@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const mysql = require('mysql2');
+const db = require('./config/database');
 require('dotenv').config();
 
 const app = express();
@@ -10,41 +10,102 @@ app.use(cors());
 app.use(express.json());  // This parses JSON bodies
 app.use(express.urlencoded({ extended: true }));  // This parses form data
 
-// Database connection
-const db = mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'click_analytics'
-});
-
-// Connect to database
-db.connect((err) => {
-    if (err) {
-        console.error('❌ Database connection failed:', err.message);
-        process.exit(1);
+// ========== SOCIAL LINKS ROUTES ==========
+// GET all active social links
+app.get('/api/social-links', async (req, res) => {
+    try {
+        const query = 'SELECT * FROM social_links WHERE is_active = 1 ORDER BY display_order ASC';
+        const [rows] = await db.query(query);
+        res.json(rows);
+    } catch (err) {
+        console.error('Database error:', err);
+        res.status(500).json({ error: 'Database error' });
     }
-    console.log('✅ Connected to database:', process.env.DB_NAME || 'click_analytics');
 });
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-    db.query('SELECT 1 as health', (err) => {
-        if (err) {
-            res.json({ status: 'error', message: err.message });
-        } else {
-            res.json({ status: 'ok', database: 'click_analytics', table: 'clicks' });
+// GET single social link by ID
+app.get('/api/social-links/:id', async (req, res) => {
+    try {
+        const query = 'SELECT * FROM social_links WHERE id = ?';
+        const [rows] = await db.query(query, [req.params.id]);
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Link not found' });
         }
-    });
+        res.json(rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
 });
 
-// Track click endpoint - FIXED VERSION
-app.post('/api/track', (req, res) => {
-    console.log('Received body:', req.body);  // Debug log
+// POST - Add new social link
+app.post('/api/social-links', async (req, res) => {
+    const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
+    
+    try {
+        const query = `INSERT INTO social_links (platform_name, platform_url, icon_class, color_code, display_order, is_active) 
+                       VALUES (?, ?, ?, ?, ?, ?)`;
+        const [result] = await db.query(query, [
+            platform_name, 
+            platform_url, 
+            icon_class, 
+            color_code, 
+            display_order || 0, 
+            is_active !== undefined ? is_active : 1
+        ]);
+        res.status(201).json({ id: result.insertId, message: 'Link added successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
+// PUT - Update social link
+app.put('/api/social-links/:id', async (req, res) => {
+    const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
+    
+    try {
+        const query = `UPDATE social_links 
+                       SET platform_name = ?, platform_url = ?, icon_class = ?, 
+                           color_code = ?, display_order = ?, is_active = ?
+                       WHERE id = ?`;
+        await db.query(query, [platform_name, platform_url, icon_class, color_code, display_order, is_active, req.params.id]);
+        res.json({ message: 'Link updated successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
+// DELETE - Remove social link
+app.delete('/api/social-links/:id', async (req, res) => {
+    try {
+        const query = 'DELETE FROM social_links WHERE id = ?';
+        await db.query(query, [req.params.id]);
+        res.json({ message: 'Link deleted successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
+// ========== CLICK TRACKING ROUTES ==========
+// Health check endpoint
+app.get('/api/health', async (req, res) => {
+    try {
+        await db.query('SELECT 1 as health');
+        res.json({ status: 'ok', database: process.env.DB_NAME, table: 'clicks', social_table: 'social_links' });
+    } catch (err) {
+        res.json({ status: 'error', message: err.message });
+    }
+});
+
+// Track click endpoint
+app.post('/api/track', async (req, res) => {
+    console.log('Received body:', req.body);
     
     const { link_url, link_title, ip_address } = req.body;
     
-    // Check if data is received
     if (!link_url || !link_title) {
         return res.status(400).json({ 
             success: false, 
@@ -54,28 +115,47 @@ app.post('/api/track', (req, res) => {
     
     console.log('📊 Tracking click:', link_title);
     
-    const query = 'INSERT INTO clicks (link_url, link_title, ip_address) VALUES (?, ?, ?)';
-    db.query(query, [link_url, link_title, ip_address || '127.0.0.1'], (err, result) => {
-        if (err) {
-            console.error('❌ Insert error:', err);
-            res.status(500).json({ success: false, error: err.message });
-        } else {
-            console.log('✅ Click tracked! ID:', result.insertId);
-            res.json({ success: true, message: 'Click tracked!', id: result.insertId });
-        }
-    });
+    try {
+        const query = 'INSERT INTO clicks (link_url, link_title, ip_address) VALUES (?, ?, ?)';
+        const [result] = await db.query(query, [link_url, link_title, ip_address || '127.0.0.1']);
+        console.log('✅ Click tracked! ID:', result.insertId);
+        res.json({ success: true, message: 'Click tracked!', id: result.insertId });
+    } catch (err) {
+        console.error('❌ Insert error:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
 });
 
 // Get all clicks endpoint
-app.get('/api/clicks', (req, res) => {
-    db.query('SELECT * FROM clicks ORDER BY clicked_at DESC', (err, results) => {
-        if (err) {
-            console.error('❌ Query error:', err);
-            res.status(500).json({ success: false, error: err.message });
-        } else {
-            res.json({ success: true, clicks: results, total: results.length });
-        }
-    });
+app.get('/api/clicks', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM clicks ORDER BY clicked_at DESC');
+        res.json({ success: true, clicks: rows, total: rows.length });
+    } catch (err) {
+        console.error('❌ Query error:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// Get click statistics
+app.get('/api/clicks/stats', async (req, res) => {
+    try {
+        const [total] = await db.query('SELECT COUNT(*) as total FROM clicks');
+        const [unique] = await db.query('SELECT COUNT(DISTINCT link_title) as unique_links FROM clicks');
+        const [today] = await db.query('SELECT COUNT(*) as today FROM clicks WHERE DATE(clicked_at) = CURDATE()');
+        
+        res.json({
+            success: true,
+            stats: {
+                total: total[0].total,
+                uniqueLinks: unique[0].unique_links,
+                last24Hours: today[0].today
+            }
+        });
+    } catch (err) {
+        console.error('❌ Stats error:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
 });
 
 // Start server
@@ -86,5 +166,10 @@ app.listen(PORT, () => {
     console.log(`   GET  http://localhost:${PORT}/api/health`);
     console.log(`   POST http://localhost:${PORT}/api/track`);
     console.log(`   GET  http://localhost:${PORT}/api/clicks`);
-    console.log(`\n✅ Ready to track clicks!\n`);
+    console.log(`   GET  http://localhost:${PORT}/api/clicks/stats`);
+    console.log(`   GET  http://localhost:${PORT}/api/social-links`);
+    console.log(`   POST http://localhost:${PORT}/api/social-links`);
+    console.log(`   PUT  http://localhost:${PORT}/api/social-links/:id`);
+    console.log(`   DEL  http://localhost:${PORT}/api/social-links/:id`);
+    console.log(`\n✅ Ready to track clicks and manage social links!\n`);
 });

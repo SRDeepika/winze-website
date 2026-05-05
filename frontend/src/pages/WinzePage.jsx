@@ -1,3 +1,4 @@
+import SocialLinks from '../components/SocialLinks';
 import React, { useState, useEffect, useRef } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 import SEO from '../components/SEO';
@@ -46,7 +47,8 @@ const solutionImages = {
     cyberSecurity: "/images/cyber-security.jpg",
     // NEW IMAGES
     cctv: "/images/cctv-services.jpg",
-    cabling: "/images/cabling-services.jpg"
+    cabling: "/images/cabling-services.jpg",
+    rentPbx: "/images/rent-ip-pbx.jpg" 
 };
 
 // Industry Images for Cards - USING LOCAL IMAGES
@@ -191,14 +193,7 @@ const WinzePage = () => {
         }
     };
 
-    const socialLinks = [
-        { name: "LinkedIn", url: "https://www.linkedin.com/company/winze-technologies", icon: faLinkedin, color: "#0077b5" },
-        { name: "WhatsApp", url: "https://wa.me/919880010417", icon: faWhatsapp, color: "#25D366" },
-        { name: "Facebook", url: "https://www.facebook.com/winzetechnologies", icon: faFacebook, color: "#1877f2" },
-        { name: "Instagram", url: "https://www.instagram.com/winzetechnologies", icon: faInstagram, color: "#e4405f" }
-    ];
-
-    const solutions = [
+  const solutions = [
     { title: "Unified Communications", desc: "Seamless integration of voice, video, and messaging for enterprise collaboration.", icon: faChartLine, img: solutionImages.unified },
     { title: "Contact Center", desc: "AI-powered customer service solutions for enhanced agent productivity.", icon: faHeadset, img: solutionImages.contact },
     { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video },
@@ -211,19 +206,26 @@ const WinzePage = () => {
     { title: "WiFi as a Service", desc: "Managed wireless solutions for seamless connectivity anywhere.", icon: faWifi, img: solutionImages.wifi },
     { title: "Web & Mobile Development", desc: "Custom web and mobile applications for your business needs.", icon: faMobileAlt, img: solutionImages.webMobile },
     { title: "Cyber Security", desc: "Advanced threat protection and security compliance solutions.", icon: faLock, img: solutionImages.cyberSecurity },
-    // NEW: CCTV Services Card
+    // CCTV Services Card
     { 
         title: "CCTV Services", 
         desc: "End-to-end surveillance solutions with H.265 HD cameras, cloud storage, and AI-powered video analytics for proactive security monitoring.", 
         icon: faVideo, 
         img: "/images/cctv-services.jpg" 
     },
-    // NEW: Cabling Services Card
+    // Cabling Services Card
     { 
         title: "Cabling Services", 
         desc: "Active & Passive Cabling solutions including Greenfield projects. Structured cabling for data centers, offices, and industrial facilities with end-to-end deployment.", 
         icon: faWifi, 
         img: "/images/cabling-services.jpg" 
+    },
+    // Rent IP PBX System Card
+    { 
+        title: "Rent IP PBX System", 
+        desc: "Cost-effective cloud-based IP PBX phone system rental with advanced call routing, voicemail to email, auto-attendant, and multi-branch connectivity.", 
+        icon: faHeadset, 
+        img: "/images/rent-ip-pbx.jpg" 
     }
 ];
 
@@ -559,78 +561,7 @@ const WinzePage = () => {
                 <div style={{ fontFamily: "'Poppins', 'Montserrat', sans-serif", overflowX: 'hidden', position: 'relative' }}>
                     
                     {/* Social Media Floating Buttons - RIGHT SIDE */}
-                    <div style={{
-                        position: 'fixed',
-                        right: '20px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        zIndex: 1000,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '15px'
-                    }}>
-                        {socialLinks.map((social, idx) => (
-                            <div
-                                key={idx}
-                                style={{
-                                    position: 'relative',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'flex-end',
-                                    cursor: 'pointer'
-                                }}
-                                onMouseEnter={() => setHoveredSocial(social.name)}
-                                onMouseLeave={() => setHoveredSocial(null)}
-                            >
-                                <span
-                                    style={{
-                                        position: 'absolute',
-                                        right: '60px',
-                                        whiteSpace: 'nowrap',
-                                        backgroundColor: social.color,
-                                        color: 'white',
-                                        padding: '8px 15px',
-                                        borderRadius: '25px',
-                                        fontSize: '14px',
-                                        fontWeight: '500',
-                                        opacity: hoveredSocial === social.name ? 1 : 0,
-                                        transform: hoveredSocial === social.name ? 'translateX(0)' : 'translateX(20px)',
-                                        transition: 'all 0.3s ease',
-                                        pointerEvents: 'none',
-                                        boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-                                    }}
-                                >
-                                    {social.name}
-                                </span>
-                                <a
-                                    href={social.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleTrackClick(`${social.name} Social`, 'social');
-                                    }}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        width: '45px',
-                                        height: '45px',
-                                        backgroundColor: hoveredSocial === social.name ? social.color : '#1a1a2e',
-                                        borderRadius: '50%',
-                                        color: 'white',
-                                        textDecoration: 'none',
-                                        transition: 'all 0.3s ease',
-                                        transform: hoveredSocial === social.name ? 'scale(1.15)' : 'scale(1)',
-                                        boxShadow: hoveredSocial === social.name ? `0 0 15px ${social.color}` : '0 4px 15px rgba(0,0,0,0.2)'
-                                    }}
-                                >
-                                    <FontAwesomeIcon icon={social.icon} style={{ fontSize: '22px' }} />
-                                </a>
-                            </div>
-                        ))}
-                    </div>
-
+                <SocialLinks />
                     {/* Top Navigation Bar */}
                     <nav style={{
                         position: 'sticky',

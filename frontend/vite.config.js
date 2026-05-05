@@ -5,9 +5,5 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
-    allowedHosts: [
-      'cleanup-publication-joining-prepaid.trycloudflare.com',
-      '.trycloudflare.com'
-    ]
   }
 })

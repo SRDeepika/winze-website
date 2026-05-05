@@ -1,139 +1,143 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
 
 const AdminLogin = () => {
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    
-    // This will read from .env file
-    const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
-    
-    // For safety, add a fallback (remove this once .env is set)
-    // const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'WinzeAdmin2026';
-    
-    if (password === ADMIN_PASSWORD) {
-        // Login success
-        localStorage.setItem('adminAuthenticated', 'true');
-        localStorage.setItem('adminLoginTime', new Date().toISOString());
-        toast.success('Login successful!');
-        navigate('/admin');
-    } else {
-        toast.error('Invalid password');
-        setPassword('');
-    }
-    setLoading(false);
-};
+    // Set your admin password here (change this to your desired password)
+    const ADMIN_PASSWORD = 'Winze@2026'; // Change this to your preferred password
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+
+        // Simple password check
+        if (password === ADMIN_PASSWORD) {
+            // Store login state
+            localStorage.setItem('adminLoggedIn', 'true');
+            localStorage.setItem('adminLoginTime', new Date().toISOString());
+            
+            // Show success message
+            alert('Login successful! Redirecting to dashboard...');
+            
+            // Redirect to admin dashboard
+            navigate('/admin');
+        } else {
+            setError('Invalid password. Please try again.');
+            setPassword('');
+        }
+        setLoading(false);
+    };
 
     return (
-        <div style={styles.container}>
-            <div style={styles.loginBox}>
-                <div style={styles.logo}>
-                    <span style={styles.logoIcon}>🔐</span>
-                    <h1 style={styles.title}>Admin Login</h1>
+        <div style={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)',
+            padding: '20px'
+        }}>
+            <div style={{
+                background: 'rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '20px',
+                padding: '40px',
+                width: '100%',
+                maxWidth: '400px',
+                boxShadow: '0 25px 45px rgba(0,0,0,0.2)',
+                border: '1px solid rgba(255,255,255,0.2)'
+            }}>
+                <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                    <div style={{
+                        width: '60px',
+                        height: '60px',
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 15px'
+                    }}>
+                        <span style={{ fontSize: '30px' }}>🔐</span>
+                    </div>
+                    <h2 style={{ color: 'white', marginBottom: '10px' }}>Admin Login</h2>
+                    <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}>Enter password to access dashboard</p>
                 </div>
-                <p style={styles.subtitle}>Enter password to access dashboard</p>
-                
-                <form onSubmit={handleLogin} style={styles.form}>
+
+                <form onSubmit={handleSubmit}>
                     <input
                         type="password"
                         placeholder="Enter admin password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        style={styles.input}
+                        style={{
+                            width: '100%',
+                            padding: '14px',
+                            marginBottom: '15px',
+                            borderRadius: '10px',
+                            border: '1px solid rgba(255,255,255,0.2)',
+                            background: 'rgba(255,255,255,0.1)',
+                            color: 'white',
+                            fontSize: '16px',
+                            outline: 'none'
+                        }}
                         autoFocus
                     />
-                    <button 
-                        type="submit" 
-                        style={styles.button}
+
+                    {error && (
+                        <div style={{
+                            color: '#ff6b6b',
+                            marginBottom: '15px',
+                            padding: '10px',
+                            background: 'rgba(255,107,107,0.1)',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            textAlign: 'center'
+                        }}>
+                            {error}
+                        </div>
+                    )}
+
+                    <button
+                        type="submit"
                         disabled={loading}
+                        style={{
+                            width: '100%',
+                            padding: '14px',
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '10px',
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s',
+                            opacity: loading ? 0.7 : 1
+                        }}
+                        onMouseEnter={(e) => {
+                            if (!loading) e.target.style.transform = 'scale(1.02)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.target.style.transform = 'scale(1)';
+                        }}
                     >
-                        {loading ? 'Logging in...' : 'Login to Dashboard'}
+                        {loading ? 'Checking...' : 'Login to Dashboard'}
                     </button>
                 </form>
-                
-                <p style={styles.hint}>
-                    <span style={{ fontSize: '12px', color: '#999' }}>
-                        Contact administrator if you forgot password
-                    </span>
-                </p>
+
+                <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                    <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px' }}>
+                        Default password: <span style={{ color: '#FFD700' }}>admin123</span>
+                    </p>
+                </div>
             </div>
         </div>
     );
-};
-
-const styles = {
-    container: {
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        padding: '20px',
-    },
-    loginBox: {
-        background: 'white',
-        borderRadius: '20px',
-        padding: '40px',
-        width: '100%',
-        maxWidth: '400px',
-        boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-        textAlign: 'center',
-    },
-    logo: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '10px',
-        marginBottom: '10px',
-    },
-    logoIcon: {
-        fontSize: '40px',
-    },
-    title: {
-        fontSize: '28px',
-        color: '#333',
-        margin: 0,
-    },
-    subtitle: {
-        color: '#666',
-        marginBottom: '30px',
-        fontSize: '14px',
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '20px',
-    },
-    input: {
-        padding: '14px',
-        fontSize: '16px',
-        border: '2px solid #e0e0e0',
-        borderRadius: '10px',
-        outline: 'none',
-        transition: 'border-color 0.3s',
-    },
-    button: {
-        padding: '14px',
-        fontSize: '16px',
-        fontWeight: 'bold',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        color: 'white',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        transition: 'transform 0.2s',
-    },
-    hint: {
-        marginTop: '20px',
-        fontSize: '12px',
-        color: '#999',
-    },
 };
 
 export default AdminLogin;
