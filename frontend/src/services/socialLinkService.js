@@ -14,6 +14,4 @@ export const socialLinkService = {
             return [];
         }
     },
-    
-    // Add other methods (create, update, delete) as needed
 };
