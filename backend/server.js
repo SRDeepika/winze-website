@@ -10,6 +10,51 @@ app.use(cors());
 app.use(express.json());  // This parses JSON bodies
 app.use(express.urlencoded({ extended: true }));  // This parses form data
 
+// ========== AUTO-CREATE SOCIAL LINKS TABLE ON STARTUP ==========
+// This runs once when the backend starts
+const createSocialLinksTable = async () => {
+    try {
+        // Create table if it doesn't exist (PostgreSQL syntax)
+        const createTableQuery = `
+            CREATE TABLE IF NOT EXISTS social_links (
+                id SERIAL PRIMARY KEY,
+                platform_name VARCHAR(50) NOT NULL,
+                platform_url VARCHAR(255) NOT NULL,
+                icon_class VARCHAR(50) NOT NULL,
+                color_code VARCHAR(20) NOT NULL,
+                display_order INT DEFAULT 0,
+                is_active SMALLINT DEFAULT 1,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `;
+        
+        await db.query(createTableQuery);
+        console.log('✅ social_links table ready');
+        
+        // Check if table is empty
+        const [rows] = await db.query('SELECT COUNT(*) as count FROM social_links');
+        
+        if (rows[0].count === 0) {
+            // Insert default social links
+            const insertQuery = `
+                INSERT INTO social_links (platform_name, platform_url, icon_class, color_code, display_order, is_active) VALUES
+                ('LinkedIn', 'https://www.linkedin.com/company/winze-technologies', 'faLinkedin', '#0077b5', 1, 1),
+                ('WhatsApp', 'https://wa.me/919880010417', 'faWhatsapp', '#25D366', 2, 1),
+                ('Facebook', 'https://www.facebook.com/winzetechnologies', 'faFacebook', '#1877f2', 3, 1),
+                ('Instagram', 'https://www.instagram.com/winzetechnologies', 'faInstagram', '#e4405f', 4, 1)
+            `;
+            await db.query(insertQuery);
+            console.log('✅ Default social links inserted');
+        }
+    } catch (err) {
+        console.error('❌ Error setting up social_links table:', err.message);
+    }
+};
+
+// Call the function to create table on startup
+createSocialLinksTable();
+
 // ========== SOCIAL LINKS ROUTES ==========
 // GET all active social links
 app.get('/api/social-links', async (req, res) => {
