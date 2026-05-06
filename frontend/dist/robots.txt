@@ -1,0 +1,17 @@
+# robots.txt for Winze Technologies
+# This file tells search engines which pages to crawl
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+# Sitemap location
+Sitemap: https://www.winzetech.com/sitemap.xml
+
+# Crawl delay (be respectful to server)
+Crawl-delay: 10
+
+# Host
+Host: https://www.winzetech.com
