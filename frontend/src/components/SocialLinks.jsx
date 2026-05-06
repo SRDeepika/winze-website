@@ -19,6 +19,39 @@ const iconMap = {
     'faYoutube': faYoutube
 };
 
+// Click tracking function
+const trackClick = async (linkUrl, linkTitle) => {
+    try {
+        // Get user's IP address
+        let ip = '0.0.0.0';
+        try {
+            const ipResponse = await fetch('https://api.ipify.org?format=json');
+            const ipData = await ipResponse.json();
+            ip = ipData.ip;
+        } catch (e) {
+            console.log('Using default IP');
+        }
+
+        // Send tracking data to backend
+        const response = await fetch('https://winze-backend-api.onrender.com/api/track', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                link_url: linkUrl,
+                link_title: linkTitle,
+                ip_address: ip
+            })
+        });
+        
+        const data = await response.json();
+        console.log('Click tracked:', data);
+    } catch (error) {
+        console.error('Error tracking click:', error);
+    }
+};
+
 const SocialLinks = () => {
     const [socialLinks, setSocialLinks] = useState([]);
     const [hoveredId, setHoveredId] = useState(null);
@@ -32,6 +65,15 @@ const SocialLinks = () => {
         const links = await socialLinkService.getAll();
         setSocialLinks(links);
         setLoading(false);
+    };
+
+    const handleClick = (e, link) => {
+        e.preventDefault(); // Prevent immediate navigation
+        trackClick(link.platform_url, link.platform_name);
+        // Small delay to ensure tracking completes before navigation
+        setTimeout(() => {
+            window.open(link.platform_url, '_blank');
+        }, 100);
     };
 
     if (loading) {
@@ -93,6 +135,7 @@ const SocialLinks = () => {
                             href={link.platform_url}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={(e) => handleClick(e, link)}
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
