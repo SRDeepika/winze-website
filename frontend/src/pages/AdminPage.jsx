@@ -3,10 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AdminSocialLinks from './AdminSocialLinks';
 
+// Use environment variable or fallback to production URL
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://winze-backend-api.onrender.com/api';
+
 const AdminPage = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
     const [stats, setStats] = useState({ total: 0, uniqueLinks: 0, last24Hours: 0 });
-    const [allClicks, setAllClicks] = useState([]);
+    // eslint-disable-next-line no-unused-vars
+    const [, setAllClicks] = useState([]); // Underscore prefix indicates intentionally unused
     const [groupedClicks, setGroupedClicks] = useState({});
     const [loading, setLoading] = useState(false);
     const [expandedCategories, setExpandedCategories] = useState({});
@@ -26,12 +30,13 @@ const AdminPage = () => {
             fetchStats();
             fetchAllClicks();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab]);
 
     const fetchStats = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('http://localhost:5000/api/clicks/stats');
+            const res = await axios.get(`${API_BASE_URL}/clicks/stats`);
             if (res.data.success) {
                 setStats(res.data.stats);
             }
@@ -43,11 +48,11 @@ const AdminPage = () => {
 
     const fetchAllClicks = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/clicks');
+            const res = await axios.get(`${API_BASE_URL}/clicks`);
             if (res.data.success) {
                 const clicks = res.data.clicks;
                 setAllClicks(clicks);
-                
+
                 // Group clicks by link_title
                 const grouped = {};
                 clicks.forEach(click => {
@@ -58,7 +63,7 @@ const AdminPage = () => {
                     grouped[title].push(click);
                 });
                 setGroupedClicks(grouped);
-                
+
                 // Initialize expanded state (all collapsed by default)
                 const initialExpanded = {};
                 Object.keys(grouped).forEach(key => {
@@ -98,7 +103,11 @@ const AdminPage = () => {
                 height: '100vh',
                 overflowY: 'auto'
             }}>
-                <div style={{ padding: '0 20px 20px 20px', borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '20px' }}>
+                <div style={{
+                    padding: '0 20px 20px 20px',
+                    borderBottom: '1px solid rgba(255,255,255,0.1)',
+                    marginBottom: '20px'
+                }}>
                     <h2 style={{ fontSize: '1.3rem', margin: 0 }}>⚡ Admin Panel</h2>
                     <p style={{ fontSize: '0.8rem', color: '#aaa', marginTop: '5px' }}>Winze Technologies</p>
                 </div>
@@ -109,14 +118,18 @@ const AdminPage = () => {
                         style={{
                             width: '100%',
                             padding: '12px 20px',
-                            background: activeTab === 'dashboard' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent',
+                            background: activeTab === 'dashboard'
+                                ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                                : 'transparent',
                             border: 'none',
                             color: 'white',
                             textAlign: 'left',
                             cursor: 'pointer',
                             fontSize: '15px',
                             transition: 'all 0.3s',
-                            borderLeft: activeTab === 'dashboard' ? '3px solid #FFD700' : '3px solid transparent'
+                            borderLeft: activeTab === 'dashboard'
+                                ? '3px solid #FFD700'
+                                : '3px solid transparent'
                         }}
                     >
                         📊 Click Analytics
@@ -127,14 +140,18 @@ const AdminPage = () => {
                         style={{
                             width: '100%',
                             padding: '12px 20px',
-                            background: activeTab === 'socialLinks' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent',
+                            background: activeTab === 'socialLinks'
+                                ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                                : 'transparent',
                             border: 'none',
                             color: 'white',
                             textAlign: 'left',
                             cursor: 'pointer',
                             fontSize: '15px',
                             transition: 'all 0.3s',
-                            borderLeft: activeTab === 'socialLinks' ? '3px solid #FFD700' : '3px solid transparent'
+                            borderLeft: activeTab === 'socialLinks'
+                                ? '3px solid #FFD700'
+                                : '3px solid transparent'
                         }}
                     >
                         🔗 Social Links
@@ -163,12 +180,22 @@ const AdminPage = () => {
             </div>
 
             {/* Main Content */}
-            <div style={{ marginLeft: '260px', flex: 1, padding: '30px', background: '#f5f6fa', minHeight: '100vh' }}>
+            <div style={{
+                marginLeft: '260px',
+                flex: 1,
+                padding: '30px',
+                background: '#f5f6fa',
+                minHeight: '100vh'
+            }}>
                 {/* Dashboard Tab - Click Analytics */}
                 {activeTab === 'dashboard' && (
                     <div>
-                        <h1 style={{ marginBottom: '10px', color: '#1a1a2e' }}>Click Analytics Dashboard</h1>
-                        <p style={{ color: '#666', marginBottom: '30px' }}>Complete click tracking statistics for your website</p>
+                        <h1 style={{ marginBottom: '10px', color: '#1a1a2e' }}>
+                            Click Analytics Dashboard
+                        </h1>
+                        <p style={{ color: '#666', marginBottom: '30px' }}>
+                            Complete click tracking statistics for your website
+                        </p>
 
                         {/* Stats Cards */}
                         <div style={{
@@ -230,9 +257,21 @@ const AdminPage = () => {
                             padding: '20px',
                             boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
                         }}>
-                            <h3 style={{ marginBottom: '20px', color: '#1a1a2e', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <span>📋 All Clickable Links ({totalUniqueLinks} unique links, {stats.total} total clicks)</span>
-                                <span style={{ fontSize: '12px', color: '#666', fontWeight: 'normal' }}>
+                            <h3 style={{
+                                marginBottom: '20px',
+                                color: '#1a1a2e',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                            }}>
+                                <span>
+                                    📋 All Clickable Links ({totalUniqueLinks} unique links, {stats.total} total clicks)
+                                </span>
+                                <span style={{
+                                    fontSize: '12px',
+                                    color: '#666',
+                                    fontWeight: 'normal'
+                                }}>
                                     Click on any category to expand/collapse
                                 </span>
                             </h3>
@@ -244,12 +283,15 @@ const AdminPage = () => {
                             ) : (
                                 <div>
                                     {Object.entries(groupedClicks).map(([title, clicks]) => (
-                                        <div key={title} style={{
-                                            marginBottom: '15px',
-                                            border: '1px solid #eee',
-                                            borderRadius: '8px',
-                                            overflow: 'hidden'
-                                        }}>
+                                        <div
+                                            key={title}
+                                            style={{
+                                                marginBottom: '15px',
+                                                border: '1px solid #eee',
+                                                borderRadius: '8px',
+                                                overflow: 'hidden'
+                                            }}
+                                        >
                                             {/* Category Header */}
                                             <div
                                                 onClick={() => toggleCategory(title)}
@@ -261,14 +303,26 @@ const AdminPage = () => {
                                                     background: '#f8f9fa',
                                                     cursor: 'pointer',
                                                     transition: 'all 0.3s',
-                                                    borderBottom: expandedCategories[title] ? '1px solid #eee' : 'none'
+                                                    borderBottom: expandedCategories[title]
+                                                        ? '1px solid #eee'
+                                                        : 'none'
                                                 }}
-                                                onMouseEnter={(e) => e.currentTarget.style.background = '#e9ecef'}
-                                                onMouseLeave={(e) => e.currentTarget.style.background = '#f8f9fa'}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.background = '#e9ecef';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.background = '#f8f9fa';
+                                                }}
                                             >
                                                 <div>
-                                                    <strong style={{ fontSize: '16px', color: '#1a1a2e' }}>{title}</strong>
-                                                    <span style={{ marginLeft: '10px', fontSize: '12px', color: '#666' }}>
+                                                    <strong style={{ fontSize: '16px', color: '#1a1a2e' }}>
+                                                        {title}
+                                                    </strong>
+                                                    <span style={{
+                                                        marginLeft: '10px',
+                                                        fontSize: '12px',
+                                                        color: '#666'
+                                                    }}>
                                                         ({clicks.length} {clicks.length === 1 ? 'click' : 'clicks'})
                                                     </span>
                                                 </div>
@@ -282,7 +336,10 @@ const AdminPage = () => {
                                                 <div style={{ padding: '15px' }}>
                                                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                                         <thead>
-                                                            <tr style={{ background: '#f8f9fa', borderBottom: '2px solid #ddd' }}>
+                                                            <tr style={{
+                                                                background: '#f8f9fa',
+                                                                borderBottom: '2px solid #ddd'
+                                                            }}>
                                                                 <th style={{ padding: '10px', textAlign: 'left' }}>#</th>
                                                                 <th style={{ padding: '10px', textAlign: 'left' }}>URL</th>
                                                                 <th style={{ padding: '10px', textAlign: 'left' }}>Clicked At</th>
@@ -294,7 +351,12 @@ const AdminPage = () => {
                                                                 <tr key={click.id} style={{ borderBottom: '1px solid #eee' }}>
                                                                     <td style={{ padding: '10px' }}>{idx + 1}</td>
                                                                     <td style={{ padding: '10px' }}>
-                                                                        <a href={click.link_url} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea', fontSize: '12px' }}>
+                                                                        <a
+                                                                            href={click.link_url}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            style={{ color: '#667eea', fontSize: '12px' }}
+                                                                        >
                                                                             {click.link_url?.substring(0, 60)}...
                                                                         </a>
                                                                     </td>
