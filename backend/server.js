@@ -325,6 +325,49 @@ app.get('/api/debug-db', async (req, res) => {
         environment: process.env.NODE_ENV || 'development'
     });
 });
+// Change username endpoint
+app.post('/api/admin/change-username', async (req, res) => {
+    const { username, newUsername, password } = req.body;
+    
+    if (!username || !newUsername || !password) {
+        return res.status(400).json({ success: false, error: 'All fields required' });
+    }
+    
+    if (newUsername.length < 3) {
+        return res.status(400).json({ success: false, error: 'Username must be at least 3 characters' });
+    }
+    
+    try {
+        // Check if user exists
+        const result = await db.query('SELECT * FROM admins WHERE username = $1', [username]);
+        
+        if (result.rows.length === 0) {
+            return res.status(401).json({ success: false, error: 'User not found' });
+        }
+        
+        const admin = result.rows[0];
+        const validPassword = await bcrypt.compare(password, admin.password_hash);
+        
+        if (!validPassword) {
+            return res.status(401).json({ success: false, error: 'Current password is incorrect' });
+        }
+        
+        // Check if new username already exists
+        const existingUser = await db.query('SELECT * FROM admins WHERE username = $1', [newUsername]);
+        if (existingUser.rows.length > 0) {
+            return res.status(400).json({ success: false, error: 'Username already exists' });
+        }
+        
+        // Update username
+        await db.query('UPDATE admins SET username = $1, updated_at = CURRENT_TIMESTAMP WHERE username = $2', 
+            [newUsername, username]);
+        
+        res.json({ success: true, message: 'Username changed successfully' });
+    } catch (err) {
+        console.error('Change username error:', err);
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
