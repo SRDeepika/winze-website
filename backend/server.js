@@ -9,6 +9,34 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ========== AUTHENTICATION MIDDLEWARE ==========
+
+// Simple token-based authentication for API
+const requireAuth = async (req, res, next) => {
+    // Check for token in headers
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader) {
+        return res.status(401).json({ 
+            success: false, 
+            error: 'Authentication required. Please login first.' 
+        });
+    }
+    
+    // Get token (Bearer token)
+    const token = authHeader.split(' ')[1];
+    
+    // Check if token is valid
+    if (!token || token !== 'admin-session-token') {
+        return res.status(401).json({ 
+            success: false, 
+            error: 'Invalid or expired token. Please login again.' 
+        });
+    }
+    
+    next();
+};
+
 // Create tables on startup
 const initDatabase = async () => {
     try {
@@ -93,7 +121,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// Health check
+// Health check (PUBLIC)
 app.get('/api/health', async (req, res) => {
     try {
         const result = await db.query('SELECT NOW() as time');
@@ -103,7 +131,7 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
-// GET all social links
+// GET all social links (PUBLIC - needed for website)
 app.get('/api/social-links', async (req, res) => {
     try {
         const result = await db.query('SELECT * FROM social_links WHERE is_active = 1 ORDER BY display_order');
@@ -114,8 +142,8 @@ app.get('/api/social-links', async (req, res) => {
     }
 });
 
-// POST - Add new social link (Admin only - no auth check for now)
-app.post('/api/social-links', async (req, res) => {
+// POST - Add new social link (PROTECTED - admin only)
+app.post('/api/social-links', requireAuth, async (req, res) => {
     const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
     
     try {
@@ -136,8 +164,8 @@ app.post('/api/social-links', async (req, res) => {
     }
 });
 
-// PUT - Update social link
-app.put('/api/social-links/:id', async (req, res) => {
+// PUT - Update social link (PROTECTED - admin only)
+app.put('/api/social-links/:id', requireAuth, async (req, res) => {
     const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
     
     try {
@@ -153,8 +181,8 @@ app.put('/api/social-links/:id', async (req, res) => {
     }
 });
 
-// DELETE - Remove social link
-app.delete('/api/social-links/:id', async (req, res) => {
+// DELETE - Remove social link (PROTECTED - admin only)
+app.delete('/api/social-links/:id', requireAuth, async (req, res) => {
     try {
         const query = 'DELETE FROM social_links WHERE id = $1';
         await db.query(query, [req.params.id]);
@@ -165,7 +193,7 @@ app.delete('/api/social-links/:id', async (req, res) => {
     }
 });
 
-// POST - Track click
+// POST - Track click (PUBLIC - anyone can track)
 app.post('/api/track', async (req, res) => {
     const { link_url, link_title, ip_address } = req.body;
     
@@ -188,8 +216,8 @@ app.post('/api/track', async (req, res) => {
     }
 });
 
-// GET all clicks
-app.get('/api/clicks', async (req, res) => {
+// GET all clicks (PROTECTED - admin only)
+app.get('/api/clicks', requireAuth, async (req, res) => {
     try {
         const result = await db.query('SELECT * FROM clicks ORDER BY clicked_at DESC');
         res.json({ success: true, clicks: result.rows, total: result.rows.length });
@@ -199,8 +227,8 @@ app.get('/api/clicks', async (req, res) => {
     }
 });
 
-// GET click statistics
-app.get('/api/clicks/stats', async (req, res) => {
+// GET click statistics (PROTECTED - admin only)
+app.get('/api/clicks/stats', requireAuth, async (req, res) => {
     try {
         const totalResult = await db.query('SELECT COUNT(*) as count FROM clicks');
         const todayResult = await db.query("SELECT COUNT(*) as count FROM clicks WHERE DATE(clicked_at) = CURRENT_DATE");
@@ -220,7 +248,7 @@ app.get('/api/clicks/stats', async (req, res) => {
 
 // ========== ADMIN AUTHENTICATION ROUTES ==========
 
-// Login endpoint
+// Login endpoint (returns token)
 app.post('/api/admin/login', async (req, res) => {
     const { username, password } = req.body;
     
@@ -242,16 +270,21 @@ app.post('/api/admin/login', async (req, res) => {
             return res.status(401).json({ success: false, error: 'Invalid credentials' });
         }
         
-        // Don't send password hash back
-        delete admin.password_hash;
-        res.json({ success: true, admin: { id: admin.id, username: admin.username } });
+        // Generate session token
+        const token = 'admin-session-token';
+        
+        res.json({ 
+            success: true, 
+            admin: { id: admin.id, username: admin.username },
+            token: token
+        });
     } catch (err) {
         console.error('Login error:', err);
         res.status(500).json({ success: false, error: 'Server error' });
     }
 });
 
-// Change password endpoint
+// Change password endpoint (NO LENGTH LIMIT)
 app.post('/api/admin/change-password', async (req, res) => {
     const { username, oldPassword, newPassword } = req.body;
     
@@ -259,9 +292,7 @@ app.post('/api/admin/change-password', async (req, res) => {
         return res.status(400).json({ success: false, error: 'All fields required' });
     }
     
-    if (newPassword.length < 6) {
-        return res.status(400).json({ success: false, error: 'Password must be at least 6 characters' });
-    }
+    // REMOVED: password length check - admin can use any password now
     
     try {
         const result = await db.query('SELECT * FROM admins WHERE username = $1', [username]);
@@ -288,7 +319,7 @@ app.post('/api/admin/change-password', async (req, res) => {
     }
 });
 
-// Create new admin (for super admin)
+// Create new admin (NO LENGTH LIMIT)
 app.post('/api/admin/create', async (req, res) => {
     const { username, password } = req.body;
     
@@ -296,9 +327,7 @@ app.post('/api/admin/create', async (req, res) => {
         return res.status(400).json({ success: false, error: 'Username and password required' });
     }
     
-    if (password.length < 6) {
-        return res.status(400).json({ success: false, error: 'Password must be at least 6 characters' });
-    }
+    // REMOVED: password length check - admin can use any password now
     
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -317,14 +346,6 @@ app.post('/api/admin/create', async (req, res) => {
     }
 });
 
-// Debug endpoint
-app.get('/api/debug-db', async (req, res) => {
-    res.json({
-        database_url_exists: !!process.env.DATABASE_URL,
-        postgres_connected: true,
-        environment: process.env.NODE_ENV || 'development'
-    });
-});
 // Change username endpoint
 app.post('/api/admin/change-username', async (req, res) => {
     const { username, newUsername, password } = req.body;
@@ -338,7 +359,6 @@ app.post('/api/admin/change-username', async (req, res) => {
     }
     
     try {
-        // Check if user exists
         const result = await db.query('SELECT * FROM admins WHERE username = $1', [username]);
         
         if (result.rows.length === 0) {
@@ -352,13 +372,11 @@ app.post('/api/admin/change-username', async (req, res) => {
             return res.status(401).json({ success: false, error: 'Current password is incorrect' });
         }
         
-        // Check if new username already exists
         const existingUser = await db.query('SELECT * FROM admins WHERE username = $1', [newUsername]);
         if (existingUser.rows.length > 0) {
             return res.status(400).json({ success: false, error: 'Username already exists' });
         }
         
-        // Update username
         await db.query('UPDATE admins SET username = $1, updated_at = CURRENT_TIMESTAMP WHERE username = $2', 
             [newUsername, username]);
         
@@ -367,6 +385,15 @@ app.post('/api/admin/change-username', async (req, res) => {
         console.error('Change username error:', err);
         res.status(500).json({ success: false, error: 'Server error' });
     }
+});
+
+// Debug endpoint (PUBLIC)
+app.get('/api/debug-db', async (req, res) => {
+    res.json({
+        database_url_exists: !!process.env.DATABASE_URL,
+        postgres_connected: true,
+        environment: process.env.NODE_ENV || 'development'
+    });
 });
 
 const PORT = process.env.PORT || 5000;
