@@ -20,7 +20,7 @@ import {
     faInstagram 
 } from '@fortawesome/free-brands-svg-icons';
 
-// ========== BACKGROUND IMAGES (NO VIDEOS) ==========
+// ========== BACKGROUND IMAGES ==========
 const bgImages = {
     hero: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format",
     delivery: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2034&auto=format",
@@ -30,7 +30,7 @@ const bgImages = {
     stats: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format",
 };
 
-// Solution Images for Cards - USING LOCAL IMAGES
+// Solution Images for Cards
 const solutionImages = {
     unified: "/images/unified-comm.jpg",
     contact: "/images/contact-center.jpg",
@@ -49,7 +49,7 @@ const solutionImages = {
     rentPbx: "/images/rent-ip-pbx.jpg" 
 };
 
-// Industry Images for Cards - USING LOCAL IMAGES
+// Industry Images for Cards
 const industryImages = {
     healthcare: "/images/healthcare.jpg",
     manufacturing: "/images/manufacturing.jpg",
@@ -59,7 +59,7 @@ const industryImages = {
     logistics: "/images/logistics.jpg"
 };
 
-// Company Logos - LOCAL IMAGES from public/images/ folder
+// Company Logos
 const clientLogos = [
     { name: "Netrack", url: "/images/netrack.png" },
     { name: "HP", url: "/images/hp.png" },
@@ -76,215 +76,11 @@ const clientLogos = [
     { name: "Dell", url: "/images/dell.png" }
 ];
 
-// Modal Components
-const DeliveryModal = ({ item, onClose }) => {
-    if (!item) return null;
-    return (
-        <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.95)',
-            backdropFilter: 'blur(10px)',
-            zIndex: 2000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px'
-        }} onClick={onClose}>
-            <div style={{
-                background: 'linear-gradient(135deg, #1a1a3e 0%, #2d2d5e 100%)',
-                borderRadius: '20px',
-                padding: '40px',
-                maxWidth: '500px',
-                width: '100%',
-                position: 'relative',
-                border: '1px solid rgba(255,255,255,0.2)'
-            }} onClick={(e) => e.stopPropagation()}>
-                <button onClick={onClose} style={{
-                    position: 'absolute',
-                    top: '20px',
-                    right: '25px',
-                    background: 'rgba(255,255,255,0.1)',
-                    border: 'none',
-                    fontSize: '24px',
-                    cursor: 'pointer',
-                    color: 'white',
-                    width: '35px',
-                    height: '35px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>×</button>
-                <FontAwesomeIcon icon={item.icon} style={{ fontSize: '60px', marginBottom: '20px', color: '#667eea' }} />
-                <h2 style={{ color: 'white', marginBottom: '15px' }}>{item.title}</h2>
-                <p style={{ color: '#ccc', lineHeight: '1.6', fontSize: '16px' }}>{item.desc}</p>
-            </div>
-        </div>
-    );
-};
-
-const SolutionModal = ({ item, onClose }) => {
-    if (!item) return null;
-    return (
-        <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.95)',
-            backdropFilter: 'blur(10px)',
-            zIndex: 2000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px'
-        }} onClick={onClose}>
-            <div style={{
-                background: 'white',
-                borderRadius: '20px',
-                maxWidth: '600px',
-                width: '100%',
-                maxHeight: '80vh',
-                overflow: 'auto',
-                position: 'relative'
-            }} onClick={(e) => e.stopPropagation()}>
-                <button onClick={onClose} style={{
-                    position: 'sticky',
-                    top: '10px',
-                    right: '10px',
-                    float: 'right',
-                    background: '#667eea',
-                    border: 'none',
-                    fontSize: '20px',
-                    cursor: 'pointer',
-                    color: 'white',
-                    width: '35px',
-                    height: '35px',
-                    borderRadius: '50%',
-                    margin: '10px',
-                    zIndex: 10
-                }}>×</button>
-                <img src={item.img} alt={item.title} style={{ width: '100%', height: '250px', objectFit: 'cover' }} />
-                <div style={{ padding: '30px' }}>
-                    <FontAwesomeIcon icon={item.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
-                    <h2 style={{ color: '#1a1a2e', marginBottom: '15px' }}>{item.title}</h2>
-                    <p style={{ color: '#666', lineHeight: '1.6', fontSize: '16px' }}>{item.desc}</p>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-const IndustryModal = ({ item, onClose }) => {
-    if (!item) return null;
-    return (
-        <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.95)',
-            backdropFilter: 'blur(10px)',
-            zIndex: 2000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px'
-        }} onClick={onClose}>
-            <div style={{
-                background: 'white',
-                borderRadius: '20px',
-                maxWidth: '500px',
-                width: '100%',
-                position: 'relative'
-            }} onClick={(e) => e.stopPropagation()}>
-                <button onClick={onClose} style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    background: '#667eea',
-                    border: 'none',
-                    fontSize: '18px',
-                    cursor: 'pointer',
-                    color: 'white',
-                    width: '30px',
-                    height: '30px',
-                    borderRadius: '50%',
-                    zIndex: 10
-                }}>×</button>
-                <img src={item.img} alt={item.name} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '20px 20px 0 0' }} />
-                <div style={{ padding: '30px' }}>
-                    <FontAwesomeIcon icon={item.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
-                    <h2 style={{ color: '#1a1a2e', marginBottom: '15px' }}>{item.name}</h2>
-                    <p style={{ color: '#666', lineHeight: '1.6', fontSize: '16px' }}>{item.desc}</p>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-const WorkModal = ({ item, onClose }) => {
-    if (!item) return null;
-    return (
-        <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.95)',
-            backdropFilter: 'blur(10px)',
-            zIndex: 2000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px'
-        }} onClick={onClose}>
-            <div style={{
-                background: 'linear-gradient(135deg, #1a1a3e 0%, #2d2d5e 100%)',
-                borderRadius: '20px',
-                padding: '40px',
-                maxWidth: '500px',
-                width: '100%',
-                position: 'relative',
-                border: '1px solid rgba(255,255,255,0.2)'
-            }} onClick={(e) => e.stopPropagation()}>
-                <button onClick={onClose} style={{
-                    position: 'absolute',
-                    top: '20px',
-                    right: '25px',
-                    background: 'rgba(255,255,255,0.1)',
-                    border: 'none',
-                    fontSize: '24px',
-                    cursor: 'pointer',
-                    color: 'white',
-                    width: '35px',
-                    height: '35px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>×</button>
-                <FontAwesomeIcon icon={item.icon} style={{ fontSize: '60px', marginBottom: '20px', color: '#667eea' }} />
-                <h2 style={{ color: 'white', marginBottom: '15px' }}>{item.title}</h2>
-                <p style={{ color: '#ccc', lineHeight: '1.6', fontSize: '16px' }}>{item.desc}</p>
-            </div>
-        </div>
-    );
-};
-
 const WinzePage = () => {
     const [scrolled, setScrolled] = useState(false);
     const [showQuoteModal, setShowQuoteModal] = useState(false);
     const [showLogoModal, setShowLogoModal] = useState(false);
     const [hoveredCard, setHoveredCard] = useState(null);
-    const [hoveredSocial, setHoveredSocial] = useState(null);
     const [counters, setCounters] = useState({
         years: 0,
         expertise: 0,
@@ -301,14 +97,10 @@ const WinzePage = () => {
     });
     
     // Modal states
-    const [selectedDelivery, setSelectedDelivery] = useState(null);
-    const [selectedSolution, setSelectedSolution] = useState(null);
-    const [selectedIndustry, setSelectedIndustry] = useState(null);
-    const [selectedWork, setSelectedWork] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalData, setModalData] = useState(null);
     
     const statsRef = useRef(null);
-    const marqueeRef = useRef(null);
-
     const homeRef = useRef(null);
     const solutionsRef = useRef(null);
     const industriesRef = useRef(null);
@@ -320,7 +112,6 @@ const WinzePage = () => {
             setScrolled(window.scrollY > 50);
         });
         
-        // Counter animation
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -365,13 +156,11 @@ const WinzePage = () => {
 
     const handleTrackClick = async (itemName, category) => {
         try {
-            // Get real IP address for the user
             let userIp = '0.0.0.0';
             try {
                 const response = await fetch('https://api.ipify.org?format=json');
                 const data = await response.json();
                 userIp = data.ip;
-                console.log('Captured IP:', userIp);
             } catch (err) {
                 console.log('Could not get IP, using default');
             }
@@ -385,6 +174,16 @@ const WinzePage = () => {
         } catch (error) {
             console.error('Tracking failed:', error);
         }
+    };
+
+    const openModal = (item) => {
+        setModalData(item);
+        setModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalOpen(false);
+        setModalData(null);
     };
 
     const handleInputChange = (e) => {
@@ -459,7 +258,53 @@ const WinzePage = () => {
         { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients, and 16+ years of excellence." }
     ];
 
-    // Background Image Component (NO VIDEO)
+    // Modal Component
+    const CardModal = () => {
+        if (!modalData) return null;
+        return (
+            <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0,0,0,0.95)',
+                zIndex: 10000,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer'
+            }} onClick={closeModal}>
+                <div style={{
+                    background: 'white',
+                    borderRadius: '20px',
+                    padding: '40px',
+                    maxWidth: '500px',
+                    width: '90%',
+                    textAlign: 'center',
+                    cursor: 'default',
+                    maxHeight: '80vh',
+                    overflow: 'auto'
+                }} onClick={(e) => e.stopPropagation()}>
+                    <FontAwesomeIcon icon={modalData.icon} style={{ fontSize: '50px', color: '#667eea', marginBottom: '20px' }} />
+                    <h2 style={{ color: '#1a1a2e', marginBottom: '15px', fontSize: '24px' }}>{modalData.title || modalData.name}</h2>
+                    <p style={{ color: '#666', lineHeight: '1.6', fontSize: '16px' }}>{modalData.desc}</p>
+                    <button onClick={closeModal} style={{
+                        marginTop: '30px',
+                        padding: '10px 30px',
+                        background: '#667eea',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '16px'
+                    }}>Close</button>
+                </div>
+            </div>
+        );
+    };
+
+    // Background Image Component
     const BackgroundImage = ({ imageSrc }) => (
         <div style={{
             position: 'absolute',
@@ -496,7 +341,6 @@ const WinzePage = () => {
         </div>
     );
 
-    // Dark Background Image Component (for sections with white cards)
     const DarkBackgroundImage = ({ imageSrc }) => (
         <div style={{
             position: 'absolute',
@@ -589,7 +433,6 @@ const WinzePage = () => {
                 `}
             </style>
             
-            {/* SEO Component */}
             <SEO 
                 title="Winze Technologies | Enterprise Communication, Security & AI"
                 description="Winze Technologies delivers unified communications, AI security, SaaS products, and IT infrastructure with 16+ years of enterprise expertise."
@@ -601,10 +444,9 @@ const WinzePage = () => {
             
             <div style={{ fontFamily: "'Poppins', 'Montserrat', sans-serif", overflowX: 'hidden', position: 'relative' }}>
                 
-                {/* Social Media Floating Buttons - RIGHT SIDE */}
                 <SocialLinks />
                 
-                {/* Top Navigation Bar */}
+                {/* Navigation Bar */}
                 <nav style={{
                     position: 'sticky',
                     top: 0,
@@ -743,15 +585,9 @@ const WinzePage = () => {
                                         boxShadow: '0 4px 15px rgba(102,126,234,0.3)'
                                     }}>🏆 16+ Years of Excellence</span>
                                 </div>
-                                <h1 style={{ fontSize: '4.5rem', marginBottom: '20px', color: 'white', lineHeight: '1.2', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>
-                                    Winze Technologies
-                                </h1>
-                                <p style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ddd', lineHeight: '1.6' }}>
-                                    Leading Enterprise Communication, Security, and AI Technology Solutions Provider
-                                </p>
-                                <p style={{ marginBottom: '30px', color: '#aaa', lineHeight: '1.7' }}>
-                                    With over 16 years of industry experience, Winze Technologies Pvt Ltd specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.
-                                </p>
+                                <h1 style={{ fontSize: '4.5rem', marginBottom: '20px', color: 'white', lineHeight: '1.2', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Winze Technologies</h1>
+                                <p style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ddd', lineHeight: '1.6' }}>Leading Enterprise Communication, Security, and AI Technology Solutions Provider</p>
+                                <p style={{ marginBottom: '30px', color: '#aaa', lineHeight: '1.7' }}>With over 16 years of industry experience, Winze Technologies Pvt Ltd specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.</p>
                                 <div style={{ marginBottom: '35px', borderLeft: '3px solid #667eea', paddingLeft: '20px' }}>
                                     <strong style={{ fontSize: '1.1rem', color: 'white' }}>Arun N</strong><br />
                                     <span style={{ fontSize: '14px', color: '#aaa' }}>Chief Executive Officer</span>
@@ -858,7 +694,7 @@ const WinzePage = () => {
                                     className="delivery-card"
                                     onClick={() => {
                                         handleTrackClick(item.title, 'delivery');
-                                        setSelectedDelivery(item);
+                                        openModal(item);
                                     }} 
                                     onMouseEnter={() => setHoveredCard(i)} 
                                     onMouseLeave={() => setHoveredCard(null)} 
@@ -886,7 +722,7 @@ const WinzePage = () => {
                                     className="solution-card"
                                     onClick={() => {
                                         handleTrackClick(solution.title, 'solution');
-                                        setSelectedSolution(solution);
+                                        openModal(solution);
                                     }} 
                                     onMouseEnter={() => setHoveredCard(`sol-${idx}`)} 
                                     onMouseLeave={() => setHoveredCard(null)} 
@@ -916,7 +752,7 @@ const WinzePage = () => {
                                     className="industry-card"
                                     onClick={() => {
                                         handleTrackClick(industry.name, 'industry');
-                                        setSelectedIndustry(industry);
+                                        openModal(industry);
                                     }} 
                                     onMouseEnter={() => setHoveredCard(`ind-${idx}`)} 
                                     onMouseLeave={() => setHoveredCard(null)} 
@@ -986,7 +822,7 @@ const WinzePage = () => {
                                     className="work-card"
                                     onClick={() => {
                                         handleTrackClick(item.title, 'workwith');
-                                        setSelectedWork(item);
+                                        openModal(item);
                                     }}
                                     onMouseEnter={() => setHoveredCard(`work-${idx}`)} 
                                     onMouseLeave={() => setHoveredCard(null)} 
@@ -1094,11 +930,8 @@ const WinzePage = () => {
                     </div>
                 )}
 
-                {/* Card Modals */}
-                {selectedDelivery && <DeliveryModal item={selectedDelivery} onClose={() => setSelectedDelivery(null)} />}
-                {selectedSolution && <SolutionModal item={selectedSolution} onClose={() => setSelectedSolution(null)} />}
-                {selectedIndustry && <IndustryModal item={selectedIndustry} onClose={() => setSelectedIndustry(null)} />}
-                {selectedWork && <WorkModal item={selectedWork} onClose={() => setSelectedWork(null)} />}
+                {/* Card Modal */}
+                <CardModal />
 
                 {/* Footer */}
                 <footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
