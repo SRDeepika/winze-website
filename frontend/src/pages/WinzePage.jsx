@@ -752,17 +752,19 @@ const WinzePage = () => {
                         </div>
                     </div>
                 </section>
-{/* Solutions Portfolio Section - WITH DIRECT INLINE BUTTONS */}
+{/* Solutions Portfolio Section */}
 <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
     <BackgroundImage imageSrc={bgImages.solutions} />
     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
         <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Our Solutions Portfolio</h2>
         <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '10px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Our SOLUTIONS — Practical Action, Bold Ambition, Endless Possibilities</p>
         <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '60px', fontSize: '1rem' }}>Enterprise-grade technology solutions for modern businesses</p>
+        
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '30px' }}>
             {solutions.map((solution, idx) => (
                 <div 
                     key={idx} 
+                    className="solution-card"
                     style={{
                         background: 'white',
                         borderRadius: '20px',
@@ -772,16 +774,17 @@ const WinzePage = () => {
                         cursor: 'pointer'
                     }}
                 >
-                    <img src={solution.img} alt={solution.title} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-                    <div style={{ padding: '25px', textAlign: 'center' }}>
+                    <img src={solution.img} alt={solution.title} className="solution-card-image" />
+                    <div className="solution-card-content" style={{ padding: '25px', textAlign: 'center' }}>
                         <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
                         <h3 style={{ marginBottom: '12px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
                         <p style={{ color: '#666', lineHeight: '1.5', marginBottom: '20px' }}>{solution.desc}</p>
-                        {/* DIRECT BUTTON - NO CSS CLASSES */}
+                        
+                        {/* LEARN MORE BUTTON - ADDED HERE */}
                         <div 
                             style={{
                                 display: 'inline-block',
-                                padding: '12px 28px',
+                                padding: '12px 30px',
                                 backgroundColor: '#667eea',
                                 color: 'white',
                                 borderRadius: '50px',
@@ -806,7 +809,7 @@ const WinzePage = () => {
         </div>
     </div>
 </section>
-                {/* Industries Section - WITH DIRECT INLINE BUTTONS */}
+                {/* Industries Section */}
 <section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
     <DarkBackgroundImage imageSrc={bgImages.industries} />
     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -816,6 +819,7 @@ const WinzePage = () => {
             {industries.map((industry, idx) => (
                 <div 
                     key={idx} 
+                    className="industry-card"
                     style={{
                         background: 'white',
                         borderRadius: '20px',
@@ -825,16 +829,17 @@ const WinzePage = () => {
                         cursor: 'pointer'
                     }}
                 >
-                    <img src={industry.img} alt={industry.name} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-                    <div style={{ padding: '25px', textAlign: 'center' }}>
+                    <img src={industry.img} alt={industry.name} className="industry-card-image" />
+                    <div className="industry-card-content" style={{ padding: '25px', textAlign: 'center' }}>
                         <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
                         <h3 style={{ marginBottom: '10px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{industry.name}</h3>
                         <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.9rem', marginBottom: '20px' }}>{industry.desc}</p>
-                        {/* DIRECT BUTTON - NO CSS CLASSES */}
+                        
+                        {/* LEARN MORE BUTTON - ADDED HERE */}
                         <div 
                             style={{
                                 display: 'inline-block',
-                                padding: '12px 28px',
+                                padding: '12px 30px',
                                 backgroundColor: '#667eea',
                                 color: 'white',
                                 borderRadius: '50px',
