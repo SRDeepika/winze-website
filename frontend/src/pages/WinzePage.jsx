@@ -786,77 +786,120 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Solutions Portfolio Section - WITH LEARN MORE BUTTONS */}
-                <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
-                    <BackgroundImage imageSrc={bgImages.solutions} />
-                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Solutions Portfolio</h2>
-                        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '10px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Our SOLUTIONS — Practical Action, Bold Ambition, Endless Possibilities</p>
-                        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '60px', fontSize: '1rem' }}>Enterprise-grade technology solutions for modern businesses</p>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '30px' }}>
-                            {solutions.map((solution, idx) => (
-                                <div 
-                                    key={idx} 
-                                    className="solution-card"
-                                    onMouseEnter={() => setHoveredCard(`sol-${idx}`)} 
-                                    onMouseLeave={() => setHoveredCard(null)} 
-                                >
-                                    <img src={solution.img} alt={solution.title} className="solution-card-image" />
-                                    <div className="solution-card-content">
-                                        <FontAwesomeIcon icon={solution.icon} className="icon" style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
-                                        <h3 style={{ marginBottom: '12px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
-                                        <p style={{ color: '#666', lineHeight: '1.5' }}>{solution.desc}</p>
-                                        <button 
-                                            className="learn-more-btn"
-                                            onClick={() => {
-                                                handleTrackClick(solution.title, 'solution');
-                                                openModal(solution);
-                                            }}
-                                        >
-                                            Learn More →
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                {/* Solutions Portfolio Section - WITH INLINE STYLE BUTTONS */}
+<section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+    <BackgroundImage imageSrc={bgImages.solutions} />
+    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Our Solutions Portfolio</h2>
+        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '10px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Our SOLUTIONS — Practical Action, Bold Ambition, Endless Possibilities</p>
+        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '60px', fontSize: '1rem' }}>Enterprise-grade technology solutions for modern businesses</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '30px' }}>
+            {solutions.map((solution, idx) => (
+                <div 
+                    key={idx} 
+                    style={{
+                        background: 'white',
+                        borderRadius: '20px',
+                        overflow: 'hidden',
+                        transition: 'all 0.4s',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                        cursor: 'pointer'
+                    }}
+                    onMouseEnter={() => setHoveredCard(`sol-${idx}`)} 
+                    onMouseLeave={() => setHoveredCard(null)} 
+                >
+                    <img src={solution.img} alt={solution.title} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+                    <div style={{ padding: '25px', textAlign: 'center' }}>
+                        <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
+                        <h3 style={{ marginBottom: '12px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
+                        <p style={{ color: '#666', lineHeight: '1.5', marginBottom: '15px' }}>{solution.desc}</p>
+                        {/* INLINE STYLE BUTTON - WILL DEFINITELY SHOW */}
+                        <button 
+                            style={{
+                                display: 'inline-block',
+                                padding: '10px 25px',
+                                backgroundColor: '#667eea',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '30px',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s',
+                                marginTop: '10px'
+                            }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
+                            onClick={() => {
+                                handleTrackClick(solution.title, 'solution');
+                                openModal(solution);
+                            }}
+                        >
+                            Learn More →
+                        </button>
                     </div>
-                </section>
+                </div>
+            ))}
+        </div>
+    </div>
+</section>
 
-                {/* Industries Section - WITH LEARN MORE BUTTONS */}
-                <section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
-                    <DarkBackgroundImage imageSrc={bgImages.industries} />
-                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Industries We Serve</h2>
-                        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Transforming businesses across sectors with innovative solutions</p>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '30px' }}>
-                            {industries.map((industry, idx) => (
-                                <div 
-                                    key={idx} 
-                                    className="industry-card"
-                                    onMouseEnter={() => setHoveredCard(`ind-${idx}`)} 
-                                    onMouseLeave={() => setHoveredCard(null)} 
-                                >
-                                    <img src={industry.img} alt={industry.name} className="industry-card-image" />
-                                    <div className="industry-card-content">
-                                        <FontAwesomeIcon icon={industry.icon} className="icon" style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
-                                        <h3 style={{ marginBottom: '10px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{industry.name}</h3>
-                                        <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.9rem' }}>{industry.desc}</p>
-                                        <button 
-                                            className="learn-more-btn"
-                                            onClick={() => {
-                                                handleTrackClick(industry.name, 'industry');
-                                                openModal(industry);
-                                            }}
-                                        >
-                                            Learn More →
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                {/* Industries Section - WITH INLINE STYLE BUTTONS */}
+<section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+    <DarkBackgroundImage imageSrc={bgImages.industries} />
+    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Industries We Serve</h2>
+        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Transforming businesses across sectors with innovative solutions</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '30px' }}>
+            {industries.map((industry, idx) => (
+                <div 
+                    key={idx} 
+                    style={{
+                        background: 'white',
+                        borderRadius: '20px',
+                        overflow: 'hidden',
+                        transition: 'all 0.4s',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                        cursor: 'pointer'
+                    }}
+                    onMouseEnter={() => setHoveredCard(`ind-${idx}`)} 
+                    onMouseLeave={() => setHoveredCard(null)} 
+                >
+                    <img src={industry.img} alt={industry.name} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+                    <div style={{ padding: '25px', textAlign: 'center' }}>
+                        <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
+                        <h3 style={{ marginBottom: '10px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{industry.name}</h3>
+                        <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.9rem', marginBottom: '15px' }}>{industry.desc}</p>
+                        {/* INLINE STYLE BUTTON - WILL DEFINITELY SHOW */}
+                        <button 
+                            style={{
+                                display: 'inline-block',
+                                padding: '10px 25px',
+                                backgroundColor: '#667eea',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '30px',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s',
+                                marginTop: '10px'
+                            }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
+                            onClick={() => {
+                                handleTrackClick(industry.name, 'industry');
+                                openModal(industry);
+                            }}
+                        >
+                            Learn More →
+                        </button>
                     </div>
-                </section>
-
+                </div>
+            ))}
+        </div>
+    </div>
+</section>
                 {/* Our Trusted Partners Section */}
                 <section ref={clientsRef} id="clients" style={{
                     padding: '80px 5%',
