@@ -208,30 +208,30 @@ const WinzePage = () => {
     };
 
     const solutions = [
-        { title: "Unified Communications", desc: "Seamless integration of voice, video, and messaging for enterprise collaboration.", icon: faChartLine, img: solutionImages.unified, detailedDesc: "Our Unified Communications solution brings together voice, video, messaging, and collaboration tools into a single platform with enterprise-grade security." },
-        { title: "Contact Center", desc: "AI-powered customer service solutions for enhanced agent productivity.", icon: faHeadset, img: solutionImages.contact, detailedDesc: "AI-powered contact center solutions with intelligent routing, chatbots, and real-time analytics." },
-        { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video, detailedDesc: "HD video conferencing with screen sharing, recording, and end-to-end encryption." },
-        { title: "IT Infrastructure", desc: "Enterprise-grade networking and server solutions for optimal performance.", icon: faServer, img: solutionImages.it, detailedDesc: "Complete IT infrastructure solutions including servers, networking, and cloud integration." },
-        { title: "Smart Eye AI", desc: "Advanced video analytics for proactive security monitoring.", icon: faRobot, img: solutionImages.ai, detailedDesc: "AI-powered video analytics for real-time threat detection and facial recognition." },
-        { title: "Smart Live Classroom", desc: "Interactive virtual learning platform with parent access features.", icon: faChalkboard, img: solutionImages.classroom, detailedDesc: "Virtual classroom platform with interactive features and parent access." },
-        { title: "SaaS Products", desc: "Scalable cloud solutions customized for your business needs.", icon: faCloud, img: solutionImages.saas, detailedDesc: "Custom SaaS solutions with scalable architecture and pay-as-you-go pricing." },
-        { title: "Enterprise Software Licensing", desc: "Flexible licensing options for major enterprise software.", icon: faFileAlt, img: solutionImages.software, detailedDesc: "Flexible licensing for Microsoft, Adobe, and other leading vendors." },
-        { title: "Rental IT Infrastructure", desc: "Cost-effective hardware rental for projects and events.", icon: faLaptop, img: solutionImages.rental, detailedDesc: "Short-term and long-term IT equipment rental for projects and events." },
-        { title: "WiFi as a Service", desc: "Managed wireless solutions for seamless connectivity anywhere.", icon: faWifi, img: solutionImages.wifi, detailedDesc: "Managed WiFi solutions with enterprise-grade security and 24/7 support." },
-        { title: "Web & Mobile Development", desc: "Custom web and mobile applications for your business needs.", icon: faMobileAlt, img: solutionImages.webMobile, detailedDesc: "Custom web and mobile application development using modern technologies." },
-        { title: "Cyber Security", desc: "Advanced threat protection and security compliance solutions.", icon: faLock, img: solutionImages.cyberSecurity, detailedDesc: "Comprehensive cyber security solutions including threat detection and compliance." },
-        { title: "CCTV Services", desc: "End-to-end surveillance solutions with H.265 HD cameras, cloud storage, and AI-powered video analytics.", icon: faVideo, img: "/images/cctv-services.jpg", detailedDesc: "Complete CCTV surveillance solutions with HD cameras, cloud storage, and AI analytics." },
-        { title: "Cabling Services", desc: "Active & Passive Cabling solutions including Greenfield projects.", icon: faWifi, img: "/images/cabling-services.jpg", detailedDesc: "Professional structured cabling for data centers, offices, and industrial facilities." },
-        { title: "Rent IP PBX System", desc: "Cost-effective cloud-based IP PBX phone system rental.", icon: faHeadset, img: "/images/rent-ip-pbx.jpg", detailedDesc: "Cloud-based IP PBX phone system with advanced call routing and features." }
+        { title: "Unified Communications", desc: "Seamless integration of voice, video, and messaging for enterprise collaboration.", icon: faChartLine, img: solutionImages.unified, detailedDesc: "Our Unified Communications solution brings together voice, video, messaging, and collaboration tools into a single platform with enterprise-grade security, 99.9% uptime, and 24/7 support. Features include: HD video conferencing, instant messaging, file sharing, and mobile accessibility." },
+        { title: "Contact Center", desc: "AI-powered customer service solutions for enhanced agent productivity.", icon: faHeadset, img: solutionImages.contact, detailedDesc: "AI-powered contact center solutions with intelligent routing, chatbots, sentiment analysis, real-time analytics, and omnichannel support including voice, email, chat, and social media." },
+        { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video, detailedDesc: "HD video conferencing with screen sharing, recording, virtual backgrounds, breakout rooms, end-to-end encryption, and integration with popular calendar apps." },
+        { title: "IT Infrastructure", desc: "Enterprise-grade networking and server solutions for optimal performance.", icon: faServer, img: solutionImages.it, detailedDesc: "Complete IT infrastructure solutions including servers, networking equipment, storage systems, cloud integration, and 24/7 monitoring with proactive maintenance." },
+        { title: "Smart Eye AI", desc: "Advanced video analytics for proactive security monitoring.", icon: faRobot, img: solutionImages.ai, detailedDesc: "AI-powered video analytics for real-time threat detection, facial recognition, license plate recognition, anomaly detection, and automated alerts with mobile notifications." },
+        { title: "Smart Live Classroom", desc: "Interactive virtual learning platform with parent access features.", icon: faChalkboard, img: solutionImages.classroom, detailedDesc: "Virtual classroom platform with live video, interactive whiteboard, attendance tracking, assignment management, parent portal, and performance analytics." },
+        { title: "SaaS Products", desc: "Scalable cloud solutions customized for your business needs.", icon: faCloud, img: solutionImages.saas, detailedDesc: "Custom SaaS solutions with scalable architecture, pay-as-you-go pricing, automatic updates, data encryption, and dedicated support for your business needs." },
+        { title: "Enterprise Software Licensing", desc: "Flexible licensing options for major enterprise software.", icon: faFileAlt, img: solutionImages.software, detailedDesc: "Flexible licensing for Microsoft, Adobe, Oracle, SAP, and other leading vendors with volume discounts, compliance management, and dedicated account management." },
+        { title: "Rental IT Infrastructure", desc: "Cost-effective hardware rental for projects and events.", icon: faLaptop, img: solutionImages.rental, detailedDesc: "Short-term and long-term IT equipment rental including laptops, desktops, servers, networking equipment, and AV gear with delivery, setup, and support included." },
+        { title: "WiFi as a Service", desc: "Managed wireless solutions for seamless connectivity anywhere.", icon: faWifi, img: solutionImages.wifi, detailedDesc: "Managed WiFi solutions with enterprise-grade security, guest access, bandwidth management, usage analytics, and 24/7 support for offices, events, and public spaces." },
+        { title: "Web & Mobile Development", desc: "Custom web and mobile applications for your business needs.", icon: faMobileAlt, img: solutionImages.webMobile, detailedDesc: "Custom web and mobile application development using React, Node.js, Flutter, and other modern technologies with responsive design, API integration, and ongoing maintenance." },
+        { title: "Cyber Security", desc: "Advanced threat protection and security compliance solutions.", icon: faLock, img: solutionImages.cyberSecurity, detailedDesc: "Comprehensive cyber security solutions including threat detection, vulnerability assessments, compliance management (GDPR, HIPAA, PCI-DSS), security audits, and employee training." },
+        { title: "CCTV Services", desc: "End-to-end surveillance solutions with H.265 HD cameras, cloud storage, and AI-powered video analytics.", icon: faVideo, img: "/images/cctv-services.jpg", detailedDesc: "Complete CCTV surveillance solutions with H.265 HD cameras, night vision, motion detection, cloud storage, mobile viewing, and AI-powered analytics for proactive security." },
+        { title: "Cabling Services", desc: "Active & Passive Cabling solutions including Greenfield projects.", icon: faWifi, img: "/images/cabling-services.jpg", detailedDesc: "Professional structured cabling for data centers, offices, and industrial facilities including fiber optics, copper cabling, cable management, and certification testing." },
+        { title: "Rent IP PBX System", desc: "Cost-effective cloud-based IP PBX phone system rental.", icon: faHeadset, img: "/images/rent-ip-pbx.jpg", detailedDesc: "Cloud-based IP PBX phone system with auto-attendant, call routing, voicemail to email, call recording, conferencing, and multi-branch connectivity on flexible rental terms." }
     ];
 
     const industries = [
-        { name: "Healthcare", desc: "HIPAA-compliant IT solutions for modern healthcare facilities.", icon: faHospital, img: industryImages.healthcare, detailedDesc: "HIPAA-compliant healthcare IT solutions including telemedicine and EHR systems." },
-        { name: "Manufacturing", desc: "IoT and automation solutions for Industry 4.0 transformation.", icon: faIndustry, img: industryImages.manufacturing, detailedDesc: "Industry 4.0 solutions including IoT sensors and automation systems." },
-        { name: "Education", desc: "Digital learning platforms for institutions of all sizes.", icon: faGraduationCap, img: industryImages.education, detailedDesc: "Digital learning platforms with virtual classrooms and learning management systems." },
-        { name: "Banking & Finance", desc: "Secure financial technology solutions for modern banking.", icon: faBuilding, img: industryImages.finance, detailedDesc: "Secure fintech solutions including digital banking and fraud detection." },
-        { name: "Retail & E-commerce", desc: "Digital transformation solutions for retail businesses.", icon: faShoppingCart, img: industryImages.retail, detailedDesc: "Retail digital transformation including POS and e-commerce platforms." },
-        { name: "Logistics & Supply Chain", desc: "Intelligent logistics and supply chain management systems.", icon: faTruck, img: industryImages.logistics, detailedDesc: "Intelligent logistics with real-time tracking and route optimization." }
+        { name: "Healthcare", desc: "HIPAA-compliant IT solutions for modern healthcare facilities.", icon: faHospital, img: industryImages.healthcare, detailedDesc: "HIPAA-compliant healthcare IT solutions including telemedicine platforms, EHR systems, patient portals, secure messaging, and remote patient monitoring with 99.9% uptime." },
+        { name: "Manufacturing", desc: "IoT and automation solutions for Industry 4.0 transformation.", icon: faIndustry, img: industryImages.manufacturing, detailedDesc: "Industry 4.0 solutions including IoT sensors, SCADA systems, predictive maintenance, real-time production monitoring, and supply chain integration for smart manufacturing." },
+        { name: "Education", desc: "Digital learning platforms for institutions of all sizes.", icon: faGraduationCap, img: industryImages.education, detailedDesc: "Digital learning platforms with virtual classrooms, learning management systems, student information systems, parent portals, and analytics for K-12 and higher education." },
+        { name: "Banking & Finance", desc: "Secure financial technology solutions for modern banking.", icon: faBuilding, img: industryImages.finance, detailedDesc: "Secure fintech solutions including digital banking platforms, payment gateways, fraud detection systems, compliance management, and data analytics for financial institutions." },
+        { name: "Retail & E-commerce", desc: "Digital transformation solutions for retail businesses.", icon: faShoppingCart, img: industryImages.retail, detailedDesc: "Retail digital transformation including POS systems, inventory management, e-commerce platforms, customer analytics, loyalty programs, and omnichannel integration." },
+        { name: "Logistics & Supply Chain", desc: "Intelligent logistics and supply chain management systems.", icon: faTruck, img: industryImages.logistics, detailedDesc: "Intelligent logistics solutions with real-time tracking, route optimization, warehouse management, inventory forecasting, and supply chain analytics for improved efficiency." }
     ];
 
     const navItems = [
@@ -243,19 +243,19 @@ const WinzePage = () => {
     ];
 
     const deliveryItems = [
-        { icon: faInfinity, title: "End-to-End Solutions", desc: "Complete lifecycle management from planning to execution and ongoing support.", detailedDesc: "Our end-to-end solutions cover every aspect of your technology journey. From initial consultation and planning to deployment, training, and ongoing support - we handle everything." },
-        { icon: faCrown, title: "Enterprise Excellence", desc: "Guaranteed uptime, performance metrics, and measurable business results.", detailedDesc: "We guarantee enterprise-grade excellence with 99.9% uptime, comprehensive performance metrics, and measurable business results." },
-        { icon: faHandshake, title: "Flexible Engagement", desc: "Flexible consulting, project-based, or managed service engagement options.", detailedDesc: "Choose the engagement model that works best for you - strategic consulting, project-based delivery, or fully managed services." },
-        { icon: faBolt, title: "Rapid Deployment", desc: "Accelerated implementation with minimal business disruption.", detailedDesc: "Our accelerated deployment methodology gets your solutions up and running quickly without disrupting your daily operations." },
-        { icon: faChartLine, title: "Analytics & Insights", desc: "Data-driven decision making with real-time dashboards.", detailedDesc: "Gain valuable insights from your data with real-time dashboards and predictive analytics." },
-        { icon: faShieldAlt, title: "24/7 Premium Support", desc: "Round-the-clock monitoring and technical assistance.", detailedDesc: "Our dedicated support team is available 24/7 to assist you with any technical issues." }
+        { icon: faInfinity, title: "End-to-End Solutions", desc: "Complete lifecycle management from planning to execution and ongoing support.", detailedDesc: "Our end-to-end solutions cover every aspect of your technology journey. From initial consultation and planning to deployment, training, and ongoing support - we handle everything. This ensures seamless integration and minimal disruption to your business operations." },
+        { icon: faCrown, title: "Enterprise Excellence", desc: "Guaranteed uptime, performance metrics, and measurable business results.", detailedDesc: "We guarantee enterprise-grade excellence with 99.9% uptime, comprehensive performance metrics, and measurable business results. Our solutions are designed to scale with your business and deliver consistent value." },
+        { icon: faHandshake, title: "Flexible Engagement", desc: "Flexible consulting, project-based, or managed service engagement options.", detailedDesc: "Choose the engagement model that works best for you - whether it's strategic consulting, project-based delivery, or fully managed services. We adapt to your needs and budget." },
+        { icon: faBolt, title: "Rapid Deployment", desc: "Accelerated implementation with minimal business disruption.", detailedDesc: "Our accelerated deployment methodology gets your solutions up and running quickly without disrupting your daily operations. We use proven frameworks and best practices to ensure smooth implementation." },
+        { icon: faChartLine, title: "Analytics & Insights", desc: "Data-driven decision making with real-time dashboards.", detailedDesc: "Gain valuable insights from your data with our advanced analytics solutions. Real-time dashboards, custom reports, and predictive analytics help you make informed business decisions." },
+        { icon: faShieldAlt, title: "24/7 Premium Support", desc: "Round-the-clock monitoring and technical assistance.", detailedDesc: "Our dedicated support team is available 24/7 to assist you with any technical issues. We provide proactive monitoring, rapid response times, and premium support services to keep your business running smoothly." }
     ];
 
     const workWithWinze = [
-        { icon: faHandshake, title: "Strategic Partnership", desc: "We don't just deliver services; we build long-term strategic partnerships.", detailedDesc: "We align our goals with yours and develop collaborative solutions that drive growth and innovation." },
-        { icon: faGem, title: "Enterprise Value", desc: "Your success is our success. We're committed to delivering excellence.", detailedDesc: "Every project focuses on delivering measurable business value, ROI, and long-term benefits." },
-        { icon: faRocket, title: "Innovation First", desc: "Stay ahead with cutting-edge solutions and future-ready technology.", detailedDesc: "We continuously invest in R&D to bring you the latest technologies and innovative solutions." },
-        { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients.", detailedDesc: "Over 100 successful deployments and 20+ satisfied enterprise clients across 16+ years." }
+        { icon: faHandshake, title: "Strategic Partnership", desc: "We don't just deliver services; we build long-term strategic partnerships focused on your business growth.", detailedDesc: "As a strategic partner, we align our goals with yours. We invest time to understand your business challenges and work collaboratively to develop solutions that drive growth and innovation." },
+        { icon: faGem, title: "Enterprise Value", desc: "Your success is our success. We're committed to delivering excellence in every project we undertake.", detailedDesc: "We measure our success by your success. Every project is executed with a focus on delivering measurable business value, ROI, and long-term benefits for your enterprise." },
+        { icon: faRocket, title: "Innovation First", desc: "Stay ahead of the curve with our cutting-edge solutions and future-ready technology approach.", detailedDesc: "We continuously invest in research and development to bring you the latest technologies and innovative solutions. Stay competitive with our future-ready approach." },
+        { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients, and 16+ years of excellence.", detailedDesc: "Our track record speaks for itself. With over 100 successful deployments and 20+ satisfied enterprise clients across 16+ years, we have the expertise and experience to deliver results." }
     ];
 
     // Modal Component
@@ -296,14 +296,14 @@ const WinzePage = () => {
                         width: '30px',
                         height: '30px',
                         borderRadius: '50%',
-                        marginTop: '-15px',
-                        marginRight: '-15px'
+                        marginTop: '-20px',
+                        marginRight: '-20px'
                     }}>×</button>
                     
                     <FontAwesomeIcon icon={modalData.icon} style={{ fontSize: '50px', color: '#667eea', marginBottom: '20px', marginTop: '20px' }} />
                     <h2 style={{ color: '#1a1a2e', marginBottom: '15px', fontSize: '24px' }}>{modalData.title || modalData.name}</h2>
                     
-                    <p style={{ color: '#666', lineHeight: '1.6', marginBottom: '20px' }}>
+                    <p style={{ color: '#666', lineHeight: '1.6', marginBottom: '20px', textAlign: 'left' }}>
                         {modalData.detailedDesc || "Detailed information coming soon. Please contact us for more details."}
                     </p>
                     
@@ -408,102 +408,55 @@ const WinzePage = () => {
     return (
         <HelmetProvider>
             <>
-            <style>
-                {`
-                    @keyframes pulse {
-                        0% { transform: scale(1); opacity: 1; }
-                        50% { transform: scale(1.02); opacity: 0.95; }
-                        100% { transform: scale(1); opacity: 1; }
-                    }
-                    
-                    @keyframes marqueeScroll {
-                        0% { transform: translateX(0); }
-                        100% { transform: translateX(-50%); }
-                    }
-                    
-                    @keyframes premiumGlow {
-                        0% { box-shadow: 0 0 10px rgba(102,126,234,0.3), 0 0 20px rgba(102,126,234,0.2); filter: brightness(1); transform: translateY(0px); }
-                        30% { box-shadow: 0 0 40px rgba(255,215,0,0.5), 0 0 60px rgba(102,126,234,0.4); filter: brightness(1.05); transform: translateY(-5px); }
-                        60% { box-shadow: 0 0 60px rgba(255,215,0,0.7), 0 0 80px rgba(102,126,234,0.6); filter: brightness(1.08); transform: translateY(-8px); }
-                        100% { box-shadow: 0 0 10px rgba(102,126,234,0.3), 0 0 20px rgba(102,126,234,0.2); filter: brightness(1); transform: translateY(0px); }
-                    }
-                    
-                    .learn-more-btn {
-                        display: inline-block;
-                        margin-top: 15px;
-                        padding: 8px 20px;
-                        background: #667eea;
-                        color: white;
-                        border: none;
-                        border-radius: 25px;
-                        cursor: pointer;
-                        font-weight: 600;
-                        font-size: 14px;
-                        transition: all 0.3s;
-                    }
-                    
-                    .learn-more-btn:hover {
-                        background: #764ba2;
-                        transform: translateX(5px);
-                    }
-                    
-                    .delivery-card, .work-card {
-                        background: white;
-                        border-radius: 20px;
-                        padding: 40px 25px;
-                        text-align: center;
-                        transition: all 0.4s;
-                        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-                        border: 1px solid rgba(0,0,0,0.05);
-                        cursor: pointer;
-                    }
-                    
-                    .delivery-card:hover, .work-card:hover { 
-                        transform: translateY(-10px); 
-                        box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                    }
-                    
-                    .delivery-card:hover h3, .delivery-card:hover p, .work-card:hover h3, .work-card:hover p { color: white; }
-                    .delivery-card:hover .icon, .work-card:hover .icon { color: white !important; }
-                    .delivery-card:hover .learn-more-btn, .work-card:hover .learn-more-btn { background: white; color: #667eea; }
-                    
-                    .solution-card, .industry-card {
-                        background: white;
-                        border-radius: 20px;
-                        overflow: hidden;
-                        transition: all 0.4s;
-                        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-                        border: 1px solid rgba(0,0,0,0.05);
-                        cursor: pointer;
-                    }
-                    
-                    .solution-card:hover, .industry-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
-                    .solution-card-image, .industry-card-image { width: 100%; height: 200px; object-fit: cover; }
-                    .solution-card-content, .industry-card-content { padding: 25px; text-align: center; }
-                    .solution-card:hover .solution-card-content, .industry-card:hover .industry-card-content { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-                    .solution-card:hover h3, .solution-card:hover p, .solution-card:hover .icon, .industry-card:hover h3, .industry-card:hover p, .industry-card:hover .icon { color: white; }
-                    .solution-card:hover .learn-more-btn, .industry-card:hover .learn-more-btn { background: white; color: #667eea; }
-                    
-                    .client-logo-item {
-                        background: white;
-                        padding: 20px;
-                        border-radius: 12px;
-                        text-align: center;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-                        min-width: 150px;
-                        border: 1px solid rgba(0,0,0,0.05);
-                        flex-shrink: 0;
-                    }
-                    
-                    .client-logo-item:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.12); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-                    .client-logo-item:hover h3 { color: white; }
-                    .client-logo-img { width: 80px; height: 80px; margin: 0 auto 12px; display: flex; align-items: center; justifyContent: center; }
-                    .client-logo-img img { width: 100%; height: 100%; object-fit: contain; }
-                `}
-            </style>
+            <style>{`
+                @keyframes pulse {
+                    0% { transform: scale(1); opacity: 1; }
+                    50% { transform: scale(1.02); opacity: 0.95; }
+                    100% { transform: scale(1); opacity: 1; }
+                }
+                @keyframes marqueeScroll {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                @keyframes premiumGlow {
+                    0% { box-shadow: 0 0 10px rgba(102,126,234,0.3), 0 0 20px rgba(102,126,234,0.2); filter: brightness(1); transform: translateY(0px); }
+                    30% { box-shadow: 0 0 40px rgba(255,215,0,0.5), 0 0 60px rgba(102,126,234,0.4); filter: brightness(1.05); transform: translateY(-5px); }
+                    60% { box-shadow: 0 0 60px rgba(255,215,0,0.7), 0 0 80px rgba(102,126,234,0.6); filter: brightness(1.08); transform: translateY(-8px); }
+                    100% { box-shadow: 0 0 10px rgba(102,126,234,0.3), 0 0 20px rgba(102,126,234,0.2); filter: brightness(1); transform: translateY(0px); }
+                }
+                .marquee-container { width: 100%; overflow: hidden; position: relative; }
+                .marquee-content { display: flex; gap: 20px; padding: 20px 10px; width: fit-content; animation: marqueeScroll 25s linear infinite; }
+                .marquee-container:hover .marquee-content { animation-play-state: paused; }
+                section { position: relative; z-index: 1; }
+                .section-content { position: relative; z-index: 2; }
+                .delivery-card, .work-card {
+                    background: white; border-radius: 20px; padding: 40px 25px; text-align: center;
+                    transition: all 0.4s; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05);
+                    cursor: pointer;
+                }
+                .delivery-card:hover, .work-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+                .delivery-card:hover h3, .delivery-card:hover p, .work-card:hover h3, .work-card:hover p { color: white; }
+                .delivery-card:hover .icon, .work-card:hover .icon { color: white !important; }
+                .solution-card, .industry-card {
+                    background: white; border-radius: 20px; overflow: hidden; transition: all 0.4s;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05);
+                    cursor: pointer;
+                }
+                .solution-card:hover, .industry-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+                .solution-card-image, .industry-card-image { width: 100%; height: 200px; object-fit: cover; }
+                .solution-card-content, .industry-card-content { padding: 25px; text-align: center; }
+                .solution-card:hover .solution-card-content, .industry-card:hover .industry-card-content { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+                .solution-card:hover h3, .solution-card:hover p, .solution-card:hover .icon, .industry-card:hover h3, .industry-card:hover p, .industry-card:hover .icon { color: white; }
+                .client-logo-item {
+                    background: white; padding: 20px; border-radius: 12px; text-align: center; cursor: pointer;
+                    transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.08); min-width: 150px;
+                    border: 1px solid rgba(0,0,0,0.05); flex-shrink: 0;
+                }
+                .client-logo-item:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.12); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+                .client-logo-item:hover h3 { color: white; }
+                .client-logo-img { width: 80px; height: 80px; margin: 0 auto 12px; display: flex; align-items: center; justifyContent: center; }
+                .client-logo-img img { width: 100%; height: 100%; object-fit: contain; }
+            `}</style>
             
             <SEO 
                 title="Winze Technologies | Enterprise Communication, Security & AI"
@@ -771,7 +724,21 @@ const WinzePage = () => {
                                     <h3 style={{ marginBottom: '15px', color: hoveredCard === i ? 'white' : '#1a1a2e', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
                                     <p style={{ color: hoveredCard === i ? 'rgba(255,255,255,0.9)' : '#666', lineHeight: '1.5' }}>{item.desc}</p>
                                     <button 
-                                        className="learn-more-btn"
+                                        style={{
+                                            display: 'inline-block',
+                                            marginTop: '15px',
+                                            padding: '10px 25px',
+                                            backgroundColor: '#667eea',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '30px',
+                                            cursor: 'pointer',
+                                            fontWeight: '600',
+                                            fontSize: '14px',
+                                            transition: 'all 0.3s'
+                                        }}
+                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
+                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleTrackClick(item.title, 'delivery');
@@ -786,120 +753,107 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Solutions Portfolio Section - WITH INLINE STYLE BUTTONS */}
-<section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
-    <BackgroundImage imageSrc={bgImages.solutions} />
-    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Our Solutions Portfolio</h2>
-        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '10px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Our SOLUTIONS — Practical Action, Bold Ambition, Endless Possibilities</p>
-        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '60px', fontSize: '1rem' }}>Enterprise-grade technology solutions for modern businesses</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '30px' }}>
-            {solutions.map((solution, idx) => (
-                <div 
-                    key={idx} 
-                    style={{
-                        background: 'white',
-                        borderRadius: '20px',
-                        overflow: 'hidden',
-                        transition: 'all 0.4s',
-                        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                        cursor: 'pointer'
-                    }}
-                    onMouseEnter={() => setHoveredCard(`sol-${idx}`)} 
-                    onMouseLeave={() => setHoveredCard(null)} 
-                >
-                    <img src={solution.img} alt={solution.title} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-                    <div style={{ padding: '25px', textAlign: 'center' }}>
-                        <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
-                        <h3 style={{ marginBottom: '12px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
-                        <p style={{ color: '#666', lineHeight: '1.5', marginBottom: '15px' }}>{solution.desc}</p>
-                        {/* INLINE STYLE BUTTON - WILL DEFINITELY SHOW */}
-                        <button 
-                            style={{
-                                display: 'inline-block',
-                                padding: '10px 25px',
-                                backgroundColor: '#667eea',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '30px',
-                                fontSize: '14px',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s',
-                                marginTop: '10px'
-                            }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
-                            onClick={() => {
-                                handleTrackClick(solution.title, 'solution');
-                                openModal(solution);
-                            }}
-                        >
-                            Learn More →
-                        </button>
+                {/* Solutions Portfolio Section - WITH WORKING BUTTONS */}
+                <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+                    <BackgroundImage imageSrc={bgImages.solutions} />
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Solutions Portfolio</h2>
+                        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '10px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Our SOLUTIONS — Practical Action, Bold Ambition, Endless Possibilities</p>
+                        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '60px', fontSize: '1rem' }}>Enterprise-grade technology solutions for modern businesses</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '30px' }}>
+                            {solutions.map((solution, idx) => (
+                                <div 
+                                    key={idx} 
+                                    className="solution-card"
+                                    onMouseEnter={() => setHoveredCard(`sol-${idx}`)} 
+                                    onMouseLeave={() => setHoveredCard(null)} 
+                                >
+                                    <img src={solution.img} alt={solution.title} className="solution-card-image" />
+                                    <div className="solution-card-content">
+                                        <FontAwesomeIcon icon={solution.icon} className="icon" style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
+                                        <h3 style={{ marginBottom: '12px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
+                                        <p style={{ color: '#666', lineHeight: '1.5', marginBottom: '15px' }}>{solution.desc}</p>
+                                        {/* VISIBLE BUTTON WITH INLINE STYLES */}
+                                        <button 
+                                            style={{
+                                                display: 'inline-block',
+                                                marginTop: '15px',
+                                                padding: '10px 25px',
+                                                backgroundColor: '#667eea',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '30px',
+                                                cursor: 'pointer',
+                                                fontWeight: '600',
+                                                fontSize: '14px',
+                                                transition: 'all 0.3s'
+                                            }}
+                                            onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
+                                            onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
+                                            onClick={() => {
+                                                handleTrackClick(solution.title, 'solution');
+                                                openModal(solution);
+                                            }}
+                                        >
+                                            Learn More →
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            ))}
-        </div>
-    </div>
-</section>
+                </section>
 
-                {/* Industries Section - WITH INLINE STYLE BUTTONS */}
-<section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
-    <DarkBackgroundImage imageSrc={bgImages.industries} />
-    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Industries We Serve</h2>
-        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Transforming businesses across sectors with innovative solutions</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '30px' }}>
-            {industries.map((industry, idx) => (
-                <div 
-                    key={idx} 
-                    style={{
-                        background: 'white',
-                        borderRadius: '20px',
-                        overflow: 'hidden',
-                        transition: 'all 0.4s',
-                        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                        cursor: 'pointer'
-                    }}
-                    onMouseEnter={() => setHoveredCard(`ind-${idx}`)} 
-                    onMouseLeave={() => setHoveredCard(null)} 
-                >
-                    <img src={industry.img} alt={industry.name} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-                    <div style={{ padding: '25px', textAlign: 'center' }}>
-                        <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
-                        <h3 style={{ marginBottom: '10px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{industry.name}</h3>
-                        <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.9rem', marginBottom: '15px' }}>{industry.desc}</p>
-                        {/* INLINE STYLE BUTTON - WILL DEFINITELY SHOW */}
-                        <button 
-                            style={{
-                                display: 'inline-block',
-                                padding: '10px 25px',
-                                backgroundColor: '#667eea',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '30px',
-                                fontSize: '14px',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s',
-                                marginTop: '10px'
-                            }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
-                            onClick={() => {
-                                handleTrackClick(industry.name, 'industry');
-                                openModal(industry);
-                            }}
-                        >
-                            Learn More →
-                        </button>
+                {/* Industries Section - WITH WORKING BUTTONS */}
+                <section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+                    <DarkBackgroundImage imageSrc={bgImages.industries} />
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Industries We Serve</h2>
+                        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Transforming businesses across sectors with innovative solutions</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '30px' }}>
+                            {industries.map((industry, idx) => (
+                                <div 
+                                    key={idx} 
+                                    className="industry-card"
+                                    onMouseEnter={() => setHoveredCard(`ind-${idx}`)} 
+                                    onMouseLeave={() => setHoveredCard(null)} 
+                                >
+                                    <img src={industry.img} alt={industry.name} className="industry-card-image" />
+                                    <div className="industry-card-content">
+                                        <FontAwesomeIcon icon={industry.icon} className="icon" style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
+                                        <h3 style={{ marginBottom: '10px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{industry.name}</h3>
+                                        <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.9rem', marginBottom: '15px' }}>{industry.desc}</p>
+                                        {/* VISIBLE BUTTON WITH INLINE STYLES */}
+                                        <button 
+                                            style={{
+                                                display: 'inline-block',
+                                                marginTop: '15px',
+                                                padding: '10px 25px',
+                                                backgroundColor: '#667eea',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '30px',
+                                                cursor: 'pointer',
+                                                fontWeight: '600',
+                                                fontSize: '14px',
+                                                transition: 'all 0.3s'
+                                            }}
+                                            onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
+                                            onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
+                                            onClick={() => {
+                                                handleTrackClick(industry.name, 'industry');
+                                                openModal(industry);
+                                            }}
+                                        >
+                                            Learn More →
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            ))}
-        </div>
-    </div>
-</section>
+                </section>
+
                 {/* Our Trusted Partners Section */}
                 <section ref={clientsRef} id="clients" style={{
                     padding: '80px 5%',
@@ -956,9 +910,23 @@ const WinzePage = () => {
                                 >
                                     <FontAwesomeIcon icon={item.icon} className="icon" style={{ fontSize: '50px', marginBottom: '20px', color: hoveredCard === `work-${idx}` ? 'white' : '#667eea' }} />
                                     <h3 style={{ marginBottom: '15px', color: hoveredCard === `work-${idx}` ? 'white' : '#1a1a2e', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
-                                    <p style={{ color: hoveredCard === `work-${idx}` ? 'rgba(255,255,255,0.9)' : '#666', lineHeight: '1.5' }}>{item.desc}</p>
+                                    <p style={{ color: hoveredCard === `work-${idx}` ? 'rgba(255,255,255,0.9)' : '#666', lineHeight: '1.5', marginBottom: '15px' }}>{item.desc}</p>
                                     <button 
-                                        className="learn-more-btn"
+                                        style={{
+                                            display: 'inline-block',
+                                            marginTop: '15px',
+                                            padding: '10px 25px',
+                                            backgroundColor: '#667eea',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '30px',
+                                            cursor: 'pointer',
+                                            fontWeight: '600',
+                                            fontSize: '14px',
+                                            transition: 'all 0.3s'
+                                        }}
+                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
+                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
                                         onClick={() => {
                                             handleTrackClick(item.title, 'workwith');
                                             openModal(item);
