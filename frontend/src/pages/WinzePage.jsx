@@ -710,7 +710,7 @@ const WinzePage = () => {
                 <section id="delivery" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.delivery} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>What We Deliver</h2>
+                        <h2 style={{ textn: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>What We Deliver</h2>
                         <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Comprehensive lifecycle for technology integration</p>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '35px' }}>
                             {deliveryItems.map((item, i) => (
@@ -756,7 +756,7 @@ const WinzePage = () => {
 <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
     <BackgroundImage imageSrc={bgImages.solutions} />
     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Our Solutions Portfolio</h2>
+        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>🔥 Our Solutions Portfolio - UPDATED 🔥</h2>
         <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '10px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Our SOLUTIONS — Practical Action, Bold Ambition, Endless Possibilities</p>
         <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '60px', fontSize: '1rem' }}>Enterprise-grade technology solutions for modern businesses</p>
         
