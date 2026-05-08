@@ -4,14 +4,6 @@ import AdminSocialLinks from './AdminSocialLinks';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://winze-backend-api.onrender.com/api';
 
-// Helper to get auth config
-const getAuthConfig = () => {
-    const token = localStorage.getItem('adminToken');
-    return {
-        headers: { Authorization: `Bearer ${token}` }
-    };
-};
-
 // Login Component
 const AdminLogin = ({ onLogin }) => {
     const [username, setUsername] = useState('');
@@ -23,13 +15,14 @@ const AdminLogin = ({ onLogin }) => {
         e.preventDefault();
         setLoading(true);
         setError('');
-
+        
         try {
             const res = await axios.post(`${API_BASE_URL}/admin/login`, { username, password });
             if (res.data.success) {
-                localStorage.setItem('adminLoggedIn', 'true');
-                localStorage.setItem('adminUsername', username);
-                localStorage.setItem('adminToken', res.data.token);
+                // Clear any existing session first
+                sessionStorage.clear();
+                sessionStorage.setItem('adminToken', res.data.token);
+                sessionStorage.setItem('adminUsername', username);
                 onLogin(username);
             }
         } catch (err) {
@@ -73,164 +66,6 @@ const AdminLogin = ({ onLogin }) => {
     );
 };
 
-// Profile Settings Component
-const ProfileSettings = ({ username, onLogout }) => {
-    const [currentPassword, setCurrentPassword] = useState('');
-    const [newUsername, setNewUsername] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [message, setMessage] = useState({ text: '', type: '' });
-    const [loading, setLoading] = useState(false);
-
-    const handleUpdateUsername = async (e) => {
-        e.preventDefault();
-        if (!newUsername) {
-            setMessage({ text: 'Please enter a new username', type: 'error' });
-            return;
-        }
-        setLoading(true);
-        try {
-            const config = getAuthConfig();
-            const res = await axios.post(`${API_BASE_URL}/admin/change-username`, {
-                username,
-                newUsername,
-                password: currentPassword
-            }, config);
-            if (res.data.success) {
-                setMessage({ text: 'Username changed successfully! Please login again.', type: 'success' });
-                setTimeout(() => {
-                    localStorage.removeItem('adminLoggedIn');
-                    localStorage.removeItem('adminUsername');
-                    localStorage.removeItem('adminToken');
-                    onLogout();
-                }, 2000);
-            }
-        } catch (err) {
-            setMessage({ text: err.response?.data?.error || 'Failed to change username', type: 'error' });
-        }
-        setLoading(false);
-    };
-
-    const handleUpdatePassword = async (e) => {
-        e.preventDefault();
-        if (newPassword !== confirmPassword) {
-            setMessage({ text: 'New passwords do not match', type: 'error' });
-            return;
-        }
-        setLoading(true);
-        try {
-            const config = getAuthConfig();
-            const res = await axios.post(`${API_BASE_URL}/admin/change-password`, {
-                username,
-                oldPassword: currentPassword,
-                newPassword
-            }, config);
-            if (res.data.success) {
-                setMessage({ text: 'Password changed successfully! Please login again.', type: 'success' });
-                setTimeout(() => {
-                    localStorage.removeItem('adminLoggedIn');
-                    localStorage.removeItem('adminUsername');
-                    localStorage.removeItem('adminToken');
-                    onLogout();
-                }, 2000);
-            }
-        } catch (err) {
-            setMessage({ text: err.response?.data?.error || 'Failed to change password', type: 'error' });
-        }
-        setLoading(false);
-    };
-
-    return (
-        <div style={{ background: 'white', borderRadius: '12px', padding: '25px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-            <h2 style={{ marginBottom: '20px', color: '#1a1a2e' }}>👤 Admin Profile Settings</h2>
-
-            {message.text && (
-                <div style={{
-                    padding: '12px',
-                    marginBottom: '20px',
-                    borderRadius: '8px',
-                    background: message.type === 'success' ? '#d4edda' : '#f8d7da',
-                    color: message.type === 'success' ? '#155724' : '#721c24',
-                    border: `1px solid ${message.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`
-                }}>
-                    {message.text}
-                </div>
-            )}
-
-            <div style={{ marginBottom: '25px', padding: '15px', background: '#f8f9fa', borderRadius: '8px' }}>
-                <h3 style={{ marginBottom: '10px', color: '#666', fontSize: '14px' }}>Current Account Info</h3>
-                <p><strong>Username:</strong> {username}</p>
-            </div>
-
-            <div style={{ marginBottom: '30px', padding: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
-                <h3 style={{ marginBottom: '15px', color: '#1a1a2e' }}>Change Username</h3>
-                <form onSubmit={handleUpdateUsername} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                    <input
-                        type="password"
-                        placeholder="Current Password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ddd' }}
-                        required
-                    />
-                    <input
-                        type="text"
-                        placeholder="New Username"
-                        value={newUsername}
-                        onChange={(e) => setNewUsername(e.target.value)}
-                        style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ddd' }}
-                        required
-                    />
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        style={{ padding: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
-                    >
-                        {loading ? 'Updating...' : 'Update Username'}
-                    </button>
-                </form>
-            </div>
-
-            <div style={{ padding: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
-                <h3 style={{ marginBottom: '15px', color: '#1a1a2e' }}>Change Password</h3>
-                <form onSubmit={handleUpdatePassword} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                    <input
-                        type="password"
-                        placeholder="Current Password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ddd' }}
-                        required
-                    />
-                    <input
-                        type="password"
-                        placeholder="New Password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ddd' }}
-                        required
-                    />
-                    <input
-                        type="password"
-                        placeholder="Confirm New Password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ddd' }}
-                        required
-                    />
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        style={{ padding: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
-                    >
-                        {loading ? 'Updating...' : 'Update Password'}
-                    </button>
-                </form>
-            </div>
-        </div>
-    );
-};
-
 // Main Admin Page Component
 const AdminPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -241,12 +76,19 @@ const AdminPage = () => {
     const [groupedClicks, setGroupedClicks] = useState({});
     const [expandedCategories, setExpandedCategories] = useState({});
 
+    // Check login status - ALWAYS check sessionStorage
     useEffect(() => {
-        const loggedIn = localStorage.getItem('adminLoggedIn');
-        const username = localStorage.getItem('adminUsername');
-        if (loggedIn) {
+        const token = sessionStorage.getItem('adminToken');
+        const username = sessionStorage.getItem('adminUsername');
+        
+        console.log('Checking session - Token exists:', !!token);
+        console.log('Checking session - Username:', username);
+        
+        if (token && username) {
             setIsLoggedIn(true);
-            setAdminUsername(username || 'admin');
+            setAdminUsername(username);
+        } else {
+            setIsLoggedIn(false);
         }
         setLoading(false);
     }, []);
@@ -257,10 +99,9 @@ const AdminPage = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('adminLoggedIn');
-        localStorage.removeItem('adminUsername');
-        localStorage.removeItem('adminToken');
+        sessionStorage.clear();
         setIsLoggedIn(false);
+        setAdminUsername('');
     };
 
     useEffect(() => {
@@ -272,7 +113,10 @@ const AdminPage = () => {
 
     const fetchStats = async () => {
         try {
-            const config = getAuthConfig();
+            const token = sessionStorage.getItem('adminToken');
+            const config = {
+                headers: { Authorization: `Bearer ${token}` }
+            };
             const res = await axios.get(`${API_BASE_URL}/clicks/stats`, config);
             if (res.data.success) {
                 setStats({
@@ -282,17 +126,21 @@ const AdminPage = () => {
             }
         } catch (err) {
             console.error('Error fetching stats:', err);
+            if (err.response?.status === 401) {
+                handleLogout();
+            }
         }
     };
 
     const fetchAllClicks = async () => {
         try {
-            const config = getAuthConfig();
+            const token = sessionStorage.getItem('adminToken');
+            const config = {
+                headers: { Authorization: `Bearer ${token}` }
+            };
             const res = await axios.get(`${API_BASE_URL}/clicks`, config);
             if (res.data.success) {
                 const clicks = res.data.clicks;
-                console.log('Clicks received:', clicks);
-
                 const grouped = {};
                 clicks.forEach(click => {
                     const title = click.link_title || 'Unknown';
@@ -302,7 +150,7 @@ const AdminPage = () => {
                     grouped[title].push(click);
                 });
                 setGroupedClicks(grouped);
-
+                
                 const initialExpanded = {};
                 Object.keys(grouped).forEach(key => {
                     initialExpanded[key] = false;
@@ -311,6 +159,9 @@ const AdminPage = () => {
             }
         } catch (err) {
             console.error('Error fetching clicks:', err);
+            if (err.response?.status === 401) {
+                handleLogout();
+            }
         }
     };
 
@@ -327,6 +178,7 @@ const AdminPage = () => {
         return <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>;
     }
 
+    // Always show login screen if not logged in
     if (!isLoggedIn) {
         return <AdminLogin onLogin={handleLogin} />;
     }
@@ -425,7 +277,6 @@ const AdminPage = () => {
                         <h1 style={{ marginBottom: '10px', color: '#1a1a2e' }}>Click Analytics Dashboard</h1>
                         <p style={{ color: '#666', marginBottom: '30px' }}>Complete click tracking statistics for your website</p>
 
-                        {/* Stats Cards */}
                         <div style={{
                             display: 'grid',
                             gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -437,12 +288,11 @@ const AdminPage = () => {
                                 padding: '25px',
                                 borderRadius: '12px',
                                 textAlign: 'center',
-                                color: 'white',
-                                boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+                                color: 'white'
                             }}>
                                 <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>📈</div>
-                                <h3 style={{ marginBottom: '10px', opacity: 0.9 }}>Total Clicks</h3>
-                                <p style={{ fontSize: '3rem', fontWeight: 'bold', margin: 0 }}>{stats.total || 0}</p>
+                                <h3>Total Clicks</h3>
+                                <p style={{ fontSize: '3rem', fontWeight: 'bold', margin: 0 }}>{stats.total}</p>
                             </div>
 
                             <div style={{
@@ -450,12 +300,11 @@ const AdminPage = () => {
                                 padding: '25px',
                                 borderRadius: '12px',
                                 textAlign: 'center',
-                                color: 'white',
-                                boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+                                color: 'white'
                             }}>
                                 <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🔗</div>
-                                <h3 style={{ marginBottom: '10px', opacity: 0.9 }}>Unique Links</h3>
-                                <p style={{ fontSize: '3rem', fontWeight: 'bold', margin: 0 }}>{totalUniqueLinks || 0}</p>
+                                <h3>Unique Links</h3>
+                                <p style={{ fontSize: '3rem', fontWeight: 'bold', margin: 0 }}>{totalUniqueLinks}</p>
                             </div>
 
                             <div style={{
@@ -463,107 +312,55 @@ const AdminPage = () => {
                                 padding: '25px',
                                 borderRadius: '12px',
                                 textAlign: 'center',
-                                color: 'white',
-                                boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+                                color: 'white'
                             }}>
                                 <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>⏰</div>
-                                <h3 style={{ marginBottom: '10px', opacity: 0.9 }}>Last 24 Hours</h3>
-                                <p style={{ fontSize: '3rem', fontWeight: 'bold', margin: 0 }}>{stats.last24Hours || 0}</p>
+                                <h3>Last 24 Hours</h3>
+                                <p style={{ fontSize: '3rem', fontWeight: 'bold', margin: 0 }}>{stats.last24Hours}</p>
                             </div>
                         </div>
 
-                        {/* All Clicks Grouped by Link Title */}
-                        <div style={{
-                            background: 'white',
-                            borderRadius: '12px',
-                            padding: '20px',
-                            boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
-                        }}>
-                            <h3 style={{ marginBottom: '20px', color: '#1a1a2e' }}>
-                                📋 All Clickable Links ({totalUniqueLinks} unique links, {stats.total} total clicks)
-                                <span style={{ fontSize: '12px', color: '#666', marginLeft: '15px' }}>Click on any category to expand/collapse</span>
-                            </h3>
-
+                        <div style={{ background: 'white', borderRadius: '12px', padding: '20px' }}>
+                            <h3>📋 All Clickable Links ({totalUniqueLinks} unique links, {stats.total} total clicks)</h3>
                             {Object.keys(groupedClicks).length === 0 ? (
-                                <p style={{ textAlign: 'center', color: '#666', padding: '40px' }}>No clicks recorded yet. Click around your website to see data.</p>
+                                <p style={{ textAlign: 'center', padding: '40px' }}>No clicks recorded yet.</p>
                             ) : (
-                                <div>
-                                    {Object.entries(groupedClicks).map(([title, clicks]) => (
-                                        <div key={title} style={{
-                                            marginBottom: '15px',
-                                            border: '1px solid #eee',
-                                            borderRadius: '8px',
-                                            overflow: 'hidden'
+                                Object.entries(groupedClicks).map(([title, clicks]) => (
+                                    <div key={title} style={{ marginBottom: '15px', border: '1px solid #eee', borderRadius: '8px' }}>
+                                        <div onClick={() => toggleCategory(title)} style={{
+                                            display: 'flex', justifyContent: 'space-between',
+                                            padding: '15px', background: '#f8f9fa', cursor: 'pointer'
                                         }}>
-                                            {/* Category Header */}
-                                            <div
-                                                onClick={() => toggleCategory(title)}
-                                                style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'space-between',
-                                                    padding: '15px',
-                                                    background: '#f8f9fa',
-                                                    cursor: 'pointer',
-                                                    transition: 'all 0.3s',
-                                                    borderBottom: expandedCategories[title] ? '1px solid #eee' : 'none'
-                                                }}
-                                                onMouseEnter={(e) => { e.currentTarget.style.background = '#e9ecef'; }}
-                                                onMouseLeave={(e) => { e.currentTarget.style.background = '#f8f9fa'; }}
-                                            >
-                                                <div>
-                                                    <strong style={{ fontSize: '16px', color: '#1a1a2e' }}>{title}</strong>
-                                                    <span style={{ marginLeft: '10px', fontSize: '12px', color: '#666' }}>
-                                                        ({clicks.length} {clicks.length === 1 ? 'click' : 'clicks'})
-                                                    </span>
-                                                </div>
-                                                <span style={{ fontSize: '18px', color: '#667eea' }}>
-                                                    {expandedCategories[title] ? '▼' : '▶'}
-                                                </span>
-                                            </div>
-
-                                            {/* Category Details (Expandable) */}
-                                            {expandedCategories[title] && (
-                                                <div style={{ padding: '15px' }}>
-                                                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                                        <thead>
-                                                            <tr style={{ background: '#f8f9fa', borderBottom: '2px solid #ddd' }}>
-                                                                <th style={{ padding: '10px', textAlign: 'left' }}>#</th>
-                                                                <th style={{ padding: '10px', textAlign: 'left' }}>URL</th>
-                                                                <th style={{ padding: '10px', textAlign: 'left' }}>Clicked At</th>
-                                                                <th style={{ padding: '10px', textAlign: 'left' }}>IP Address</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {clicks.map((click, idx) => (
-                                                                <tr key={click.id} style={{ borderBottom: '1px solid #eee' }}>
-                                                                    <td style={{ padding: '10px' }}>{idx + 1}</td>
-                                                                    <td style={{ padding: '10px' }}>
-                                                                        <a href={click.link_url} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea', fontSize: '12px' }}>
-                                                                            {click.link_url?.substring(0, 60)}...
-                                                                        </a>
-                                                                    </td>
-                                                                    <td style={{ padding: '10px', fontSize: '12px' }}>
-                                                                        {new Date(click.clicked_at).toLocaleString()}
-                                                                    </td>
-                                                                    <td style={{ padding: '10px', fontSize: '12px' }}>
-                                                                        {click.ip_address || 'user'}
-                                                                    </td>
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            )}
+                                            <strong>{title}</strong>
+                                            <span>({clicks.length} clicks) {expandedCategories[title] ? '▼' : '▶'}</span>
                                         </div>
-                                    ))}
-                                </div>
+                                        {expandedCategories[title] && (
+                                            <div style={{ padding: '15px' }}>
+                                                {clicks.map((click, idx) => (
+                                                    <div key={click.id} style={{ marginBottom: '10px', padding: '10px', background: '#f9f9f9', borderRadius: '4px' }}>
+                                                        <div>#{idx + 1} - {new Date(click.clicked_at).toLocaleString()}</div>
+                                                        <div>IP: {click.ip_address || 'unknown'}</div>
+                                                        <div>URL: {click.link_url?.substring(0, 60)}...</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
                             )}
                         </div>
                     </div>
                 )}
                 {activeTab === 'socialLinks' && <AdminSocialLinks />}
-                {activeTab === 'profile' && <ProfileSettings username={adminUsername} onLogout={handleLogout} />}
+                {activeTab === 'profile' && (
+                    <div style={{ background: 'white', borderRadius: '12px', padding: '25px' }}>
+                        <h2>👤 Admin Profile Settings</h2>
+                        <p><strong>Username:</strong> {adminUsername}</p>
+                        <button onClick={handleLogout} style={{ padding: '10px 20px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                            Logout
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -597,19 +394,9 @@ const styles = {
         justifyContent: 'center',
         margin: '0 auto 20px'
     },
-    icon: {
-        fontSize: '35px'
-    },
-    title: {
-        color: 'white',
-        marginBottom: '10px',
-        fontSize: '28px'
-    },
-    subtitle: {
-        color: 'rgba(255,255,255,0.7)',
-        marginBottom: '30px',
-        fontSize: '14px'
-    },
+    icon: { fontSize: '35px' },
+    title: { color: 'white', marginBottom: '10px', fontSize: '28px' },
+    subtitle: { color: 'rgba(255,255,255,0.7)', marginBottom: '30px', fontSize: '14px' },
     input: {
         width: '100%',
         padding: '14px',
@@ -632,7 +419,6 @@ const styles = {
         fontSize: '16px',
         fontWeight: '600',
         cursor: 'pointer',
-        transition: 'all 0.3s',
         marginTop: '10px'
     },
     error: {
