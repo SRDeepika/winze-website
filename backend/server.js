@@ -6,9 +6,17 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(cors());
+// Updated CORS configuration
+app.use(cors({
+    origin: [
+        'https://winze-website.onrender.com',
+        'https://creative-belekoy-0cae1a.netlify.app',
+        'http://localhost:5000',
+        'http://localhost:3000'
+    ],
+    credentials: true
+}));
 app.use(express.json());
-
 // ========== AUTHENTICATION MIDDLEWARE ==========
 
 // Simple token-based authentication for API
