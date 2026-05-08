@@ -208,7 +208,7 @@ const WinzePage = () => {
     };
 
     const solutions = [
-        { title: "Unified Communications", desc: "Seamless integration of voice, video, and messaging for enterprise collaboration.", icon: faChartLine, img: solutionImages.unified, detailedDesc: "Our Unified Communications solution brings together voice, video, messaging, and collaboration tools into a single platform." },
+        { title: "Unified Communications", desc: "Seamless integration of voice, video, and messaging for enterprise collaboration.", icon: faChartLine, img: solutionImages.unified, detailedDesc: "Our Unified Communications solution brings together voice, video, messaging, and collaboration tools into a single platform with enterprise-grade security." },
         { title: "Contact Center", desc: "AI-powered customer service solutions for enhanced agent productivity.", icon: faHeadset, img: solutionImages.contact, detailedDesc: "AI-powered contact center solutions with intelligent routing, chatbots, and real-time analytics." },
         { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video, detailedDesc: "HD video conferencing with screen sharing, recording, and end-to-end encryption." },
         { title: "IT Infrastructure", desc: "Enterprise-grade networking and server solutions for optimal performance.", icon: faServer, img: solutionImages.it, detailedDesc: "Complete IT infrastructure solutions including servers, networking, and cloud integration." },
@@ -304,7 +304,7 @@ const WinzePage = () => {
                     <h2 style={{ color: '#1a1a2e', marginBottom: '15px', fontSize: '24px' }}>{modalData.title || modalData.name}</h2>
                     
                     <p style={{ color: '#666', lineHeight: '1.6', marginBottom: '20px' }}>
-                        {modalData.detailedDesc || modalData.desc || "Detailed information coming soon. Please contact us for more details."}
+                        {modalData.detailedDesc || "Detailed information coming soon. Please contact us for more details."}
                     </p>
                     
                     <div style={{ marginTop: '30px', display: 'flex', gap: '15px', justifyContent: 'center' }}>
@@ -428,18 +428,54 @@ const WinzePage = () => {
                         100% { box-shadow: 0 0 10px rgba(102,126,234,0.3), 0 0 20px rgba(102,126,234,0.2); filter: brightness(1); transform: translateY(0px); }
                     }
                     
-                    .delivery-card, .work-card {
-                        background: white; border-radius: 20px; padding: 40px 25px; text-align: center;
-                        transition: all 0.4s; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05);
+                    .learn-more-btn-inline {
+                        display: inline-block;
+                        margin-top: 15px;
+                        padding: 8px 20px;
+                        background: #667eea;
+                        color: white;
+                        border: none;
+                        border-radius: 25px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        font-size: 14px;
+                        transition: all 0.3s;
                     }
-                    .delivery-card:hover, .work-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+                    
+                    .learn-more-btn-inline:hover {
+                        background: #764ba2;
+                        transform: translateX(5px);
+                    }
+                    
+                    .delivery-card, .work-card {
+                        background: white;
+                        border-radius: 20px;
+                        padding: 40px 25px;
+                        text-align: center;
+                        transition: all 0.4s;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+                        border: 1px solid rgba(0,0,0,0.05);
+                    }
+                    
+                    .delivery-card:hover, .work-card:hover { 
+                        transform: translateY(-10px); 
+                        box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    }
+                    
                     .delivery-card:hover h3, .delivery-card:hover p, .work-card:hover h3, .work-card:hover p { color: white; }
                     .delivery-card:hover .icon, .work-card:hover .icon { color: white !important; }
+                    .delivery-card:hover .learn-more-btn-inline, .work-card:hover .learn-more-btn-inline { background: white; color: #667eea; }
                     
                     .solution-card, .industry-card {
-                        background: white; border-radius: 20px; overflow: hidden; transition: all 0.4s;
-                        box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05);
+                        background: white;
+                        border-radius: 20px;
+                        overflow: hidden;
+                        transition: all 0.4s;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+                        border: 1px solid rgba(0,0,0,0.05);
                     }
+                    
                     .solution-card:hover, .industry-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
                     .solution-card-image, .industry-card-image { width: 100%; height: 200px; object-fit: cover; }
                     .solution-card-content, .industry-card-content { padding: 25px; text-align: center; }
@@ -447,10 +483,18 @@ const WinzePage = () => {
                     .solution-card:hover h3, .solution-card:hover p, .solution-card:hover .icon, .industry-card:hover h3, .industry-card:hover p, .industry-card:hover .icon { color: white; }
                     
                     .client-logo-item {
-                        background: white; padding: 20px; border-radius: 12px; text-align: center; cursor: pointer;
-                        transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.08); min-width: 150px;
-                        border: 1px solid rgba(0,0,0,0.05); flex-shrink: 0;
+                        background: white;
+                        padding: 20px;
+                        border-radius: 12px;
+                        text-align: center;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                        min-width: 150px;
+                        border: 1px solid rgba(0,0,0,0.05);
+                        flex-shrink: 0;
                     }
+                    
                     .client-logo-item:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.12); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
                     .client-logo-item:hover h3 { color: white; }
                     .client-logo-img { width: 80px; height: 80px; margin: 0 auto 12px; display: flex; align-items: center; justifyContent: center; }
@@ -706,7 +750,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* What We Deliver Section - WITH WORKING BUTTONS */}
+                {/* What We Deliver Section - Buttons INSIDE cards */}
                 <section id="delivery" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.delivery} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -724,20 +768,7 @@ const WinzePage = () => {
                                     <h3 style={{ marginBottom: '15px', color: hoveredCard === i ? 'white' : '#1a1a2e', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
                                     <p style={{ color: hoveredCard === i ? 'rgba(255,255,255,0.9)' : '#666', lineHeight: '1.5' }}>{item.desc}</p>
                                     <button 
-                                        style={{
-                                            marginTop: '20px',
-                                            padding: '10px 25px',
-                                            backgroundColor: '#667eea',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '30px',
-                                            cursor: 'pointer',
-                                            fontWeight: '600',
-                                            fontSize: '14px',
-                                            transition: 'all 0.3s'
-                                        }}
-                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
-                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
+                                        className="learn-more-btn-inline"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleTrackClick(item.title, 'delivery');
@@ -752,7 +783,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Solutions Portfolio Section */}
+                {/* Solutions Portfolio Section - Buttons INSIDE cards */}
                 <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.solutions} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -773,19 +804,7 @@ const WinzePage = () => {
                                         <h3 style={{ marginBottom: '12px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
                                         <p style={{ color: '#666', lineHeight: '1.5' }}>{solution.desc}</p>
                                         <button 
-                                            style={{
-                                                marginTop: '20px',
-                                                padding: '8px 20px',
-                                                backgroundColor: '#667eea',
-                                                color: 'white',
-                                                border: 'none',
-                                                borderRadius: '25px',
-                                                cursor: 'pointer',
-                                                fontWeight: '600',
-                                                fontSize: '14px'
-                                            }}
-                                            onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
-                                            onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
+                                            className="learn-more-btn-inline"
                                             onClick={() => {
                                                 handleTrackClick(solution.title, 'solution');
                                                 openModal(solution);
@@ -800,7 +819,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Industries Section */}
+                {/* Industries Section - Buttons INSIDE cards */}
                 <section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.industries} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -820,19 +839,7 @@ const WinzePage = () => {
                                         <h3 style={{ marginBottom: '10px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{industry.name}</h3>
                                         <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.9rem' }}>{industry.desc}</p>
                                         <button 
-                                            style={{
-                                                marginTop: '20px',
-                                                padding: '8px 20px',
-                                                backgroundColor: '#667eea',
-                                                color: 'white',
-                                                border: 'none',
-                                                borderRadius: '25px',
-                                                cursor: 'pointer',
-                                                fontWeight: '600',
-                                                fontSize: '14px'
-                                            }}
-                                            onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
-                                            onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
+                                            className="learn-more-btn-inline"
                                             onClick={() => {
                                                 handleTrackClick(industry.name, 'industry');
                                                 openModal(industry);
@@ -887,7 +894,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Work With Winze Section */}
+                {/* Work With Winze Section - Buttons INSIDE cards */}
                 <section ref={workwithRef} id="workwith" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.workwith} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
@@ -905,19 +912,7 @@ const WinzePage = () => {
                                     <h3 style={{ marginBottom: '15px', color: hoveredCard === `work-${idx}` ? 'white' : '#1a1a2e', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
                                     <p style={{ color: hoveredCard === `work-${idx}` ? 'rgba(255,255,255,0.9)' : '#666', lineHeight: '1.5' }}>{item.desc}</p>
                                     <button 
-                                        style={{
-                                            marginTop: '20px',
-                                            padding: '10px 25px',
-                                            backgroundColor: '#667eea',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '30px',
-                                            cursor: 'pointer',
-                                            fontWeight: '600',
-                                            fontSize: '14px'
-                                        }}
-                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
-                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
+                                        className="learn-more-btn-inline"
                                         onClick={() => {
                                             handleTrackClick(item.title, 'workwith');
                                             openModal(item);
