@@ -457,19 +457,19 @@ const WinzePage = () => {
                     }
                     
                     .learn-more-btn {
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 8px;
-                        margin-top: 20px;
-                        padding: 8px 20px;
-                        background: transparent;
-                        color: #667eea;
-                        border: 2px solid #667eea;
-                        border-radius: 30px;
-                        cursor: pointer;
-                        font-weight: 600;
-                        transition: all 0.3s;
-                    }
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 8px 20px;
+    background: transparent;
+    color: #667eea;
+    border: 2px solid #667eea;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
                     .learn-more-btn:hover {
                         background: #667eea;
                         color: white;
