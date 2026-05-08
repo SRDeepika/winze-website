@@ -9,7 +9,6 @@ const Header = () => {
     const handleLogout = () => {
         localStorage.removeItem('adminAuthenticated');
         localStorage.removeItem('adminLoginTime');
-        toast.success('Logged out successfully');
         navigate('/admin-login');
     };
 

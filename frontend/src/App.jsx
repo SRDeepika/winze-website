@@ -2,8 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import WinzePage from './pages/WinzePage';
 import AdminPage from './pages/AdminPage';
-import AdminLogin from './pages/AdminLogin';
-import { Toaster } from 'react-hot-toast';
+// Remove this line - no separate login route needed
+// import AdminLogin from './pages/AdminLogin';
+// Remove Toaster - no popups
+// import { Toaster } from 'react-hot-toast';
 
 function App() {
     return (
@@ -13,11 +15,11 @@ function App() {
                 v7_relativeSplatPath: true
             }}
         >
-            <Toaster position="top-right" />
+            {/* Remove Toaster component */}
             <Routes>
                 <Route path="/" element={<WinzePage />} />
                 <Route path="/admin" element={<AdminPage />} />
-                <Route path="/admin-login" element={<AdminLogin />} />
+                {/* Remove the /admin-login route */}
             </Routes>
         </Router>
     );

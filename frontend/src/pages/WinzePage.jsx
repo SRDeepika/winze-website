@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 import SEO from '../components/SEO';
 import { trackClick } from '../services/api';
-import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faChartLine, faShieldAlt, faHeadset, faVideo, faServer, faRobot, 
@@ -158,18 +157,28 @@ const WinzePage = () => {
     }, []);
 
     const handleTrackClick = async (itemName, category) => {
+    try {
+        // Get real IP address for the user
+        let userIp = '0.0.0.0';
         try {
-            await trackClick({
-                link_url: window.location.href,
-                link_title: `Winze - ${itemName}`,
-                ip_address: 'user',
-                category: category
-            });
-            toast.success(`✨ Tracked: ${itemName}`);
-        } catch (error) {
-            console.error('Tracking failed:', error);
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            userIp = data.ip;
+            console.log('Captured IP:', userIp);
+        } catch (err) {
+            console.log('Could not get IP, using default');
         }
-    };
+
+        await trackClick({
+            link_url: window.location.href,
+            link_title: `Winze - ${itemName}`,
+            ip_address: userIp,
+            category: category
+        });
+    } catch (error) {
+        console.error('Tracking failed:', error);
+    }
+};
 
     const handleInputChange = (e) => {
         setFormData({
@@ -181,7 +190,6 @@ const WinzePage = () => {
     const handleSubmitQuote = async (e) => {
         e.preventDefault();
         await handleTrackClick(`Quote Request from ${formData.name} - ${formData.service}`, 'quote');
-        toast.success(`✅ Thank you ${formData.name}! We'll contact you soon.`);
         setShowQuoteModal(false);
         setFormData({ name: '', email: '', phone: '', service: '', message: '' });
     };

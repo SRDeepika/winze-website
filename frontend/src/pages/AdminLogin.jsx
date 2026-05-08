@@ -11,27 +11,25 @@ const AdminLogin = () => {
     const ADMIN_PASSWORD = 'Winze@2026'; // Change this to your preferred password
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError('');
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-        // Simple password check
-        if (password === ADMIN_PASSWORD) {
-            // Store login state
-            localStorage.setItem('adminLoggedIn', 'true');
-            localStorage.setItem('adminLoginTime', new Date().toISOString());
-            
-            // Show success message
-            alert('Login successful! Redirecting to dashboard...');
-            
-            // Redirect to admin dashboard
-            navigate('/admin');
-        } else {
-            setError('Invalid password. Please try again.');
-            setPassword('');
-        }
-        setLoading(false);
-    };
+    // Simple password check
+    if (password === ADMIN_PASSWORD) {
+        // Store login state
+        localStorage.setItem('adminLoggedIn', 'true');
+        localStorage.setItem('adminLoginTime', new Date().toISOString());
+        
+        // REMOVED: alert('Login successful! Redirecting to dashboard...');
+        // Direct redirect without any popup
+        navigate('/admin');
+    } else {
+        setError('Invalid password. Please try again.');
+        setPassword('');
+    }
+    setLoading(false);
+};
 
     return (
         <div style={{
