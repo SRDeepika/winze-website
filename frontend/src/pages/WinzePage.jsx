@@ -760,36 +760,55 @@ const WinzePage = () => {
                 </section>
 
                 {/* What We Deliver Section */}
-                <section id="delivery" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
-                    <DarkBackgroundImage imageSrc={bgImages.delivery} />
-                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>What We Deliver</h2>
-                        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Comprehensive lifecycle for technology integration</p>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '35px' }}>
-                            {deliveryItems.map((item, i) => (
-                                <div 
-                                    key={i} 
-                                    className="delivery-card"
-                                    onMouseEnter={() => setHoveredCard(i)} 
-                                    onMouseLeave={() => setHoveredCard(null)} 
-                                >
-                                    <FontAwesomeIcon icon={item.icon} className="icon" style={{ fontSize: '50px', marginBottom: '20px', color: hoveredCard === i ? 'white' : '#667eea' }} />
-                                    <h3 style={{ marginBottom: '15px', color: hoveredCard === i ? 'white' : '#1a1a2e', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
-                                    <p style={{ color: hoveredCard === i ? 'rgba(255,255,255,0.9)' : '#666', lineHeight: '1.5' }}>{item.desc}</p>
-                                    <button 
-                                        className="learn-more-btn"
-                                        onClick={() => {
-                                            handleTrackClick(item.title, 'delivery');
-                                            openModal(item);
-                                        }}
-                                    >
-                                        Learn More <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: '12px' }} />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
+<section id="delivery" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+    <DarkBackgroundImage imageSrc={bgImages.delivery} />
+    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>What We Deliver</h2>
+        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Comprehensive lifecycle for technology integration</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '35px' }}>
+            {deliveryItems.map((item, i) => (
+                <div 
+                    key={i} 
+                    style={{
+                        background: 'white',
+                        borderRadius: '20px',
+                        padding: '40px 25px',
+                        textAlign: 'center',
+                        transition: 'all 0.4s',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                        cursor: 'pointer'
+                    }}
+                    onMouseEnter={() => setHoveredCard(i)} 
+                    onMouseLeave={() => setHoveredCard(null)} 
+                >
+                    <FontAwesomeIcon icon={item.icon} style={{ fontSize: '50px', marginBottom: '20px', color: hoveredCard === i ? 'white' : '#667eea' }} />
+                    <h3 style={{ marginBottom: '15px', color: hoveredCard === i ? 'white' : '#1a1a2e' }}>{item.title}</h3>
+                    <p style={{ color: hoveredCard === i ? 'rgba(255,255,255,0.9)' : '#666', lineHeight: '1.5' }}>{item.desc}</p>
+                    
+                    <button 
+                        style={{
+                            marginTop: '20px',
+                            padding: '8px 20px',
+                            background: '#667eea',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '25px',
+                            cursor: 'pointer',
+                            fontWeight: '600'
+                        }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleTrackClick(item.title, 'delivery');
+                            openModal(item);
+                        }}
+                    >
+                        Learn More →
+                    </button>
+                </div>
+            ))}
+        </div>
+    </div>
+</section>
 
                 {/* Solutions Portfolio Section */}
                 <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
