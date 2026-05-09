@@ -61,7 +61,7 @@ const AdminLogin = ({ onLogin }) => {
     );
 };
 
-// Profile Settings Component - NO PASSWORD LENGTH LIMIT
+// Profile Settings Component - NO LOGOUT BUTTON HERE (removed)
 const ProfileSettings = ({ username, onLogout }) => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newUsername, setNewUsername] = useState('');
@@ -105,7 +105,6 @@ const ProfileSettings = ({ username, onLogout }) => {
             setMessage({ text: 'New passwords do not match', type: 'error' });
             return;
         }
-        // REMOVED: Password length check - admin can use any password now
         setLoading(true);
         try {
             const config = getAuthConfig();
@@ -180,7 +179,7 @@ const ProfileSettings = ({ username, onLogout }) => {
                 </form>
             </div>
 
-            {/* Change Password Section - NO LENGTH LIMIT */}
+            {/* Change Password Section */}
             <div style={{ padding: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
                 <h3 style={{ marginBottom: '15px', color: '#1a1a2e' }}>Change Password</h3>
                 <form onSubmit={handleUpdatePassword} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
@@ -216,16 +215,6 @@ const ProfileSettings = ({ username, onLogout }) => {
                         {loading ? 'Updating...' : 'Update Password'}
                     </button>
                 </form>
-            </div>
-
-            {/* Logout Button */}
-            <div style={{ marginTop: '30px', textAlign: 'center', paddingTop: '20px', borderTop: '1px solid #eee' }}>
-                <button
-                    onClick={onLogout}
-                    style={{ padding: '12px 30px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
-                >
-                    🚪 Logout
-                </button>
             </div>
         </div>
     );
@@ -395,6 +384,25 @@ const AdminPage = () => {
                         }}
                     >
                         👤 Admin Profile
+                    </button>
+                    {/* Logout Button in Sidebar */}
+                    <button
+                        onClick={handleLogout}
+                        style={{
+                            width: '100%',
+                            padding: '12px 20px',
+                            background: 'transparent',
+                            border: 'none',
+                            color: '#ff6b6b',
+                            textAlign: 'left',
+                            cursor: 'pointer',
+                            fontSize: '15px',
+                            marginTop: '20px',
+                            borderTop: '1px solid rgba(255,255,255,0.1)',
+                            paddingTop: '20px'
+                        }}
+                    >
+                        🚪 Logout
                     </button>
                 </nav>
             </div>
