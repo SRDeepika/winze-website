@@ -4,6 +4,14 @@ import AdminSocialLinks from './AdminSocialLinks';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://winze-backend-api.onrender.com/api';
 
+// Helper to get auth config
+const getAuthConfig = () => {
+    const token = sessionStorage.getItem('adminToken');
+    return {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+};
+
 // Login Component
 const AdminLogin = ({ onLogin }) => {
     const [username, setUsername] = useState('');
@@ -15,11 +23,10 @@ const AdminLogin = ({ onLogin }) => {
         e.preventDefault();
         setLoading(true);
         setError('');
-        
+
         try {
             const res = await axios.post(`${API_BASE_URL}/admin/login`, { username, password });
             if (res.data.success) {
-                // Clear any existing session first
                 sessionStorage.clear();
                 sessionStorage.setItem('adminToken', res.data.token);
                 sessionStorage.setItem('adminUsername', username);
@@ -40,27 +47,188 @@ const AdminLogin = ({ onLogin }) => {
                 <h2 style={styles.title}>Admin Login</h2>
                 <p style={styles.subtitle}>Enter your credentials to access dashboard</p>
                 <form onSubmit={handleSubmit}>
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        style={styles.input}
-                        required
-                    />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        style={styles.input}
-                        required
-                    />
+                    <input type="text" placeholder="Username" value={username}
+                        onChange={(e) => setUsername(e.target.value)} style={styles.input} required />
+                    <input type="password" placeholder="Password" value={password}
+                        onChange={(e) => setPassword(e.target.value)} style={styles.input} required />
                     {error && <div style={styles.error}>{error}</div>}
                     <button type="submit" disabled={loading} style={styles.button}>
                         {loading ? 'Logging in...' : 'Login'}
                     </button>
                 </form>
+            </div>
+        </div>
+    );
+};
+
+// Profile Settings Component - FULL VERSION
+const ProfileSettings = ({ username, onLogout }) => {
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newUsername, setNewUsername] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [message, setMessage] = useState({ text: '', type: '' });
+    const [loading, setLoading] = useState(false);
+
+    const handleUpdateUsername = async (e) => {
+        e.preventDefault();
+        if (!newUsername) {
+            setMessage({ text: 'Please enter a new username', type: 'error' });
+            return;
+        }
+        setLoading(true);
+        try {
+            const config = getAuthConfig();
+            const res = await axios.post(`${API_BASE_URL}/admin/change-username`, {
+                username,
+                newUsername,
+                password: currentPassword
+            }, config);
+            if (res.data.success) {
+                setMessage({ text: 'Username changed successfully! Please login again.', type: 'success' });
+                setTimeout(() => {
+                    sessionStorage.clear();
+                    onLogout();
+                }, 2000);
+            }
+        } catch (err) {
+            setMessage({ text: err.response?.data?.error || 'Failed to change username', type: 'error' });
+            setNewUsername('');
+            setCurrentPassword('');
+        }
+        setLoading(false);
+    };
+
+    const handleUpdatePassword = async (e) => {
+        e.preventDefault();
+        if (newPassword !== confirmPassword) {
+            setMessage({ text: 'New passwords do not match', type: 'error' });
+            return;
+        }
+        if (newPassword.length < 6) {
+            setMessage({ text: 'Password must be at least 6 characters', type: 'error' });
+            return;
+        }
+        setLoading(true);
+        try {
+            const config = getAuthConfig();
+            const res = await axios.post(`${API_BASE_URL}/admin/change-password`, {
+                username,
+                oldPassword: currentPassword,
+                newPassword
+            }, config);
+            if (res.data.success) {
+                setMessage({ text: 'Password changed successfully! Please login again.', type: 'success' });
+                setTimeout(() => {
+                    sessionStorage.clear();
+                    onLogout();
+                }, 2000);
+            }
+        } catch (err) {
+            setMessage({ text: err.response?.data?.error || 'Failed to change password', type: 'error' });
+            setNewPassword('');
+            setConfirmPassword('');
+            setCurrentPassword('');
+        }
+        setLoading(false);
+    };
+
+    return (
+        <div style={{ background: 'white', borderRadius: '12px', padding: '25px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+            <h2 style={{ marginBottom: '20px', color: '#1a1a2e' }}>👤 Admin Profile Settings</h2>
+            
+            {message.text && (
+                <div style={{
+                    padding: '12px', marginBottom: '20px', borderRadius: '8px',
+                    background: message.type === 'success' ? '#d4edda' : '#f8d7da',
+                    color: message.type === 'success' ? '#155724' : '#721c24',
+                    border: `1px solid ${message.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`
+                }}>
+                    {message.text}
+                </div>
+            )}
+
+            <div style={{ marginBottom: '25px', padding: '15px', background: '#f8f9fa', borderRadius: '8px' }}>
+                <h3 style={{ marginBottom: '10px', color: '#666', fontSize: '14px' }}>Current Account Info</h3>
+                <p><strong>Username:</strong> {username}</p>
+            </div>
+
+            {/* Change Username Section */}
+            <div style={{ marginBottom: '30px', padding: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
+                <h3 style={{ marginBottom: '15px', color: '#1a1a2e' }}>Change Username</h3>
+                <form onSubmit={handleUpdateUsername} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                    <input
+                        type="password"
+                        placeholder="Current Password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ddd' }}
+                        required
+                    />
+                    <input
+                        type="text"
+                        placeholder="New Username"
+                        value={newUsername}
+                        onChange={(e) => setNewUsername(e.target.value)}
+                        style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ddd' }}
+                        required
+                    />
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        style={{ padding: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+                    >
+                        {loading ? 'Updating...' : 'Update Username'}
+                    </button>
+                </form>
+            </div>
+
+            {/* Change Password Section */}
+            <div style={{ padding: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
+                <h3 style={{ marginBottom: '15px', color: '#1a1a2e' }}>Change Password</h3>
+                <form onSubmit={handleUpdatePassword} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                    <input
+                        type="password"
+                        placeholder="Current Password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ddd' }}
+                        required
+                    />
+                    <input
+                        type="password"
+                        placeholder="New Password (min 6 characters)"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ddd' }}
+                        required
+                    />
+                    <input
+                        type="password"
+                        placeholder="Confirm New Password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ddd' }}
+                        required
+                    />
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        style={{ padding: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+                    >
+                        {loading ? 'Updating...' : 'Update Password'}
+                    </button>
+                </form>
+            </div>
+
+            {/* Logout Button */}
+            <div style={{ marginTop: '30px', textAlign: 'center', paddingTop: '20px', borderTop: '1px solid #eee' }}>
+                <button
+                    onClick={onLogout}
+                    style={{ padding: '12px 30px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+                >
+                    🚪 Logout
+                </button>
             </div>
         </div>
     );
@@ -76,19 +244,12 @@ const AdminPage = () => {
     const [groupedClicks, setGroupedClicks] = useState({});
     const [expandedCategories, setExpandedCategories] = useState({});
 
-    // Check login status - ALWAYS check sessionStorage
     useEffect(() => {
         const token = sessionStorage.getItem('adminToken');
         const username = sessionStorage.getItem('adminUsername');
-        
-        console.log('Checking session - Token exists:', !!token);
-        console.log('Checking session - Username:', username);
-        
         if (token && username) {
             setIsLoggedIn(true);
             setAdminUsername(username);
-        } else {
-            setIsLoggedIn(false);
         }
         setLoading(false);
     }, []);
@@ -113,10 +274,7 @@ const AdminPage = () => {
 
     const fetchStats = async () => {
         try {
-            const token = sessionStorage.getItem('adminToken');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
+            const config = getAuthConfig();
             const res = await axios.get(`${API_BASE_URL}/clicks/stats`, config);
             if (res.data.success) {
                 setStats({
@@ -126,18 +284,13 @@ const AdminPage = () => {
             }
         } catch (err) {
             console.error('Error fetching stats:', err);
-            if (err.response?.status === 401) {
-                handleLogout();
-            }
+            if (err.response?.status === 401) handleLogout();
         }
     };
 
     const fetchAllClicks = async () => {
         try {
-            const token = sessionStorage.getItem('adminToken');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
+            const config = getAuthConfig();
             const res = await axios.get(`${API_BASE_URL}/clicks`, config);
             if (res.data.success) {
                 const clicks = res.data.clicks;
@@ -159,9 +312,7 @@ const AdminPage = () => {
             }
         } catch (err) {
             console.error('Error fetching clicks:', err);
-            if (err.response?.status === 401) {
-                handleLogout();
-            }
+            if (err.response?.status === 401) handleLogout();
         }
     };
 
@@ -178,7 +329,6 @@ const AdminPage = () => {
         return <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>;
     }
 
-    // Always show login screen if not logged in
     if (!isLoggedIn) {
         return <AdminLogin onLogin={handleLogin} />;
     }
@@ -249,24 +399,6 @@ const AdminPage = () => {
                     >
                         👤 Admin Profile
                     </button>
-                    <button
-                        onClick={handleLogout}
-                        style={{
-                            width: '100%',
-                            padding: '12px 20px',
-                            background: 'transparent',
-                            border: 'none',
-                            color: '#ff6b6b',
-                            textAlign: 'left',
-                            cursor: 'pointer',
-                            fontSize: '15px',
-                            marginTop: '20px',
-                            borderTop: '1px solid rgba(255,255,255,0.1)',
-                            paddingTop: '20px'
-                        }}
-                    >
-                        🚪 Logout
-                    </button>
                 </nav>
             </div>
 
@@ -277,43 +409,18 @@ const AdminPage = () => {
                         <h1 style={{ marginBottom: '10px', color: '#1a1a2e' }}>Click Analytics Dashboard</h1>
                         <p style={{ color: '#666', marginBottom: '30px' }}>Complete click tracking statistics for your website</p>
 
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                            gap: '20px',
-                            marginBottom: '30px'
-                        }}>
-                            <div style={{
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                padding: '25px',
-                                borderRadius: '12px',
-                                textAlign: 'center',
-                                color: 'white'
-                            }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+                            <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '25px', borderRadius: '12px', textAlign: 'center', color: 'white' }}>
                                 <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>📈</div>
                                 <h3>Total Clicks</h3>
                                 <p style={{ fontSize: '3rem', fontWeight: 'bold', margin: 0 }}>{stats.total}</p>
                             </div>
-
-                            <div style={{
-                                background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                                padding: '25px',
-                                borderRadius: '12px',
-                                textAlign: 'center',
-                                color: 'white'
-                            }}>
+                            <div style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', padding: '25px', borderRadius: '12px', textAlign: 'center', color: 'white' }}>
                                 <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🔗</div>
                                 <h3>Unique Links</h3>
                                 <p style={{ fontSize: '3rem', fontWeight: 'bold', margin: 0 }}>{totalUniqueLinks}</p>
                             </div>
-
-                            <div style={{
-                                background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-                                padding: '25px',
-                                borderRadius: '12px',
-                                textAlign: 'center',
-                                color: 'white'
-                            }}>
+                            <div style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', padding: '25px', borderRadius: '12px', textAlign: 'center', color: 'white' }}>
                                 <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>⏰</div>
                                 <h3>Last 24 Hours</h3>
                                 <p style={{ fontSize: '3rem', fontWeight: 'bold', margin: 0 }}>{stats.last24Hours}</p>
@@ -321,15 +428,15 @@ const AdminPage = () => {
                         </div>
 
                         <div style={{ background: 'white', borderRadius: '12px', padding: '20px' }}>
-                            <h3>📋 All Clickable Links ({totalUniqueLinks} unique links, {stats.total} total clicks)</h3>
+                            <h3>📋 All Clicks ({stats.total} total)</h3>
                             {Object.keys(groupedClicks).length === 0 ? (
                                 <p style={{ textAlign: 'center', padding: '40px' }}>No clicks recorded yet.</p>
                             ) : (
                                 Object.entries(groupedClicks).map(([title, clicks]) => (
                                     <div key={title} style={{ marginBottom: '15px', border: '1px solid #eee', borderRadius: '8px' }}>
                                         <div onClick={() => toggleCategory(title)} style={{
-                                            display: 'flex', justifyContent: 'space-between',
-                                            padding: '15px', background: '#f8f9fa', cursor: 'pointer'
+                                            padding: '15px', background: '#f8f9fa', cursor: 'pointer',
+                                            display: 'flex', justifyContent: 'space-between'
                                         }}>
                                             <strong>{title}</strong>
                                             <span>({clicks.length} clicks) {expandedCategories[title] ? '▼' : '▶'}</span>
@@ -338,9 +445,7 @@ const AdminPage = () => {
                                             <div style={{ padding: '15px' }}>
                                                 {clicks.map((click, idx) => (
                                                     <div key={click.id} style={{ marginBottom: '10px', padding: '10px', background: '#f9f9f9', borderRadius: '4px' }}>
-                                                        <div>#{idx + 1} - {new Date(click.clicked_at).toLocaleString()}</div>
-                                                        <div>IP: {click.ip_address || 'unknown'}</div>
-                                                        <div>URL: {click.link_url?.substring(0, 60)}...</div>
+                                                        #{idx + 1} - {new Date(click.clicked_at).toLocaleString()} - IP: {click.ip_address || 'unknown'}
                                                     </div>
                                                 ))}
                                             </div>
@@ -352,15 +457,7 @@ const AdminPage = () => {
                     </div>
                 )}
                 {activeTab === 'socialLinks' && <AdminSocialLinks />}
-                {activeTab === 'profile' && (
-                    <div style={{ background: 'white', borderRadius: '12px', padding: '25px' }}>
-                        <h2>👤 Admin Profile Settings</h2>
-                        <p><strong>Username:</strong> {adminUsername}</p>
-                        <button onClick={handleLogout} style={{ padding: '10px 20px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                            Logout
-                        </button>
-                    </div>
-                )}
+                {activeTab === 'profile' && <ProfileSettings username={adminUsername} onLogout={handleLogout} />}
             </div>
         </div>
     );
