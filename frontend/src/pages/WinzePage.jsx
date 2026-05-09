@@ -710,7 +710,7 @@ const WinzePage = () => {
                 <section id="delivery" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.delivery} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-                       <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>What We Deliver</h2>
+                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>What We Deliver</h2>
                         <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Comprehensive lifecycle for technology integration</p>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '35px' }}>
                             {deliveryItems.map((item, i) => (
@@ -752,117 +752,119 @@ const WinzePage = () => {
                         </div>
                     </div>
                 </section>
-{/* Solutions Portfolio Section */}
-<section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
-    <BackgroundImage imageSrc={bgImages.solutions} />
-    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Our Solutions Portfolio</h2>
-        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '10px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Our SOLUTIONS — Practical Action, Bold Ambition, Endless Possibilities</p>
-        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '60px', fontSize: '1rem' }}>Enterprise-grade technology solutions for modern businesses</p>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '30px' }}>
-            {solutions.map((solution, idx) => (
-                <div 
-                    key={idx} 
-                    style={{
-                        background: 'white',
-                        borderRadius: '20px',
-                        overflow: 'hidden',
-                        transition: 'all 0.4s',
-                        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                        cursor: 'pointer'
-                    }}
-                >
-                    <img src={solution.img} alt={solution.title} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-                    <div style={{ padding: '25px', textAlign: 'center' }}>
-                        <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
-                        <h3 style={{ marginBottom: '12px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
-                        <p style={{ color: '#666', lineHeight: '1.5', marginBottom: '20px' }}>{solution.desc}</p>
+
+                {/* Solutions Portfolio Section - RESTORED */}
+                <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+                    <BackgroundImage imageSrc={bgImages.solutions} />
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Our Solutions Portfolio</h2>
+                        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '10px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Our SOLUTIONS — Practical Action, Bold Ambition, Endless Possibilities</p>
+                        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '60px', fontSize: '1rem' }}>Enterprise-grade technology solutions for modern businesses</p>
                         
-                        {/* Learn More Button */}
-                        <div
-                            style={{
-                                display: 'inline-block',
-                                padding: '12px 30px',
-                                backgroundColor: '#667eea',
-                                color: 'white',
-                                borderRadius: '50px',
-                                fontSize: '14px',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                textAlign: 'center',
-                                transition: 'all 0.3s'
-                            }}
-                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#764ba2'}
-                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#667eea'}
-                            onClick={() => {
-                                handleTrackClick(solution.title, 'solution');
-                                openModal(solution);
-                            }}
-                        >
-                            Learn More →
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '30px' }}>
+                            {solutions.map((solution, idx) => (
+                                <div 
+                                    key={idx} 
+                                    style={{
+                                        background: 'white',
+                                        borderRadius: '20px',
+                                        overflow: 'hidden',
+                                        transition: 'all 0.4s',
+                                        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    <img src={solution.img} alt={solution.title} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+                                    <div style={{ padding: '25px', textAlign: 'center' }}>
+                                        <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
+                                        <h3 style={{ marginBottom: '12px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
+                                        <p style={{ color: '#666', lineHeight: '1.5', marginBottom: '20px' }}>{solution.desc}</p>
+                                        
+                                        {/* Learn More Button */}
+                                        <div
+                                            style={{
+                                                display: 'inline-block',
+                                                padding: '12px 30px',
+                                                backgroundColor: '#667eea',
+                                                color: 'white',
+                                                borderRadius: '50px',
+                                                fontSize: '14px',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                textAlign: 'center',
+                                                transition: 'all 0.3s'
+                                            }}
+                                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#764ba2'}
+                                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#667eea'}
+                                            onClick={() => {
+                                                handleTrackClick(solution.title, 'solution');
+                                                openModal(solution);
+                                            }}
+                                        >
+                                            Learn More →
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                </div>
-            ))}
-        </div>
-    </div>
-</section>
+                </section>
+
                 {/* Industries Section */}
-<section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
-    <DarkBackgroundImage imageSrc={bgImages.industries} />
-    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Industries We Serve</h2>
-        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Transforming businesses across sectors with innovative solutions</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '30px' }}>
-            {industries.map((industry, idx) => (
-                <div 
-                    key={idx} 
-                    className="industry-card"
-                    style={{
-                        background: 'white',
-                        borderRadius: '20px',
-                        overflow: 'hidden',
-                        transition: 'all 0.4s',
-                        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                        cursor: 'pointer'
-                    }}
-                >
-                    <img src={industry.img} alt={industry.name} className="industry-card-image" />
-                    <div className="industry-card-content" style={{ padding: '25px', textAlign: 'center' }}>
-                        <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
-                        <h3 style={{ marginBottom: '10px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{industry.name}</h3>
-                        <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.9rem', marginBottom: '20px' }}>{industry.desc}</p>
-                        
-                        {/* LEARN MORE BUTTON - ADDED HERE */}
-                        <div 
-                            style={{
-                                display: 'inline-block',
-                                padding: '12px 30px',
-                                backgroundColor: '#667eea',
-                                color: 'white',
-                                borderRadius: '50px',
-                                fontSize: '14px',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                textAlign: 'center',
-                                transition: 'all 0.3s'
-                            }}
-                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#764ba2'}
-                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#667eea'}
-                            onClick={() => {
-                                handleTrackClick(industry.name, 'industry');
-                                openModal(industry);
-                            }}
-                        >
-                            Learn More →
+                <section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+                    <DarkBackgroundImage imageSrc={bgImages.industries} />
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Industries We Serve</h2>
+                        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Transforming businesses across sectors with innovative solutions</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '30px' }}>
+                            {industries.map((industry, idx) => (
+                                <div 
+                                    key={idx} 
+                                    className="industry-card"
+                                    style={{
+                                        background: 'white',
+                                        borderRadius: '20px',
+                                        overflow: 'hidden',
+                                        transition: 'all 0.4s',
+                                        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    <img src={industry.img} alt={industry.name} className="industry-card-image" />
+                                    <div className="industry-card-content" style={{ padding: '25px', textAlign: 'center' }}>
+                                        <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
+                                        <h3 style={{ marginBottom: '10px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{industry.name}</h3>
+                                        <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.9rem', marginBottom: '20px' }}>{industry.desc}</p>
+                                        
+                                        {/* LEARN MORE BUTTON */}
+                                        <div 
+                                            style={{
+                                                display: 'inline-block',
+                                                padding: '12px 30px',
+                                                backgroundColor: '#667eea',
+                                                color: 'white',
+                                                borderRadius: '50px',
+                                                fontSize: '14px',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                textAlign: 'center',
+                                                transition: 'all 0.3s'
+                                            }}
+                                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#764ba2'}
+                                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#667eea'}
+                                            onClick={() => {
+                                                handleTrackClick(industry.name, 'industry');
+                                                openModal(industry);
+                                            }}
+                                        >
+                                            Learn More →
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                </div>
-            ))}
-        </div>
-    </div>
-</section>
+                </section>
 
                 {/* Our Trusted Partners Section */}
                 <section ref={clientsRef} id="clients" style={{
