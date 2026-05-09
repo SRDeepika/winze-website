@@ -258,7 +258,7 @@ const WinzePage = () => {
         { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients, and 16+ years of excellence.", detailedDesc: "Our track record speaks for itself. With over 100 successful deployments and 20+ satisfied enterprise clients across 16+ years, we have the expertise and experience to deliver results." }
     ];
 
-    // Modal Component
+    // Modal Component - WITH Request Quote that doesn't close the modal
     const CardModal = () => {
         if (!modalData) return null;
         return (
@@ -317,15 +317,23 @@ const WinzePage = () => {
                             cursor: 'pointer',
                             fontSize: '14px'
                         }}>Close</button>
-                        <button onClick={() => setShowQuoteModal(true)} style={{
-                            padding: '10px 30px',
-                            background: 'transparent',
-                            color: '#667eea',
-                            border: '2px solid #667eea',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontSize: '14px'
-                        }}>Request a Quote →</button>
+                        <button 
+                            onClick={() => {
+                                // Don't close modal - just open quote form alongside
+                                setShowQuoteModal(true);
+                            }} 
+                            style={{
+                                padding: '10px 30px',
+                                background: 'transparent',
+                                color: '#667eea',
+                                border: '2px solid #667eea',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontSize: '14px'
+                            }}
+                        >
+                            Request a Quote →
+                        </button>
                     </div>
                 </div>
             </div>
@@ -447,6 +455,7 @@ const WinzePage = () => {
                 .solution-card-content, .industry-card-content { padding: 25px; text-align: center; }
                 .solution-card:hover .solution-card-content, .industry-card:hover .industry-card-content { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
                 .solution-card:hover h3, .solution-card:hover p, .solution-card:hover .icon, .industry-card:hover h3, .industry-card:hover p, .industry-card:hover .icon { color: white; }
+                .solution-card:hover .learn-more-btn, .industry-card:hover .learn-more-btn { background: white; color: #667eea; border-color: white; }
                 .client-logo-item {
                     background: white; padding: 20px; border-radius: 12px; text-align: center; cursor: pointer;
                     transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.08); min-width: 150px;
@@ -753,7 +762,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Solutions Portfolio Section - RESTORED */}
+                {/* Solutions Portfolio Section - WITH HOVER EFFECT */}
                 <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.solutions} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -765,44 +774,24 @@ const WinzePage = () => {
                             {solutions.map((solution, idx) => (
                                 <div 
                                     key={idx} 
-                                    style={{
-                                        background: 'white',
-                                        borderRadius: '20px',
-                                        overflow: 'hidden',
-                                        transition: 'all 0.4s',
-                                        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                                        cursor: 'pointer'
-                                    }}
+                                    className="solution-card"
+                                    onMouseEnter={() => setHoveredCard(`sol-${idx}`)} 
+                                    onMouseLeave={() => setHoveredCard(null)} 
                                 >
-                                    <img src={solution.img} alt={solution.title} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-                                    <div style={{ padding: '25px', textAlign: 'center' }}>
-                                        <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
+                                    <img src={solution.img} alt={solution.title} className="solution-card-image" />
+                                    <div className="solution-card-content">
+                                        <FontAwesomeIcon icon={solution.icon} className="icon" style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
                                         <h3 style={{ marginBottom: '12px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
-                                        <p style={{ color: '#666', lineHeight: '1.5', marginBottom: '20px' }}>{solution.desc}</p>
-                                        
-                                        {/* Learn More Button */}
-                                        <div
-                                            style={{
-                                                display: 'inline-block',
-                                                padding: '12px 30px',
-                                                backgroundColor: '#667eea',
-                                                color: 'white',
-                                                borderRadius: '50px',
-                                                fontSize: '14px',
-                                                fontWeight: '600',
-                                                cursor: 'pointer',
-                                                textAlign: 'center',
-                                                transition: 'all 0.3s'
-                                            }}
-                                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#764ba2'}
-                                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#667eea'}
+                                        <p style={{ color: '#666', lineHeight: '1.5' }}>{solution.desc}</p>
+                                        <button 
+                                            className="learn-more-btn"
                                             onClick={() => {
                                                 handleTrackClick(solution.title, 'solution');
                                                 openModal(solution);
                                             }}
                                         >
                                             Learn More →
-                                        </div>
+                                        </button>
                                     </div>
                                 </div>
                             ))}
@@ -821,44 +810,23 @@ const WinzePage = () => {
                                 <div 
                                     key={idx} 
                                     className="industry-card"
-                                    style={{
-                                        background: 'white',
-                                        borderRadius: '20px',
-                                        overflow: 'hidden',
-                                        transition: 'all 0.4s',
-                                        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                                        cursor: 'pointer'
-                                    }}
+                                    onMouseEnter={() => setHoveredCard(`ind-${idx}`)} 
+                                    onMouseLeave={() => setHoveredCard(null)} 
                                 >
                                     <img src={industry.img} alt={industry.name} className="industry-card-image" />
-                                    <div className="industry-card-content" style={{ padding: '25px', textAlign: 'center' }}>
-                                        <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
+                                    <div className="industry-card-content">
+                                        <FontAwesomeIcon icon={industry.icon} className="icon" style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
                                         <h3 style={{ marginBottom: '10px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{industry.name}</h3>
-                                        <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.9rem', marginBottom: '20px' }}>{industry.desc}</p>
-                                        
-                                        {/* LEARN MORE BUTTON */}
-                                        <div 
-                                            style={{
-                                                display: 'inline-block',
-                                                padding: '12px 30px',
-                                                backgroundColor: '#667eea',
-                                                color: 'white',
-                                                borderRadius: '50px',
-                                                fontSize: '14px',
-                                                fontWeight: '600',
-                                                cursor: 'pointer',
-                                                textAlign: 'center',
-                                                transition: 'all 0.3s'
-                                            }}
-                                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#764ba2'}
-                                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#667eea'}
+                                        <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.9rem' }}>{industry.desc}</p>
+                                        <button 
+                                            className="learn-more-btn"
                                             onClick={() => {
                                                 handleTrackClick(industry.name, 'industry');
                                                 openModal(industry);
                                             }}
                                         >
                                             Learn More →
-                                        </div>
+                                        </button>
                                     </div>
                                 </div>
                             ))}
@@ -922,23 +890,9 @@ const WinzePage = () => {
                                 >
                                     <FontAwesomeIcon icon={item.icon} className="icon" style={{ fontSize: '50px', marginBottom: '20px', color: hoveredCard === `work-${idx}` ? 'white' : '#667eea' }} />
                                     <h3 style={{ marginBottom: '15px', color: hoveredCard === `work-${idx}` ? 'white' : '#1a1a2e', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
-                                    <p style={{ color: hoveredCard === `work-${idx}` ? 'rgba(255,255,255,0.9)' : '#666', lineHeight: '1.5', marginBottom: '15px' }}>{item.desc}</p>
+                                    <p style={{ color: hoveredCard === `work-${idx}` ? 'rgba(255,255,255,0.9)' : '#666', lineHeight: '1.5' }}>{item.desc}</p>
                                     <button 
-                                        style={{
-                                            display: 'inline-block',
-                                            marginTop: '15px',
-                                            padding: '10px 25px',
-                                            backgroundColor: '#667eea',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '30px',
-                                            cursor: 'pointer',
-                                            fontWeight: '600',
-                                            fontSize: '14px',
-                                            transition: 'all 0.3s'
-                                        }}
-                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
-                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
+                                        className="learn-more-btn"
                                         onClick={() => {
                                             handleTrackClick(item.title, 'workwith');
                                             openModal(item);
