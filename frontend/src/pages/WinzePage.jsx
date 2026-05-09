@@ -761,57 +761,104 @@ const WinzePage = () => {
                 </section>
 
                 {/* Solutions Portfolio Section */}
-                <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
-                    <BackgroundImage imageSrc={bgImages.solutions} />
-                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Our Solutions Portfolio</h2>
-                        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '10px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Our SOLUTIONS — Practical Action, Bold Ambition, Endless Possibilities</p>
-                        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '60px', fontSize: '1rem' }}>Enterprise-grade technology solutions for modern businesses</p>
+<section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+    <BackgroundImage imageSrc={bgImages.solutions} />
+    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Our Solutions Portfolio</h2>
+        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '10px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Our SOLUTIONS — Practical Action, Bold Ambition, Endless Possibilities</p>
+        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '60px', fontSize: '1rem' }}>Enterprise-grade technology solutions for modern businesses</p>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '30px' }}>
+            {solutions.map((solution, idx) => (
+                <div 
+                    key={idx} 
+                    className="solution-card"
+                    style={{
+                        background: 'white',
+                        borderRadius: '20px',
+                        overflow: 'hidden',
+                        transition: 'all 0.4s ease-in-out',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                        cursor: 'pointer',
+                        transform: hoveredCard === `sol-${idx}` ? 'translateY(-10px)' : 'translateY(0)',
+                        boxShadow: hoveredCard === `sol-${idx}` ? '0 20px 40px rgba(0,0,0,0.15)' : '0 10px 30px rgba(0,0,0,0.08)'
+                    }}
+                    onMouseEnter={() => setHoveredCard(`sol-${idx}`)} 
+                    onMouseLeave={() => setHoveredCard(null)} 
+                >
+                    <img 
+                        src={solution.img} 
+                        alt={solution.title} 
+                        style={{ 
+                            width: '100%', 
+                            height: '200px', 
+                            objectFit: 'cover',
+                            transition: 'all 0.4s ease-in-out'
+                        }} 
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://placehold.co/600x400/667eea/white?text=' + encodeURIComponent(solution.title);
+                        }}
+                    />
+                    <div style={{ 
+                        padding: '25px', 
+                        textAlign: 'center',
+                        transition: 'all 0.4s ease-in-out',
+                        background: hoveredCard === `sol-${idx}` ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'white'
+                    }}>
+                        <FontAwesomeIcon 
+                            icon={solution.icon} 
+                            style={{ 
+                                fontSize: '40px', 
+                                marginBottom: '15px', 
+                                color: hoveredCard === `sol-${idx}` ? 'white' : '#667eea',
+                                transition: 'color 0.3s'
+                            }} 
+                        />
+                        <h3 style={{ 
+                            marginBottom: '12px', 
+                            color: hoveredCard === `sol-${idx}` ? 'white' : '#1a1a2e', 
+                            fontSize: '1.2rem', 
+                            fontWeight: '700',
+                            transition: 'color 0.3s'
+                        }}>{solution.title}</h3>
+                        <p style={{ 
+                            color: hoveredCard === `sol-${idx}` ? 'rgba(255,255,255,0.9)' : '#666', 
+                            lineHeight: '1.5', 
+                            marginBottom: '20px',
+                            transition: 'color 0.3s'
+                        }}>{solution.desc}</p>
                         
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '30px' }}>
-                            {solutions.map((solution, idx) => (
-                                <div 
-                                    key={idx} 
-                                    className="solution-card"
-                                    onMouseEnter={() => setHoveredCard(`sol-${idx}`)} 
-                                    onMouseLeave={() => setHoveredCard(null)} 
-                                >
-                                    <img src={solution.img} alt={solution.title} className="solution-card-image" />
-                                    <div className="solution-card-content">
-                                        <FontAwesomeIcon icon={solution.icon} className="icon" style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
-                                        <h3 style={{ marginBottom: '12px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
-                                        <p style={{ color: '#666', lineHeight: '1.5', marginBottom: '20px' }}>{solution.desc}</p>
-                                        {/* Learning More Button with INLINE STYLES */}
-                                        <div
-                                            style={{
-                                                display: 'inline-block',
-                                                padding: '12px 30px',
-                                                backgroundColor: '#667eea',
-                                                color: 'white',
-                                                borderRadius: '50px',
-                                                fontSize: '14px',
-                                                fontWeight: '600',
-                                                cursor: 'pointer',
-                                                textAlign: 'center',
-                                                transition: 'all 0.3s',
-                                                marginTop: '10px'
-                                            }}
-                                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#764ba2'}
-                                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#667eea'}
-                                            onClick={() => {
-                                                handleTrackClick(solution.title, 'solution');
-                                                openModal(solution);
-                                            }}
-                                        >
-                                            Learn More →
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                        {/* Learn More Button */}
+                        <div
+                            style={{
+                                display: 'inline-block',
+                                padding: '12px 30px',
+                                backgroundColor: hoveredCard === `sol-${idx}` ? 'white' : '#667eea',
+                                color: hoveredCard === `sol-${idx}` ? '#667eea' : 'white',
+                                borderRadius: '50px',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                textAlign: 'center',
+                                transition: 'all 0.3s',
+                                marginTop: '10px'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateX(5px)'}
+                            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateX(0)'}
+                            onClick={() => {
+                                handleTrackClick(solution.title, 'solution');
+                                openModal(solution);
+                            }}
+                        >
+                            Learn More →
                         </div>
                     </div>
-                </section>
-
+                </div>
+            ))}
+        </div>
+    </div>
+</section>
                 {/* Industries Section */}
                 <section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.industries} />
