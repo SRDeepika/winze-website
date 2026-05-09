@@ -187,11 +187,12 @@ const WinzePage = () => {
     };
 
     const handleInputChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
+    const { name, value } = e.target;
+    setFormData(prev => ({
+        ...prev,
+        [name]: value
+    }));
+};
 
     const handleSubmitQuote = async (e) => {
         e.preventDefault();
@@ -1060,30 +1061,181 @@ const WinzePage = () => {
                     </div>
                 )}
 
-                {/* Quote Modal */}
-                {showQuoteModal && (
-                    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(10px)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowQuoteModal(false)}>
-                        <div style={{ background: 'linear-gradient(135deg, #1a1a3e 0%, #2d2d5e 100%)', borderRadius: '20px', padding: '45px', maxWidth: '550px', width: '100%', position: 'relative', border: '1px solid rgba(255,255,255,0.2)' }} onClick={(e) => e.stopPropagation()}>
-                            <button onClick={() => setShowQuoteModal(false)} style={{ position: 'absolute', top: '20px', right: '25px', background: 'rgba(255,255,255,0.1)', border: 'none', fontSize: '24px', cursor: 'pointer', color: 'white', width: '35px', height: '35px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
-                            <h2 style={{ color: 'white', marginBottom: '25px', textAlign: 'center' }}>✨ Request a Quote</h2>
-                            <p style={{ color: '#ccc', textAlign: 'center', marginBottom: '30px', fontSize: '14px' }}>Fill out the form and our team will contact you within 24 hours</p>
-                            <form onSubmit={handleSubmitQuote}>
-                                <input type="text" name="name" placeholder="Full Name" required onChange={handleInputChange} style={{ width: '100%', padding: '14px', marginBottom: '15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px' }} />
-                                <input type="email" name="email" placeholder="Email Address" required onChange={handleInputChange} style={{ width: '100%', padding: '14px', marginBottom: '15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px' }} />
-                                <input type="tel" name="phone" placeholder="Phone Number" required onChange={handleInputChange} style={{ width: '100%', padding: '14px', marginBottom: '15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px' }} />
-                                <select name="service" onChange={handleInputChange} style={{ width: '100%', padding: '14px', marginBottom: '15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px' }}>
-                                    <option value="">Select a Service</option>
-                                    {solutions.map(s => <option key={s.title}>{s.title}</option>)}
-                                </select>
-                                <textarea name="message" placeholder="Tell us about your requirements..." rows="4" onChange={handleInputChange} style={{ width: '100%', padding: '14px', marginBottom: '20px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px' }}></textarea>
-                                <button type="submit" style={{ width: '100%', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', padding: '14px', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.3s' }}
-                                onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'}
-                                onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}>Submit Request →</button>
-                            </form>
-                        </div>
-                    </div>
-                )}
-
+                {/* Quote Modal - FIXED DROPDOWN VISIBILITY */}
+{showQuoteModal && (
+    <div style={{ 
+        position: 'fixed', 
+        top: 0, 
+        left: 0, 
+        right: 0, 
+        bottom: 0, 
+        background: 'rgba(0,0,0,0.95)', 
+        backdropFilter: 'blur(10px)', 
+        zIndex: 2000, 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        padding: '20px' 
+    }} onClick={() => setShowQuoteModal(false)}>
+        <div style={{ 
+            background: 'linear-gradient(135deg, #1a1a3e 0%, #2d2d5e 100%)', 
+            borderRadius: '20px', 
+            padding: '45px', 
+            maxWidth: '550px', 
+            width: '100%', 
+            position: 'relative', 
+            border: '1px solid rgba(255,255,255,0.2)',
+            maxHeight: '85vh',
+            overflow: 'auto'
+        }} onClick={(e) => e.stopPropagation()}>
+            <button 
+                onClick={() => setShowQuoteModal(false)} 
+                style={{ 
+                    position: 'absolute', 
+                    top: '20px', 
+                    right: '25px', 
+                    background: 'rgba(255,255,255,0.1)', 
+                    border: 'none', 
+                    fontSize: '24px', 
+                    cursor: 'pointer', 
+                    color: 'white', 
+                    width: '35px', 
+                    height: '35px', 
+                    borderRadius: '50%', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center' 
+                }}
+            >×</button>
+            <h2 style={{ color: 'white', marginBottom: '25px', textAlign: 'center' }}>✨ Request a Quote</h2>
+            <p style={{ color: '#ccc', textAlign: 'center', marginBottom: '30px', fontSize: '14px' }}>Fill out the form and our team will contact you within 24 hours</p>
+            
+            <form onSubmit={handleSubmitQuote}>
+                <input 
+                    type="text" 
+                    name="name" 
+                    placeholder="Full Name" 
+                    required 
+                    onChange={handleInputChange} 
+                    style={{ 
+                        width: '100%', 
+                        padding: '14px', 
+                        marginBottom: '15px', 
+                        borderRadius: '12px', 
+                        border: '1px solid rgba(255,255,255,0.2)', 
+                        background: 'rgba(255,255,255,0.1)', 
+                        color: 'white', 
+                        fontSize: '15px',
+                        boxSizing: 'border-box'
+                    }} 
+                />
+                <input 
+                    type="email" 
+                    name="email" 
+                    placeholder="Email Address" 
+                    required 
+                    onChange={handleInputChange} 
+                    style={{ 
+                        width: '100%', 
+                        padding: '14px', 
+                        marginBottom: '15px', 
+                        borderRadius: '12px', 
+                        border: '1px solid rgba(255,255,255,0.2)', 
+                        background: 'rgba(255,255,255,0.1)', 
+                        color: 'white', 
+                        fontSize: '15px',
+                        boxSizing: 'border-box'
+                    }} 
+                />
+                <input 
+                    type="tel" 
+                    name="phone" 
+                    placeholder="Phone Number" 
+                    required 
+                    onChange={handleInputChange} 
+                    style={{ 
+                        width: '100%', 
+                        padding: '14px', 
+                        marginBottom: '15px', 
+                        borderRadius: '12px', 
+                        border: '1px solid rgba(255,255,255,0.2)', 
+                        background: 'rgba(255,255,255,0.1)', 
+                        color: 'white', 
+                        fontSize: '15px',
+                        boxSizing: 'border-box'
+                    }} 
+                />
+                
+                {/* DROPDOWN - Made fully visible */}
+                <div style={{ position: 'relative', marginBottom: '15px' }}>
+                    <select 
+                        name="service" 
+                        required
+                        value={formData.service}
+                        onChange={handleInputChange} 
+                        style={{ 
+                            width: '100%', 
+                            padding: '14px', 
+                            borderRadius: '12px', 
+                            border: '1px solid rgba(255,255,255,0.2)', 
+                            background: 'rgba(255,255,255,0.1)', 
+                            color: 'white', 
+                            fontSize: '15px',
+                            boxSizing: 'border-box',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        <option value="" style={{ background: '#1a1a3e', color: 'white' }}>Select a Service</option>
+                        {solutions.map((s, idx) => (
+                            <option key={idx} value={s.title} style={{ background: '#1a1a3e', color: 'white', padding: '10px' }}>
+                                {s.title}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                
+                <textarea 
+                    name="message" 
+                    placeholder="Tell us about your requirements..." 
+                    rows="4" 
+                    onChange={handleInputChange} 
+                    style={{ 
+                        width: '100%', 
+                        padding: '14px', 
+                        marginBottom: '20px', 
+                        borderRadius: '12px', 
+                        border: '1px solid rgba(255,255,255,0.2)', 
+                        background: 'rgba(255,255,255,0.1)', 
+                        color: 'white', 
+                        fontSize: '15px',
+                        boxSizing: 'border-box',
+                        resize: 'vertical'
+                    }} 
+                ></textarea>
+                
+                <button 
+                    type="submit" 
+                    style={{ 
+                        width: '100%', 
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
+                        color: 'white', 
+                        padding: '14px', 
+                        border: 'none', 
+                        borderRadius: '12px', 
+                        fontSize: '16px', 
+                        fontWeight: '600', 
+                        cursor: 'pointer', 
+                        transition: 'all 0.3s' 
+                    }}
+                    onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'}
+                    onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                >
+                    Submit Request →
+                </button>
+            </form>
+        </div>
+    </div>
+)}
                 {/* Card Modal */}
                 <CardModal />
 
