@@ -61,7 +61,7 @@ const AdminLogin = ({ onLogin }) => {
     );
 };
 
-// Profile Settings Component - FULL VERSION
+// Profile Settings Component - NO PASSWORD LENGTH LIMIT
 const ProfileSettings = ({ username, onLogout }) => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newUsername, setNewUsername] = useState('');
@@ -105,10 +105,7 @@ const ProfileSettings = ({ username, onLogout }) => {
             setMessage({ text: 'New passwords do not match', type: 'error' });
             return;
         }
-        if (newPassword.length < 6) {
-            setMessage({ text: 'Password must be at least 6 characters', type: 'error' });
-            return;
-        }
+        // REMOVED: Password length check - admin can use any password now
         setLoading(true);
         try {
             const config = getAuthConfig();
@@ -183,7 +180,7 @@ const ProfileSettings = ({ username, onLogout }) => {
                 </form>
             </div>
 
-            {/* Change Password Section */}
+            {/* Change Password Section - NO LENGTH LIMIT */}
             <div style={{ padding: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
                 <h3 style={{ marginBottom: '15px', color: '#1a1a2e' }}>Change Password</h3>
                 <form onSubmit={handleUpdatePassword} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
@@ -197,7 +194,7 @@ const ProfileSettings = ({ username, onLogout }) => {
                     />
                     <input
                         type="password"
-                        placeholder="New Password (min 6 characters)"
+                        placeholder="New Password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         style={{ padding: '12px', borderRadius: '6px', border: '1px solid #ddd' }}
