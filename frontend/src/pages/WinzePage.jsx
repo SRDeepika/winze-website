@@ -258,7 +258,7 @@ const WinzePage = () => {
         { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients, and 16+ years of excellence.", detailedDesc: "Our track record speaks for itself. With over 100 successful deployments and 20+ satisfied enterprise clients across 16+ years, we have the expertise and experience to deliver results." }
     ];
 
-    // Modal Component - WITH Request Quote that doesn't close the modal
+    // Modal Component
     const CardModal = () => {
         if (!modalData) return null;
         return (
@@ -319,7 +319,6 @@ const WinzePage = () => {
                         }}>Close</button>
                         <button 
                             onClick={() => {
-                                // Don't close modal - just open quote form alongside
                                 setShowQuoteModal(true);
                             }} 
                             style={{
@@ -455,7 +454,6 @@ const WinzePage = () => {
                 .solution-card-content, .industry-card-content { padding: 25px; text-align: center; }
                 .solution-card:hover .solution-card-content, .industry-card:hover .industry-card-content { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
                 .solution-card:hover h3, .solution-card:hover p, .solution-card:hover .icon, .industry-card:hover h3, .industry-card:hover p, .industry-card:hover .icon { color: white; }
-                .solution-card:hover .learn-more-btn, .industry-card:hover .learn-more-btn { background: white; color: #667eea; border-color: white; }
                 .client-logo-item {
                     background: white; padding: 20px; border-radius: 12px; text-align: center; cursor: pointer;
                     transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.08); min-width: 150px;
@@ -762,7 +760,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Solutions Portfolio Section - WITH HOVER EFFECT */}
+                {/* Solutions Portfolio Section */}
                 <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.solutions} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -782,16 +780,31 @@ const WinzePage = () => {
                                     <div className="solution-card-content">
                                         <FontAwesomeIcon icon={solution.icon} className="icon" style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
                                         <h3 style={{ marginBottom: '12px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
-                                        <p style={{ color: '#666', lineHeight: '1.5' }}>{solution.desc}</p>
-                                        <button 
-                                            className="learn-more-btn"
+                                        <p style={{ color: '#666', lineHeight: '1.5', marginBottom: '20px' }}>{solution.desc}</p>
+                                        {/* Learning More Button with INLINE STYLES */}
+                                        <div
+                                            style={{
+                                                display: 'inline-block',
+                                                padding: '12px 30px',
+                                                backgroundColor: '#667eea',
+                                                color: 'white',
+                                                borderRadius: '50px',
+                                                fontSize: '14px',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                textAlign: 'center',
+                                                transition: 'all 0.3s',
+                                                marginTop: '10px'
+                                            }}
+                                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#764ba2'}
+                                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#667eea'}
                                             onClick={() => {
                                                 handleTrackClick(solution.title, 'solution');
                                                 openModal(solution);
                                             }}
                                         >
                                             Learn More →
-                                        </button>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -817,16 +830,31 @@ const WinzePage = () => {
                                     <div className="industry-card-content">
                                         <FontAwesomeIcon icon={industry.icon} className="icon" style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
                                         <h3 style={{ marginBottom: '10px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{industry.name}</h3>
-                                        <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.9rem' }}>{industry.desc}</p>
-                                        <button 
-                                            className="learn-more-btn"
+                                        <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.9rem', marginBottom: '20px' }}>{industry.desc}</p>
+                                        {/* Learning More Button with INLINE STYLES */}
+                                        <div
+                                            style={{
+                                                display: 'inline-block',
+                                                padding: '12px 30px',
+                                                backgroundColor: '#667eea',
+                                                color: 'white',
+                                                borderRadius: '50px',
+                                                fontSize: '14px',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                textAlign: 'center',
+                                                transition: 'all 0.3s',
+                                                marginTop: '10px'
+                                            }}
+                                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#764ba2'}
+                                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#667eea'}
                                             onClick={() => {
                                                 handleTrackClick(industry.name, 'industry');
                                                 openModal(industry);
                                             }}
                                         >
                                             Learn More →
-                                        </button>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -890,16 +918,31 @@ const WinzePage = () => {
                                 >
                                     <FontAwesomeIcon icon={item.icon} className="icon" style={{ fontSize: '50px', marginBottom: '20px', color: hoveredCard === `work-${idx}` ? 'white' : '#667eea' }} />
                                     <h3 style={{ marginBottom: '15px', color: hoveredCard === `work-${idx}` ? 'white' : '#1a1a2e', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
-                                    <p style={{ color: hoveredCard === `work-${idx}` ? 'rgba(255,255,255,0.9)' : '#666', lineHeight: '1.5' }}>{item.desc}</p>
-                                    <button 
-                                        className="learn-more-btn"
+                                    <p style={{ color: hoveredCard === `work-${idx}` ? 'rgba(255,255,255,0.9)' : '#666', lineHeight: '1.5', marginBottom: '20px' }}>{item.desc}</p>
+                                    {/* Learning More Button with INLINE STYLES */}
+                                    <div
+                                        style={{
+                                            display: 'inline-block',
+                                            padding: '12px 30px',
+                                            backgroundColor: '#667eea',
+                                            color: 'white',
+                                            borderRadius: '50px',
+                                            fontSize: '14px',
+                                            fontWeight: '600',
+                                            cursor: 'pointer',
+                                            textAlign: 'center',
+                                            transition: 'all 0.3s',
+                                            marginTop: '10px'
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#764ba2'}
+                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#667eea'}
                                         onClick={() => {
                                             handleTrackClick(item.title, 'workwith');
                                             openModal(item);
                                         }}
                                     >
                                         Learn More →
-                                    </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
