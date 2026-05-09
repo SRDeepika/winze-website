@@ -1,11 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import WinzePage from './pages/WinzePage';
+import TestPage from './pages/TestPage';  // Use TestPage
 import AdminPage from './pages/AdminPage';
-// Remove this line - no separate login route needed
-// import AdminLogin from './pages/AdminLogin';
-// Remove Toaster - no popups
-// import { Toaster } from 'react-hot-toast';
+// import WinzePage from './pages/WinzePage';  // Comment out
 
 function App() {
     return (
@@ -15,11 +12,9 @@ function App() {
                 v7_relativeSplatPath: true
             }}
         >
-            {/* Remove Toaster component */}
             <Routes>
-                <Route path="/" element={<WinzePage />} />
+                <Route path="/" element={<TestPage />} />  {/* Use TestPage */}
                 <Route path="/admin" element={<AdminPage />} />
-                {/* Remove the /admin-login route */}
             </Routes>
         </Router>
     );
