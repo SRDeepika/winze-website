@@ -1,31 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { getBlogs } from '../services/api';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar, faUser, faClock, faEye } from '@fortawesome/free-solid-svg-icons';
 
 const BlogsSection = () => {
-    const [blogs, setBlogs] = useState([]);
     const [selectedBlog, setSelectedBlog] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        loadBlogs();
-    }, []);
-
-    const loadBlogs = async () => {
-        try {
-            const response = await getBlogs();
-            if (response.success) {
-                setBlogs(response.blogs.slice(0, 6));
-            }
-        } catch (error) {
-            console.error('Error loading blogs:', error);
-        } finally {
-            setLoading(false);
+    
+    // Hardcoded blog data
+    const blogs = [
+        {
+            id: 1,
+            title: "The Future of AI in Enterprise Security",
+            excerpt: "Discover how artificial intelligence is revolutionizing enterprise security with real-time threat detection and predictive analytics.",
+            category: "AI & Security",
+            author: "Arun N",
+            author_role: "CEO",
+            read_time: 5,
+            views: 150,
+            created_at: new Date().toISOString(),
+            image: "",
+            content: "<h2>Introduction</h2><p>AI is transforming enterprise security with real-time threat detection, predictive analytics, and automated response systems.</p><h2>Key Benefits</h2><ul><li>99.5% threat detection accuracy</li><li>Real-time alerts and response</li><li>Reduced false positives</li><li>24/7 automated monitoring</li></ul>"
+        },
+        {
+            id: 2,
+            title: "Top 5 Unified Communication Trends for 2024",
+            excerpt: "Stay ahead of the curve with the latest trends in unified communications that are shaping how businesses collaborate.",
+            category: "Communications",
+            author: "Arun N",
+            author_role: "CEO",
+            read_time: 4,
+            views: 98,
+            created_at: new Date().toISOString(),
+            image: "",
+            content: "<h2>1. AI-Powered Communication</h2><p>AI assistants help with meeting scheduling, transcription, and follow-ups.</p><h2>2. Video-First Collaboration</h2><p>Organizations are prioritizing video quality and features for remote collaboration.</p><h2>3. Unified Workspaces</h2><p>Integration of chat, video, and document collaboration in one platform.</p>"
+        },
+        {
+            id: 3,
+            title: "Cybersecurity Best Practices for Remote Work",
+            excerpt: "Essential security measures every organization should implement for their remote workforce.",
+            category: "Cyber Security",
+            author: "Arun N",
+            author_role: "CEO",
+            read_time: 6,
+            views: 210,
+            created_at: new Date().toISOString(),
+            image: "",
+            content: "<h2>Remote Work Security</h2><p>As remote work becomes permanent, organizations need robust security measures including VPNs, MFA, and endpoint protection.</p>"
         }
-    };
-
-    if (loading || blogs.length === 0) return null;
+    ];
 
     return (
         <section style={{
@@ -57,19 +78,12 @@ const BlogsSection = () => {
                             e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
                         }}
                         onClick={() => setSelectedBlog(blog)}>
-                            {blog.image && (
-                                <img src={blog.image} alt={blog.title} style={{
-                                    width: '100%',
-                                    height: '220px',
-                                    objectFit: 'cover'
-                                }} />
-                            )}
                             <div style={{ padding: '25px' }}>
                                 <div style={{ display: 'flex', gap: '15px', marginBottom: '15px', fontSize: '13px', color: '#888' }}>
                                     <span><FontAwesomeIcon icon={faCalendar} /> {new Date(blog.created_at).toLocaleDateString()}</span>
-                                    <span><FontAwesomeIcon icon={faUser} /> {blog.author || 'Winze Tech'}</span>
-                                    <span><FontAwesomeIcon icon={faClock} /> {blog.read_time || 5} min read</span>
-                                    <span><FontAwesomeIcon icon={faEye} /> {blog.views || 0} views</span>
+                                    <span><FontAwesomeIcon icon={faUser} /> {blog.author}</span>
+                                    <span><FontAwesomeIcon icon={faClock} /> {blog.read_time} min read</span>
+                                    <span><FontAwesomeIcon icon={faEye} /> {blog.views} views</span>
                                 </div>
                                 <h3 style={{ fontSize: '1.3rem', color: '#1a1a2e', marginBottom: '12px' }}>{blog.title}</h3>
                                 <p style={{ color: '#666', lineHeight: '1.6', marginBottom: '20px' }}>{blog.excerpt}</p>
@@ -126,15 +140,6 @@ const BlogsSection = () => {
                         }}>×</button>
                         
                         <div style={{ padding: '40px' }}>
-                            {selectedBlog.image && (
-                                <img src={selectedBlog.image} alt={selectedBlog.title} style={{
-                                    width: '100%',
-                                    height: '400px',
-                                    objectFit: 'cover',
-                                    borderRadius: '15px',
-                                    marginBottom: '30px'
-                                }} />
-                            )}
                             <h1 style={{ fontSize: '2.5rem', color: '#1a1a2e', marginBottom: '20px' }}>{selectedBlog.title}</h1>
                             <div dangerouslySetInnerHTML={{ __html: selectedBlog.content }} />
                         </div>
