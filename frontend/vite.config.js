@@ -5,5 +5,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
+  },
+  build: {
+    outDir: 'dist',
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
   }
 })
