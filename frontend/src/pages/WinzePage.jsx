@@ -46,7 +46,6 @@ const solutionImages = {
     cyberSecurity: "/images/cyber-security.jpg",
     cctv: "/images/cctv-services.jpg",
     cabling: "/images/cabling-services.jpg",
-    // rentPbx removed
 };
 
 // Industry Images for Cards
@@ -59,168 +58,39 @@ const industryImages = {
     logistics: "/images/logistics.jpg"
 };
 
-// Company Logos (Updated)
-const clientLogos = [
+// Partner Logos (Updated - removed Toshiba, Infosys, HCL, Tata)
+const partnerLogos = [
     { name: "Netrack", url: "/images/netrack.png" },
     { name: "HP", url: "/images/hp.png" },
     { name: "AWS", url: "/images/aws.png" },
     { name: "TP-Link", url: "/images/tp-link.png" },
-    // Cisco removed
     { name: "Sophos", url: "/images/sophos.png" },
     { name: "MS Azure", url: "/images/ms-azure.png" },
     { name: "Check Point", url: "/images/checkpoint.png" },
     { name: "Microsoft 365", url: "/images/microsoft-365.png" },
-    // Narayana Health removed from here - moved to clients section
     { name: "Matrix", url: "/images/matrix.png" },
     { name: "CP Plus", url: "/images/cp-plus.png" },
-    { name: "Dell", url: "/images/dell.png" },
-    // New clients (add your images to the images folder)
-    { name: "Toshiba", url: "/images/toshiba.png" },
-    { name: "HCL", url: "/images/hcl.png" },
-    { name: "Infosys", url: "/images/infosys.png" },
-    { name: "TATA", url: "/images/tata.png" }
+    { name: "Dell", url: "/images/dell.png" }
 ];
 
-// New clients section logos (displayed separately)
-const companyClients = [
-    { name: "Narayana Health", url: "/images/narayana-health.png" },
+// Client Logos for Clients section (with scrolling effect)
+const clientLogos = [
     { name: "Toshiba", url: "/images/toshiba.png" },
-    { name: "HCL Technologies", url: "/images/hcl.png" },
-    { name: "Infosys", url: "/images/infosys.png" },
-    { name: "TATA Group", url: "/images/tata.png" },
-    { name: "Reliance", url: "/images/reliance.png" },
-    { name: "Adani Group", url: "/images/adani.png" },
-    { name: "Mahindra", url: "/images/mahindra.png" }
+    { name: "Toyota", url: "/images/toyota.png" },
+    { name: "Starpacks", url: "/images/starpacks.png" },
+    { name: "MAF", url: "/images/maf.png" },
+    { name: "Athma", url: "/images/athma.png" },
+    { name: "RGP", url: "/images/rgp.png" },
+    { name: "Utthunga", url: "/images/utthunga.png" },
+    { name: "TRC", url: "/images/trc.png" },
+    { name: "Unilateral", url: "/images/unilateral.png" },
+    { name: "Sun Bright", url: "/images/sun-bright.png" },
+    { name: "CKPC", url: "/images/ckpc.png" },
+    { name: "Kyyba", url: "/images/kyyba.png" },
+    { name: "Skidata", url: "/images/skidata.png" },
+    { name: "Satrac", url: "/images/satrac.png" },
+    { name: "Vikas Telecom", url: "/images/vikas-telecom.png" }
 ];
-
-// Landing Page Modal Component
-const LandingPage = ({ item, onClose, onRequestQuote }) => {
-    if (!item) return null;
-    
-    return (
-        <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.95)',
-            zIndex: 10000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            overflow: 'auto',
-            padding: '20px'
-        }} onClick={onClose}>
-            <div style={{
-                background: 'white',
-                borderRadius: '20px',
-                maxWidth: '900px',
-                width: '100%',
-                cursor: 'default',
-                maxHeight: '90vh',
-                overflow: 'auto',
-                position: 'relative'
-            }} onClick={(e) => e.stopPropagation()}>
-                <button onClick={onClose} style={{
-                    position: 'sticky',
-                    top: '20px',
-                    right: '20px',
-                    float: 'right',
-                    background: '#667eea',
-                    border: 'none',
-                    fontSize: '18px',
-                    cursor: 'pointer',
-                    color: 'white',
-                    width: '35px',
-                    height: '35px',
-                    borderRadius: '50%',
-                    marginTop: '20px',
-                    marginRight: '20px',
-                    zIndex: 10
-                }}>×</button>
-                
-                <div style={{ padding: '40px', paddingTop: '20px' }}>
-                    {item.img && (
-                        <img 
-                            src={item.img} 
-                            alt={item.title || item.name}
-                            style={{ 
-                                width: '100%', 
-                                height: '300px', 
-                                objectFit: 'cover', 
-                                borderRadius: '15px',
-                                marginBottom: '30px'
-                            }}
-                            onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.style.display = 'none';
-                            }}
-                        />
-                    )}
-                    
-                    <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                        <FontAwesomeIcon icon={item.icon} style={{ fontSize: '60px', color: '#667eea', marginBottom: '20px' }} />
-                        <h1 style={{ color: '#1a1a2e', marginBottom: '15px', fontSize: '32px' }}>{item.title || item.name}</h1>
-                    </div>
-                    
-                    <div style={{ marginBottom: '30px' }}>
-                        <h3 style={{ color: '#333', marginBottom: '15px', fontSize: '20px' }}>Overview</h3>
-                        <p style={{ color: '#666', lineHeight: '1.8', marginBottom: '20px' }}>
-                            {item.detailedDesc || item.desc || "Detailed information coming soon. Please contact us for more details about this solution."}
-                        </p>
-                    </div>
-                    
-                    <div style={{ 
-                        background: '#f8f9ff', 
-                        padding: '25px', 
-                        borderRadius: '15px',
-                        marginBottom: '30px'
-                    }}>
-                        <h3 style={{ color: '#333', marginBottom: '15px', fontSize: '20px' }}>Key Benefits</h3>
-                        <ul style={{ color: '#666', lineHeight: '1.8', paddingLeft: '20px' }}>
-                            <li>Enterprise-grade security and compliance</li>
-                            <li>24/7 technical support and monitoring</li>
-                            <li>Scalable solution that grows with your business</li>
-                            <li>Seamless integration with existing systems</li>
-                            <li>Dedicated account management team</li>
-                        </ul>
-                    </div>
-                    
-                    <div style={{ textAlign: 'center' }}>
-                        <button 
-                            onClick={() => {
-                                onRequestQuote(item.title || item.name);
-                            }} 
-                            style={{
-                                padding: '14px 40px',
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '50px',
-                                cursor: 'pointer',
-                                fontSize: '16px',
-                                fontWeight: '600',
-                                transition: 'all 0.3s'
-                            }}
-                            onMouseEnter={(e) => {
-                                e.target.style.transform = 'translateY(-2px)';
-                                e.target.style.boxShadow = '0 8px 25px rgba(102,126,234,0.4)';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.target.style.transform = 'translateY(0)';
-                                e.target.style.boxShadow = 'none';
-                            }}
-                        >
-                            Request a Quote for {item.title || item.name} →
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
 
 const WinzePage = () => {
     const [scrolled, setScrolled] = useState(false);
@@ -250,8 +120,8 @@ const WinzePage = () => {
     const homeRef = useRef(null);
     const solutionsRef = useRef(null);
     const industriesRef = useRef(null);
-    const clientsRef = useRef(null);
     const partnersRef = useRef(null);
+    const clientsRef = useRef(null);
     const workwithRef = useRef(null);
 
     useEffect(() => {
@@ -362,29 +232,20 @@ const WinzePage = () => {
         }
     };
 
-    // Updated solutions array with reordered cards and removed Rent IP PBX
+    // Updated solutions array with reordered cards
     const solutions = [
-        // Row 1: Video Conferencing, Smart Eye AI, Rental IT Infrastructure
         { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video, detailedDesc: "HD video conferencing with screen sharing, recording, virtual backgrounds, breakout rooms, end-to-end encryption, and integration with popular calendar apps. Perfect for remote teams and global collaboration." },
         { title: "Smart Eye AI", desc: "Advanced video analytics for proactive security monitoring.", icon: faRobot, img: solutionImages.ai, detailedDesc: "AI-powered video analytics for real-time threat detection, facial recognition, license plate recognition, anomaly detection, and automated alerts with mobile notifications. Enhance your security infrastructure with intelligent monitoring." },
         { title: "Rental IT Infrastructure", desc: "Cost-effective hardware rental for projects and events.", icon: faLaptop, img: solutionImages.rental, detailedDesc: "Short-term and long-term IT equipment rental including laptops, desktops, servers, networking equipment, and AV gear with delivery, setup, and support included. Flexible terms to match your project needs." },
-        
-        // Row 2: SaaS Products, Enterprise Software Licensing, IT Infrastructure
         { title: "SaaS Products", desc: "Scalable cloud solutions customized for your business needs.", icon: faCloud, img: solutionImages.saas, detailedDesc: "Custom SaaS solutions with scalable architecture, pay-as-you-go pricing, automatic updates, data encryption, and dedicated support for your business needs. Transform your operations with cloud-native solutions." },
         { title: "Enterprise Software Licensing", desc: "Flexible licensing options for major enterprise software.", icon: faFileAlt, img: solutionImages.software, detailedDesc: "Flexible licensing for Microsoft, Adobe, Oracle, SAP, and other leading vendors with volume discounts, compliance management, and dedicated account management. Optimize your software investments." },
         { title: "IT Infrastructure", desc: "Enterprise-grade networking and server solutions for optimal performance.", icon: faServer, img: solutionImages.it, detailedDesc: "Complete IT infrastructure solutions including servers, networking equipment, storage systems, cloud integration, and 24/7 monitoring with proactive maintenance. Build a robust foundation for your business." },
-        
-        // Row 3: CCTV Services, Cabling Services, WiFi as a Service
         { title: "CCTV Services", desc: "End-to-end surveillance solutions with H.265 HD cameras, cloud storage, and AI-powered video analytics.", icon: faVideo, img: "/images/cctv-services.jpg", detailedDesc: "Complete CCTV surveillance solutions with H.265 HD cameras, night vision, motion detection, cloud storage, mobile viewing, and AI-powered analytics for proactive security. Protect your premises with state-of-the-art surveillance." },
         { title: "Cabling Services", desc: "Active & Passive Cabling solutions including Greenfield projects.", icon: faWifi, img: "/images/cabling-services.jpg", detailedDesc: "Professional structured cabling for data centers, offices, and industrial facilities including fiber optics, copper cabling, cable management, and certification testing. Ensure reliable connectivity infrastructure." },
         { title: "WiFi as a Service", desc: "Managed wireless solutions for seamless connectivity anywhere.", icon: faWifi, img: solutionImages.wifi, detailedDesc: "Managed WiFi solutions with enterprise-grade security, guest access, bandwidth management, usage analytics, and 24/7 support for offices, events, and public spaces. Stay connected everywhere." },
-        
-        // Row 4: Smart Live Classroom, Web & Mobile Development, Cyber Security
         { title: "Smart Live Classroom", desc: "Interactive virtual learning platform with parent access features.", icon: faChalkboard, img: solutionImages.classroom, detailedDesc: "Virtual classroom platform with live video, interactive whiteboard, attendance tracking, assignment management, parent portal, and performance analytics. Revolutionize education with digital learning." },
         { title: "Web & Mobile Development", desc: "Custom web and mobile applications for your business needs.", icon: faMobileAlt, img: solutionImages.webMobile, detailedDesc: "Custom web and mobile application development using React, Node.js, Flutter, and other modern technologies with responsive design, API integration, and ongoing maintenance. Bring your digital ideas to life." },
         { title: "Cyber Security", desc: "Advanced threat protection and security compliance solutions.", icon: faLock, img: solutionImages.cyberSecurity, detailedDesc: "Comprehensive cyber security solutions including threat detection, vulnerability assessments, compliance management (GDPR, HIPAA, PCI-DSS), security audits, and employee training. Protect your digital assets." },
-        
-        // Row 5: Unified Communications, Contact Center
         { title: "Unified Communications", desc: "Seamless integration of voice, video, and messaging for enterprise collaboration.", icon: faChartLine, img: solutionImages.unified, detailedDesc: "Our Unified Communications solution brings together voice, video, messaging, and collaboration tools into a single platform with enterprise-grade security, 99.9% uptime, and 24/7 support. Features include: HD video conferencing, instant messaging, file sharing, and mobile accessibility." },
         { title: "Contact Center", desc: "AI-powered customer service solutions for enhanced agent productivity.", icon: faHeadset, img: solutionImages.contact, detailedDesc: "AI-powered contact center solutions with intelligent routing, chatbots, sentiment analysis, real-time analytics, and omnichannel support including voice, email, chat, and social media. Elevate your customer experience." }
     ];
@@ -402,7 +263,8 @@ const WinzePage = () => {
         { name: "Home", ref: homeRef },
         { name: "Solutions", ref: solutionsRef },
         { name: "Industries", ref: industriesRef },
-        { name: "Partners", ref: partnersRef }, // Changed from Clients to Partners
+        { name: "Partners", ref: partnersRef },
+        { name: "Clients", ref: clientsRef },
         { name: "Work With Winze", ref: workwithRef }
     ];
 
@@ -421,6 +283,135 @@ const WinzePage = () => {
         { icon: faRocket, title: "Innovation First", desc: "Stay ahead of the curve with our cutting-edge solutions and future-ready technology approach.", detailedDesc: "We continuously invest in research and development to bring you the latest technologies and innovative solutions. Stay competitive with our future-ready approach." },
         { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients, and 16+ years of excellence.", detailedDesc: "Our track record speaks for itself. With over 100 successful deployments and 20+ satisfied enterprise clients across 16+ years, we have the expertise and experience to deliver results." }
     ];
+
+    // Landing Page Modal Component
+    const LandingPage = ({ item, onClose, onRequestQuote }) => {
+        if (!item) return null;
+        
+        return (
+            <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0,0,0,0.95)',
+                zIndex: 10000,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                overflow: 'auto',
+                padding: '20px'
+            }} onClick={onClose}>
+                <div style={{
+                    background: 'white',
+                    borderRadius: '20px',
+                    maxWidth: '900px',
+                    width: '100%',
+                    cursor: 'default',
+                    maxHeight: '90vh',
+                    overflow: 'auto',
+                    position: 'relative'
+                }} onClick={(e) => e.stopPropagation()}>
+                    <button onClick={onClose} style={{
+                        position: 'sticky',
+                        top: '20px',
+                        right: '20px',
+                        float: 'right',
+                        background: '#667eea',
+                        border: 'none',
+                        fontSize: '18px',
+                        cursor: 'pointer',
+                        color: 'white',
+                        width: '35px',
+                        height: '35px',
+                        borderRadius: '50%',
+                        marginTop: '20px',
+                        marginRight: '20px',
+                        zIndex: 10
+                    }}>×</button>
+                    
+                    <div style={{ padding: '40px', paddingTop: '20px' }}>
+                        {item.img && (
+                            <img 
+                                src={item.img} 
+                                alt={item.title || item.name}
+                                style={{ 
+                                    width: '100%', 
+                                    height: '300px', 
+                                    objectFit: 'cover', 
+                                    borderRadius: '15px',
+                                    marginBottom: '30px'
+                                }}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.style.display = 'none';
+                                }}
+                            />
+                        )}
+                        
+                        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '60px', color: '#667eea', marginBottom: '20px' }} />
+                            <h1 style={{ color: '#1a1a2e', marginBottom: '15px', fontSize: '32px' }}>{item.title || item.name}</h1>
+                        </div>
+                        
+                        <div style={{ marginBottom: '30px' }}>
+                            <h3 style={{ color: '#333', marginBottom: '15px', fontSize: '20px' }}>Overview</h3>
+                            <p style={{ color: '#666', lineHeight: '1.8', marginBottom: '20px' }}>
+                                {item.detailedDesc || item.desc || "Detailed information coming soon. Please contact us for more details about this solution."}
+                            </p>
+                        </div>
+                        
+                        <div style={{ 
+                            background: '#f8f9ff', 
+                            padding: '25px', 
+                            borderRadius: '15px',
+                            marginBottom: '30px'
+                        }}>
+                            <h3 style={{ color: '#333', marginBottom: '15px', fontSize: '20px' }}>Key Benefits</h3>
+                            <ul style={{ color: '#666', lineHeight: '1.8', paddingLeft: '20px' }}>
+                                <li>Enterprise-grade security and compliance</li>
+                                <li>24/7 technical support and monitoring</li>
+                                <li>Scalable solution that grows with your business</li>
+                                <li>Seamless integration with existing systems</li>
+                                <li>Dedicated account management team</li>
+                            </ul>
+                        </div>
+                        
+                        <div style={{ textAlign: 'center' }}>
+                            <button 
+                                onClick={() => {
+                                    onRequestQuote(item.title || item.name);
+                                }} 
+                                style={{
+                                    padding: '14px 40px',
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '50px',
+                                    cursor: 'pointer',
+                                    fontSize: '16px',
+                                    fontWeight: '600',
+                                    transition: 'all 0.3s'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.target.style.transform = 'translateY(-2px)';
+                                    e.target.style.boxShadow = '0 8px 25px rgba(102,126,234,0.4)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.target.style.transform = 'translateY(0)';
+                                    e.target.style.boxShadow = 'none';
+                                }}
+                            >
+                                Request a Quote for {item.title || item.name} →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     // Background Image Component
     const BackgroundImage = ({ imageSrc }) => (
@@ -574,15 +565,15 @@ const WinzePage = () => {
                     color: #667eea !important;
                     border: 1px solid #667eea !important;
                 }
-                .client-logo-item {
+                .client-logo-item, .partner-logo-item {
                     background: white; padding: 20px; border-radius: 12px; text-align: center; cursor: pointer;
                     transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.08); min-width: 150px;
                     border: 1px solid rgba(0,0,0,0.05); flex-shrink: 0;
                 }
-                .client-logo-item:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.12); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-                .client-logo-item:hover h3 { color: white; }
-                .client-logo-img { width: 80px; height: 80px; margin: 0 auto 12px; display: flex; align-items: center; justifyContent: center; }
-                .client-logo-img img { width: 100%; height: 100%; object-fit: contain; }
+                .client-logo-item:hover, .partner-logo-item:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.12); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+                .client-logo-item:hover h3, .partner-logo-item:hover h3 { color: white; }
+                .client-logo-img, .partner-logo-img { width: 80px; height: 80px; margin: 0 auto 12px; display: flex; align-items: center; justifyContent: center; }
+                .client-logo-img img, .partner-logo-img img { width: 100%; height: 100%; object-fit: contain; }
             `}</style>
             
             <SEO 
@@ -881,7 +872,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Solutions Portfolio Section - Reordered */}
+                {/* Solutions Portfolio Section */}
                 <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.solutions} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -993,7 +984,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Our Trusted Partners Section - Changed from Clients to Partners */}
+                {/* Our Trusted Partners Section */}
                 <section ref={partnersRef} id="partners" style={{
                     padding: '80px 5%',
                     position: 'relative',
@@ -1004,6 +995,45 @@ const WinzePage = () => {
                         <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Trusted Partners</h2>
                         <p style={{ color: '#FFD700', marginBottom: '20px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Innovation. Excellence. Trust.</p>
                         <p style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '50px', fontSize: '1rem', fontWeight: '500', letterSpacing: '0.5px' }}>Partnering with industry leaders to deliver world-class technology solutions</p>
+                        
+                        <div className="marquee-container">
+                            <div className="marquee-content">
+                                {[...partnerLogos, ...partnerLogos, ...partnerLogos].map((partner, idx) => (
+                                    <div 
+                                        key={idx}
+                                        className="partner-logo-item"
+                                        onClick={() => handleTrackClick(partner.name, 'partner')}
+                                        style={{ background: 'white' }}
+                                    >
+                                        <div className="partner-logo-img">
+                                            <img 
+                                                src={partner.url} 
+                                                alt={partner.name}
+                                                style={{ filter: 'none' }}
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = `https://placehold.co/100x100/667eea/white?text=${partner.name.charAt(0)}`;
+                                                }}
+                                            />
+                                        </div>
+                                        <h3 style={{ color: '#333', fontSize: '0.9rem', margin: 0, fontWeight: '600' }}>{partner.name}</h3>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Our Clients Section with Scrolling Effect */}
+                <section ref={clientsRef} id="clients" style={{
+                    padding: '80px 5%',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: 'linear-gradient(135deg, #1a1a3e 0%, #2d2d5e 100%)'
+                }}>
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
+                        <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Valued Clients</h2>
+                        <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.1rem' }}>Trusted by industry leaders across India</p>
                         
                         <div className="marquee-container">
                             <div className="marquee-content">
@@ -1029,58 +1059,6 @@ const WinzePage = () => {
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* New Our Clients Section */}
-                <section style={{
-                    padding: '80px 5%',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    background: 'linear-gradient(135deg, #1a1a3e 0%, #2d2d5e 100%)'
-                }}>
-                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Valued Clients</h2>
-                        <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.1rem' }}>Trusted by industry leaders across India</p>
-                        
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '30px', maxWidth: '1200px', margin: '0 auto' }}>
-                            {companyClients.map((client, idx) => (
-                                <div 
-                                    key={idx}
-                                    style={{
-                                        background: 'white',
-                                        padding: '25px',
-                                        borderRadius: '15px',
-                                        textAlign: 'center',
-                                        transition: 'all 0.3s ease',
-                                        cursor: 'pointer',
-                                        border: '1px solid rgba(255,255,255,0.1)'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.transform = 'translateY(-5px)';
-                                        e.currentTarget.style.boxShadow = '0 15px 30px rgba(0,0,0,0.2)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.transform = 'translateY(0)';
-                                        e.currentTarget.style.boxShadow = 'none';
-                                    }}
-                                    onClick={() => handleTrackClick(client.name, 'client_company')}
-                                >
-                                    <div style={{ width: '100px', height: '100px', margin: '0 auto 15px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        <img 
-                                            src={client.url} 
-                                            alt={client.name}
-                                            style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
-                                            onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = `https://placehold.co/100x100/667eea/white?text=${client.name.charAt(0)}`;
-                                            }}
-                                        />
-                                    </div>
-                                    <h3 style={{ color: '#333', fontSize: '1rem', fontWeight: '600' }}>{client.name}</h3>
-                                </div>
-                            ))}
                         </div>
                     </div>
                 </section>
@@ -1385,7 +1363,7 @@ const WinzePage = () => {
                     onRequestQuote={openQuoteModalForItem}
                 />
 
-                {/* Footer - Updated contact info */}
+                {/* Footer */}
                 <footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '45px', marginBottom: '45px' }}>
