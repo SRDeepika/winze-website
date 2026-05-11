@@ -1,3 +1,5 @@
+import BlogsSection from './components/BlogsSection';
+import CareersSection from './components/CareersSection';
 import SocialLinks from '../components/SocialLinks';
 import React, { useState, useEffect, useRef } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
@@ -11,7 +13,7 @@ import {
     faTruck, faShoppingCart, faHandshake, faStar, faRocket,
     faInfinity, faCrown, faGem, faBolt, faUsers,
     faBriefcase, faTrophy, faGlobe, faLightbulb, faProjectDiagram,
-    faChevronLeft, faChevronRight, faTimes, faArrowRight
+    faChevronLeft, faChevronRight, faTimes, faArrowRight, faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
 import { 
     faLinkedin, 
@@ -58,7 +60,7 @@ const industryImages = {
     logistics: "/images/logistics.jpg"
 };
 
-// Partner Logos (Updated - removed Toshiba, Infosys, HCL, Tata)
+// Partner Logos
 const partnerLogos = [
     { name: "Netrack", url: "/images/netrack.png" },
     { name: "HP", url: "/images/hp.png" },
@@ -73,44 +75,41 @@ const partnerLogos = [
     { name: "Dell", url: "/images/dell.png" }
 ];
 
-// Client Logos for Clients section (all requested clients)
+// Client Logos for Clients section
 const clientLogos = [
-    { name: "Toshiba", url: "/images/toshiba.png" },
-    { name: "Toyota", url: "/images/toyota.png" },
-    { name: "Starpacks", url: "/images/starpacks.png" },
-    { name: "MAF", url: "/images/maf.png" },
-    { name: "Athma", url: "/images/athma.png" },
-    { name: "RGP", url: "/images/rgp.png" },
-    { name: "Utthunga", url: "/images/utthunga.png" },
-    { name: "TRC", url: "/images/trc.png" },
-    { name: "Unilateral", url: "/images/unilateral.png" },
-    { name: "Sun Bright", url: "/images/sun-bright.png" },
-    { name: "CKPC", url: "/images/ckpc.png" },
-    { name: "Kyyba", url: "/images/kyyba.png" },
-    { name: "Skidata", url: "/images/skidata.png" }
+    { name: "Toshiba", url: "/images/clients/toshiba.png" },
+    { name: "Toyota", url: "/images/clients/toyota.png" },
+    { name: "Starpacks", url: "/images/clients/starpacks.png" },
+    { name: "MAF", url: "/images/clients/maf.png" },
+    { name: "Athma", url: "/images/clients/athma.png" },
+    { name: "RGP", url: "/images/clients/rgp.png" },
+    { name: "Utthunga", url: "/images/clients/utthunga.png" },
+    { name: "TRC", url: "/images/clients/trc.png" },
+    { name: "Unilateral", url: "/images/clients/unilateral.png" },
+    { name: "Sun Bright", url: "/images/clients/sun-bright.png" },
+    { name: "CKPC", url: "/images/clients/ckpc.png" },
+    { name: "Kyyba", url: "/images/clients/kyyba.png" },
+    { name: "Skidata", url: "/images/clients/skidata.png" }
 ];
 
-// Detailed content for each solution card (AI-generated content for landing pages)
+// Detailed content for solution cards
 const solutionDetailedContent = {
     "Video Conferencing": {
-        overview: "Our Video Conferencing solution provides enterprise-grade virtual meeting capabilities with crystal-clear HD video, advanced security features, and seamless integration with your existing workflow. Perfect for remote teams, global collaboration, and hybrid work environments.",
+        overview: "Our Video Conferencing solution provides enterprise-grade virtual meeting capabilities with crystal-clear HD video, advanced security features, and seamless integration with your existing workflow.",
         benefits: [
             "4K Ultra HD video quality with automatic lighting adjustment",
             "End-to-end encryption for secure business communications",
             "Supports up to 500 participants in a single meeting",
             "Screen sharing, virtual backgrounds, and breakout rooms",
             "Integration with Slack, Teams, Zoom, and Google Workspace",
-            "Recording and transcription with AI-powered summaries",
-            "Mobile apps for iOS and Android with full functionality",
-            "Real-time closed captioning and language translation"
+            "Recording and transcription with AI-powered summaries"
         ],
         features: [
             "Smart gallery view that highlights active speakers",
             "Virtual hand raise, polls, and Q&A sessions",
             "Calendar integration for one-click meeting joins",
             "Custom branding for enterprise accounts",
-            "Analytics dashboard with meeting insights",
-            "API access for custom integrations"
+            "Analytics dashboard with meeting insights"
         ],
         useCases: [
             "Global team meetings and daily standups",
@@ -121,24 +120,21 @@ const solutionDetailedContent = {
         ]
     },
     "Smart Eye AI": {
-        overview: "Smart Eye AI is an advanced video analytics platform that transforms ordinary CCTV cameras into intelligent security systems. Using cutting-edge machine learning algorithms, it detects anomalies, recognizes faces and vehicles, and sends real-time alerts to prevent incidents before they occur.",
+        overview: "Smart Eye AI is an advanced video analytics platform that transforms ordinary CCTV cameras into intelligent security systems.",
         benefits: [
             "Real-time threat detection with 99.5% accuracy",
             "Facial recognition with watchlist alerts",
             "Automatic number plate recognition (ANPR)",
             "Abandoned object and loitering detection",
             "Crowd density monitoring and social distancing alerts",
-            "Fire and smoke detection from video feeds",
-            "Unauthorized access alerts for restricted areas",
-            "24/7 automated monitoring reduces manual effort"
+            "Fire and smoke detection from video feeds"
         ],
         features: [
             "Centralized dashboard for multiple camera feeds",
             "Mobile app notifications for instant alerts",
             "Search by face, vehicle, or object across recorded footage",
             "Integration with existing CCTV infrastructure",
-            "Cloud-based or on-premise deployment options",
-            "Custom alert rules and zones configuration"
+            "Cloud-based or on-premise deployment options"
         ],
         useCases: [
             "Airport security and perimeter monitoring",
@@ -149,24 +145,21 @@ const solutionDetailedContent = {
         ]
     },
     "Rental IT Infrastructure": {
-        overview: "Rental IT Infrastructure provides cost-effective, flexible hardware solutions for businesses of all sizes. Whether you need equipment for a short-term project, a corporate event, or to scale your operations during peak seasons, we deliver premium IT hardware with full setup and support.",
+        overview: "Rental IT Infrastructure provides cost-effective, flexible hardware solutions for businesses of all sizes.",
         benefits: [
             "Pay only for what you use with flexible daily/weekly/monthly rentals",
             "Latest generation laptops, desktops, and servers",
             "Free delivery, setup, and on-site support",
             "Replace faulty equipment within 4 hours",
             "Scale up or down based on project requirements",
-            "No long-term commitment or capital expenditure",
-            "All hardware sanitized and tested before delivery",
-            "Bulk discounts for large-scale deployments"
+            "No long-term commitment or capital expenditure"
         ],
         features: [
             "Enterprise-grade laptops (Dell, HP, Lenovo)",
             "High-performance desktops and workstations",
             "Servers and networking equipment",
             "AV equipment including projectors and speakers",
-            "Printers, scanners, and peripherals",
-            "Pre-configured with required software"
+            "Printers, scanners, and peripherals"
         ],
         useCases: [
             "Corporate events and conferences",
@@ -177,53 +170,46 @@ const solutionDetailedContent = {
         ]
     },
     "SaaS Products": {
-        overview: "Our custom SaaS products are designed to solve specific business challenges with scalable, cloud-native architecture. From CRM to ERP, HRMS to project management, we build and deploy software that grows with your business.",
+        overview: "Our custom SaaS products are designed to solve specific business challenges with scalable, cloud-native architecture.",
         benefits: [
             "Subscription-based pricing with no upfront costs",
             "Automatic updates and maintenance included",
             "99.99% uptime SLA with multi-region redundancy",
             "GDPR and SOC2 compliant data handling",
             "Customizable to match your business processes",
-            "Integration APIs for third-party apps",
-            "Dedicated customer success manager",
-            "Regular security audits and penetration testing"
+            "Integration APIs for third-party apps"
         ],
         features: [
             "White-label options for your brand",
             "Role-based access control and permissions",
             "Real-time analytics and custom reports",
             "Mobile-responsive design for on-the-go access",
-            "24/7 technical support via chat, email, and phone",
-            "Data export and backup capabilities"
+            "24/7 technical support via chat, email, and phone"
         ],
         useCases: [
             "Small to medium business automation",
             "Enterprise workflow management",
             "Startup MVPs and product launches",
-            "Industry-specific solutions (healthcare, retail, logistics)",
+            "Industry-specific solutions",
             "Legacy system modernization"
         ]
     },
     "Enterprise Software Licensing": {
-        overview: "We simplify enterprise software licensing by offering volume discounts, compliance management, and dedicated account support for all major software vendors including Microsoft, Adobe, Oracle, SAP, and VMware.",
+        overview: "We simplify enterprise software licensing by offering volume discounts, compliance management, and dedicated account support.",
         benefits: [
             "Volume licensing discounts up to 40% off retail",
             "Centralized license management across your organization",
             "Compliance audits to prevent over-licensing or penalties",
             "Flexible payment terms (monthly, quarterly, annually)",
             "Dedicated licensing specialist assigned to your account",
-            "Software asset management (SAM) services",
-            "Migration assistance to cloud subscriptions",
-            "Renewal reminders and best-price negotiation"
+            "Software asset management (SAM) services"
         ],
         features: [
             "Microsoft 365 and Azure licensing",
             "Adobe Creative Cloud and Document Cloud",
             "Oracle Database and ERP licenses",
             "SAP S/4HANA and Business Suite",
-            "VMware virtualization licenses",
-            "AutoCAD and design software",
-            "Antivirus and security software"
+            "VMware virtualization licenses"
         ],
         useCases: [
             "Startups needing affordable software access",
@@ -234,24 +220,21 @@ const solutionDetailedContent = {
         ]
     },
     "IT Infrastructure": {
-        overview: "Our IT Infrastructure solutions provide enterprise-grade networking, server, and storage systems designed for optimal performance, reliability, and scalability. From data center design to cloud integration, we build the foundation for your digital transformation.",
+        overview: "Our IT Infrastructure solutions provide enterprise-grade networking, server, and storage systems designed for optimal performance.",
         benefits: [
             "99.999% uptime with redundant architecture",
             "24/7 proactive monitoring and alerting",
             "Scalable design that grows with your business",
             "On-premise, cloud, or hybrid deployment options",
             "Energy-efficient hardware reduces operating costs",
-            "Disaster recovery and backup solutions included",
-            "Regular firmware updates and patch management",
-            "Vendor-agnostic recommendations for best value"
+            "Disaster recovery and backup solutions included"
         ],
         features: [
             "Hyper-converged infrastructure (HCI)",
             "Enterprise switches, routers, and firewalls",
             "SAN and NAS storage systems",
             "Virtualization with VMware or Hyper-V",
-            "Cloud integration (AWS, Azure, GCP)",
-            "Network monitoring and management tools"
+            "Cloud integration (AWS, Azure, GCP)"
         ],
         useCases: [
             "New office setup and expansion",
@@ -262,24 +245,21 @@ const solutionDetailedContent = {
         ]
     },
     "CCTV Services": {
-        overview: "Our comprehensive CCTV services include site survey, camera installation, configuration, cloud storage, and ongoing maintenance. We deploy H.265 HD cameras with night vision, motion detection, and AI-powered analytics for proactive security monitoring.",
+        overview: "Our comprehensive CCTV services include site survey, camera installation, configuration, cloud storage, and ongoing maintenance.",
         benefits: [
             "24/7 recording with 30-day cloud storage",
-            "Remote viewing from any device (mobile, tablet, desktop)",
+            "Remote viewing from any device",
             "Motion-triggered alerts and email notifications",
             "AI-powered people counting and heat mapping",
             "License plate recognition for parking management",
-            "Tamper detection and camera health monitoring",
-            "Weatherproof cameras for outdoor installation",
-            "Night vision up to 50 meters"
+            "Tamper detection and camera health monitoring"
         ],
         features: [
             "4MP and 8MP HD cameras",
             "PTZ (Pan-Tilt-Zoom) cameras for active monitoring",
             "Explosion-proof cameras for hazardous areas",
             "Thermal cameras for perimeter security",
-            "Video management software (VMS)",
-            "Integration with access control systems"
+            "Video management software (VMS)"
         ],
         useCases: [
             "Office complexes and corporate campuses",
@@ -290,24 +270,21 @@ const solutionDetailedContent = {
         ]
     },
     "Cabling Services": {
-        overview: "We provide professional structured cabling solutions for data centers, offices, and industrial facilities. Our certified technicians design and install copper, fiber optic, and structured cabling systems that meet industry standards and future-proof your network.",
+        overview: "We provide professional structured cabling solutions for data centers, offices, and industrial facilities.",
         benefits: [
             "Cat6, Cat6a, Cat7, and Cat8 copper cabling",
             "Single-mode and multi-mode fiber optics",
             "Cable management and labeling for easy maintenance",
             "Fluke testing and certification for every drop",
             "Greenfield and brownfield project experience",
-            "Minimum 25-year warranty on cabling components",
-            "Minimal disruption with after-hours installation",
-            "Detailed as-built drawings and documentation"
+            "Minimum 25-year warranty on cabling components"
         ],
         features: [
             "Rack mounting and cable tray installation",
             "Patch panel termination and testing",
             "Fiber splicing and connectorization",
             "Cable pathway design (overhead and underfloor)",
-            "Grounding and bonding for safety",
-            "Thermal imaging for hot spot detection"
+            "Grounding and bonding for safety"
         ],
         useCases: [
             "New building construction (Greenfield)",
@@ -318,24 +295,21 @@ const solutionDetailedContent = {
         ]
     },
     "WiFi as a Service": {
-        overview: "WiFi as a Service delivers enterprise-grade wireless networking without the capital expense. We design, deploy, and manage your WiFi infrastructure, ensuring seamless connectivity for your employees, guests, and IoT devices.",
+        overview: "WiFi as a Service delivers enterprise-grade wireless networking without the capital expense.",
         benefits: [
             "Predictive monthly subscription pricing",
             "Access points, controllers, and licenses included",
             "Guest WiFi with social login and captive portal",
             "Bandwidth management and traffic shaping",
             "Usage analytics and heat mapping",
-            "Automatic firmware updates and security patches",
-            "24/7 monitoring and Remote Troubleshooting",
-            "Scalable from 10 to 10,000 users"
+            "Automatic firmware updates and security patches"
         ],
         features: [
             "WiFi 6 (802.11ax) access points for high density",
             "Cloud-based or on-premise controller options",
             "Captive portal customization for branding",
             "Integration with Active Directory and RADIUS",
-            "Self-service onboarding for guests",
-            "Compliance reporting (PCI, HIPAA)"
+            "Self-service onboarding for guests"
         ],
         useCases: [
             "Corporate offices and coworking spaces",
@@ -346,25 +320,21 @@ const solutionDetailedContent = {
         ]
     },
     "Smart Live Classroom": {
-        overview: "Smart Live Classroom is an interactive virtual learning platform that brings teachers and students together in an engaging digital environment. With live video, interactive whiteboards, attendance tracking, and parent portals, we make remote learning effective and enjoyable.",
+        overview: "Smart Live Classroom is an interactive virtual learning platform that brings teachers and students together in an engaging digital environment.",
         benefits: [
             "Live HD video classes with recording option",
             "Interactive digital whiteboard with annotations",
             "Automated attendance tracking and reporting",
             "Assignment submission and grading system",
             "Parent portal for progress monitoring",
-            "Breakout rooms for group activities",
-            "Screen sharing and presentation tools",
-            " supports up to 500 students per session"
+            "Breakout rooms for group activities"
         ],
         features: [
             "Quiz and poll creation for real-time assessment",
             "Class recordings accessible anytime",
             "Digital library for course materials",
             "Discussion forums and chat moderation",
-            "Certificate generation upon course completion",
-            "Mobile apps for iOS and Android",
-            "Integration with LMS like Moodle and Canvas"
+            "Certificate generation upon course completion"
         ],
         useCases: [
             "K-12 schools and online tutoring",
@@ -375,53 +345,46 @@ const solutionDetailedContent = {
         ]
     },
     "Web & Mobile Development": {
-        overview: "Our Web & Mobile Development team builds custom applications using modern technologies like React, Node.js, Flutter, and React Native. From e-commerce platforms to enterprise dashboards, we deliver responsive, scalable, and secure solutions.",
+        overview: "Our Web & Mobile Development team builds custom applications using modern technologies like React, Node.js, Flutter, and React Native.",
         benefits: [
             "End-to-end development from concept to deployment",
             "Agile methodology with 2-week sprints",
             "Responsive design for all screen sizes",
             "API development and third-party integrations",
             "SEO-optimized architecture",
-            "Ongoing maintenance and support",
-            "Source code ownership with no vendor lock-in",
-            "Cloud deployment (AWS, Azure, GCP)"
+            "Ongoing maintenance and support"
         ],
         features: [
             "Frontend: React, Angular, Vue.js",
             "Backend: Node.js, Python, Java, PHP",
             "Mobile: Flutter, React Native, Swift, Kotlin",
             "Database: MySQL, PostgreSQL, MongoDB",
-            "DevOps: CI/CD, Docker, Kubernetes",
-            "Security: HTTPS, JWT, OAuth"
+            "DevOps: CI/CD, Docker, Kubernetes"
         ],
         useCases: [
             "E-commerce and marketplace platforms",
             "Enterprise resource planning (ERP) systems",
             "Customer relationship management (CRM)",
-            "On-demand service apps (Uber-like)",
+            "On-demand service apps",
             "Healthcare and telemedicine portals"
         ]
     },
     "Cyber Security": {
-        overview: "Our comprehensive cyber security services protect your business from evolving threats. We provide threat detection, vulnerability assessments, compliance management, and employee training to keep your data and systems secure.",
+        overview: "Our comprehensive cyber security services protect your business from evolving threats.",
         benefits: [
             "24/7 security operations center (SOC) monitoring",
             "Automated threat detection and response",
             "Weekly vulnerability scans and monthly penetration tests",
             "GDPR, HIPAA, PCI-DSS, and ISO 27001 compliance",
             "Security awareness training for employees",
-            "Incident response and disaster recovery planning",
-            "Dark web monitoring for compromised credentials",
-            "Managed firewall, antivirus, and endpoint protection"
+            "Incident response and disaster recovery planning"
         ],
         features: [
             "Next-generation firewall (NGFW) management",
             "Endpoint detection and response (EDR)",
             "Email security and anti-phishing protection",
             "Web application firewall (WAF)",
-            "Data loss prevention (DLP)",
-            "Multi-factor authentication (MFA) implementation",
-            "Security information and event management (SIEM)"
+            "Data loss prevention (DLP)"
         ],
         useCases: [
             "Financial services and banking compliance",
@@ -432,25 +395,21 @@ const solutionDetailedContent = {
         ]
     },
     "Unified Communications": {
-        overview: "Unified Communications brings voice, video, messaging, and collaboration tools into a single platform. Improve team productivity, reduce communication silos, and enable seamless collaboration across your organization.",
+        overview: "Unified Communications brings voice, video, messaging, and collaboration tools into a single platform.",
         benefits: [
             "VoIP phone system with auto-attendant",
             "HD video conferencing and screen sharing",
             "Instant messaging with file sharing",
             "Presence detection and calendar integration",
             "Mobile and desktop apps for anywhere access",
-            "Call recording and voicemail-to-email",
-            "Integration with CRM (Salesforce, HubSpot)",
-            "99.999% uptime with redundant infrastructure"
+            "Call recording and voicemail-to-email"
         ],
         features: [
             "Auto-attendant and call routing",
             "Ring groups and call queues",
             "Conference calling up to 100 participants",
             "Virtual fax receive and send",
-            "Analytics dashboard with call metrics",
-            "BYOC (Bring Your Own Carrier) support",
-            "API access for custom integrations"
+            "Analytics dashboard with call metrics"
         ],
         useCases: [
             "Multi-location businesses needing unified communication",
@@ -461,25 +420,21 @@ const solutionDetailedContent = {
         ]
     },
     "Contact Center": {
-        overview: "Our AI-powered Contact Center solution transforms customer service with intelligent routing, chatbots, sentiment analysis, and omnichannel support. Deliver exceptional experiences across voice, email, chat, and social media.",
+        overview: "Our AI-powered Contact Center solution transforms customer service with intelligent routing, chatbots, sentiment analysis, and omnichannel support.",
         benefits: [
             "Omnichannel queue (voice, email, chat, social)",
             "AI-powered chatbots for instant responses",
             "Sentiment analysis to prioritize upset customers",
             "Real-time dashboards and performance analytics",
             "Skills-based routing to the right agent",
-            "Call recording and quality management",
-            "Workforce management for shift scheduling",
-            "CRM and helpdesk integration (Salesforce, Zendesk)"
+            "Call recording and quality management"
         ],
         features: [
             "Interactive voice response (IVR) with NLP",
             "Click-to-call from your website",
             "Callback and voicemail drop features",
             "Co-browsing and screen sharing",
-            "Customer satisfaction (CSAT) surveys",
-            "Agent scripting and knowledge base",
-            "Speech analytics for compliance monitoring"
+            "Customer satisfaction (CSAT) surveys"
         ],
         useCases: [
             "E-commerce customer support",
@@ -491,49 +446,49 @@ const solutionDetailedContent = {
     }
 };
 
-// Detailed content for delivery items and work with winze
+// Detailed content for delivery items
 const deliveryDetailedContent = {
     "End-to-End Solutions": {
-        overview: "We provide complete lifecycle management from initial planning and strategy to deployment, training, and ongoing support. Our holistic approach ensures seamless integration, minimal business disruption, and maximum ROI.",
+        overview: "We provide complete lifecycle management from initial planning and strategy to deployment, training, and ongoing support.",
         benefits: ["Strategy consulting and roadmap planning", "Vendor selection and procurement", "Project management and implementation", "User training and change management", "24/7 support and maintenance", "Continuous optimization and upgrades"]
     },
     "Enterprise Excellence": {
-        overview: "We guarantee enterprise-grade excellence with 99.9% uptime, comprehensive performance metrics, and measurable business results. Our solutions are designed to scale with your business and deliver consistent value.",
+        overview: "We guarantee enterprise-grade excellence with 99.9% uptime, comprehensive performance metrics, and measurable business results.",
         benefits: ["SLA-backed uptime guarantees", "Real-time performance dashboards", "Regular business reviews", "Continuous improvement programs", "ISO and compliance certifications", "Disaster recovery and business continuity"]
     },
     "Flexible Engagement": {
-        overview: "Choose the engagement model that works best for your business - strategic consulting, project-based delivery, or fully managed services. We adapt to your needs, timeline, and budget.",
+        overview: "Choose the engagement model that works best for your business - strategic consulting, project-based delivery, or fully managed services.",
         benefits: ["Time and material projects", "Fixed-price deliverables", "Dedicated team engagement", "Co-managed IT services", "Fully outsourced IT operations", "Pay-as-you-go options"]
     },
     "Rapid Deployment": {
-        overview: "Our accelerated deployment methodology gets your solutions up and running quickly without disrupting daily operations. We use proven frameworks, automation, and best practices to ensure smooth implementation.",
+        overview: "Our accelerated deployment methodology gets your solutions up and running quickly without disrupting daily operations.",
         benefits: ["Agile implementation methodology", "Automated provisioning and configuration", "Minimal downtime during cutover", "Parallel run and testing phase", "Phased rollout options", "Post-deployment hyper-care"]
     },
     "Analytics & Insights": {
-        overview: "Gain valuable insights from your data with our advanced analytics solutions. Real-time dashboards, custom reports, and predictive analytics help you make informed business decisions.",
+        overview: "Gain valuable insights from your data with our advanced analytics solutions.",
         benefits: ["Real-time data visualization", "Predictive modeling and forecasting", "Custom report builder", "Data warehousing and ETL", "Business intelligence tools (Power BI, Tableau)", "Self-service analytics for business users"]
     },
     "24/7 Premium Support": {
-        overview: "Our dedicated support team is available 24/7/365 to assist with any technical issues. We provide proactive monitoring, rapid response times, and premium support services to keep your business running smoothly.",
+        overview: "Our dedicated support team is available 24/7/365 to assist with any technical issues.",
         benefits: ["24/7 phone, chat, and email support", "15-minute response SLA for critical issues", "Dedicated account manager", "Quarterly business reviews", "Proactive monitoring and alerting", "Root cause analysis and preventive actions"]
     }
 };
 
 const workDetailedContent = {
     "Strategic Partnership": {
-        overview: "As a strategic partner, we align our goals with yours. We invest time to understand your business challenges and work collaboratively to develop solutions that drive growth and innovation.",
+        overview: "As a strategic partner, we align our goals with yours. We invest time to understand your business challenges and work collaboratively.",
         benefits: ["Dedicated strategic advisor", "Quarterly strategy sessions", "Innovation roadmap planning", "Co-investment in new capabilities", "Long-term commercial flexibility", "Joint go-to-market opportunities"]
     },
     "Enterprise Value": {
-        overview: "We measure our success by your success. Every project is executed with a focus on delivering measurable business value, ROI, and long-term benefits for your enterprise.",
+        overview: "We measure our success by your success. Every project is executed with a focus on delivering measurable business value.",
         benefits: ["ROI guarantee on qualified projects", "Value-based pricing options", "Outcome-focused KPIs", "Regular value realization reviews", "Cost optimization recommendations", "Competitive benchmarking"]
     },
     "Innovation First": {
-        overview: "We continuously invest in research and development to bring you the latest technologies and innovative solutions. Stay competitive with our future-ready approach.",
+        overview: "We continuously invest in research and development to bring you the latest technologies and innovative solutions.",
         benefits: ["Dedicated R&D team", "Early access to beta technologies", "Innovation workshops and hackathons", "Technology watch and trend reports", "Proof of concept (POC) at no cost", "Patent and IP collaboration"]
     },
     "Client Success": {
-        overview: "Our track record speaks for itself. With over 100 successful deployments, 500+ satisfied clients, and 16+ years of excellence, we have the expertise and experience to deliver results.",
+        overview: "Our track record speaks for itself. With over 100 successful deployments, 500+ satisfied clients, and 16+ years of excellence.",
         benefits: ["Case studies and reference calls", "Client success manager assigned", "Annual user conferences and events", "Client advisory board participation", "Loyalty rewards and discounts", "Referral program benefits"]
     }
 };
@@ -558,7 +513,6 @@ const WinzePage = () => {
         message: ''
     });
     
-    // Modal states for landing pages
     const [landingModalOpen, setLandingModalOpen] = useState(false);
     const [landingData, setLandingData] = useState(null);
     
@@ -569,6 +523,7 @@ const WinzePage = () => {
     const partnersRef = useRef(null);
     const clientsRef = useRef(null);
     const workwithRef = useRef(null);
+    const careersRef = useRef(null);  // NEW: Careers ref
 
     useEffect(() => {
         window.addEventListener('scroll', () => {
@@ -692,7 +647,6 @@ const WinzePage = () => {
         }
     };
 
-    // Updated solutions array with reordered cards
     const solutions = [
         { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video },
         { title: "Smart Eye AI", desc: "Advanced video analytics for proactive security monitoring.", icon: faRobot, img: solutionImages.ai },
@@ -725,6 +679,7 @@ const WinzePage = () => {
         { name: "Industries", ref: industriesRef },
         { name: "Partners", ref: partnersRef },
         { name: "Clients", ref: clientsRef },
+        { name: "Careers", ref: careersRef },  // NEW: Careers in navbar
         { name: "Work With Winze", ref: workwithRef }
     ];
 
@@ -744,7 +699,7 @@ const WinzePage = () => {
         { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients, and 16+ years of excellence." }
     ];
 
-    // Landing Page Modal Component with Request Quote Form
+    // Landing Page Modal Component
     const LandingPage = ({ item, onClose, onRequestQuote }) => {
         if (!item) return null;
         
@@ -1029,7 +984,6 @@ const WinzePage = () => {
         );
     };
 
-    // Background Image Component
     const BackgroundImage = ({ imageSrc }) => (
         <div style={{
             position: 'absolute',
@@ -1195,7 +1149,7 @@ const WinzePage = () => {
             <SEO 
                 title="Winze Technologies | Enterprise Communication, Security & AI"
                 description="Winze Technologies delivers unified communications, AI security, SaaS products, and IT infrastructure with 16+ years of enterprise expertise."
-                keywords="unified communications, contact center, video conferencing, IT infrastructure, AI security, SaaS products, enterprise software"
+                keywords="unified communications, contact center, video conferencing, IT infrastructure, AI security, SaaS products, enterprise software, careers"
                 url="https://www.winzetech.com"
                 image="/og-image.jpg"
                 type="website"
@@ -1640,7 +1594,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Our Valued Clients Section - Only the requested clients */}
+                {/* Our Valued Clients Section */}
                 <section ref={clientsRef} id="clients" style={{
                     padding: '80px 5%',
                     position: 'relative',
@@ -1678,6 +1632,14 @@ const WinzePage = () => {
                         </div>
                     </div>
                 </section>
+
+                {/* Blogs Section */}
+                <BlogsSection />
+
+                {/* Careers Section */}
+                <div ref={careersRef}>
+                    <CareersSection />
+                </div>
 
                 {/* Work With Winze Section */}
                 <section ref={workwithRef} id="workwith" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
@@ -2021,8 +1983,5 @@ const WinzePage = () => {
         </HelmetProvider>
     );
 };
-
-// Add missing icon imports at the top
-import { faCheckCircle, faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
 
 export default WinzePage;

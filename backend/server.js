@@ -2,11 +2,34 @@ const express = require('express');
 const cors = require('cors');
 const db = require('./config/database');
 const bcrypt = require('bcryptjs');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
 
-// Updated CORS configuration
+// File upload configuration
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+const upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } });
+
+// Serve uploaded files
+app.use('/uploads', express.static(uploadDir));
+
+// CORS configuration
 app.use(cors({
     origin: [
         'https://winze-website.onrender.com',
@@ -17,38 +40,48 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
-// ========== AUTHENTICATION MIDDLEWARE ==========
 
-// Simple token-based authentication for API
+// ========== AUTHENTICATION MIDDLEWARE ==========
 const requireAuth = async (req, res, next) => {
-    // Check for token in headers
     const authHeader = req.headers.authorization;
     
     if (!authHeader) {
-        return res.status(401).json({ 
-            success: false, 
-            error: 'Authentication required. Please login first.' 
-        });
+        return res.status(401).json({ success: false, error: 'Authentication required' });
     }
     
-    // Get token (Bearer token)
     const token = authHeader.split(' ')[1];
     
-    // Check if token is valid
     if (!token || token !== 'admin-session-token') {
-        return res.status(401).json({ 
-            success: false, 
-            error: 'Invalid or expired token. Please login again.' 
-        });
+        return res.status(401).json({ success: false, error: 'Invalid or expired token' });
     }
     
     next();
 };
 
-// Create tables on startup
+const requireSuperAdmin = async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(' ')[1];
+    
+    if (!token || token !== 'admin-session-token') {
+        return res.status(401).json({ success: false, error: 'Authentication required' });
+    }
+    
+    try {
+        const result = await db.query(`SELECT role FROM admins WHERE username = 'superadmin'`);
+        if (result.rows.length > 0 && result.rows[0].role === 'super_admin') {
+            next();
+        } else {
+            res.status(403).json({ success: false, error: 'Super admin access required' });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+};
+
+// ========== DATABASE INITIALIZATION ==========
 const initDatabase = async () => {
     try {
-        // Create social_links table
+        // Existing tables
         await db.query(`
             CREATE TABLE IF NOT EXISTS social_links (
                 id SERIAL PRIMARY KEY,
@@ -61,7 +94,129 @@ const initDatabase = async () => {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `);
-        console.log('✅ social_links table ready');
+
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS clicks (
+                id SERIAL PRIMARY KEY,
+                link_url VARCHAR(255) NOT NULL,
+                link_title VARCHAR(255) NOT NULL,
+                ip_address VARCHAR(45),
+                clicked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS admins (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL,
+                role VARCHAR(20) DEFAULT 'admin',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // NEW: Blogs table
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS blogs (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                slug VARCHAR(255) UNIQUE NOT NULL,
+                excerpt TEXT,
+                content TEXT,
+                category VARCHAR(100),
+                image VARCHAR(500),
+                author VARCHAR(100),
+                author_role VARCHAR(100),
+                read_time INT DEFAULT 5,
+                views INT DEFAULT 0,
+                status VARCHAR(20) DEFAULT 'draft',
+                created_by INT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // NEW: Jobs table
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS jobs (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                department VARCHAR(100),
+                location VARCHAR(255),
+                type VARCHAR(50) DEFAULT 'Full-time',
+                experience VARCHAR(50),
+                salary VARCHAR(100),
+                description TEXT,
+                requirements TEXT,
+                benefits TEXT,
+                status VARCHAR(20) DEFAULT 'active',
+                deadline DATE,
+                posted_by INT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // NEW: Job applications table
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS job_applications (
+                id SERIAL PRIMARY KEY,
+                job_id INT REFERENCES jobs(id) ON DELETE CASCADE,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL,
+                phone VARCHAR(20),
+                experience VARCHAR(50),
+                current_company VARCHAR(100),
+                current_ctc VARCHAR(50),
+                notice_period VARCHAR(50),
+                cover_letter TEXT,
+                resume_url VARCHAR(500),
+                status VARCHAR(20) DEFAULT 'pending',
+                applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // NEW: Quotes table
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS quotes (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL,
+                phone VARCHAR(20),
+                service VARCHAR(255),
+                message TEXT,
+                status VARCHAR(20) DEFAULT 'pending',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Add role column if not exists
+        await db.query(`
+            ALTER TABLE admins ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'admin'
+        `);
+
+        // Insert default super admin
+        const superAdminCheck = await db.query(`SELECT * FROM admins WHERE username = 'superadmin'`);
+        if (superAdminCheck.rows.length === 0) {
+            const hashedPassword = await bcrypt.hash('SuperAdmin@2024', 10);
+            await db.query(
+                `INSERT INTO admins (username, password_hash, role) VALUES ($1, $2, $3)`,
+                ['superadmin', hashedPassword, 'super_admin']
+            );
+            console.log('✅ Super admin created (username: superadmin, password: SuperAdmin@2024)');
+        }
+
+        // Insert default admin
+        const adminCheck = await db.query(`SELECT * FROM admins WHERE username = 'admin'`);
+        if (adminCheck.rows.length === 0) {
+            const hashedPassword = await bcrypt.hash('admin123', 10);
+            await db.query(
+                `INSERT INTO admins (username, password_hash, role) VALUES ($1, $2, $3)`,
+                ['admin', hashedPassword, 'admin']
+            );
+            console.log('✅ Admin created (username: admin, password: admin123)');
+        }
 
         // Insert default social links if empty
         const socialResult = await db.query('SELECT COUNT(*) FROM social_links');
@@ -76,42 +231,7 @@ const initDatabase = async () => {
             console.log('✅ Default social links inserted');
         }
 
-        // Create clicks table
-        await db.query(`
-            CREATE TABLE IF NOT EXISTS clicks (
-                id SERIAL PRIMARY KEY,
-                link_url VARCHAR(255) NOT NULL,
-                link_title VARCHAR(255) NOT NULL,
-                ip_address VARCHAR(45),
-                clicked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        `);
-        console.log('✅ clicks table ready');
-
-        // Create admins table for authentication
-        await db.query(`
-            CREATE TABLE IF NOT EXISTS admins (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(50) UNIQUE NOT NULL,
-                password_hash VARCHAR(255) NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        `);
-        console.log('✅ admins table ready');
-
-        // Check if default admin exists
-        const adminResult = await db.query('SELECT COUNT(*) FROM admins');
-        if (parseInt(adminResult.rows[0].count) === 0) {
-            const saltRounds = 10;
-            const hashedPassword = await bcrypt.hash('Winze@2026', saltRounds);
-            await db.query(
-                'INSERT INTO admins (username, password_hash) VALUES ($1, $2)',
-                ['admin', hashedPassword]
-            );
-            console.log('✅ Default admin created (username: admin, password: Winze@2026)');
-        }
-
+        console.log('✅ All database tables ready');
     } catch (err) {
         console.error('Database init error:', err.message);
     }
@@ -119,17 +239,14 @@ const initDatabase = async () => {
 
 initDatabase();
 
-// ========== API ENDPOINTS ==========
-
-// Root
+// ========== EXISTING ROUTES ==========
 app.get('/', (req, res) => {
     res.json({ 
         message: 'Winze API is running', 
-        endpoints: ['/api/health', '/api/social-links', '/api/track', '/api/clicks', '/api/clicks/stats', '/api/admin/login'] 
+        endpoints: ['/api/health', '/api/social-links', '/api/track', '/api/clicks', '/api/blogs', '/api/jobs', '/api/admin/*'] 
     });
 });
 
-// Health check (PUBLIC)
 app.get('/api/health', async (req, res) => {
     try {
         const result = await db.query('SELECT NOW() as time');
@@ -139,7 +256,6 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
-// GET all social links (PUBLIC - needed for website)
 app.get('/api/social-links', async (req, res) => {
     try {
         const result = await db.query('SELECT * FROM social_links WHERE is_active = 1 ORDER BY display_order');
@@ -150,7 +266,6 @@ app.get('/api/social-links', async (req, res) => {
     }
 });
 
-// POST - Add new social link (PROTECTED - admin only)
 app.post('/api/social-links', requireAuth, async (req, res) => {
     const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
     
@@ -158,12 +273,7 @@ app.post('/api/social-links', requireAuth, async (req, res) => {
         const query = `INSERT INTO social_links (platform_name, platform_url, icon_class, color_code, display_order, is_active) 
                        VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`;
         const result = await db.query(query, [
-            platform_name, 
-            platform_url, 
-            icon_class, 
-            color_code, 
-            display_order || 0, 
-            is_active !== undefined ? is_active : 1
+            platform_name, platform_url, icon_class, color_code, display_order || 0, is_active !== undefined ? is_active : 1
         ]);
         res.status(201).json({ id: result.rows[0].id, message: 'Link added successfully' });
     } catch (err) {
@@ -172,7 +282,6 @@ app.post('/api/social-links', requireAuth, async (req, res) => {
     }
 });
 
-// PUT - Update social link (PROTECTED - admin only)
 app.put('/api/social-links/:id', requireAuth, async (req, res) => {
     const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
     
@@ -189,11 +298,9 @@ app.put('/api/social-links/:id', requireAuth, async (req, res) => {
     }
 });
 
-// DELETE - Remove social link (PROTECTED - admin only)
 app.delete('/api/social-links/:id', requireAuth, async (req, res) => {
     try {
-        const query = 'DELETE FROM social_links WHERE id = $1';
-        await db.query(query, [req.params.id]);
+        await db.query('DELETE FROM social_links WHERE id = $1', [req.params.id]);
         res.json({ message: 'Link deleted successfully' });
     } catch (err) {
         console.error(err);
@@ -201,15 +308,11 @@ app.delete('/api/social-links/:id', requireAuth, async (req, res) => {
     }
 });
 
-// POST - Track click (PUBLIC - anyone can track)
 app.post('/api/track', async (req, res) => {
     const { link_url, link_title, ip_address } = req.body;
     
     if (!link_url || !link_title) {
-        return res.status(400).json({ 
-            success: false, 
-            error: 'Missing required fields: link_url and link_title are required' 
-        });
+        return res.status(400).json({ success: false, error: 'Missing required fields' });
     }
     
     try {
@@ -224,7 +327,6 @@ app.post('/api/track', async (req, res) => {
     }
 });
 
-// GET all clicks (PROTECTED - admin only)
 app.get('/api/clicks', requireAuth, async (req, res) => {
     try {
         const result = await db.query('SELECT * FROM clicks ORDER BY clicked_at DESC');
@@ -235,7 +337,6 @@ app.get('/api/clicks', requireAuth, async (req, res) => {
     }
 });
 
-// GET click statistics (PROTECTED - admin only)
 app.get('/api/clicks/stats', requireAuth, async (req, res) => {
     try {
         const totalResult = await db.query('SELECT COUNT(*) as count FROM clicks');
@@ -254,9 +355,6 @@ app.get('/api/clicks/stats', requireAuth, async (req, res) => {
     }
 });
 
-// ========== ADMIN AUTHENTICATION ROUTES ==========
-
-// Login endpoint (returns token)
 app.post('/api/admin/login', async (req, res) => {
     const { username, password } = req.body;
     
@@ -278,12 +376,11 @@ app.post('/api/admin/login', async (req, res) => {
             return res.status(401).json({ success: false, error: 'Invalid credentials' });
         }
         
-        // Generate session token
         const token = 'admin-session-token';
         
         res.json({ 
             success: true, 
-            admin: { id: admin.id, username: admin.username },
+            admin: { id: admin.id, username: admin.username, role: admin.role },
             token: token
         });
     } catch (err) {
@@ -292,15 +389,8 @@ app.post('/api/admin/login', async (req, res) => {
     }
 });
 
-// Change password endpoint (NO LENGTH LIMIT)
-app.post('/api/admin/change-password', async (req, res) => {
+app.post('/api/admin/change-password', requireAuth, async (req, res) => {
     const { username, oldPassword, newPassword } = req.body;
-    
-    if (!username || !oldPassword || !newPassword) {
-        return res.status(400).json({ success: false, error: 'All fields required' });
-    }
-    
-    // REMOVED: password length check - admin can use any password now
     
     try {
         const result = await db.query('SELECT * FROM admins WHERE username = $1', [username]);
@@ -327,44 +417,8 @@ app.post('/api/admin/change-password', async (req, res) => {
     }
 });
 
-// Create new admin (NO LENGTH LIMIT)
-app.post('/api/admin/create', async (req, res) => {
-    const { username, password } = req.body;
-    
-    if (!username || !password) {
-        return res.status(400).json({ success: false, error: 'Username and password required' });
-    }
-    
-    // REMOVED: password length check - admin can use any password now
-    
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        
-        await db.query('INSERT INTO admins (username, password_hash) VALUES ($1, $2)', 
-            [username, hashedPassword]);
-        
-        res.json({ success: true, message: 'Admin created successfully' });
-    } catch (err) {
-        if (err.code === '23505') { // Unique violation
-            res.status(400).json({ success: false, error: 'Username already exists' });
-        } else {
-            console.error('Create admin error:', err);
-            res.status(500).json({ success: false, error: 'Server error' });
-        }
-    }
-});
-
-// Change username endpoint
-app.post('/api/admin/change-username', async (req, res) => {
+app.post('/api/admin/change-username', requireAuth, async (req, res) => {
     const { username, newUsername, password } = req.body;
-    
-    if (!username || !newUsername || !password) {
-        return res.status(400).json({ success: false, error: 'All fields required' });
-    }
-    
-    if (newUsername.length < 3) {
-        return res.status(400).json({ success: false, error: 'Username must be at least 3 characters' });
-    }
     
     try {
         const result = await db.query('SELECT * FROM admins WHERE username = $1', [username]);
@@ -395,279 +449,334 @@ app.post('/api/admin/change-username', async (req, res) => {
     }
 });
 
-// Debug endpoint (PUBLIC)
-app.get('/api/debug-db', async (req, res) => {
-    res.json({
-        database_url_exists: !!process.env.DATABASE_URL,
-        postgres_connected: true,
-        environment: process.env.NODE_ENV || 'development'
-    });
-});
-
-const PORT = process.env.PORT || 5000;
-// ========== NEW: USER MANAGEMENT (Super Admin) ==========
-
-// Create Super Admin (Run once)
-app.post('/api/setup-super-admin', async (req, res) => {
-    try {
-        const existing = await db.query('SELECT * FROM users WHERE role = $1', ['super_admin']);
-        if (existing.rows.length > 0) {
-            return res.json({ message: 'Super admin already exists' });
-        }
-        const hashedPassword = await bcrypt.hash('SuperAdmin@2025', 10);
-        await db.query(
-            'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4)',
-            ['superadmin', 'superadmin@winzetech.com', hashedPassword, 'super_admin']
-        );
-        res.json({ success: true, message: 'Super admin created', credentials: { username: 'superadmin', password: 'SuperAdmin@2025' } });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Create new admin (Super Admin only)
-app.post('/api/admin/create-user', requireAuth, async (req, res) => {
-    const { username, email, password, role } = req.body;
-    const authHeader = req.headers.authorization;
-    const token = authHeader.split(' ')[1];
-    // Simple check - in production use JWT
-    if (token !== 'admin-session-token') {
-        return res.status(403).json({ error: 'Super admin access required' });
-    }
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await db.query(
-            'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4)',
-            [username, email, hashedPassword, role || 'admin']
-        );
-        res.json({ success: true, message: 'Admin created successfully' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Get all admins (Super Admin only)
-app.get('/api/admins-list', requireAuth, async (req, res) => {
-    const authHeader = req.headers.authorization;
-    const token = authHeader.split(' ')[1];
-    if (token !== 'admin-session-token') {
-        return res.status(403).json({ error: 'Super admin access required' });
-    }
-    try {
-        const result = await db.query('SELECT id, username, email, role, created_at FROM users WHERE role = $1', ['admin']);
-        res.json({ success: true, admins: result.rows });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// ========== NEW: JOB MANAGEMENT ==========
-
-// Get all open jobs (Public)
-app.get('/api/jobs', async (req, res) => {
-    try {
-        const result = await db.query('SELECT * FROM jobs WHERE status = $1 ORDER BY posted_at DESC', ['open']);
-        res.json(result.rows);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Get single job (Public)
-app.get('/api/jobs/:id', async (req, res) => {
-    try {
-        const result = await db.query('SELECT * FROM jobs WHERE id = $1', [req.params.id]);
-        if (result.rows.length === 0) return res.status(404).json({ error: 'Job not found' });
-        res.json(result.rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Create job (Admin only)
-app.post('/api/jobs', requireAuth, async (req, res) => {
-    const { title, department, location, job_type, experience, salary, description, requirements, responsibilities, deadline } = req.body;
-    try {
-        const result = await db.query(
-            `INSERT INTO jobs (title, department, location, job_type, experience, salary, description, requirements, responsibilities, deadline) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
-            [title, department, location, job_type, experience, salary, description, requirements || [], responsibilities || [], deadline]
-        );
-        res.json({ success: true, message: 'Job created', jobId: result.rows[0].id });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Update job (Admin only)
-app.put('/api/jobs/:id', requireAuth, async (req, res) => {
-    const { title, department, location, job_type, experience, salary, description, requirements, responsibilities, status, deadline } = req.body;
-    try {
-        await db.query(
-            `UPDATE jobs SET title=$1, department=$2, location=$3, job_type=$4, experience=$5, 
-             salary=$6, description=$7, requirements=$8, responsibilities=$9, status=$10, deadline=$11 WHERE id=$12`,
-            [title, department, location, job_type, experience, salary, description, requirements, responsibilities, status, deadline, req.params.id]
-        );
-        res.json({ success: true, message: 'Job updated' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Delete job (Admin only)
-app.delete('/api/jobs/:id', requireAuth, async (req, res) => {
-    try {
-        await db.query('DELETE FROM jobs WHERE id = $1', [req.params.id]);
-        res.json({ success: true, message: 'Job deleted' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// ========== NEW: JOB APPLICATIONS ==========
-
-// Submit application (Public)
-const multer = require('multer');
-const fs = require('fs');
-
-// Create uploads folder if not exists
-if (!fs.existsSync('./uploads')) fs.mkdirSync('./uploads');
-if (!fs.existsSync('./uploads/resumes')) fs.mkdirSync('./uploads/resumes');
-
-const storage = multer.diskStorage({
-    destination: './uploads/resumes/',
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
-const upload = multer({ storage });
-
-app.post('/api/applications', upload.single('resume'), async (req, res) => {
-    const { job_id, name, email, phone, experience, current_company, current_ctc, notice_period, cover_letter } = req.body;
-    try {
-        const jobResult = await db.query('SELECT title FROM jobs WHERE id = $1', [job_id]);
-        const jobTitle = jobResult.rows[0]?.title;
-        const resumeUrl = req.file ? `/uploads/resumes/${req.file.filename}` : null;
-        
-        await db.query(
-            `INSERT INTO applications (job_id, job_title, name, email, phone, experience, current_company, current_ctc, notice_period, resume_url, cover_letter) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-            [job_id, jobTitle, name, email, phone, experience, current_company, current_ctc, notice_period, resumeUrl, cover_letter]
-        );
-        res.json({ success: true, message: 'Application submitted successfully!' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Get all applications (Admin only)
-app.get('/api/applications', requireAuth, async (req, res) => {
-    try {
-        const result = await db.query('SELECT * FROM applications ORDER BY applied_at DESC');
-        res.json({ success: true, applications: result.rows });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Update application status (Admin only)
-app.put('/api/applications/:id', requireAuth, async (req, res) => {
-    const { status, notes } = req.body;
-    try {
-        await db.query('UPDATE applications SET status = $1, notes = $2 WHERE id = $3', [status, notes, req.params.id]);
-        res.json({ success: true, message: 'Application updated' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// ========== NEW: BLOG MANAGEMENT ==========
-
-app.post('/api/blogs', requireAuth, async (req, res) => {
-    const { title, slug, excerpt, content, author, category, tags, status } = req.body;
-    try {
-        await db.query(
-            `INSERT INTO blogs (title, slug, excerpt, content, author, category, tags, status) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-            [title, slug, excerpt, content, author, category, tags || [], status || 'draft']
-        );
-        res.json({ success: true, message: 'Blog created' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
+// ========== BLOG ROUTES ==========
 app.get('/api/blogs', async (req, res) => {
     try {
-        const result = await db.query('SELECT * FROM blogs WHERE status = $1 ORDER BY published_at DESC', ['published']);
-        res.json(result.rows);
+        const result = await db.query(
+            `SELECT id, title, slug, excerpt, category, image, author, author_role, read_time, views, created_at 
+             FROM blogs 
+             WHERE status = 'published' 
+             ORDER BY created_at DESC`
+        );
+        res.json({ success: true, blogs: result.rows });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Error fetching blogs:', err);
+        res.status(500).json({ success: false, error: err.message });
     }
 });
 
 app.get('/api/blogs/:slug', async (req, res) => {
     try {
-        const result = await db.query('SELECT * FROM blogs WHERE slug = $1 AND status = $2', [req.params.slug, 'published']);
-        if (result.rows.length === 0) return res.status(404).json({ error: 'Blog not found' });
-        await db.query('UPDATE blogs SET views = views + 1 WHERE id = $1', [result.rows[0].id]);
-        res.json(result.rows[0]);
+        const result = await db.query(`SELECT * FROM blogs WHERE slug = $1 AND status = 'published'`, [req.params.slug]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, error: 'Blog not found' });
+        }
+        
+        await db.query(`UPDATE blogs SET views = views + 1 WHERE id = $1`, [result.rows[0].id]);
+        
+        res.json({ success: true, blog: result.rows[0] });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Error fetching blog:', err);
+        res.status(500).json({ success: false, error: err.message });
     }
 });
 
-app.put('/api/blogs/:id', requireAuth, async (req, res) => {
-    const { title, excerpt, content, category, tags, status } = req.body;
+app.get('/api/admin/blogs', requireAuth, async (req, res) => {
     try {
-        await db.query(
-            `UPDATE blogs SET title=$1, excerpt=$2, content=$3, category=$4, tags=$5, status=$6, 
-             published_at = CASE WHEN status='published' AND published_at IS NULL THEN CURRENT_TIMESTAMP ELSE published_at END
-             WHERE id=$7`,
-            [title, excerpt, content, category, tags || [], status, req.params.id]
+        const result = await db.query(`SELECT * FROM blogs ORDER BY created_at DESC`);
+        res.json({ success: true, blogs: result.rows });
+    } catch (err) {
+        console.error('Error fetching admin blogs:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.post('/api/admin/blogs', requireAuth, upload.single('image'), async (req, res) => {
+    try {
+        const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        const image = req.file ? `/uploads/${req.file.filename}` : '';
+        
+        const result = await db.query(
+            `INSERT INTO blogs (title, slug, excerpt, content, category, image, author, author_role, read_time, status) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
+            [title, slug, excerpt, content, category, image, author, author_role, read_time || 5, status || 'draft']
         );
-        res.json({ success: true, message: 'Blog updated' });
+        
+        res.json({ success: true, id: result.rows[0].id, message: 'Blog created successfully' });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Error creating blog:', err);
+        res.status(500).json({ success: false, error: err.message });
     }
 });
 
-app.delete('/api/blogs/:id', requireAuth, async (req, res) => {
+app.put('/api/admin/blogs/:id', requireAuth, upload.single('image'), async (req, res) => {
     try {
-        await db.query('DELETE FROM blogs WHERE id = $1', [req.params.id]);
-        res.json({ success: true, message: 'Blog deleted' });
+        const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
+        let query = `UPDATE blogs SET title=$1, excerpt=$2, content=$3, category=$4, author=$5, author_role=$6, read_time=$7, status=$8, updated_at=CURRENT_TIMESTAMP`;
+        let params = [title, excerpt, content, category, author, author_role, read_time, status];
+        
+        if (req.file) {
+            query += `, image=$9`;
+            params.push(`/uploads/${req.file.filename}`);
+        }
+        
+        query += ` WHERE id=$${params.length + 1}`;
+        params.push(req.params.id);
+        
+        await db.query(query, params);
+        res.json({ success: true, message: 'Blog updated successfully' });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Error updating blog:', err);
+        res.status(500).json({ success: false, error: err.message });
     }
 });
 
-// Dashboard Stats
-app.get('/api/admin/dashboard-stats', requireAuth, async (req, res) => {
+app.delete('/api/admin/blogs/:id', requireAuth, async (req, res) => {
     try {
-        const totalJobs = await db.query('SELECT COUNT(*) FROM jobs');
-        const openJobs = await db.query('SELECT COUNT(*) FROM jobs WHERE status = $1', ['open']);
-        const totalApplications = await db.query('SELECT COUNT(*) FROM applications');
-        const pendingApps = await db.query('SELECT COUNT(*) FROM applications WHERE status = $1', ['pending']);
-        const totalBlogs = await db.query('SELECT COUNT(*) FROM blogs');
-        const publishedBlogs = await db.query('SELECT COUNT(*) FROM blogs WHERE status = $1', ['published']);
+        await db.query(`DELETE FROM blogs WHERE id = $1`, [req.params.id]);
+        res.json({ success: true, message: 'Blog deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting blog:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ========== JOB ROUTES ==========
+app.get('/api/jobs', async (req, res) => {
+    try {
+        const result = await db.query(
+            `SELECT id, title, department, location, type, experience, salary, description, requirements, benefits, deadline, created_at 
+             FROM jobs 
+             WHERE status = 'active' AND (deadline IS NULL OR deadline > CURRENT_DATE)
+             ORDER BY created_at DESC`
+        );
+        res.json({ success: true, jobs: result.rows });
+    } catch (err) {
+        console.error('Error fetching jobs:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.get('/api/jobs/:id', async (req, res) => {
+    try {
+        const result = await db.query(`SELECT * FROM jobs WHERE id = $1`, [req.params.id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, error: 'Job not found' });
+        }
+        res.json({ success: true, job: result.rows[0] });
+    } catch (err) {
+        console.error('Error fetching job:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.post('/api/jobs/:id/apply', upload.single('resume'), async (req, res) => {
+    try {
+        const { name, email, phone, experience, current_company, current_ctc, notice_period, cover_letter } = req.body;
+        const resume_url = req.file ? `/uploads/${req.file.filename}` : '';
+        
+        await db.query(
+            `INSERT INTO job_applications (job_id, name, email, phone, experience, current_company, current_ctc, notice_period, cover_letter, resume_url) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+            [req.params.id, name, email, phone, experience, current_company, current_ctc, notice_period, cover_letter, resume_url]
+        );
+        
+        res.json({ success: true, message: 'Application submitted successfully' });
+    } catch (err) {
+        console.error('Error submitting application:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.get('/api/admin/jobs', requireAuth, async (req, res) => {
+    try {
+        const result = await db.query(`SELECT * FROM jobs ORDER BY created_at DESC`);
+        res.json({ success: true, jobs: result.rows });
+    } catch (err) {
+        console.error('Error fetching admin jobs:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.post('/api/admin/jobs', requireAuth, async (req, res) => {
+    try {
+        const { title, department, location, type, experience, salary, description, requirements, benefits, status, deadline } = req.body;
+        
+        const result = await db.query(
+            `INSERT INTO jobs (title, department, location, type, experience, salary, description, requirements, benefits, status, deadline) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
+            [title, department, location, type, experience, salary, description, requirements, benefits, status || 'active', deadline]
+        );
+        
+        res.json({ success: true, id: result.rows[0].id, message: 'Job posted successfully' });
+    } catch (err) {
+        console.error('Error creating job:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.put('/api/admin/jobs/:id', requireAuth, async (req, res) => {
+    try {
+        const { title, department, location, type, experience, salary, description, requirements, benefits, status, deadline } = req.body;
+        
+        await db.query(
+            `UPDATE jobs SET title=$1, department=$2, location=$3, type=$4, experience=$5, salary=$6, description=$7, requirements=$8, benefits=$9, status=$10, deadline=$11, updated_at=CURRENT_TIMESTAMP 
+             WHERE id=$12`,
+            [title, department, location, type, experience, salary, description, requirements, benefits, status, deadline, req.params.id]
+        );
+        
+        res.json({ success: true, message: 'Job updated successfully' });
+    } catch (err) {
+        console.error('Error updating job:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.delete('/api/admin/jobs/:id', requireAuth, async (req, res) => {
+    try {
+        await db.query(`DELETE FROM jobs WHERE id = $1`, [req.params.id]);
+        res.json({ success: true, message: 'Job deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting job:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.get('/api/admin/applications', requireAuth, async (req, res) => {
+    try {
+        const result = await db.query(
+            `SELECT ja.*, j.title as job_title 
+             FROM job_applications ja 
+             LEFT JOIN jobs j ON ja.job_id = j.id 
+             ORDER BY ja.applied_at DESC`
+        );
+        res.json({ success: true, applications: result.rows });
+    } catch (err) {
+        console.error('Error fetching applications:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.put('/api/admin/applications/:id/status', requireAuth, async (req, res) => {
+    try {
+        const { status } = req.body;
+        await db.query(`UPDATE job_applications SET status = $1 WHERE id = $2`, [status, req.params.id]);
+        res.json({ success: true, message: 'Application status updated' });
+    } catch (err) {
+        console.error('Error updating application:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ========== QUOTE ROUTES ==========
+app.post('/api/quotes', async (req, res) => {
+    try {
+        const { name, email, phone, service, message } = req.body;
+        await db.query(
+            `INSERT INTO quotes (name, email, phone, service, message) VALUES ($1, $2, $3, $4, $5)`,
+            [name, email, phone, service, message]
+        );
+        res.json({ success: true, message: 'Quote request submitted successfully' });
+    } catch (err) {
+        console.error('Error submitting quote:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.get('/api/admin/quotes', requireAuth, async (req, res) => {
+    try {
+        const result = await db.query(`SELECT * FROM quotes ORDER BY created_at DESC`);
+        res.json({ success: true, quotes: result.rows });
+    } catch (err) {
+        console.error('Error fetching quotes:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ========== USER MANAGEMENT (Super Admin only) ==========
+app.get('/api/admin/users', requireAuth, requireSuperAdmin, async (req, res) => {
+    try {
+        const result = await db.query(`SELECT id, username, role, created_at FROM admins`);
+        res.json({ success: true, users: result.rows });
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.post('/api/admin/users', requireAuth, requireSuperAdmin, async (req, res) => {
+    try {
+        const { username, password, role } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        await db.query(
+            `INSERT INTO admins (username, password_hash, role) VALUES ($1, $2, $3)`,
+            [username, hashedPassword, role || 'admin']
+        );
+        
+        res.json({ success: true, message: 'Admin created successfully' });
+    } catch (err) {
+        if (err.code === '23505') {
+            res.status(400).json({ success: false, error: 'Username already exists' });
+        } else {
+            console.error('Error creating admin:', err);
+            res.status(500).json({ success: false, error: err.message });
+        }
+    }
+});
+
+app.delete('/api/admin/users/:id', requireAuth, requireSuperAdmin, async (req, res) => {
+    try {
+        const superAdminCheck = await db.query(`SELECT COUNT(*) FROM admins WHERE role = 'super_admin'`);
+        const userToDelete = await db.query(`SELECT role FROM admins WHERE id = $1`, [req.params.id]);
+        
+        if (userToDelete.rows.length > 0 && userToDelete.rows[0].role === 'super_admin' && parseInt(superAdminCheck.rows[0].count) <= 1) {
+            return res.status(400).json({ success: false, error: 'Cannot delete the last super admin' });
+        }
+        
+        await db.query(`DELETE FROM admins WHERE id = $1`, [req.params.id]);
+        res.json({ success: true, message: 'Admin deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting admin:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ========== DASHBOARD STATS ==========
+app.get('/api/admin/stats', requireAuth, async (req, res) => {
+    try {
+        const blogCount = await db.query(`SELECT COUNT(*) FROM blogs`);
+        const publishedBlogs = await db.query(`SELECT COUNT(*) FROM blogs WHERE status = 'published'`);
+        const jobCount = await db.query(`SELECT COUNT(*) FROM jobs`);
+        const activeJobs = await db.query(`SELECT COUNT(*) FROM jobs WHERE status = 'active'`);
+        const applicationCount = await db.query(`SELECT COUNT(*) FROM job_applications`);
+        const quoteCount = await db.query(`SELECT COUNT(*) FROM quotes`);
+        const clickCount = await db.query(`SELECT COUNT(*) FROM clicks`);
         
         res.json({
             success: true,
             stats: {
-                totalJobs: parseInt(totalJobs.rows[0].count),
-                openJobs: parseInt(openJobs.rows[0].count),
-                totalApplications: parseInt(totalApplications.rows[0].count),
-                pendingApplications: parseInt(pendingApps.rows[0].count),
-                totalBlogs: parseInt(totalBlogs.rows[0].count),
-                publishedBlogs: parseInt(publishedBlogs.rows[0].count)
+                totalBlogs: parseInt(blogCount.rows[0].count),
+                publishedBlogs: parseInt(publishedBlogs.rows[0].count),
+                totalJobs: parseInt(jobCount.rows[0].count),
+                activeJobs: parseInt(activeJobs.rows[0].count),
+                totalApplications: parseInt(applicationCount.rows[0].count),
+                totalQuotes: parseInt(quoteCount.rows[0].count),
+                totalClicks: parseInt(clickCount.rows[0].count)
             }
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Error fetching stats:', err);
+        res.status(500).json({ success: false, error: err.message });
     }
 });
+
+const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`✅ Database: PostgreSQL`);
-    console.log(`📡 Endpoints ready: /api/health, /api/social-links, /api/track, /api/clicks, /api/admin/login`);
+    console.log(`📡 Endpoints ready`);
 });
