@@ -405,6 +405,267 @@ app.get('/api/debug-db', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
+// ========== NEW: USER MANAGEMENT (Super Admin) ==========
+
+// Create Super Admin (Run once)
+app.post('/api/setup-super-admin', async (req, res) => {
+    try {
+        const existing = await db.query('SELECT * FROM users WHERE role = $1', ['super_admin']);
+        if (existing.rows.length > 0) {
+            return res.json({ message: 'Super admin already exists' });
+        }
+        const hashedPassword = await bcrypt.hash('SuperAdmin@2025', 10);
+        await db.query(
+            'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4)',
+            ['superadmin', 'superadmin@winzetech.com', hashedPassword, 'super_admin']
+        );
+        res.json({ success: true, message: 'Super admin created', credentials: { username: 'superadmin', password: 'SuperAdmin@2025' } });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Create new admin (Super Admin only)
+app.post('/api/admin/create-user', requireAuth, async (req, res) => {
+    const { username, email, password, role } = req.body;
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    // Simple check - in production use JWT
+    if (token !== 'admin-session-token') {
+        return res.status(403).json({ error: 'Super admin access required' });
+    }
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await db.query(
+            'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4)',
+            [username, email, hashedPassword, role || 'admin']
+        );
+        res.json({ success: true, message: 'Admin created successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Get all admins (Super Admin only)
+app.get('/api/admins-list', requireAuth, async (req, res) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    if (token !== 'admin-session-token') {
+        return res.status(403).json({ error: 'Super admin access required' });
+    }
+    try {
+        const result = await db.query('SELECT id, username, email, role, created_at FROM users WHERE role = $1', ['admin']);
+        res.json({ success: true, admins: result.rows });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ========== NEW: JOB MANAGEMENT ==========
+
+// Get all open jobs (Public)
+app.get('/api/jobs', async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM jobs WHERE status = $1 ORDER BY posted_at DESC', ['open']);
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Get single job (Public)
+app.get('/api/jobs/:id', async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM jobs WHERE id = $1', [req.params.id]);
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Job not found' });
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Create job (Admin only)
+app.post('/api/jobs', requireAuth, async (req, res) => {
+    const { title, department, location, job_type, experience, salary, description, requirements, responsibilities, deadline } = req.body;
+    try {
+        const result = await db.query(
+            `INSERT INTO jobs (title, department, location, job_type, experience, salary, description, requirements, responsibilities, deadline) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
+            [title, department, location, job_type, experience, salary, description, requirements || [], responsibilities || [], deadline]
+        );
+        res.json({ success: true, message: 'Job created', jobId: result.rows[0].id });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Update job (Admin only)
+app.put('/api/jobs/:id', requireAuth, async (req, res) => {
+    const { title, department, location, job_type, experience, salary, description, requirements, responsibilities, status, deadline } = req.body;
+    try {
+        await db.query(
+            `UPDATE jobs SET title=$1, department=$2, location=$3, job_type=$4, experience=$5, 
+             salary=$6, description=$7, requirements=$8, responsibilities=$9, status=$10, deadline=$11 WHERE id=$12`,
+            [title, department, location, job_type, experience, salary, description, requirements, responsibilities, status, deadline, req.params.id]
+        );
+        res.json({ success: true, message: 'Job updated' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Delete job (Admin only)
+app.delete('/api/jobs/:id', requireAuth, async (req, res) => {
+    try {
+        await db.query('DELETE FROM jobs WHERE id = $1', [req.params.id]);
+        res.json({ success: true, message: 'Job deleted' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ========== NEW: JOB APPLICATIONS ==========
+
+// Submit application (Public)
+const multer = require('multer');
+const fs = require('fs');
+
+// Create uploads folder if not exists
+if (!fs.existsSync('./uploads')) fs.mkdirSync('./uploads');
+if (!fs.existsSync('./uploads/resumes')) fs.mkdirSync('./uploads/resumes');
+
+const storage = multer.diskStorage({
+    destination: './uploads/resumes/',
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+const upload = multer({ storage });
+
+app.post('/api/applications', upload.single('resume'), async (req, res) => {
+    const { job_id, name, email, phone, experience, current_company, current_ctc, notice_period, cover_letter } = req.body;
+    try {
+        const jobResult = await db.query('SELECT title FROM jobs WHERE id = $1', [job_id]);
+        const jobTitle = jobResult.rows[0]?.title;
+        const resumeUrl = req.file ? `/uploads/resumes/${req.file.filename}` : null;
+        
+        await db.query(
+            `INSERT INTO applications (job_id, job_title, name, email, phone, experience, current_company, current_ctc, notice_period, resume_url, cover_letter) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+            [job_id, jobTitle, name, email, phone, experience, current_company, current_ctc, notice_period, resumeUrl, cover_letter]
+        );
+        res.json({ success: true, message: 'Application submitted successfully!' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Get all applications (Admin only)
+app.get('/api/applications', requireAuth, async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM applications ORDER BY applied_at DESC');
+        res.json({ success: true, applications: result.rows });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Update application status (Admin only)
+app.put('/api/applications/:id', requireAuth, async (req, res) => {
+    const { status, notes } = req.body;
+    try {
+        await db.query('UPDATE applications SET status = $1, notes = $2 WHERE id = $3', [status, notes, req.params.id]);
+        res.json({ success: true, message: 'Application updated' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ========== NEW: BLOG MANAGEMENT ==========
+
+app.post('/api/blogs', requireAuth, async (req, res) => {
+    const { title, slug, excerpt, content, author, category, tags, status } = req.body;
+    try {
+        await db.query(
+            `INSERT INTO blogs (title, slug, excerpt, content, author, category, tags, status) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+            [title, slug, excerpt, content, author, category, tags || [], status || 'draft']
+        );
+        res.json({ success: true, message: 'Blog created' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/blogs', async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM blogs WHERE status = $1 ORDER BY published_at DESC', ['published']);
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/blogs/:slug', async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM blogs WHERE slug = $1 AND status = $2', [req.params.slug, 'published']);
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Blog not found' });
+        await db.query('UPDATE blogs SET views = views + 1 WHERE id = $1', [result.rows[0].id]);
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/blogs/:id', requireAuth, async (req, res) => {
+    const { title, excerpt, content, category, tags, status } = req.body;
+    try {
+        await db.query(
+            `UPDATE blogs SET title=$1, excerpt=$2, content=$3, category=$4, tags=$5, status=$6, 
+             published_at = CASE WHEN status='published' AND published_at IS NULL THEN CURRENT_TIMESTAMP ELSE published_at END
+             WHERE id=$7`,
+            [title, excerpt, content, category, tags || [], status, req.params.id]
+        );
+        res.json({ success: true, message: 'Blog updated' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/blogs/:id', requireAuth, async (req, res) => {
+    try {
+        await db.query('DELETE FROM blogs WHERE id = $1', [req.params.id]);
+        res.json({ success: true, message: 'Blog deleted' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Dashboard Stats
+app.get('/api/admin/dashboard-stats', requireAuth, async (req, res) => {
+    try {
+        const totalJobs = await db.query('SELECT COUNT(*) FROM jobs');
+        const openJobs = await db.query('SELECT COUNT(*) FROM jobs WHERE status = $1', ['open']);
+        const totalApplications = await db.query('SELECT COUNT(*) FROM applications');
+        const pendingApps = await db.query('SELECT COUNT(*) FROM applications WHERE status = $1', ['pending']);
+        const totalBlogs = await db.query('SELECT COUNT(*) FROM blogs');
+        const publishedBlogs = await db.query('SELECT COUNT(*) FROM blogs WHERE status = $1', ['published']);
+        
+        res.json({
+            success: true,
+            stats: {
+                totalJobs: parseInt(totalJobs.rows[0].count),
+                openJobs: parseInt(openJobs.rows[0].count),
+                totalApplications: parseInt(totalApplications.rows[0].count),
+                pendingApplications: parseInt(pendingApps.rows[0].count),
+                totalBlogs: parseInt(totalBlogs.rows[0].count),
+                publishedBlogs: parseInt(publishedBlogs.rows[0].count)
+            }
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`✅ Database: PostgreSQL`);
