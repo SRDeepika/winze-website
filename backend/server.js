@@ -29,15 +29,18 @@ const upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } 
 // Serve uploaded files
 app.use('/uploads', express.static(uploadDir));
 
-// CORS configuration
+/// CORS configuration
 app.use(cors({
     origin: [
         'https://winze-website.onrender.com',
+        'https://winze-frontend.onrender.com',  // Your frontend URL
         'https://creative-belekoy-0cae1a.netlify.app',
         'http://localhost:5000',
         'http://localhost:3000'
     ],
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
