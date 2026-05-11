@@ -79,12 +79,11 @@ const clientLogos = [
     { name: "Toshiba", url: "/images/toshiba.png" },
     { name: "Toyota", url: "/images/toyota.png" },
     { name: "Starpacks", url: "/images/starpacks.png" },
-    { name: "MAF", url: "/images/maf.png" },        // Fixed - no /clients/
+    { name: "MAF", url: "/images/maf.png" },
     { name: "Athma", url: "/images/athma.png" },
-    { name: "RGP", url: "/images/rgp.png" },        // Fixed - no /clients/
+    { name: "RGP", url: "/images/rgp.png" },
     { name: "Utthunga", url: "/images/utthunga.png" },
-    { name: "TRC", url: "/images/trc.png" },        // Fixed - no /clients/
-    { name: "Unilateral", url: "/images/unilateral.png" }, // Fixed - no /clients/
+    { name: "Unilateral", url: "/images/unilateral.png" },
     { name: "Sun Bright", url: "/images/sun-bright.png" },
     { name: "CKPC", url: "/images/ckpc.png" },
     { name: "Kyyba", url: "/images/kyyba.png" },
