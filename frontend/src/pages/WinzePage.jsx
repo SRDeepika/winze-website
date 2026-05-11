@@ -1,5 +1,5 @@
-import BlogsSection from './components/BlogsSection';
-import CareersSection from './components/CareersSection';
+import BlogsSection from '../components/BlogsSection';
+import CareersSection from '../components/CareersSection';
 import SocialLinks from '../components/SocialLinks';
 import React, { useState, useEffect, useRef } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
