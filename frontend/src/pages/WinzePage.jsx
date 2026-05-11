@@ -73,7 +73,7 @@ const partnerLogos = [
     { name: "Dell", url: "/images/dell.png" }
 ];
 
-// Client Logos - Using reliable placeholder images
+// Client Logos
 const clientLogos = [
     { name: "Toshiba", url: "https://placehold.co/200x100/667eea/white?text=Toshiba" },
     { name: "Toyota", url: "https://placehold.co/200x100/667eea/white?text=Toyota" },
@@ -91,9 +91,111 @@ const clientLogos = [
     { name: "SATRAC", url: "https://placehold.co/200x100/667eea/white?text=SATRAC" }
 ];
 
-// Detailed content for each solution card (keeping your existing full object)
-// ... (keep your full solutionDetailedContent object here - too long to repeat)
+// ========== DETAILED CONTENT FOR SOLUTION CARDS ==========
+// MAKE SURE THIS OBJECT IS PROPERLY CLOSED WITH }; BEFORE THE COMPONENT
 
+const solutionDetailedContent = {
+    "Video Conferencing": {
+        overview: "Our Video Conferencing solution provides enterprise-grade virtual meeting capabilities...",
+        benefits: ["4K Ultra HD video quality", "End-to-end encryption", "Supports up to 500 participants", "Screen sharing and breakout rooms"],
+        features: ["Smart gallery view", "Virtual hand raise", "Calendar integration", "Custom branding"],
+        useCases: ["Global team meetings", "Client presentations", "Webinars", "Remote interviews"],
+        image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200"
+    },
+    "Smart Eye AI": {
+        overview: "Smart Eye AI is an advanced video analytics platform...",
+        benefits: ["Real-time threat detection", "Facial recognition", "Number plate recognition", "Crowd density monitoring"],
+        features: ["Centralized dashboard", "Mobile notifications", "Search by face/vehicle", "Cloud or on-premise"],
+        useCases: ["Airport security", "Retail theft prevention", "Bank surveillance", "School safety"],
+        image: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=1200"
+    },
+    "Rental IT Infrastructure": {
+        overview: "Rental IT Infrastructure provides cost-effective hardware solutions...",
+        benefits: ["Flexible rentals", "Latest hardware", "Free delivery", "24/7 support"],
+        features: ["Enterprise laptops", "High-performance desktops", "Servers", "AV equipment"],
+        useCases: ["Corporate events", "Software testing", "Temporary offices", "Exhibitions"],
+        image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200"
+    },
+    "SaaS Products": {
+        overview: "Custom SaaS products with scalable cloud-native architecture...",
+        benefits: ["Subscription pricing", "Auto updates", "99.99% uptime", "GDPR compliant"],
+        features: ["White-label options", "Role-based access", "Real-time analytics", "24/7 support"],
+        useCases: ["Business automation", "Workflow management", "Startup MVPs", "Legacy modernization"],
+        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200"
+    },
+    "Enterprise Software Licensing": {
+        overview: "Volume discounts and compliance management for enterprise software...",
+        benefits: ["40% off retail", "Centralized management", "Compliance audits", "Flexible payments"],
+        features: ["Microsoft 365", "Adobe Creative Cloud", "Oracle", "SAP", "VMware"],
+        useCases: ["Startups", "Enterprises", "Educational institutions", "Government"],
+        image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200"
+    },
+    "IT Infrastructure": {
+        overview: "Enterprise-grade networking and server solutions...",
+        benefits: ["99.999% uptime", "24/7 monitoring", "Scalable design", "Disaster recovery"],
+        features: ["HCI", "Enterprise switches", "SAN/NAS storage", "Virtualization"],
+        useCases: ["New office setup", "Data center migration", "Cloud integration", "Disaster recovery"],
+        image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200"
+    },
+    "CCTV Services": {
+        overview: "End-to-end surveillance with AI-powered analytics...",
+        benefits: ["24/7 recording", "Remote viewing", "Motion alerts", "AI analytics"],
+        features: ["4MP/8MP cameras", "PTZ cameras", "Thermal cameras", "VMS software"],
+        useCases: ["Office complexes", "Warehouses", "Retail stores", "Schools"],
+        image: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=1200"
+    },
+    "Cabling Services": {
+        overview: "Professional structured cabling solutions...",
+        benefits: ["Cat6/Cat7 cabling", "Fiber optics", "25-year warranty", "Certified testing"],
+        features: ["Rack mounting", "Patch panels", "Fiber splicing", "Cable management"],
+        useCases: ["New construction", "Office renovations", "Data centers", "Industrial facilities"],
+        image: "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=1200"
+    },
+    "WiFi as a Service": {
+        overview: "Enterprise-grade wireless networking without capital expense...",
+        benefits: ["Monthly subscription", "WiFi 6 access points", "Guest WiFi", "24/7 monitoring"],
+        features: ["Cloud controller", "Captive portal", "AD integration", "Usage analytics"],
+        useCases: ["Corporate offices", "Hotels", "Airports", "Stadiums", "Warehouses"],
+        image: "https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?w=1200"
+    },
+    "Smart Live Classroom": {
+        overview: "Interactive virtual learning platform...",
+        benefits: ["Live HD video", "Interactive whiteboard", "Attendance tracking", "Parent portal"],
+        features: ["Quizzes", "Recordings", "Digital library", "Mobile apps"],
+        useCases: ["K-12 schools", "Universities", "Corporate training", "Coaching institutes"],
+        image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200"
+    },
+    "Web & Mobile Development": {
+        overview: "Custom web and mobile applications...",
+        benefits: ["End-to-end development", "Agile methodology", "Responsive design", "Cloud deployment"],
+        features: ["React/Angular", "Node.js/Python", "Flutter/React Native", "CI/CD"],
+        useCases: ["E-commerce", "ERP systems", "CRM", "On-demand apps", "Telemedicine"],
+        image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200"
+    },
+    "Cyber Security": {
+        overview: "Comprehensive cyber security services...",
+        benefits: ["24/7 SOC monitoring", "Threat detection", "Compliance management", "Security training"],
+        features: ["NGFW", "EDR", "Email security", "MFA", "SIEM"],
+        useCases: ["Financial services", "Healthcare", "E-commerce", "Cloud security"],
+        image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200"
+    },
+    "Unified Communications": {
+        overview: "Voice, video, messaging in one platform...",
+        benefits: ["VoIP phone system", "HD video conferencing", "Instant messaging", "CRM integration"],
+        features: ["Auto-attendant", "Call routing", "Conference calling", "Analytics dashboard"],
+        useCases: ["Multi-location businesses", "Remote teams", "Customer service", "Sales teams"],
+        image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200"
+    },
+    "Contact Center": {
+        overview: "AI-powered customer service solution...",
+        benefits: ["Omnichannel support", "AI chatbots", "Sentiment analysis", "Real-time analytics"],
+        features: ["IVR with NLP", "Click-to-call", "Callback", "Co-browsing", "CSAT surveys"],
+        useCases: ["E-commerce support", "Financial services", "Travel reservations", "Healthcare", "IT helpdesk"],
+        image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=1200"
+    }
+};  // <-- IMPORTANT: THIS MUST BE CLOSED WITH }; 
+
+// ========== WINZE PAGE COMPONENT ==========
 const WinzePage = () => {
     const [scrolled, setScrolled] = useState(false);
     const [showQuoteModal, setShowQuoteModal] = useState(false);
@@ -124,7 +226,7 @@ const WinzePage = () => {
     const partnersRef = useRef(null);
     const clientsRef = useRef(null);
     const workwithRef = useRef(null);
-    const careersRef = useRef(null);  // ADDED: Careers ref
+    const careersRef = useRef(null);
 
     useEffect(() => {
         window.addEventListener('scroll', () => {
@@ -227,7 +329,6 @@ const WinzePage = () => {
 
     const scrollToSection = (ref, sectionName) => {
         handleTrackClick(`Navigation - ${sectionName}`, 'nav');
-        // If Careers is clicked, navigate to careers page
         if (sectionName === "Careers") {
             window.location.href = '/careers';
             return;
@@ -263,14 +364,13 @@ const WinzePage = () => {
         { name: "Logistics & Supply Chain", desc: "Intelligent logistics and supply chain management systems.", icon: faTruck, img: industryImages.logistics }
     ];
 
-    // UPDATED: Added Careers to navigation items
     const navItems = [
         { name: "Home", ref: homeRef },
         { name: "Solutions", ref: solutionsRef },
         { name: "Industries", ref: industriesRef },
         { name: "Partners", ref: partnersRef },
         { name: "Clients", ref: clientsRef },
-        { name: "Careers", ref: careersRef },  // ADDED
+        { name: "Careers", ref: careersRef },
         { name: "Work With Winze", ref: workwithRef }
     ];
 
@@ -652,6 +752,7 @@ const WinzePage = () => {
                 
                 <SocialLinks />
                 
+                {/* Navigation Bar */}
                 <nav style={{
                     position: 'sticky',
                     top: 0,
@@ -755,7 +856,7 @@ const WinzePage = () => {
                     </div>
                 </nav>
 
-                {/* Hero Section - keep your existing content */}
+                {/* Hero Section */}
                 <section ref={homeRef} id="home" style={{
                     minHeight: '100vh',
                     position: 'relative',
@@ -764,14 +865,157 @@ const WinzePage = () => {
                     padding: '80px 5%',
                     overflow: 'hidden'
                 }}>
-                    {/* Keep your existing Hero section content */}
+                    <BackgroundImage imageSrc={bgImages.hero} />
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+                            <div>
+                                <div style={{ marginBottom: '25px' }}>
+                                    <span style={{ 
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        padding: '8px 24px',
+                                        borderRadius: '30px',
+                                        fontSize: '14px',
+                                        color: 'white',
+                                        display: 'inline-block',
+                                        boxShadow: '0 4px 15px rgba(102,126,234,0.3)'
+                                    }}>🏆 16+ Years of Excellence</span>
+                                </div>
+                                <h1 style={{ fontSize: '4.5rem', marginBottom: '20px', color: 'white', lineHeight: '1.2', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Winze Technologies</h1>
+                                <p style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ddd', lineHeight: '1.6' }}>Leading Enterprise Communication, Security, and AI Technology Solutions Provider</p>
+                                <p style={{ marginBottom: '30px', color: '#aaa', lineHeight: '1.7' }}>With over 16 years of industry experience, Winze Technologies Pvt Ltd specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.</p>
+                                <div style={{ marginBottom: '35px', borderLeft: '3px solid #667eea', paddingLeft: '20px' }}>
+                                    <strong style={{ fontSize: '1.1rem', color: 'white' }}>Arun N</strong><br />
+                                    <span style={{ fontSize: '14px', color: '#aaa' }}>Chief Executive Officer</span>
+                                </div>
+                                <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                                    <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} style={{
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '14px 40px',
+                                        borderRadius: '50px',
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s',
+                                        boxShadow: '0 4px 15px rgba(102,126,234,0.3)'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = '0 8px 25px rgba(102,126,234,0.4)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = '0 4px 15px rgba(102,126,234,0.3)';
+                                    }}>✨ Get a Free Consultation →</button>
+                                    <button onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleTrackClick('Explore Solutions', 'cta');
+                                        if (solutionsRef.current) {
+                                            solutionsRef.current.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    }} style={{
+                                        background: 'transparent',
+                                        color: 'white',
+                                        border: '2px solid #667eea',
+                                        padding: '14px 40px',
+                                        borderRadius: '50px',
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                                        e.target.style.transform = 'translateY(-2px)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.background = 'transparent';
+                                        e.target.style.transform = 'translateY(0)';
+                                    }}>Explore Solutions</button>
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <div
+                                    style={{
+                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        cursor: 'pointer',
+                                        display: 'inline-block',
+                                        animation: 'premiumGlow 3s ease-in-out infinite',
+                                        background: 'linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1))',
+                                        padding: '3px',
+                                        borderRadius: '23px'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.animation = 'premiumGlow 0.8s ease-in-out infinite';
+                                        e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.animation = 'premiumGlow 3s ease-in-out infinite';
+                                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                                    }}
+                                >
+                                    <img 
+                                        src="/images/hero-image.jpg" 
+                                        alt="Hero" 
+                                        style={{ 
+                                            width: '100%', 
+                                            maxWidth: '550px',
+                                            height: 'auto',
+                                            borderRadius: '20px', 
+                                            boxShadow: '0 25px 50px rgba(0,0,0,0.3)', 
+                                            border: '2px solid rgba(102,126,234,0.5)',
+                                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            display: 'block'
+                                        }} 
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
-                {/* Keep all your other sections (What We Deliver, Solutions, Industries, Partners, Clients, Work With Winze, Stats) as they are */}
-                {/* ... your existing sections ... */}
-
-                {/* Footer - keep your existing footer */}
+                {/* NOTE: Keep all your other sections (What We Deliver, Solutions, Industries, Partners, Clients, Work With Winze, Stats) as they were in your original code */}
+                {/* They are too long to repeat here, but keep them exactly as you had them */}
                 
+                {/* Footer */}
+                <footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '45px', marginBottom: '45px' }}>
+                            <div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                                    <div style={{ width: '45px', height: '45px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}>
+                                        <img src="/winze-logo.jpg" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px' }} />
+                                    </div>
+                                    <span style={{ fontWeight: '800', fontSize: '1.2rem', color: 'white' }}>Winze Technologies</span>
+                                </div>
+                                <p style={{ color: '#aaa', lineHeight: '1.6' }}>Driving Innovation through Customer-Centric Technology Solutions.</p>
+                            </div>
+                            <div>
+                                <h4 style={{ marginBottom: '20px', color: '#667eea', fontSize: '1.1rem' }}>Quick Links</h4>
+                                {navItems.map((item) => (
+                                    <p key={item.name}>
+                                        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollToSection(item.ref, item.name); }} style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '12px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s' }}
+                                        onMouseEnter={(e) => e.target.style.color = '#667eea'}
+                                        onMouseLeave={(e) => e.target.style.color = '#aaa'}>
+                                            {item.name}
+                                        </button>
+                                    </p>
+                                ))}
+                            </div>
+                            <div>
+                                <h4 style={{ marginBottom: '20px', color: '#667eea', fontSize: '1.1rem' }}>Contact Info</h4>
+                                <p style={{ color: '#aaa', marginBottom: '12px' }}>📧 arunnsales@winzetech.com</p>
+                                <p style={{ color: '#aaa', marginBottom: '12px' }}>📞 +91 95500 10417</p>
+                                <p style={{ color: '#aaa', marginBottom: '12px' }}>🌐 www.winzetech.com</p>
+                            </div>
+                        </div>
+                        <div style={{ textAlign: 'center', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#666' }}>
+                            <p>© 2024 Winze Technologies Pvt Ltd. All rights reserved.</p>
+                        </div>
+                    </div>
+                </footer>
             </div>
             </>
         </HelmetProvider>
