@@ -73,7 +73,7 @@ const partnerLogos = [
     { name: "Dell", url: "/images/dell.png" }
 ];
 
-// Client Logos for Clients section (all requested clients)
+// Client Logos for Clients section (properly capitalized names)
 const clientLogos = [
     { name: "Toshiba", url: "/images/toshiba.png" },
     { name: "Toyota", url: "/images/toyota.png" },
@@ -87,7 +87,8 @@ const clientLogos = [
     { name: "Sun Bright", url: "/images/sun-bright.png" },
     { name: "CKPC", url: "/images/ckpc.png" },
     { name: "Kyyba", url: "/images/kyyba.png" },
-    { name: "Skidata", url: "/images/skidata.png" }
+    { name: "Skidata", url: "/images/skidata.png" },
+    { name: "SATRAC", url: "/images/satrac.png" }  // SATRAC added in ALL CAPS
 ];
 
 // Detailed content for each solution card (AI-generated content for landing pages)
