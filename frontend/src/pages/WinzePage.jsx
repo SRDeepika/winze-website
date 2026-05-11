@@ -77,19 +77,19 @@ const partnerLogos = [
 
 // Client Logos for Clients section
 const clientLogos = [
-    { name: "Toshiba", url: "/images/clients/toshiba.png" },
-    { name: "Toyota", url: "/images/clients/toyota.png" },
-    { name: "Starpacks", url: "/images/clients/starpacks.png" },
-    { name: "MAF", url: "/images/clients/maf.png" },
-    { name: "Athma", url: "/images/clients/athma.png" },
-    { name: "RGP", url: "/images/clients/rgp.png" },
-    { name: "Utthunga", url: "/images/clients/utthunga.png" },
-    { name: "TRC", url: "/images/clients/trc.png" },
-    { name: "Unilateral", url: "/images/clients/unilateral.png" },
-    { name: "Sun Bright", url: "/images/clients/sun-bright.png" },
-    { name: "CKPC", url: "/images/clients/ckpc.png" },
-    { name: "Kyyba", url: "/images/clients/kyyba.png" },
-    { name: "Skidata", url: "/images/clients/skidata.png" }
+    { name: "Toshiba", url: "https://placehold.co/100x100/1a1a3e/white?text=Toshiba" },
+    { name: "Toyota", url: "https://placehold.co/100x100/1a1a3e/white?text=Toyota" },
+    { name: "Starpacks", url: "https://placehold.co/100x100/1a1a3e/white?text=Starpacks" },
+    { name: "MAF", url: "https://placehold.co/100x100/1a1a3e/white?text=MAF" },
+    { name: "Athma", url: "https://placehold.co/100x100/1a1a3e/white?text=Athma" },
+    { name: "RGP", url: "https://placehold.co/100x100/1a1a3e/white?text=RGP" },
+    { name: "Utthunga", url: "https://placehold.co/100x100/1a1a3e/white?text=Utthunga" },
+    { name: "TRC", url: "https://placehold.co/100x100/1a1a3e/white?text=TRC" },
+    { name: "Unilateral", url: "https://placehold.co/100x100/1a1a3e/white?text=Unilateral" },
+    { name: "Sun Bright", url: "https://placehold.co/100x100/1a1a3e/white?text=Sun+Bright" },
+    { name: "CKPC", url: "https://placehold.co/100x100/1a1a3e/white?text=CKPC" },
+    { name: "Kyyba", url: "https://placehold.co/100x100/1a1a3e/white?text=Kyyba" },
+    { name: "Skidata", url: "https://placehold.co/100x100/1a1a3e/white?text=Skidata" }
 ];
 
 // Detailed content for solution cards
