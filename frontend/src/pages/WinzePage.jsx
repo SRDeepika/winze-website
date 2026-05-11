@@ -75,21 +75,20 @@ const partnerLogos = [
     { name: "Dell", url: "/images/dell.png" }
 ];
 
-// Client Logos for Clients section
 const clientLogos = [
-    { name: "Toshiba", url: "https://placehold.co/100x100/1a1a3e/white?text=Toshiba" },
-    { name: "Toyota", url: "https://placehold.co/100x100/1a1a3e/white?text=Toyota" },
-    { name: "Starpacks", url: "https://placehold.co/100x100/1a1a3e/white?text=Starpacks" },
-    { name: "MAF", url: "https://placehold.co/100x100/1a1a3e/white?text=MAF" },
-    { name: "Athma", url: "https://placehold.co/100x100/1a1a3e/white?text=Athma" },
-    { name: "RGP", url: "https://placehold.co/100x100/1a1a3e/white?text=RGP" },
-    { name: "Utthunga", url: "https://placehold.co/100x100/1a1a3e/white?text=Utthunga" },
-    { name: "TRC", url: "https://placehold.co/100x100/1a1a3e/white?text=TRC" },
-    { name: "Unilateral", url: "https://placehold.co/100x100/1a1a3e/white?text=Unilateral" },
-    { name: "Sun Bright", url: "https://placehold.co/100x100/1a1a3e/white?text=Sun+Bright" },
-    { name: "CKPC", url: "https://placehold.co/100x100/1a1a3e/white?text=CKPC" },
-    { name: "Kyyba", url: "https://placehold.co/100x100/1a1a3e/white?text=Kyyba" },
-    { name: "Skidata", url: "https://placehold.co/100x100/1a1a3e/white?text=Skidata" }
+    { name: "Toshiba", url: "/images/toshiba.png" },
+    { name: "Toyota", url: "/images/toyota.png" },
+    { name: "Starpacks", url: "/images/starpacks.png" },
+    { name: "MAF", url: "/images/maf.png" },        // Fixed - no /clients/
+    { name: "Athma", url: "/images/athma.png" },
+    { name: "RGP", url: "/images/rgp.png" },        // Fixed - no /clients/
+    { name: "Utthunga", url: "/images/utthunga.png" },
+    { name: "TRC", url: "/images/trc.png" },        // Fixed - no /clients/
+    { name: "Unilateral", url: "/images/unilateral.png" }, // Fixed - no /clients/
+    { name: "Sun Bright", url: "/images/sun-bright.png" },
+    { name: "CKPC", url: "/images/ckpc.png" },
+    { name: "Kyyba", url: "/images/kyyba.png" },
+    { name: "Skidata", url: "/images/skidata.png" }
 ];
 
 // Detailed content for solution cards
