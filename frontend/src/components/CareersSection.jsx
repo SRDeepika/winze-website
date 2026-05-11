@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getJobs, applyForJob } from '../services/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarker, faBriefcase, faClock, faMoneyBill, faEnvelope, faPhone, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarker, faBriefcase, faClock, faMoneyBill } from '@fortawesome/free-solid-svg-icons';
 
 const CareersSection = () => {
     const [jobs, setJobs] = useState([]);
@@ -11,7 +11,8 @@ const CareersSection = () => {
     const [submitting, setSubmitting] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [formData, setFormData] = useState({
-        name: '', email: '', phone: '', experience: '', currentCompany: '', currentCTC: '', noticePeriod: '', coverLetter: '', resume: null
+        name: '', email: '', phone: '', experience: '', currentCompany: '', 
+        currentCTC: '', noticePeriod: '', coverLetter: '', resume: null
     });
 
     useEffect(() => { loadJobs(); }, []);
@@ -136,23 +137,42 @@ const CareersSection = () => {
 
             {/* Application Form Modal */}
             {showApplyForm && selectedJob && (
-                <div style={modalStyles.overlay} onClick={() => setShowApplyForm(false)}>
-                    <div style={modalStyles.content} onClick={(e) => e.stopPropagation()}>
-                        <button onClick={() => setShowApplyForm(false)} style={modalStyles.closeBtn}>×</button>
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.95)', zIndex: 10000,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    padding: '20px', overflow: 'auto'
+                }} onClick={() => setShowApplyForm(false)}>
+                    <div style={{
+                        background: 'white', borderRadius: '20px', maxWidth: '700px',
+                        width: '100%', maxHeight: '90vh', overflow: 'auto',
+                        padding: '30px', position: 'relative'
+                    }} onClick={(e) => e.stopPropagation()}>
+                        <button onClick={() => setShowApplyForm(false)} style={{
+                            position: 'sticky', top: '0', right: '0', float: 'right',
+                            background: '#667eea', color: 'white', border: 'none',
+                            width: '30px', height: '30px', borderRadius: '50%',
+                            cursor: 'pointer', fontSize: '18px'
+                        }}>×</button>
                         <h2 style={{ marginBottom: '20px' }}>Apply for {selectedJob.title}</h2>
                         <form onSubmit={handleSubmit}>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                                <input type="text" name="name" placeholder="Full Name*" value={formData.name} onChange={handleInputChange} style={modalStyles.input} required />
-                                <input type="email" name="email" placeholder="Email*" value={formData.email} onChange={handleInputChange} style={modalStyles.input} required />
-                                <input type="tel" name="phone" placeholder="Phone*" value={formData.phone} onChange={handleInputChange} style={modalStyles.input} required />
-                                <input type="text" name="experience" placeholder="Years of Experience*" value={formData.experience} onChange={handleInputChange} style={modalStyles.input} required />
-                                <input type="text" name="currentCompany" placeholder="Current Company" value={formData.currentCompany} onChange={handleInputChange} style={modalStyles.input} />
-                                <input type="text" name="currentCTC" placeholder="Current CTC" value={formData.currentCTC} onChange={handleInputChange} style={modalStyles.input} />
-                                <input type="text" name="noticePeriod" placeholder="Notice Period" value={formData.noticePeriod} onChange={handleInputChange} style={modalStyles.input} />
-                                <input type="file" name="resume" accept=".pdf,.doc,.docx" onChange={handleFileChange} style={modalStyles.input} />
+                                <input type="text" name="name" placeholder="Full Name*" value={formData.name} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} required />
+                                <input type="email" name="email" placeholder="Email*" value={formData.email} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} required />
+                                <input type="tel" name="phone" placeholder="Phone*" value={formData.phone} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} required />
+                                <input type="text" name="experience" placeholder="Years of Experience*" value={formData.experience} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} required />
+                                <input type="text" name="currentCompany" placeholder="Current Company" value={formData.currentCompany} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
+                                <input type="text" name="currentCTC" placeholder="Current CTC" value={formData.currentCTC} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
+                                <input type="text" name="noticePeriod" placeholder="Notice Period" value={formData.noticePeriod} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
+                                <input type="file" name="resume" accept=".pdf,.doc,.docx" onChange={handleFileChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
                             </div>
-                            <textarea name="coverLetter" placeholder="Cover Letter / Additional Information" rows="4" value={formData.coverLetter} onChange={handleInputChange} style={modalStyles.textarea} />
-                            <button type="submit" disabled={submitting} style={modalStyles.submitBtn}>
+                            <textarea name="coverLetter" placeholder="Cover Letter / Additional Information" rows="4" value={formData.coverLetter} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '20px', borderRadius: '8px', border: '1px solid #ddd', resize: 'vertical' }} />
+                            <button type="submit" disabled={submitting} style={{
+                                width: '100%', padding: '14px',
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                color: 'white', border: 'none', borderRadius: '10px',
+                                cursor: 'pointer', fontWeight: '600', fontSize: '16px'
+                            }}>
                                 {submitting ? 'Submitting...' : 'Submit Application'}
                             </button>
                         </form>
@@ -161,15 +181,6 @@ const CareersSection = () => {
             )}
         </section>
     );
-};
-
-const modalStyles = {
-    overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', overflow: 'auto' },
-    content: { background: 'white', borderRadius: '20px', maxWidth: '700px', width: '100%', maxHeight: '90vh', overflow: 'auto', padding: '30px', position: 'relative' },
-    closeBtn: { position: 'sticky', top: '0', right: '0', float: 'right', background: '#667eea', color: 'white', border: 'none', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer', fontSize: '18px' },
-    input: { width: '100%', padding: '12px', marginBottom: '15px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '14px', boxSizing: 'border-box' },
-    textarea: { width: '100%', padding: '12px', marginBottom: '15px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '14px', resize: 'vertical', boxSizing: 'border-box' },
-    submitBtn: { width: '100%', padding: '14px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: '600', fontSize: '16px' }
 };
 
 export default CareersSection;
