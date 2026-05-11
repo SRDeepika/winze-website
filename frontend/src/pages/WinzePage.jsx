@@ -73,7 +73,7 @@ const partnerLogos = [
     { name: "Dell", url: "/images/dell.png" }
 ];
 
-// Client Logos for Clients section (with scrolling effect)
+// Client Logos for Clients section (all requested clients)
 const clientLogos = [
     { name: "Toshiba", url: "/images/toshiba.png" },
     { name: "Toyota", url: "/images/toyota.png" },
@@ -87,10 +87,456 @@ const clientLogos = [
     { name: "Sun Bright", url: "/images/sun-bright.png" },
     { name: "CKPC", url: "/images/ckpc.png" },
     { name: "Kyyba", url: "/images/kyyba.png" },
-    { name: "Skidata", url: "/images/skidata.png" },
-    { name: "Satrac", url: "/images/satrac.png" },
-    { name: "Vikas Telecom", url: "/images/vikas-telecom.png" }
+    { name: "Skidata", url: "/images/skidata.png" }
 ];
+
+// Detailed content for each solution card (AI-generated content for landing pages)
+const solutionDetailedContent = {
+    "Video Conferencing": {
+        overview: "Our Video Conferencing solution provides enterprise-grade virtual meeting capabilities with crystal-clear HD video, advanced security features, and seamless integration with your existing workflow. Perfect for remote teams, global collaboration, and hybrid work environments.",
+        benefits: [
+            "4K Ultra HD video quality with automatic lighting adjustment",
+            "End-to-end encryption for secure business communications",
+            "Supports up to 500 participants in a single meeting",
+            "Screen sharing, virtual backgrounds, and breakout rooms",
+            "Integration with Slack, Teams, Zoom, and Google Workspace",
+            "Recording and transcription with AI-powered summaries",
+            "Mobile apps for iOS and Android with full functionality",
+            "Real-time closed captioning and language translation"
+        ],
+        features: [
+            "Smart gallery view that highlights active speakers",
+            "Virtual hand raise, polls, and Q&A sessions",
+            "Calendar integration for one-click meeting joins",
+            "Custom branding for enterprise accounts",
+            "Analytics dashboard with meeting insights",
+            "API access for custom integrations"
+        ],
+        useCases: [
+            "Global team meetings and daily standups",
+            "Client presentations and sales demos",
+            "Webinars and virtual events",
+            "Remote interviews and onboarding",
+            "Board meetings and executive briefings"
+        ]
+    },
+    "Smart Eye AI": {
+        overview: "Smart Eye AI is an advanced video analytics platform that transforms ordinary CCTV cameras into intelligent security systems. Using cutting-edge machine learning algorithms, it detects anomalies, recognizes faces and vehicles, and sends real-time alerts to prevent incidents before they occur.",
+        benefits: [
+            "Real-time threat detection with 99.5% accuracy",
+            "Facial recognition with watchlist alerts",
+            "Automatic number plate recognition (ANPR)",
+            "Abandoned object and loitering detection",
+            "Crowd density monitoring and social distancing alerts",
+            "Fire and smoke detection from video feeds",
+            "Unauthorized access alerts for restricted areas",
+            "24/7 automated monitoring reduces manual effort"
+        ],
+        features: [
+            "Centralized dashboard for multiple camera feeds",
+            "Mobile app notifications for instant alerts",
+            "Search by face, vehicle, or object across recorded footage",
+            "Integration with existing CCTV infrastructure",
+            "Cloud-based or on-premise deployment options",
+            "Custom alert rules and zones configuration"
+        ],
+        useCases: [
+            "Airport security and perimeter monitoring",
+            "Retail store theft prevention",
+            "Bank and ATM surveillance",
+            "School and campus safety",
+            "Industrial facility security"
+        ]
+    },
+    "Rental IT Infrastructure": {
+        overview: "Rental IT Infrastructure provides cost-effective, flexible hardware solutions for businesses of all sizes. Whether you need equipment for a short-term project, a corporate event, or to scale your operations during peak seasons, we deliver premium IT hardware with full setup and support.",
+        benefits: [
+            "Pay only for what you use with flexible daily/weekly/monthly rentals",
+            "Latest generation laptops, desktops, and servers",
+            "Free delivery, setup, and on-site support",
+            "Replace faulty equipment within 4 hours",
+            "Scale up or down based on project requirements",
+            "No long-term commitment or capital expenditure",
+            "All hardware sanitized and tested before delivery",
+            "Bulk discounts for large-scale deployments"
+        ],
+        features: [
+            "Enterprise-grade laptops (Dell, HP, Lenovo)",
+            "High-performance desktops and workstations",
+            "Servers and networking equipment",
+            "AV equipment including projectors and speakers",
+            "Printers, scanners, and peripherals",
+            "Pre-configured with required software"
+        ],
+        useCases: [
+            "Corporate events and conferences",
+            "Software development and testing",
+            "Temporary office setups and pop-up stores",
+            "Exhibitions and trade shows",
+            "Disaster recovery and business continuity"
+        ]
+    },
+    "SaaS Products": {
+        overview: "Our custom SaaS products are designed to solve specific business challenges with scalable, cloud-native architecture. From CRM to ERP, HRMS to project management, we build and deploy software that grows with your business.",
+        benefits: [
+            "Subscription-based pricing with no upfront costs",
+            "Automatic updates and maintenance included",
+            "99.99% uptime SLA with multi-region redundancy",
+            "GDPR and SOC2 compliant data handling",
+            "Customizable to match your business processes",
+            "Integration APIs for third-party apps",
+            "Dedicated customer success manager",
+            "Regular security audits and penetration testing"
+        ],
+        features: [
+            "White-label options for your brand",
+            "Role-based access control and permissions",
+            "Real-time analytics and custom reports",
+            "Mobile-responsive design for on-the-go access",
+            "24/7 technical support via chat, email, and phone",
+            "Data export and backup capabilities"
+        ],
+        useCases: [
+            "Small to medium business automation",
+            "Enterprise workflow management",
+            "Startup MVPs and product launches",
+            "Industry-specific solutions (healthcare, retail, logistics)",
+            "Legacy system modernization"
+        ]
+    },
+    "Enterprise Software Licensing": {
+        overview: "We simplify enterprise software licensing by offering volume discounts, compliance management, and dedicated account support for all major software vendors including Microsoft, Adobe, Oracle, SAP, and VMware.",
+        benefits: [
+            "Volume licensing discounts up to 40% off retail",
+            "Centralized license management across your organization",
+            "Compliance audits to prevent over-licensing or penalties",
+            "Flexible payment terms (monthly, quarterly, annually)",
+            "Dedicated licensing specialist assigned to your account",
+            "Software asset management (SAM) services",
+            "Migration assistance to cloud subscriptions",
+            "Renewal reminders and best-price negotiation"
+        ],
+        features: [
+            "Microsoft 365 and Azure licensing",
+            "Adobe Creative Cloud and Document Cloud",
+            "Oracle Database and ERP licenses",
+            "SAP S/4HANA and Business Suite",
+            "VMware virtualization licenses",
+            "AutoCAD and design software",
+            "Antivirus and security software"
+        ],
+        useCases: [
+            "Startups needing affordable software access",
+            "Enterprises with complex licensing needs",
+            "Educational institutions with special pricing",
+            "Government and non-profit organizations",
+            "Businesses migrating to cloud subscriptions"
+        ]
+    },
+    "IT Infrastructure": {
+        overview: "Our IT Infrastructure solutions provide enterprise-grade networking, server, and storage systems designed for optimal performance, reliability, and scalability. From data center design to cloud integration, we build the foundation for your digital transformation.",
+        benefits: [
+            "99.999% uptime with redundant architecture",
+            "24/7 proactive monitoring and alerting",
+            "Scalable design that grows with your business",
+            "On-premise, cloud, or hybrid deployment options",
+            "Energy-efficient hardware reduces operating costs",
+            "Disaster recovery and backup solutions included",
+            "Regular firmware updates and patch management",
+            "Vendor-agnostic recommendations for best value"
+        ],
+        features: [
+            "Hyper-converged infrastructure (HCI)",
+            "Enterprise switches, routers, and firewalls",
+            "SAN and NAS storage systems",
+            "Virtualization with VMware or Hyper-V",
+            "Cloud integration (AWS, Azure, GCP)",
+            "Network monitoring and management tools"
+        ],
+        useCases: [
+            "New office setup and expansion",
+            "Data center consolidation and migration",
+            "Cloud repatriation projects",
+            "Disaster recovery site implementation",
+            "High-performance computing (HPC) clusters"
+        ]
+    },
+    "CCTV Services": {
+        overview: "Our comprehensive CCTV services include site survey, camera installation, configuration, cloud storage, and ongoing maintenance. We deploy H.265 HD cameras with night vision, motion detection, and AI-powered analytics for proactive security monitoring.",
+        benefits: [
+            "24/7 recording with 30-day cloud storage",
+            "Remote viewing from any device (mobile, tablet, desktop)",
+            "Motion-triggered alerts and email notifications",
+            "AI-powered people counting and heat mapping",
+            "License plate recognition for parking management",
+            "Tamper detection and camera health monitoring",
+            "Weatherproof cameras for outdoor installation",
+            "Night vision up to 50 meters"
+        ],
+        features: [
+            "4MP and 8MP HD cameras",
+            "PTZ (Pan-Tilt-Zoom) cameras for active monitoring",
+            "Explosion-proof cameras for hazardous areas",
+            "Thermal cameras for perimeter security",
+            "Video management software (VMS)",
+            "Integration with access control systems"
+        ],
+        useCases: [
+            "Office complexes and corporate campuses",
+            "Warehouses and logistics centers",
+            "Retail stores and shopping malls",
+            "Schools and educational institutions",
+            "Residential complexes and gated communities"
+        ]
+    },
+    "Cabling Services": {
+        overview: "We provide professional structured cabling solutions for data centers, offices, and industrial facilities. Our certified technicians design and install copper, fiber optic, and structured cabling systems that meet industry standards and future-proof your network.",
+        benefits: [
+            "Cat6, Cat6a, Cat7, and Cat8 copper cabling",
+            "Single-mode and multi-mode fiber optics",
+            "Cable management and labeling for easy maintenance",
+            "Fluke testing and certification for every drop",
+            "Greenfield and brownfield project experience",
+            "Minimum 25-year warranty on cabling components",
+            "Minimal disruption with after-hours installation",
+            "Detailed as-built drawings and documentation"
+        ],
+        features: [
+            "Rack mounting and cable tray installation",
+            "Patch panel termination and testing",
+            "Fiber splicing and connectorization",
+            "Cable pathway design (overhead and underfloor)",
+            "Grounding and bonding for safety",
+            "Thermal imaging for hot spot detection"
+        ],
+        useCases: [
+            "New building construction (Greenfield)",
+            "Office renovations and expansions",
+            "Data center cabling and re-cabling",
+            "School and campus network infrastructure",
+            "Industrial facility automation networks"
+        ]
+    },
+    "WiFi as a Service": {
+        overview: "WiFi as a Service delivers enterprise-grade wireless networking without the capital expense. We design, deploy, and manage your WiFi infrastructure, ensuring seamless connectivity for your employees, guests, and IoT devices.",
+        benefits: [
+            "Predictive monthly subscription pricing",
+            "Access points, controllers, and licenses included",
+            "Guest WiFi with social login and captive portal",
+            "Bandwidth management and traffic shaping",
+            "Usage analytics and heat mapping",
+            "Automatic firmware updates and security patches",
+            "24/7 monitoring and Remote Troubleshooting",
+            "Scalable from 10 to 10,000 users"
+        ],
+        features: [
+            "WiFi 6 (802.11ax) access points for high density",
+            "Cloud-based or on-premise controller options",
+            "Captive portal customization for branding",
+            "Integration with Active Directory and RADIUS",
+            "Self-service onboarding for guests",
+            "Compliance reporting (PCI, HIPAA)"
+        ],
+        useCases: [
+            "Corporate offices and coworking spaces",
+            "Hotels and hospitality venues",
+            "Airports and transportation hubs",
+            "Stadiums and large event venues",
+            "Warehouses and manufacturing facilities"
+        ]
+    },
+    "Smart Live Classroom": {
+        overview: "Smart Live Classroom is an interactive virtual learning platform that brings teachers and students together in an engaging digital environment. With live video, interactive whiteboards, attendance tracking, and parent portals, we make remote learning effective and enjoyable.",
+        benefits: [
+            "Live HD video classes with recording option",
+            "Interactive digital whiteboard with annotations",
+            "Automated attendance tracking and reporting",
+            "Assignment submission and grading system",
+            "Parent portal for progress monitoring",
+            "Breakout rooms for group activities",
+            "Screen sharing and presentation tools",
+            " supports up to 500 students per session"
+        ],
+        features: [
+            "Quiz and poll creation for real-time assessment",
+            "Class recordings accessible anytime",
+            "Digital library for course materials",
+            "Discussion forums and chat moderation",
+            "Certificate generation upon course completion",
+            "Mobile apps for iOS and Android",
+            "Integration with LMS like Moodle and Canvas"
+        ],
+        useCases: [
+            "K-12 schools and online tutoring",
+            "Colleges and university distance learning",
+            "Corporate training and employee onboarding",
+            "Test preparation and coaching institutes",
+            "Skill development and vocational training"
+        ]
+    },
+    "Web & Mobile Development": {
+        overview: "Our Web & Mobile Development team builds custom applications using modern technologies like React, Node.js, Flutter, and React Native. From e-commerce platforms to enterprise dashboards, we deliver responsive, scalable, and secure solutions.",
+        benefits: [
+            "End-to-end development from concept to deployment",
+            "Agile methodology with 2-week sprints",
+            "Responsive design for all screen sizes",
+            "API development and third-party integrations",
+            "SEO-optimized architecture",
+            "Ongoing maintenance and support",
+            "Source code ownership with no vendor lock-in",
+            "Cloud deployment (AWS, Azure, GCP)"
+        ],
+        features: [
+            "Frontend: React, Angular, Vue.js",
+            "Backend: Node.js, Python, Java, PHP",
+            "Mobile: Flutter, React Native, Swift, Kotlin",
+            "Database: MySQL, PostgreSQL, MongoDB",
+            "DevOps: CI/CD, Docker, Kubernetes",
+            "Security: HTTPS, JWT, OAuth"
+        ],
+        useCases: [
+            "E-commerce and marketplace platforms",
+            "Enterprise resource planning (ERP) systems",
+            "Customer relationship management (CRM)",
+            "On-demand service apps (Uber-like)",
+            "Healthcare and telemedicine portals"
+        ]
+    },
+    "Cyber Security": {
+        overview: "Our comprehensive cyber security services protect your business from evolving threats. We provide threat detection, vulnerability assessments, compliance management, and employee training to keep your data and systems secure.",
+        benefits: [
+            "24/7 security operations center (SOC) monitoring",
+            "Automated threat detection and response",
+            "Weekly vulnerability scans and monthly penetration tests",
+            "GDPR, HIPAA, PCI-DSS, and ISO 27001 compliance",
+            "Security awareness training for employees",
+            "Incident response and disaster recovery planning",
+            "Dark web monitoring for compromised credentials",
+            "Managed firewall, antivirus, and endpoint protection"
+        ],
+        features: [
+            "Next-generation firewall (NGFW) management",
+            "Endpoint detection and response (EDR)",
+            "Email security and anti-phishing protection",
+            "Web application firewall (WAF)",
+            "Data loss prevention (DLP)",
+            "Multi-factor authentication (MFA) implementation",
+            "Security information and event management (SIEM)"
+        ],
+        useCases: [
+            "Financial services and banking compliance",
+            "Healthcare data protection (HIPAA)",
+            "E-commerce PCI-DSS compliance",
+            "Cloud security for AWS, Azure, GCP",
+            "Remote workforce security"
+        ]
+    },
+    "Unified Communications": {
+        overview: "Unified Communications brings voice, video, messaging, and collaboration tools into a single platform. Improve team productivity, reduce communication silos, and enable seamless collaboration across your organization.",
+        benefits: [
+            "VoIP phone system with auto-attendant",
+            "HD video conferencing and screen sharing",
+            "Instant messaging with file sharing",
+            "Presence detection and calendar integration",
+            "Mobile and desktop apps for anywhere access",
+            "Call recording and voicemail-to-email",
+            "Integration with CRM (Salesforce, HubSpot)",
+            "99.999% uptime with redundant infrastructure"
+        ],
+        features: [
+            "Auto-attendant and call routing",
+            "Ring groups and call queues",
+            "Conference calling up to 100 participants",
+            "Virtual fax receive and send",
+            "Analytics dashboard with call metrics",
+            "BYOC (Bring Your Own Carrier) support",
+            "API access for custom integrations"
+        ],
+        useCases: [
+            "Multi-location businesses needing unified communication",
+            "Remote and hybrid teams",
+            "Customer service and support centers",
+            "Sales teams requiring CRM integration",
+            "Healthcare telemedicine consultations"
+        ]
+    },
+    "Contact Center": {
+        overview: "Our AI-powered Contact Center solution transforms customer service with intelligent routing, chatbots, sentiment analysis, and omnichannel support. Deliver exceptional experiences across voice, email, chat, and social media.",
+        benefits: [
+            "Omnichannel queue (voice, email, chat, social)",
+            "AI-powered chatbots for instant responses",
+            "Sentiment analysis to prioritize upset customers",
+            "Real-time dashboards and performance analytics",
+            "Skills-based routing to the right agent",
+            "Call recording and quality management",
+            "Workforce management for shift scheduling",
+            "CRM and helpdesk integration (Salesforce, Zendesk)"
+        ],
+        features: [
+            "Interactive voice response (IVR) with NLP",
+            "Click-to-call from your website",
+            "Callback and voicemail drop features",
+            "Co-browsing and screen sharing",
+            "Customer satisfaction (CSAT) surveys",
+            "Agent scripting and knowledge base",
+            "Speech analytics for compliance monitoring"
+        ],
+        useCases: [
+            "E-commerce customer support",
+            "Financial services helpdesk",
+            "Travel and hospitality reservations",
+            "Healthcare appointment scheduling",
+            "IT service desk (ITSM)"
+        ]
+    }
+};
+
+// Detailed content for delivery items and work with winze
+const deliveryDetailedContent = {
+    "End-to-End Solutions": {
+        overview: "We provide complete lifecycle management from initial planning and strategy to deployment, training, and ongoing support. Our holistic approach ensures seamless integration, minimal business disruption, and maximum ROI.",
+        benefits: ["Strategy consulting and roadmap planning", "Vendor selection and procurement", "Project management and implementation", "User training and change management", "24/7 support and maintenance", "Continuous optimization and upgrades"]
+    },
+    "Enterprise Excellence": {
+        overview: "We guarantee enterprise-grade excellence with 99.9% uptime, comprehensive performance metrics, and measurable business results. Our solutions are designed to scale with your business and deliver consistent value.",
+        benefits: ["SLA-backed uptime guarantees", "Real-time performance dashboards", "Regular business reviews", "Continuous improvement programs", "ISO and compliance certifications", "Disaster recovery and business continuity"]
+    },
+    "Flexible Engagement": {
+        overview: "Choose the engagement model that works best for your business - strategic consulting, project-based delivery, or fully managed services. We adapt to your needs, timeline, and budget.",
+        benefits: ["Time and material projects", "Fixed-price deliverables", "Dedicated team engagement", "Co-managed IT services", "Fully outsourced IT operations", "Pay-as-you-go options"]
+    },
+    "Rapid Deployment": {
+        overview: "Our accelerated deployment methodology gets your solutions up and running quickly without disrupting daily operations. We use proven frameworks, automation, and best practices to ensure smooth implementation.",
+        benefits: ["Agile implementation methodology", "Automated provisioning and configuration", "Minimal downtime during cutover", "Parallel run and testing phase", "Phased rollout options", "Post-deployment hyper-care"]
+    },
+    "Analytics & Insights": {
+        overview: "Gain valuable insights from your data with our advanced analytics solutions. Real-time dashboards, custom reports, and predictive analytics help you make informed business decisions.",
+        benefits: ["Real-time data visualization", "Predictive modeling and forecasting", "Custom report builder", "Data warehousing and ETL", "Business intelligence tools (Power BI, Tableau)", "Self-service analytics for business users"]
+    },
+    "24/7 Premium Support": {
+        overview: "Our dedicated support team is available 24/7/365 to assist with any technical issues. We provide proactive monitoring, rapid response times, and premium support services to keep your business running smoothly.",
+        benefits: ["24/7 phone, chat, and email support", "15-minute response SLA for critical issues", "Dedicated account manager", "Quarterly business reviews", "Proactive monitoring and alerting", "Root cause analysis and preventive actions"]
+    }
+};
+
+const workDetailedContent = {
+    "Strategic Partnership": {
+        overview: "As a strategic partner, we align our goals with yours. We invest time to understand your business challenges and work collaboratively to develop solutions that drive growth and innovation.",
+        benefits: ["Dedicated strategic advisor", "Quarterly strategy sessions", "Innovation roadmap planning", "Co-investment in new capabilities", "Long-term commercial flexibility", "Joint go-to-market opportunities"]
+    },
+    "Enterprise Value": {
+        overview: "We measure our success by your success. Every project is executed with a focus on delivering measurable business value, ROI, and long-term benefits for your enterprise.",
+        benefits: ["ROI guarantee on qualified projects", "Value-based pricing options", "Outcome-focused KPIs", "Regular value realization reviews", "Cost optimization recommendations", "Competitive benchmarking"]
+    },
+    "Innovation First": {
+        overview: "We continuously invest in research and development to bring you the latest technologies and innovative solutions. Stay competitive with our future-ready approach.",
+        benefits: ["Dedicated R&D team", "Early access to beta technologies", "Innovation workshops and hackathons", "Technology watch and trend reports", "Proof of concept (POC) at no cost", "Patent and IP collaboration"]
+    },
+    "Client Success": {
+        overview: "Our track record speaks for itself. With over 100 successful deployments, 500+ satisfied clients, and 16+ years of excellence, we have the expertise and experience to deliver results.",
+        benefits: ["Case studies and reference calls", "Client success manager assigned", "Annual user conferences and events", "Client advisory board participation", "Loyalty rewards and discounts", "Referral program benefits"]
+    }
+};
 
 const WinzePage = () => {
     const [scrolled, setScrolled] = useState(false);
@@ -193,8 +639,22 @@ const WinzePage = () => {
         }
     };
 
-    const openLandingPage = (item) => {
-        setLandingData(item);
+    const openLandingPage = (item, type = 'solution') => {
+        let detailedContent = null;
+        
+        if (type === 'solution') {
+            detailedContent = solutionDetailedContent[item.title];
+        } else if (type === 'delivery') {
+            detailedContent = deliveryDetailedContent[item.title];
+        } else if (type === 'work') {
+            detailedContent = workDetailedContent[item.title];
+        }
+        
+        setLandingData({
+            ...item,
+            type: type,
+            detailedContent: detailedContent
+        });
         setLandingModalOpen(true);
         handleTrackClick(item.title || item.name, 'landing_page_view');
     };
@@ -234,20 +694,20 @@ const WinzePage = () => {
 
     // Updated solutions array with reordered cards
     const solutions = [
-        { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video, detailedDesc: "HD video conferencing with screen sharing, recording, virtual backgrounds, breakout rooms, end-to-end encryption, and integration with popular calendar apps. Perfect for remote teams and global collaboration." },
-        { title: "Smart Eye AI", desc: "Advanced video analytics for proactive security monitoring.", icon: faRobot, img: solutionImages.ai, detailedDesc: "AI-powered video analytics for real-time threat detection, facial recognition, license plate recognition, anomaly detection, and automated alerts with mobile notifications. Enhance your security infrastructure with intelligent monitoring." },
-        { title: "Rental IT Infrastructure", desc: "Cost-effective hardware rental for projects and events.", icon: faLaptop, img: solutionImages.rental, detailedDesc: "Short-term and long-term IT equipment rental including laptops, desktops, servers, networking equipment, and AV gear with delivery, setup, and support included. Flexible terms to match your project needs." },
-        { title: "SaaS Products", desc: "Scalable cloud solutions customized for your business needs.", icon: faCloud, img: solutionImages.saas, detailedDesc: "Custom SaaS solutions with scalable architecture, pay-as-you-go pricing, automatic updates, data encryption, and dedicated support for your business needs. Transform your operations with cloud-native solutions." },
-        { title: "Enterprise Software Licensing", desc: "Flexible licensing options for major enterprise software.", icon: faFileAlt, img: solutionImages.software, detailedDesc: "Flexible licensing for Microsoft, Adobe, Oracle, SAP, and other leading vendors with volume discounts, compliance management, and dedicated account management. Optimize your software investments." },
-        { title: "IT Infrastructure", desc: "Enterprise-grade networking and server solutions for optimal performance.", icon: faServer, img: solutionImages.it, detailedDesc: "Complete IT infrastructure solutions including servers, networking equipment, storage systems, cloud integration, and 24/7 monitoring with proactive maintenance. Build a robust foundation for your business." },
-        { title: "CCTV Services", desc: "End-to-end surveillance solutions with H.265 HD cameras, cloud storage, and AI-powered video analytics.", icon: faVideo, img: "/images/cctv-services.jpg", detailedDesc: "Complete CCTV surveillance solutions with H.265 HD cameras, night vision, motion detection, cloud storage, mobile viewing, and AI-powered analytics for proactive security. Protect your premises with state-of-the-art surveillance." },
-        { title: "Cabling Services", desc: "Active & Passive Cabling solutions including Greenfield projects.", icon: faWifi, img: "/images/cabling-services.jpg", detailedDesc: "Professional structured cabling for data centers, offices, and industrial facilities including fiber optics, copper cabling, cable management, and certification testing. Ensure reliable connectivity infrastructure." },
-        { title: "WiFi as a Service", desc: "Managed wireless solutions for seamless connectivity anywhere.", icon: faWifi, img: solutionImages.wifi, detailedDesc: "Managed WiFi solutions with enterprise-grade security, guest access, bandwidth management, usage analytics, and 24/7 support for offices, events, and public spaces. Stay connected everywhere." },
-        { title: "Smart Live Classroom", desc: "Interactive virtual learning platform with parent access features.", icon: faChalkboard, img: solutionImages.classroom, detailedDesc: "Virtual classroom platform with live video, interactive whiteboard, attendance tracking, assignment management, parent portal, and performance analytics. Revolutionize education with digital learning." },
-        { title: "Web & Mobile Development", desc: "Custom web and mobile applications for your business needs.", icon: faMobileAlt, img: solutionImages.webMobile, detailedDesc: "Custom web and mobile application development using React, Node.js, Flutter, and other modern technologies with responsive design, API integration, and ongoing maintenance. Bring your digital ideas to life." },
-        { title: "Cyber Security", desc: "Advanced threat protection and security compliance solutions.", icon: faLock, img: solutionImages.cyberSecurity, detailedDesc: "Comprehensive cyber security solutions including threat detection, vulnerability assessments, compliance management (GDPR, HIPAA, PCI-DSS), security audits, and employee training. Protect your digital assets." },
-        { title: "Unified Communications", desc: "Seamless integration of voice, video, and messaging for enterprise collaboration.", icon: faChartLine, img: solutionImages.unified, detailedDesc: "Our Unified Communications solution brings together voice, video, messaging, and collaboration tools into a single platform with enterprise-grade security, 99.9% uptime, and 24/7 support. Features include: HD video conferencing, instant messaging, file sharing, and mobile accessibility." },
-        { title: "Contact Center", desc: "AI-powered customer service solutions for enhanced agent productivity.", icon: faHeadset, img: solutionImages.contact, detailedDesc: "AI-powered contact center solutions with intelligent routing, chatbots, sentiment analysis, real-time analytics, and omnichannel support including voice, email, chat, and social media. Elevate your customer experience." }
+        { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video },
+        { title: "Smart Eye AI", desc: "Advanced video analytics for proactive security monitoring.", icon: faRobot, img: solutionImages.ai },
+        { title: "Rental IT Infrastructure", desc: "Cost-effective hardware rental for projects and events.", icon: faLaptop, img: solutionImages.rental },
+        { title: "SaaS Products", desc: "Scalable cloud solutions customized for your business needs.", icon: faCloud, img: solutionImages.saas },
+        { title: "Enterprise Software Licensing", desc: "Flexible licensing options for major enterprise software.", icon: faFileAlt, img: solutionImages.software },
+        { title: "IT Infrastructure", desc: "Enterprise-grade networking and server solutions for optimal performance.", icon: faServer, img: solutionImages.it },
+        { title: "CCTV Services", desc: "End-to-end surveillance solutions with H.265 HD cameras, cloud storage, and AI-powered video analytics.", icon: faVideo, img: "/images/cctv-services.jpg" },
+        { title: "Cabling Services", desc: "Active & Passive Cabling solutions including Greenfield projects.", icon: faWifi, img: "/images/cabling-services.jpg" },
+        { title: "WiFi as a Service", desc: "Managed wireless solutions for seamless connectivity anywhere.", icon: faWifi, img: solutionImages.wifi },
+        { title: "Smart Live Classroom", desc: "Interactive virtual learning platform with parent access features.", icon: faChalkboard, img: solutionImages.classroom },
+        { title: "Web & Mobile Development", desc: "Custom web and mobile applications for your business needs.", icon: faMobileAlt, img: solutionImages.webMobile },
+        { title: "Cyber Security", desc: "Advanced threat protection and security compliance solutions.", icon: faLock, img: solutionImages.cyberSecurity },
+        { title: "Unified Communications", desc: "Seamless integration of voice, video, and messaging for enterprise collaboration.", icon: faChartLine, img: solutionImages.unified },
+        { title: "Contact Center", desc: "AI-powered customer service solutions for enhanced agent productivity.", icon: faHeadset, img: solutionImages.contact }
     ];
 
     const industries = [
@@ -269,24 +729,46 @@ const WinzePage = () => {
     ];
 
     const deliveryItems = [
-        { icon: faInfinity, title: "End-to-End Solutions", desc: "Complete lifecycle management from planning to execution and ongoing support.", detailedDesc: "Our end-to-end solutions cover every aspect of your technology journey. From initial consultation and planning to deployment, training, and ongoing support - we handle everything. This ensures seamless integration and minimal disruption to your business operations." },
-        { icon: faCrown, title: "Enterprise Excellence", desc: "Guaranteed uptime, performance metrics, and measurable business results.", detailedDesc: "We guarantee enterprise-grade excellence with 99.9% uptime, comprehensive performance metrics, and measurable business results. Our solutions are designed to scale with your business and deliver consistent value." },
-        { icon: faHandshake, title: "Flexible Engagement", desc: "Flexible consulting, project-based, or managed service engagement options.", detailedDesc: "Choose the engagement model that works best for you - whether it's strategic consulting, project-based delivery, or fully managed services. We adapt to your needs and budget." },
-        { icon: faBolt, title: "Rapid Deployment", desc: "Accelerated implementation with minimal business disruption.", detailedDesc: "Our accelerated deployment methodology gets your solutions up and running quickly without disrupting your daily operations. We use proven frameworks and best practices to ensure smooth implementation." },
-        { icon: faChartLine, title: "Analytics & Insights", desc: "Data-driven decision making with real-time dashboards.", detailedDesc: "Gain valuable insights from your data with our advanced analytics solutions. Real-time dashboards, custom reports, and predictive analytics help you make informed business decisions." },
-        { icon: faShieldAlt, title: "24/7 Premium Support", desc: "Round-the-clock monitoring and technical assistance.", detailedDesc: "Our dedicated support team is available 24/7 to assist you with any technical issues. We provide proactive monitoring, rapid response times, and premium support services to keep your business running smoothly." }
+        { icon: faInfinity, title: "End-to-End Solutions", desc: "Complete lifecycle management from planning to execution and ongoing support." },
+        { icon: faCrown, title: "Enterprise Excellence", desc: "Guaranteed uptime, performance metrics, and measurable business results." },
+        { icon: faHandshake, title: "Flexible Engagement", desc: "Flexible consulting, project-based, or managed service engagement options." },
+        { icon: faBolt, title: "Rapid Deployment", desc: "Accelerated implementation with minimal business disruption." },
+        { icon: faChartLine, title: "Analytics & Insights", desc: "Data-driven decision making with real-time dashboards." },
+        { icon: faShieldAlt, title: "24/7 Premium Support", desc: "Round-the-clock monitoring and technical assistance." }
     ];
 
     const workWithWinze = [
-        { icon: faHandshake, title: "Strategic Partnership", desc: "We don't just deliver services; we build long-term strategic partnerships focused on your business growth.", detailedDesc: "As a strategic partner, we align our goals with yours. We invest time to understand your business challenges and work collaboratively to develop solutions that drive growth and innovation." },
-        { icon: faGem, title: "Enterprise Value", desc: "Your success is our success. We're committed to delivering excellence in every project we undertake.", detailedDesc: "We measure our success by your success. Every project is executed with a focus on delivering measurable business value, ROI, and long-term benefits for your enterprise." },
-        { icon: faRocket, title: "Innovation First", desc: "Stay ahead of the curve with our cutting-edge solutions and future-ready technology approach.", detailedDesc: "We continuously invest in research and development to bring you the latest technologies and innovative solutions. Stay competitive with our future-ready approach." },
-        { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients, and 16+ years of excellence.", detailedDesc: "Our track record speaks for itself. With over 100 successful deployments and 20+ satisfied enterprise clients across 16+ years, we have the expertise and experience to deliver results." }
+        { icon: faHandshake, title: "Strategic Partnership", desc: "We don't just deliver services; we build long-term strategic partnerships focused on your business growth." },
+        { icon: faGem, title: "Enterprise Value", desc: "Your success is our success. We're committed to delivering excellence in every project we undertake." },
+        { icon: faRocket, title: "Innovation First", desc: "Stay ahead of the curve with our cutting-edge solutions and future-ready technology approach." },
+        { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients, and 16+ years of excellence." }
     ];
 
-    // Landing Page Modal Component
+    // Landing Page Modal Component with Request Quote Form
     const LandingPage = ({ item, onClose, onRequestQuote }) => {
         if (!item) return null;
+        
+        const content = item.detailedContent;
+        const [showInnerQuoteForm, setShowInnerQuoteForm] = useState(false);
+        const [innerFormData, setInnerFormData] = useState({
+            name: '',
+            email: '',
+            phone: '',
+            message: ''
+        });
+
+        const handleInnerInputChange = (e) => {
+            const { name, value } = e.target;
+            setInnerFormData(prev => ({ ...prev, [name]: value }));
+        };
+
+        const handleInnerSubmit = async (e) => {
+            e.preventDefault();
+            await handleTrackClick(`Landing Page Quote - ${item.title} from ${innerFormData.name}`, 'landing_quote');
+            setShowInnerQuoteForm(false);
+            setInnerFormData({ name: '', email: '', phone: '', message: '' });
+            alert(`Thank you! We'll contact you about ${item.title} within 24 hours.`);
+        };
         
         return (
             <div style={{
@@ -307,7 +789,7 @@ const WinzePage = () => {
                 <div style={{
                     background: 'white',
                     borderRadius: '20px',
-                    maxWidth: '900px',
+                    maxWidth: '1000px',
                     width: '100%',
                     cursor: 'default',
                     maxHeight: '90vh',
@@ -346,67 +828,201 @@ const WinzePage = () => {
                                 }}
                                 onError={(e) => {
                                     e.target.onerror = null;
-                                    e.target.style.display = 'none';
+                                    e.target.src = 'https://placehold.co/1200x400/667eea/white?text=' + encodeURIComponent(item.title || item.name);
                                 }}
                             />
                         )}
                         
-                        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
                             <FontAwesomeIcon icon={item.icon} style={{ fontSize: '60px', color: '#667eea', marginBottom: '20px' }} />
-                            <h1 style={{ color: '#1a1a2e', marginBottom: '15px', fontSize: '32px' }}>{item.title || item.name}</h1>
-                        </div>
-                        
-                        <div style={{ marginBottom: '30px' }}>
-                            <h3 style={{ color: '#333', marginBottom: '15px', fontSize: '20px' }}>Overview</h3>
-                            <p style={{ color: '#666', lineHeight: '1.8', marginBottom: '20px' }}>
-                                {item.detailedDesc || item.desc || "Detailed information coming soon. Please contact us for more details about this solution."}
+                            <h1 style={{ color: '#1a1a2e', marginBottom: '15px', fontSize: '36px' }}>{item.title || item.name}</h1>
+                            <p style={{ color: '#666', fontSize: '18px', maxWidth: '800px', margin: '0 auto' }}>
+                                {content?.overview || "Enterprise-grade solution designed to transform your business operations."}
                             </p>
                         </div>
                         
-                        <div style={{ 
-                            background: '#f8f9ff', 
-                            padding: '25px', 
-                            borderRadius: '15px',
-                            marginBottom: '30px'
-                        }}>
-                            <h3 style={{ color: '#333', marginBottom: '15px', fontSize: '20px' }}>Key Benefits</h3>
-                            <ul style={{ color: '#666', lineHeight: '1.8', paddingLeft: '20px' }}>
-                                <li>Enterprise-grade security and compliance</li>
-                                <li>24/7 technical support and monitoring</li>
-                                <li>Scalable solution that grows with your business</li>
-                                <li>Seamless integration with existing systems</li>
-                                <li>Dedicated account management team</li>
-                            </ul>
-                        </div>
+                        {content && content.benefits && (
+                            <div style={{ marginBottom: '30px' }}>
+                                <h3 style={{ color: '#333', marginBottom: '20px', fontSize: '24px', borderLeft: '4px solid #667eea', paddingLeft: '15px' }}>Key Benefits</h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '15px' }}>
+                                    {content.benefits.map((benefit, idx) => (
+                                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', background: '#f8f9ff', borderRadius: '10px' }}>
+                                            <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#667eea', fontSize: '18px' }} />
+                                            <span style={{ color: '#555' }}>{benefit}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                         
-                        <div style={{ textAlign: 'center' }}>
-                            <button 
-                                onClick={() => {
-                                    onRequestQuote(item.title || item.name);
-                                }} 
-                                style={{
-                                    padding: '14px 40px',
-                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '50px',
-                                    cursor: 'pointer',
-                                    fontSize: '16px',
-                                    fontWeight: '600',
-                                    transition: 'all 0.3s'
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.target.style.transform = 'translateY(-2px)';
-                                    e.target.style.boxShadow = '0 8px 25px rgba(102,126,234,0.4)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.target.style.transform = 'translateY(0)';
-                                    e.target.style.boxShadow = 'none';
-                                }}
-                            >
-                                Request a Quote for {item.title || item.name} →
-                            </button>
-                        </div>
+                        {content && content.features && (
+                            <div style={{ marginBottom: '30px' }}>
+                                <h3 style={{ color: '#333', marginBottom: '20px', fontSize: '24px', borderLeft: '4px solid #667eea', paddingLeft: '15px' }}>Key Features</h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '15px' }}>
+                                    {content.features.map((feature, idx) => (
+                                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', background: '#f8f9ff', borderRadius: '10px' }}>
+                                            <FontAwesomeIcon icon={faStar} style={{ color: '#FFD700', fontSize: '18px' }} />
+                                            <span style={{ color: '#555' }}>{feature}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        
+                        {content && content.useCases && (
+                            <div style={{ marginBottom: '30px' }}>
+                                <h3 style={{ color: '#333', marginBottom: '20px', fontSize: '24px', borderLeft: '4px solid #667eea', paddingLeft: '15px' }}>Use Cases</h3>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                                    {content.useCases.map((useCase, idx) => (
+                                        <span key={idx} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', padding: '8px 20px', borderRadius: '30px', fontSize: '14px' }}>
+                                            {useCase}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        
+                        {!showInnerQuoteForm ? (
+                            <div style={{ textAlign: 'center', marginTop: '40px', padding: '30px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '15px' }}>
+                                <h3 style={{ color: 'white', marginBottom: '15px', fontSize: '22px' }}>Ready to get started with {item.title}?</h3>
+                                <p style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '20px' }}>Get a personalized quote tailored to your specific requirements.</p>
+                                <button 
+                                    onClick={() => setShowInnerQuoteForm(true)}
+                                    style={{
+                                        padding: '14px 40px',
+                                        background: 'white',
+                                        color: '#667eea',
+                                        border: 'none',
+                                        borderRadius: '50px',
+                                        cursor: 'pointer',
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        transition: 'all 0.3s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.transform = 'scale(1.05)';
+                                        e.target.style.boxShadow = '0 8px 25px rgba(0,0,0,0.2)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.transform = 'scale(1)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
+                                >
+                                    Request a Quote for {item.title} →
+                                </button>
+                            </div>
+                        ) : (
+                            <div style={{ marginTop: '40px', padding: '30px', background: '#f8f9ff', borderRadius: '15px' }}>
+                                <h3 style={{ color: '#333', marginBottom: '20px', textAlign: 'center' }}>
+                                    Request a Quote for <span style={{ color: '#667eea' }}>{item.title}</span>
+                                </h3>
+                                <form onSubmit={handleInnerSubmit}>
+                                    <input 
+                                        type="text" 
+                                        name="name" 
+                                        placeholder="Full Name" 
+                                        required 
+                                        value={innerFormData.name}
+                                        onChange={handleInnerInputChange}
+                                        style={{ 
+                                            width: '100%', 
+                                            padding: '14px', 
+                                            marginBottom: '15px', 
+                                            borderRadius: '10px', 
+                                            border: '1px solid #ddd',
+                                            fontSize: '15px',
+                                            boxSizing: 'border-box'
+                                        }} 
+                                    />
+                                    <input 
+                                        type="email" 
+                                        name="email" 
+                                        placeholder="Email Address" 
+                                        required 
+                                        value={innerFormData.email}
+                                        onChange={handleInnerInputChange}
+                                        style={{ 
+                                            width: '100%', 
+                                            padding: '14px', 
+                                            marginBottom: '15px', 
+                                            borderRadius: '10px', 
+                                            border: '1px solid #ddd',
+                                            fontSize: '15px',
+                                            boxSizing: 'border-box'
+                                        }} 
+                                    />
+                                    <input 
+                                        type="tel" 
+                                        name="phone" 
+                                        placeholder="Phone Number" 
+                                        required 
+                                        value={innerFormData.phone}
+                                        onChange={handleInnerInputChange}
+                                        style={{ 
+                                            width: '100%', 
+                                            padding: '14px', 
+                                            marginBottom: '15px', 
+                                            borderRadius: '10px', 
+                                            border: '1px solid #ddd',
+                                            fontSize: '15px',
+                                            boxSizing: 'border-box'
+                                        }} 
+                                    />
+                                    <textarea 
+                                        name="message" 
+                                        placeholder="Tell us about your specific requirements..." 
+                                        rows="4" 
+                                        value={innerFormData.message}
+                                        onChange={handleInnerInputChange}
+                                        style={{ 
+                                            width: '100%', 
+                                            padding: '14px', 
+                                            marginBottom: '20px', 
+                                            borderRadius: '10px', 
+                                            border: '1px solid #ddd',
+                                            fontSize: '15px',
+                                            boxSizing: 'border-box',
+                                            resize: 'vertical'
+                                        }} 
+                                    ></textarea>
+                                    <div style={{ display: 'flex', gap: '15px' }}>
+                                        <button 
+                                            type="button"
+                                            onClick={() => setShowInnerQuoteForm(false)}
+                                            style={{
+                                                flex: 1,
+                                                padding: '14px',
+                                                background: '#ccc',
+                                                color: '#333',
+                                                border: 'none',
+                                                borderRadius: '10px',
+                                                cursor: 'pointer',
+                                                fontSize: '16px',
+                                                fontWeight: '600'
+                                            }}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button 
+                                            type="submit"
+                                            style={{
+                                                flex: 1,
+                                                padding: '14px',
+                                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '10px',
+                                                cursor: 'pointer',
+                                                fontSize: '16px',
+                                                fontWeight: '600'
+                                            }}
+                                        >
+                                            Submit Request →
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -861,7 +1477,7 @@ const WinzePage = () => {
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleTrackClick(item.title, 'delivery');
-                                            openLandingPage(item);
+                                            openLandingPage(item, 'delivery');
                                         }}
                                     >
                                         Learn More →
@@ -921,7 +1537,7 @@ const WinzePage = () => {
                                             onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
                                             onClick={() => {
                                                 handleTrackClick(solution.title, 'solution');
-                                                openLandingPage(solution);
+                                                openLandingPage(solution, 'solution');
                                             }}
                                         >
                                             Learn More →
@@ -972,7 +1588,7 @@ const WinzePage = () => {
                                             onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
                                             onClick={() => {
                                                 handleTrackClick(industry.name, 'industry');
-                                                openLandingPage(industry);
+                                                openLandingPage(industry, 'industry');
                                             }}
                                         >
                                             Learn More →
@@ -1024,7 +1640,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Our Clients Section with Scrolling Effect */}
+                {/* Our Valued Clients Section - Only the requested clients */}
                 <section ref={clientsRef} id="clients" style={{
                     padding: '80px 5%',
                     position: 'relative',
@@ -1100,7 +1716,7 @@ const WinzePage = () => {
                                         onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
                                         onClick={() => {
                                             handleTrackClick(item.title, 'workwith');
-                                            openLandingPage(item);
+                                            openLandingPage(item, 'work');
                                         }}
                                     >
                                         Learn More →
@@ -1405,5 +2021,8 @@ const WinzePage = () => {
         </HelmetProvider>
     );
 };
+
+// Add missing icon imports at the top
+import { faCheckCircle, faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
 
 export default WinzePage;
