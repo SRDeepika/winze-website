@@ -546,7 +546,7 @@ const UserManager = ({ token }) => {
     return (
         <div style={styles.dashboardCard}>
             <div style={styles.cardHeader}>
-                <h2>👥 Admin Management - Create Other Admins</h2>
+                <h2>👥 Admin Management</h2>
                 <button onClick={() => setShowForm(true)} style={styles.addButton}>+ Add New Admin</button>
             </div>
             <div style={{ overflowX: 'auto' }}>
@@ -560,7 +560,7 @@ const UserManager = ({ token }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map(user => (
+                        {users.map((user) => (
                             <tr key={user.id}>
                                 <td style={styles.td}>{user.username}</td>
                                 <td style={styles.td}>
@@ -570,10 +570,10 @@ const UserManager = ({ token }) => {
                                 </td>
                                 <td style={styles.td}>{new Date(user.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
-                                    {user.username !== 'admin' ? (
-                                        <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>
-                                    ) : (
+                                    {user.username === 'admin' ? (
                                         <span style={{ color: '#888', fontSize: '12px' }}>Primary Admin</span>
+                                    ) : (
+                                        <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>
                                     )}
                                 </td>
                             </tr>
