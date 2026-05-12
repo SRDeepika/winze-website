@@ -570,10 +570,9 @@ const UserManager = ({ token }) => {
                                 </td>
                                 <td style={styles.td}>{new Date(user.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
-                                    {user.username !== 'admin' && (
+                                    {user.username !== 'admin' ? (
                                         <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>
-                                    )}
-                                    {user.username === 'admin' && (
+                                    ) : (
                                         <span style={{ color: '#888', fontSize: '12px' }}>Primary Admin</span>
                                     )}
                                 </td>
@@ -600,7 +599,6 @@ const UserManager = ({ token }) => {
         </div>
     );
 };
-
 // ============================================
 // PROFILE SETTINGS
 // ============================================
