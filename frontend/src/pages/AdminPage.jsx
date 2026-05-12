@@ -124,10 +124,6 @@ const AdminLogin = ({ onLogin }) => {
                         {loading ? 'Logging in...' : 'Login'}
                     </button>
                 </form>
-                <div style={styles.demoText}>
-                    <p>Super Admin: superadmin / SuperAdmin@2024</p>
-                    <p>Admin: admin / admin123</p>
-                </div>
             </div>
         </div>
     );
@@ -460,7 +456,9 @@ const ApplicationsManager = ({ token }) => {
                         <p><strong>Experience:</strong> {selectedApp.experience} years</p>
                         <p><strong>Company:</strong> {selectedApp.current_company}</p>
                         <p><strong>Cover Letter:</strong></p>
-                        <div style={{ background: '#f5f5f5', padding: '10px', borderRadius: '5px' }}>{selectedApp.cover_letter}</div>
+                        <div style={{ background: '#f5f5f5', padding: '10px', borderRadius: '5px' }}>
+                            {selectedApp.cover_letter}
+                        </div>
                         <button onClick={() => setSelectedApp(null)} style={styles.closeModalBtn}>Close</button>
                     </div>
                 </div>
@@ -529,7 +527,7 @@ const QuotesManager = ({ token }) => {
 const UserManager = ({ token }) => {
     const [users, setUsers] = useState([]);
     const [showForm, setShowForm] = useState(false);
-    const [newUser, setNewUser] = useState({ username: '', password: '', role: 'admin' });
+    const [newUser, setNewUser] = useState({ username: '', password: '', role: 'super_admin' });
 
     useEffect(() => { loadUsers(); }, []);
 
@@ -543,11 +541,11 @@ const UserManager = ({ token }) => {
         await createUser(newUser, token);
         await loadUsers();
         setShowForm(false);
-        setNewUser({ username: '', password: '', role: 'admin' });
+        setNewUser({ username: '', password: '', role: 'super_admin' });
     };
 
     const handleDeleteUser = async (id) => {
-        if (window.confirm('Delete this user?')) {
+        if (window.confirm('Delete this user permanently?')) {
             await deleteUser(id, token);
             await loadUsers();
         }
@@ -556,8 +554,8 @@ const UserManager = ({ token }) => {
     return (
         <div style={styles.dashboardCard}>
             <div style={styles.cardHeader}>
-                <h2>👥 User Management (Super Admin)</h2>
-                <button onClick={() => setShowForm(true)} style={styles.addButton}>+ Add User</button>
+                <h2>👥 Admin Management</h2>
+                <button onClick={() => setShowForm(true)} style={styles.addButton}>+ Add Admin</button>
             </div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
@@ -573,14 +571,18 @@ const UserManager = ({ token }) => {
                         {users.map(user => (
                             <tr key={user.id}>
                                 <td style={styles.td}>{user.username}</td>
-                                <td style={styles.td}>{user.role}</td>
+                                <td style={styles.td}>
+                                    <span style={{...styles.statusBadge, background: user.role === 'super_admin' ? '#ffeaa7' : '#d4edda'}}>
+                                        {user.role}
+                                    </span>
+                                </td>
                                 <td style={styles.td}>{new Date(user.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
-                                    {user.role !== 'super_admin' && (
+                                    {user.username !== 'superadmin' && (
                                         <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>
                                     )}
-                                    {user.role === 'super_admin' && (
-                                        <span style={{ color: '#888', fontSize: '12px' }}>Cannot delete</span>
+                                    {user.username === 'superadmin' && (
+                                        <span style={{ color: '#888', fontSize: '12px' }}>Primary Admin</span>
                                     )}
                                 </td>
                             </tr>
@@ -591,16 +593,12 @@ const UserManager = ({ token }) => {
             {showForm && (
                 <div style={styles.modal} onClick={() => setShowForm(false)}>
                     <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
-                        <h3>Add New User</h3>
+                        <h3>Add New Admin</h3>
                         <form onSubmit={handleCreateUser}>
                             <input type="text" placeholder="Username" value={newUser.username} onChange={e => setNewUser({...newUser, username: e.target.value})} style={styles.input} required />
                             <input type="password" placeholder="Password" value={newUser.password} onChange={e => setNewUser({...newUser, password: e.target.value})} style={styles.input} required />
-                            <select value={newUser.role} onChange={e => setNewUser({...newUser, role: e.target.value})} style={styles.input}>
-                                <option value="admin">Admin</option>
-                                <option value="super_admin">Super Admin</option>
-                            </select>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                                <button type="submit" style={styles.saveBtn}>Create</button>
+                                <button type="submit" style={styles.saveBtn}>Create Admin</button>
                                 <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>Cancel</button>
                             </div>
                         </form>
@@ -789,7 +787,7 @@ const AdminPage = () => {
             <div style={styles.sidebar}>
                 <div style={styles.sidebarHeader}>
                     <h2>⚡ Winze Admin</h2>
-                    <p style={{ fontSize: '12px', color: '#aaa' }}>{adminUsername} ({adminRole})</p>
+                    <p style={{ fontSize: '12px', color: '#aaa' }}>{adminUsername}</p>
                 </div>
                 <nav>
                     <button onClick={() => setActiveTab('dashboard')} style={{...styles.navBtn, background: activeTab === 'dashboard' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>
@@ -816,11 +814,9 @@ const AdminPage = () => {
                     <button onClick={() => setActiveTab('profile')} style={{...styles.navBtn, background: activeTab === 'profile' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>
                         👤 Profile
                     </button>
-                    {isSuperAdmin && (
-                        <button onClick={() => setActiveTab('users')} style={{...styles.navBtn, background: activeTab === 'users' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>
-                            👥 Users
-                        </button>
-                    )}
+                    <button onClick={() => setActiveTab('users')} style={{...styles.navBtn, background: activeTab === 'users' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>
+                        👥 Admins
+                    </button>
                     <button onClick={handleLogout} style={{...styles.navBtn, marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#ff6b6b'}}>
                         🚪 Logout
                     </button>
@@ -832,51 +828,15 @@ const AdminPage = () => {
                     <div>
                         <h1 style={{ marginBottom: '20px' }}>Dashboard</h1>
                         <div style={styles.statsGrid}>
-                            <div style={styles.statCard}>
-                                <div>📝</div>
-                                <h3>{stats.totalBlogs || 0}</h3>
-                                <p>Total Blogs</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>✅</div>
-                                <h3>{stats.publishedBlogs || 0}</h3>
-                                <p>Published Blogs</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>💼</div>
-                                <h3>{stats.totalJobs || 0}</h3>
-                                <p>Total Jobs</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>🔴</div>
-                                <h3>{stats.activeJobs || 0}</h3>
-                                <p>Active Jobs</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>📋</div>
-                                <h3>{stats.totalApplications || 0}</h3>
-                                <p>Applications</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>📧</div>
-                                <h3>{stats.totalQuotes || 0}</h3>
-                                <p>Quotes</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>📈</div>
-                                <h3>{totalClicks}</h3>
-                                <p>Total Clicks</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>⏰</div>
-                                <h3>{last24Hours}</h3>
-                                <p>Last 24 Hours</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>🔗</div>
-                                <h3>{uniqueLinks}</h3>
-                                <p>Unique Links</p>
-                            </div>
+                            <div style={styles.statCard}><div>📝</div><h3>{stats.totalBlogs || 0}</h3><p>Total Blogs</p></div>
+                            <div style={styles.statCard}><div>✅</div><h3>{stats.publishedBlogs || 0}</h3><p>Published Blogs</p></div>
+                            <div style={styles.statCard}><div>💼</div><h3>{stats.totalJobs || 0}</h3><p>Total Jobs</p></div>
+                            <div style={styles.statCard}><div>🔴</div><h3>{stats.activeJobs || 0}</h3><p>Active Jobs</p></div>
+                            <div style={styles.statCard}><div>📋</div><h3>{stats.totalApplications || 0}</h3><p>Applications</p></div>
+                            <div style={styles.statCard}><div>📧</div><h3>{stats.totalQuotes || 0}</h3><p>Quotes</p></div>
+                            <div style={styles.statCard}><div>📈</div><h3>{totalClicks}</h3><p>Total Clicks</p></div>
+                            <div style={styles.statCard}><div>⏰</div><h3>{last24Hours}</h3><p>Last 24 Hours</p></div>
+                            <div style={styles.statCard}><div>🔗</div><h3>{uniqueLinks}</h3><p>Unique Links</p></div>
                         </div>
                     </div>
                 )}
@@ -885,21 +845,9 @@ const AdminPage = () => {
                     <div style={styles.dashboardCard}>
                         <h2>📈 Click Analytics</h2>
                         <div style={styles.statsGrid}>
-                            <div style={styles.statCard}>
-                                <div>📈</div>
-                                <h3>{totalClicks}</h3>
-                                <p>Total Clicks</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>🔗</div>
-                                <h3>{uniqueLinks}</h3>
-                                <p>Unique Links</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>⏰</div>
-                                <h3>{last24Hours}</h3>
-                                <p>Last 24 Hours</p>
-                            </div>
+                            <div style={styles.statCard}><div>📈</div><h3>{totalClicks}</h3><p>Total Clicks</p></div>
+                            <div style={styles.statCard}><div>🔗</div><h3>{uniqueLinks}</h3><p>Unique Links</p></div>
+                            <div style={styles.statCard}><div>⏰</div><h3>{last24Hours}</h3><p>Last 24 Hours</p></div>
                         </div>
                         {Object.keys(groupedClicks).length === 0 ? (
                             <p style={{ textAlign: 'center', padding: '40px' }}>No clicks recorded yet.</p>
@@ -928,7 +876,7 @@ const AdminPage = () => {
                                                             <td style={{ padding: '8px' }}>{new Date(click.clicked_at).toLocaleString()}</td>
                                                             <td style={{ padding: '8px' }}>{click.ip_address || 'unknown'}</td>
                                                             <td style={{ padding: '8px', wordBreak: 'break-all' }}>{click.link_url || click.link_title}</td>
-                                                        </tr>
+                                                        </td>
                                                     ))}
                                                 </tbody>
                                             </table>
@@ -946,7 +894,7 @@ const AdminPage = () => {
                 {activeTab === 'quotes' && <QuotesManager token={token} />}
                 {activeTab === 'socialLinks' && <AdminSocialLinks token={token} />}
                 {activeTab === 'profile' && <ProfileSettings username={adminUsername} onLogout={handleLogout} />}
-                {activeTab === 'users' && isSuperAdmin && <UserManager token={token} />}
+                {activeTab === 'users' && <UserManager token={token} />}
             </div>
         </div>
     );
@@ -1001,7 +949,6 @@ const styles = {
     icon: { fontSize: '35px' },
     title: { color: 'white', marginBottom: '10px', fontSize: '28px' },
     subtitle: { color: 'rgba(255,255,255,0.7)', marginBottom: '30px', fontSize: '14px' },
-    demoText: { marginTop: '20px', textAlign: 'center', fontSize: '12px', color: '#aaa' },
     input: { 
         width: '100%', 
         padding: '12px', 
