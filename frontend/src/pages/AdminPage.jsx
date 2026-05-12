@@ -57,7 +57,7 @@ const AdminLogin = ({ onLogin }) => {
             return;
         }
 
-        if (username === 'admin' && password === 'admin123') {
+        if (username === 'admin' && password === 'Winzebglr') {
             sessionStorage.clear();
             sessionStorage.setItem('adminToken', 'admin-token');
             sessionStorage.setItem('adminUsername', 'admin');

@@ -7,29 +7,26 @@ const AdminLogin = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Set your admin password here (change this to your desired password)
-    const ADMIN_PASSWORD = 'Winze@2026'; // Change this to your preferred password
+    // Set your admin password here
+    const ADMIN_PASSWORD = 'Winzebglr'; 
 
     const handleSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+        e.preventDefault();
+        setLoading(true);
+        setError('');
 
-    // Simple password check
-    if (password === ADMIN_PASSWORD) {
-        // Store login state
-        localStorage.setItem('adminLoggedIn', 'true');
-        localStorage.setItem('adminLoginTime', new Date().toISOString());
-        
-        // REMOVED: alert('Login successful! Redirecting to dashboard...');
-        // Direct redirect without any popup
-        navigate('/admin');
-    } else {
-        setError('Invalid password. Please try again.');
-        setPassword('');
-    }
-    setLoading(false);
-};
+        // Simple password check
+        if (password === ADMIN_PASSWORD) {
+            // Store login state
+            localStorage.setItem('adminLoggedIn', 'true');
+            localStorage.setItem('adminLoginTime', new Date().toISOString());
+            navigate('/admin');
+        } else {
+            setError('Invalid password. Please try again.');
+            setPassword('');
+        }
+        setLoading(false);
+    };
 
     return (
         <div style={{
