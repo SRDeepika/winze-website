@@ -128,7 +128,7 @@ const AdminLogin = ({ onLogin }) => {
 };
 
 // ============================================
-// BLOG MANAGER
+// BLOG MANAGER - COMPLETELY FIXED VERSION
 // ============================================
 const BlogManager = ({ token }) => {
     const [blogs, setBlogs] = useState([]);
@@ -202,11 +202,7 @@ const BlogManager = ({ token }) => {
                             <tr key={blog.id}>
                                 <td style={styles.td}>{blog.title}</td>
                                 <td style={styles.td}>{blog.category}</td>
-                                <td style={styles.td}>
-                                    <span style={{...styles.statusBadge, background: blog.status === 'published' ? '#d4edda' : '#ffeaa7'}}>
-                                        {blog.status}
-                                    </span>
-                                </td>
+                                <td style={styles.td}><span style={{...styles.statusBadge, background: blog.status === 'published' ? '#d4edda' : '#ffeaa7'}}>{blog.status}</span></td>
                                 <td style={styles.td}>{blog.views || 0}</td>
                                 <td style={styles.td}>{new Date(blog.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
@@ -223,7 +219,7 @@ const BlogManager = ({ token }) => {
                             </tr>
                         )}
                     </tbody>
-                <table>
+                </table>
             </div>
             {showForm && (
                 <div style={styles.modal} onClick={() => { setShowForm(false); setEditingBlog(null); }}>
@@ -254,7 +250,7 @@ const BlogManager = ({ token }) => {
 };
 
 // ============================================
-// JOB MANAGER
+// JOB MANAGER - FIXED VERSION
 // ============================================
 const JobManager = ({ token }) => {
     const [jobs, setJobs] = useState([]);
@@ -326,11 +322,11 @@ const JobManager = ({ token }) => {
                                 <td style={styles.td}>{job.department}</td>
                                 <td style={styles.td}>{job.location}</td>
                                 <td style={styles.td}>{job.type}</td>
-                                <td style={styles.td}><span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>{job.status}</span></tr>
+                                <td style={styles.td}><span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>{job.status}</span></td>
                                 <td style={styles.td}>
                                     <button onClick={() => handleEdit(job)} style={styles.editBtn}>Edit</button>
                                     <button onClick={() => handleDelete(job.id)} style={styles.deleteBtn}>Delete</button>
-                                </tr>
+                                </td>
                             </tr>
                         ))}
                         {jobs.length === 0 && (
@@ -362,7 +358,9 @@ const JobManager = ({ token }) => {
                                 <option value="active">Active</option><option value="closed">Closed</option>
                             </select>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                                <button type="submit" disabled={loading} style={styles.saveBtn}>{loading ? 'Saving...' : (editingJob ? 'Update' : 'Post')}</button>
+                                <button type="submit" disabled={loading} style={styles.saveBtn}>
+                                    {loading ? 'Saving...' : (editingJob ? 'Update' : 'Post')}
+                                </button>
                                 <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>Cancel</button>
                             </div>
                         </form>
