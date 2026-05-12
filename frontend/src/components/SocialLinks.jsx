@@ -7,7 +7,7 @@ import {
     faInstagram
 } from '@fortawesome/free-brands-svg-icons';
 
-// Hardcoded social links (same as before - no backend needed)
+// Hardcoded social links
 const socialLinks = [
     { id: 1, platform_name: "LinkedIn", platform_url: "https://www.linkedin.com/company/winze-technologies", icon: faLinkedin, color: "#0077b5" },
     { id: 2, platform_name: "WhatsApp", platform_url: "https://wa.me/919880010417", icon: faWhatsapp, color: "#25D366" },
@@ -15,13 +15,50 @@ const socialLinks = [
     { id: 4, platform_name: "Instagram", platform_url: "https://www.instagram.com/winzetechnologies", icon: faInstagram, color: "#e4405f" }
 ];
 
+// Function to get user's IP address
+const getIpAddress = async () => {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+    } catch (err) {
+        console.log('Could not get IP, using default');
+        return '0.0.0.0';
+    }
+};
+
+// Function to track click on backend
+const trackSocialClick = async (link) => {
+    try {
+        const ip = await getIpAddress();
+        const response = await fetch('https://winze-backend-api.onrender.com/api/track', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                link_url: link.platform_url,
+                link_title: `Social: ${link.platform_name}`,
+                ip_address: ip
+            })
+        });
+        const data = await response.json();
+        console.log('Click tracked:', data);
+    } catch (error) {
+        console.error('Tracking failed:', error);
+    }
+};
+
 const SocialLinks = () => {
     const [hoveredId, setHoveredId] = useState(null);
 
-    const handleClick = (e, link) => {
+    const handleClick = async (e, link) => {
         e.preventDefault();
-        // Track click locally
-        console.log(`Clicked ${link.platform_name}`);
+        
+        // Track the click on backend
+        await trackSocialClick(link);
+        
+        // Small delay to ensure tracking completes, then open link
         setTimeout(() => {
             window.open(link.platform_url, '_blank');
         }, 100);
@@ -53,7 +90,6 @@ const SocialLinks = () => {
                         onMouseEnter={() => setHoveredId(link.id)}
                         onMouseLeave={() => setHoveredId(null)}
                     >
-                        {/* Tooltip that appears on the left side when hovering */}
                         <span
                             style={{
                                 position: 'absolute',
@@ -75,7 +111,6 @@ const SocialLinks = () => {
                             {link.platform_name}
                         </span>
                         
-                        {/* Floating button */}
                         <a
                             href={link.platform_url}
                             target="_blank"
