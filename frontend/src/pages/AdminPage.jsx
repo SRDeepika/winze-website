@@ -405,9 +405,8 @@ const ApplicationsManager = ({ token }) => {
         </div>
     );
 };
-
 // ============================================
-// QUOTES MANAGER
+// QUOTES MANAGER - FIXED VERSION
 // ============================================
 const QuotesManager = ({ token }) => {
     const [quotes, setQuotes] = useState([]);
@@ -423,26 +422,35 @@ const QuotesManager = ({ token }) => {
         <div style={styles.dashboardCard}>
             <div style={styles.cardHeader}>
                 <h2>📧 Quote Requests</h2>
-                <button onClick={loadQuotes} style={styles.refreshBtn}>Refresh</button>
+                <button onClick={loadQuotes} style={styles.refreshBtn}>🔄 Refresh</button>
             </div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
                     <thead>
                         <tr>
-                            <th style={styles.th}>Name</th><th style={styles.th}>Email</th>
-                            <th style={styles.th}>Service</th><th style={styles.th}>Date</th><th style={styles.th}>Message</th>
+                            <th style={styles.th}>Name</th>
+                            <th style={styles.th}>Email</th>
+                            <th style={styles.th}>Service</th>
+                            <th style={styles.th}>Date</th>
+                            <th style={styles.th}>Message</th>
                         </tr>
                     </thead>
                     <tbody>
                         {quotes.map(quote => (
                             <tr key={quote.id}>
-                                <td style={styles.td}>{quote.name}</td><td style={styles.td}>{quote.email}</td>
-                                <td style={styles.td}>{quote.service}</td><td style={styles.td}>{new Date(quote.created_at).toLocaleDateString()}</td>
+                                <td style={styles.td}>{quote.name}</td>
+                                <td style={styles.td}>{quote.email}</td>
+                                <td style={styles.td}>{quote.service}</td>
+                                <td style={styles.td}>{new Date(quote.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>{quote.message?.substring(0, 50)}...</td>
                             </tr>
                         ))}
                         {quotes.length === 0 && (
-                            <td><td colSpan="5" style={{ textAlign: 'center', padding: '40px' }}>No quote requests yet.</td></tr>
+                            <tr>
+                                <td colSpan="5" style={{ textAlign: 'center', padding: '40px' }}>
+                                    No quote requests yet.
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>
