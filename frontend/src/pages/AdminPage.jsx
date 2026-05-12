@@ -510,7 +510,7 @@ const QuotesManager = ({ token }) => {
 };
 
 // ============================================
-// USER MANAGER (SUPER ADMIN ONLY)
+// USER MANAGER (SUPER ADMIN ONLY) - FIXED VERSION
 // ============================================
 const UserManager = ({ token }) => {
     const [users, setUsers] = useState([]);
@@ -553,17 +553,25 @@ const UserManager = ({ token }) => {
                             <th style={styles.th}>Role</th>
                             <th style={styles.th}>Created</th>
                             <th style={styles.th}>Actions</th>
-                        <tr>
+                        </tr>
                     </thead>
                     <tbody>
                         {users.map(user => (
                             <tr key={user.id}>
                                 <td style={styles.td}>{user.username}</td>
-                                <td style={styles.td}><span style={{...styles.statusBadge, background: user.role === 'super_admin' ? '#ffeaa7' : '#d4edda'}}>{user.role}</span></td>
+                                <td style={styles.td}>
+                                    <span style={{...styles.statusBadge, background: user.role === 'super_admin' ? '#ffeaa7' : '#d4edda'}}>
+                                        {user.role}
+                                    </span>
+                                </td>
                                 <td style={styles.td}>{new Date(user.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
-                                    {user.username !== 'superadmin' && <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>}
-                                    {user.username === 'superadmin' && <span style={{ color: '#888', fontSize: '12px' }}>Primary Admin</span>}
+                                    {user.username !== 'superadmin' && (
+                                        <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>
+                                    )}
+                                    {user.username === 'superadmin' && (
+                                        <span style={{ color: '#888', fontSize: '12px' }}>Primary Admin</span>
+                                    )}
                                 </td>
                             </tr>
                         ))}
@@ -588,9 +596,8 @@ const UserManager = ({ token }) => {
         </div>
     );
 };
-
 // ============================================
-// PROFILE SETTINGS
+// PROFILE SETTINGS - FIXED VERSION
 // ============================================
 const ProfileSettings = ({ username, onLogout }) => {
     const [currentPassword, setCurrentPassword] = useState('');
@@ -644,7 +651,9 @@ const ProfileSettings = ({ username, onLogout }) => {
                 <form onSubmit={handleUpdateUsername}>
                     <div style={{ position: 'relative' }}>
                         <input type={showCurrent ? "text" : "password"} placeholder="Current Password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} style={styles.input} required />
-                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>{showCurrent ? '🙈' : '👁️'}</span>
+                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>
+                            {showCurrent ? '🙈' : '👁️'}
+                        </span>
                     </div>
                     <input type="text" placeholder="New Username" value={newUsername} onChange={e => setNewUsername(e.target.value)} style={styles.input} required />
                     <button type="submit" style={styles.saveBtn}>Update Username</button>
@@ -655,11 +664,15 @@ const ProfileSettings = ({ username, onLogout }) => {
                 <form onSubmit={handleUpdatePassword}>
                     <div style={{ position: 'relative' }}>
                         <input type={showCurrent ? "text" : "password"} placeholder="Current Password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} style={styles.input} required />
-                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>{showCurrent ? '🙈' : '👁️'}</span>
+                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>
+                            {showCurrent ? '🙈' : '👁️'}
+                        </span>
                     </div>
                     <div style={{ position: 'relative' }}>
                         <input type={showNew ? "text" : "password"} placeholder="New Password" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={styles.input} required />
-                        <span onClick={() => setShowNew(!showNew)} style={styles.eyeIcon}>{showNew ? '🙈' : '👁️'}</span>
+                        <span onClick={() => setShowNew(!showNew)} style={styles.eyeIcon}>
+                            {showNew ? '🙈' : '👁️'}
+                        </span>
                     </div>
                     <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} style={styles.input} required />
                     <button type="submit" style={styles.saveBtn}>Update Password</button>
