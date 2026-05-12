@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import AdminSocialLinks from './AdminSocialLinks';
+import AdminSocialLinks from '../admin/AdminSocialLinks';
 import { 
   getAdminBlogs, createBlog, updateBlog, deleteBlog,
   getAdminJobs, createJob, updateJob, deleteJob,
@@ -29,7 +29,7 @@ const generateCaptcha = () => {
 };
 
 // ============================================
-// ADMIN LOGIN COMPONENT WITH CAPTCHA
+// LOGIN COMPONENT
 // ============================================
 const AdminLogin = ({ onLogin }) => {
     const [username, setUsername] = useState('');
@@ -57,14 +57,14 @@ const AdminLogin = ({ onLogin }) => {
             return;
         }
 
-        if (username === 'admin' && password === 'Winzebglr') {
+        if (username === 'admin' && password === 'admin123') {
             sessionStorage.clear();
-            sessionStorage.setItem('adminToken', 'admin-token');
+            sessionStorage.setItem('adminToken', 'admin-session-token');
             sessionStorage.setItem('adminUsername', 'admin');
             sessionStorage.setItem('adminRole', 'admin');
             onLogin('admin', 'admin');
         } else {
-            setError('Invalid credentials. Please try again.');
+            setError('Invalid credentials');
             refreshCaptcha();
         }
         setLoading(false);
@@ -73,9 +73,7 @@ const AdminLogin = ({ onLogin }) => {
     return (
         <div style={styles.container}>
             <div style={styles.card}>
-                <div style={styles.iconContainer}>
-                    <span style={styles.icon}>🔐</span>
-                </div>
+                <div style={styles.iconContainer}><span style={styles.icon}>🔐</span></div>
                 <h2 style={styles.title}>Admin Login</h2>
                 <p style={styles.subtitle}>Enter your credentials to access dashboard</p>
                 <form onSubmit={handleSubmit}>
@@ -95,6 +93,356 @@ const AdminLogin = ({ onLogin }) => {
                     <button type="submit" disabled={loading} style={styles.button}>{loading ? 'Logging in...' : 'Login'}</button>
                 </form>
             </div>
+        </div>
+    );
+};
+
+// ============================================
+// BLOG MANAGER
+// ============================================
+const BlogManager = ({ token }) => {
+    const [blogs, setBlogs] = useState([]);
+    const [showForm, setShowForm] = useState(false);
+    const [editingBlog, setEditingBlog] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        title: '', excerpt: '', content: '', category: '', 
+        author: '', author_role: '', read_time: 5, status: 'draft', image: null
+    });
+
+    useEffect(() => { loadBlogs(); }, []);
+
+    const loadBlogs = async () => {
+        const res = await getAdminBlogs(token);
+        if (res.success) setBlogs(res.blogs);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        if (editingBlog) {
+            await updateBlog(editingBlog.id, formData, token);
+        } else {
+            await createBlog(formData, token);
+        }
+        await loadBlogs();
+        setShowForm(false);
+        setEditingBlog(null);
+        setFormData({ title: '', excerpt: '', content: '', category: '', author: '', author_role: '', read_time: 5, status: 'draft', image: null });
+        setLoading(false);
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm('Delete this blog?')) {
+            await deleteBlog(id, token);
+            await loadBlogs();
+        }
+    };
+
+    const handleEdit = (blog) => {
+        setEditingBlog(blog);
+        setFormData({
+            title: blog.title, excerpt: blog.excerpt, content: blog.content,
+            category: blog.category, author: blog.author, author_role: blog.author_role,
+            read_time: blog.read_time, status: blog.status, image: null
+        });
+        setShowForm(true);
+    };
+
+    return (
+        <div style={styles.dashboardCard}>
+            <div style={styles.cardHeader}><h2>📝 Blog Management</h2><button onClick={() => setShowForm(true)} style={styles.addButton}>+ New Blog</button></div>
+            <div style={{ overflowX: 'auto' }}>
+                <table style={styles.table}>
+                    <thead><tr><th style={styles.th}>Title</th><th style={styles.th}>Category</th><th style={styles.th}>Status</th><th style={styles.th}>Views</th><th style={styles.th}>Created</th><th style={styles.th}>Actions</th></tr></thead>
+                    <tbody>
+                        {blogs.map(blog => (
+                            <tr key={blog.id}>
+                                <td style={styles.td}>{blog.title}</td><td style={styles.td}>{blog.category}</td>
+                                <td style={styles.td}><span style={{...styles.statusBadge, background: blog.status === 'published' ? '#d4edda' : '#ffeaa7'}}>{blog.status}</span></td>
+                                <td style={styles.td}>{blog.views || 0}</td>
+                                <td style={styles.td}>{new Date(blog.created_at).toLocaleDateString()}</td>
+                                <td style={styles.td}><button onClick={() => handleEdit(blog)} style={styles.editBtn}>Edit</button><button onClick={() => handleDelete(blog.id)} style={styles.deleteBtn}>Delete</button></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            {showForm && (
+                <div style={styles.modal} onClick={() => setShowForm(false)}>
+                    <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
+                        <h3>{editingBlog ? 'Edit Blog' : 'Create Blog'}</h3>
+                        <form onSubmit={handleSubmit}>
+                            <input type="text" placeholder="Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={styles.input} required />
+                            <input type="text" placeholder="Category" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={styles.input} required />
+                            <textarea placeholder="Excerpt" rows="2" value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} style={styles.textarea} required />
+                            <textarea placeholder="Content" rows="6" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} style={styles.textarea} required />
+                            <input type="file" accept="image/*" onChange={e => setFormData({...formData, image: e.target.files[0]})} style={styles.input} />
+                            <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={styles.input}>
+                                <option value="draft">Draft</option><option value="published">Published</option>
+                            </select>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button type="submit" style={styles.saveBtn}>{editingBlog ? 'Update' : 'Create'}</button>
+                                <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// ============================================
+// JOB MANAGER
+// ============================================
+const JobManager = ({ token }) => {
+    const [jobs, setJobs] = useState([]);
+    const [showForm, setShowForm] = useState(false);
+    const [editingJob, setEditingJob] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        title: '', department: '', location: '', type: 'Full-time', 
+        experience: '', salary: '', description: '', requirements: '', 
+        benefits: '', status: 'active', deadline: ''
+    });
+
+    useEffect(() => { loadJobs(); }, []);
+
+    const loadJobs = async () => {
+        const res = await getAdminJobs(token);
+        if (res.success) setJobs(res.jobs);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        if (editingJob) {
+            await updateJob(editingJob.id, formData, token);
+        } else {
+            await createJob(formData, token);
+        }
+        await loadJobs();
+        setShowForm(false);
+        setEditingJob(null);
+        setLoading(false);
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm('Delete this job?')) {
+            await deleteJob(id, token);
+            await loadJobs();
+        }
+    };
+
+    return (
+        <div style={styles.dashboardCard}>
+            <div style={styles.cardHeader}><h2>💼 Job Management</h2><button onClick={() => setShowForm(true)} style={styles.addButton}>+ Post Job</button></div>
+            <div style={{ overflowX: 'auto' }}>
+                <table style={styles.table}>
+                    <thead><tr><th style={styles.th}>Title</th><th style={styles.th}>Department</th><th style={styles.th}>Location</th><th style={styles.th}>Type</th><th style={styles.th}>Status</th><th style={styles.th}>Actions</th></tr></thead>
+                    <tbody>
+                        {jobs.map(job => (
+                            <tr key={job.id}>
+                                <td style={styles.td}>{job.title}</td><td style={styles.td}>{job.department}</td>
+                                <td style={styles.td}>{job.location}</td><td style={styles.td}>{job.type}</td>
+                                <td style={styles.td}><span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>{job.status}</span></td>
+                                <td style={styles.td}><button onClick={() => { setEditingJob(job); setFormData(job); setShowForm(true); }} style={styles.editBtn}>Edit</button><button onClick={() => handleDelete(job.id)} style={styles.deleteBtn}>Delete</button></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            {showForm && (
+                <div style={styles.modal} onClick={() => setShowForm(false)}>
+                    <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
+                        <h3>{editingJob ? 'Edit Job' : 'Post Job'}</h3>
+                        <form onSubmit={handleSubmit}>
+                            <input type="text" placeholder="Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={styles.input} required />
+                            <input type="text" placeholder="Department" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} style={styles.input} required />
+                            <input type="text" placeholder="Location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} style={styles.input} required />
+                            <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={styles.input}>
+                                <option>Full-time</option><option>Part-time</option><option>Remote</option><option>Hybrid</option>
+                            </select>
+                            <input type="text" placeholder="Experience" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} style={styles.input} />
+                            <input type="text" placeholder="Salary" value={formData.salary} onChange={e => setFormData({...formData, salary: e.target.value})} style={styles.input} />
+                            <textarea placeholder="Description" rows="4" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={styles.textarea} required />
+                            <textarea placeholder="Requirements" rows="3" value={formData.requirements} onChange={e => setFormData({...formData, requirements: e.target.value})} style={styles.textarea} />
+                            <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={styles.input}>
+                                <option value="active">Active</option><option value="closed">Closed</option>
+                            </select>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button type="submit" style={styles.saveBtn}>{editingJob ? 'Update' : 'Post'}</button>
+                                <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// ============================================
+// APPLICATIONS MANAGER
+// ============================================
+const ApplicationsManager = ({ token }) => {
+    const [applications, setApplications] = useState([]);
+    const [selectedApp, setSelectedApp] = useState(null);
+
+    useEffect(() => { loadApplications(); }, []);
+
+    const loadApplications = async () => {
+        const res = await getApplications(token);
+        if (res.success) setApplications(res.applications);
+    };
+
+    const updateStatus = async (id, status) => {
+        await updateApplicationStatus(id, status, token);
+        await loadApplications();
+    };
+
+    return (
+        <div style={styles.dashboardCard}>
+            <div style={styles.cardHeader}><h2>📋 Job Applications</h2><button onClick={loadApplications} style={styles.refreshBtn}>Refresh</button></div>
+            <div style={{ overflowX: 'auto' }}>
+                <table style={styles.table}>
+                    <thead><tr><th style={styles.th}>Name</th><th style={styles.th}>Job</th><th style={styles.th}>Email</th><th style={styles.th}>Experience</th><th style={styles.th}>Status</th><th style={styles.th}>Action</th></tr></thead>
+                    <tbody>
+                        {applications.map(app => (
+                            <tr key={app.id}>
+                                <td style={styles.td}>{app.name}</td><td style={styles.td}>{app.job_title}</td>
+                                <td style={styles.td}>{app.email}</td><td style={styles.td}>{app.experience || 'N/A'} yrs</td>
+                                <td style={styles.td}>
+                                    <select value={app.status} onChange={e => updateStatus(app.id, e.target.value)} style={styles.select}>
+                                        <option value="pending">Pending</option><option value="reviewed">Reviewed</option>
+                                        <option value="shortlisted">Shortlisted</option><option value="rejected">Rejected</option>
+                                    </select>
+                                </td>
+                                <td style={styles.td}><button onClick={() => setSelectedApp(app)} style={styles.viewBtn}>View</button></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            {selectedApp && (
+                <div style={styles.modal} onClick={() => setSelectedApp(null)}>
+                    <div style={styles.modalContent}>
+                        <h3>Application Details</h3>
+                        <p><strong>Name:</strong> {selectedApp.name}</p>
+                        <p><strong>Email:</strong> {selectedApp.email}</p>
+                        <p><strong>Phone:</strong> {selectedApp.phone}</p>
+                        <p><strong>Experience:</strong> {selectedApp.experience} years</p>
+                        <p><strong>Company:</strong> {selectedApp.current_company}</p>
+                        <p><strong>Cover Letter:</strong></p>
+                        <div style={{ background: '#f5f5f5', padding: '10px', borderRadius: '5px' }}>{selectedApp.cover_letter}</div>
+                        <button onClick={() => setSelectedApp(null)} style={styles.closeModalBtn}>Close</button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// ============================================
+// QUOTES MANAGER
+// ============================================
+const QuotesManager = ({ token }) => {
+    const [quotes, setQuotes] = useState([]);
+
+    useEffect(() => { loadQuotes(); }, []);
+
+    const loadQuotes = async () => {
+        const res = await getQuotes(token);
+        if (res.success) setQuotes(res.quotes);
+    };
+
+    return (
+        <div style={styles.dashboardCard}>
+            <div style={styles.cardHeader}><h2>📧 Quote Requests</h2><button onClick={loadQuotes} style={styles.refreshBtn}>Refresh</button></div>
+            <div style={{ overflowX: 'auto' }}>
+                <table style={styles.table}>
+                    <thead><tr><th style={styles.th}>Name</th><th style={styles.th}>Email</th><th style={styles.th}>Service</th><th style={styles.th}>Date</th><th style={styles.th}>Message</th></tr></thead>
+                    <tbody>
+                        {quotes.map(quote => (
+                            <tr key={quote.id}>
+                                <td style={styles.td}>{quote.name}</td><td style={styles.td}>{quote.email}</td>
+                                <td style={styles.td}>{quote.service}</td><td style={styles.td}>{new Date(quote.created_at).toLocaleDateString()}</td>
+                                <td style={styles.td}>{quote.message?.substring(0, 50)}...</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
+
+// ============================================
+// USER MANAGER
+// ============================================
+const UserManager = ({ token }) => {
+    const [users, setUsers] = useState([]);
+    const [showForm, setShowForm] = useState(false);
+    const [newUser, setNewUser] = useState({ username: '', password: '', role: 'admin' });
+
+    useEffect(() => { loadUsers(); }, []);
+
+    const loadUsers = async () => {
+        const res = await getUsers(token);
+        if (res.success) setUsers(res.users);
+    };
+
+    const handleCreateUser = async (e) => {
+        e.preventDefault();
+        await createUser(newUser, token);
+        await loadUsers();
+        setShowForm(false);
+        setNewUser({ username: '', password: '', role: 'admin' });
+    };
+
+    const handleDeleteUser = async (id) => {
+        if (window.confirm('Delete this user?')) {
+            await deleteUser(id, token);
+            await loadUsers();
+        }
+    };
+
+    return (
+        <div style={styles.dashboardCard}>
+            <div style={styles.cardHeader}><h2>👥 Admin Management</h2><button onClick={() => setShowForm(true)} style={styles.addButton}>+ Add Admin</button></div>
+            <div style={{ overflowX: 'auto' }}>
+                <table style={styles.table}>
+                    <thead><tr><th style={styles.th}>Username</th><th style={styles.th}>Role</th><th style={styles.th}>Created</th><th style={styles.th}>Actions</th></tr></thead>
+                    <tbody>
+                        {users.map(user => (
+                            <tr key={user.id}>
+                                <td style={styles.td}>{user.username}</td>
+                                <td style={styles.td}>{user.role}</td>
+                                <td style={styles.td}>{new Date(user.created_at).toLocaleDateString()}</td>
+                                <td style={styles.td}>
+                                    {user.username !== 'admin' && <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            {showForm && (
+                <div style={styles.modal} onClick={() => setShowForm(false)}>
+                    <div style={styles.modalContent}>
+                        <h3>Add New Admin</h3>
+                        <form onSubmit={handleCreateUser}>
+                            <input type="text" placeholder="Username" value={newUser.username} onChange={e => setNewUser({...newUser, username: e.target.value})} style={styles.input} required />
+                            <input type="password" placeholder="Password" value={newUser.password} onChange={e => setNewUser({...newUser, password: e.target.value})} style={styles.input} required />
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button type="submit" style={styles.saveBtn}>Create</button>
+                                <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
@@ -180,94 +528,56 @@ const ProfileSettings = ({ username, onLogout }) => {
 };
 
 // ============================================
-// USER MANAGER - FIXED VERSION
+// CLICK ANALYTICS COMPONENT
 // ============================================
-const UserManager = ({ token }) => {
-    const [users, setUsers] = useState([]);
-    const [showForm, setShowForm] = useState(false);
-    const [newUser, setNewUser] = useState({ username: '', password: '', role: 'admin' });
-
-    useEffect(() => { loadUsers(); }, []);
-
-    const loadUsers = async () => {
-        const res = await getUsers(token);
-        if (res.success) setUsers(res.users);
-    };
-
-    const handleCreateUser = async (e) => {
-        e.preventDefault();
-        await createUser(newUser, token);
-        await loadUsers();
-        setShowForm(false);
-        setNewUser({ username: '', password: '', role: 'admin' });
-    };
-
-    const handleDeleteUser = async (id) => {
-        if (window.confirm('Delete this user permanently?')) {
-            await deleteUser(id, token);
-            await loadUsers();
-        }
-    };
-
+const ClickAnalytics = ({ clicks, totalClicks, uniqueLinks, last24Hours, expanded, toggleGroup, groupedClicks }) => {
     return (
         <div style={styles.dashboardCard}>
-            <div style={styles.cardHeader}>
-                <h2>👥 Admin Management</h2>
-                <button onClick={() => setShowForm(true)} style={styles.addButton}>+ Add New Admin</button>
+            <h2>📈 Click Analytics</h2>
+            <div style={styles.statsGrid}>
+                <div style={styles.statCard}><div>📈</div><h3>{totalClicks}</h3><p>Total Clicks</p></div>
+                <div style={styles.statCard}><div>🔗</div><h3>{uniqueLinks}</h3><p>Unique Links</p></div>
+                <div style={styles.statCard}><div>⏰</div><h3>{last24Hours}</h3><p>Last 24 Hours</p></div>
             </div>
-            <div style={{ overflowX: 'auto' }}>
-                <table style={styles.table}>
-                    <thead>
-                        <tr>
-                            <th style={styles.th}>Username</th>
-                            <th style={styles.th}>Role</th>
-                            <th style={styles.th}>Created</th>
-                            <th style={styles.th}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map((user) => (
-                            <tr key={user.id}>
-                                <td style={styles.td}>{user.username}</td>
-                                <td style={styles.td}>
-                                    <span style={{...styles.statusBadge, background: user.role === 'admin' ? '#d4edda' : '#ffeaa7'}}>
-                                        {user.role}
-                                    </span>
-                                </td>
-                                <td style={styles.td}>{new Date(user.created_at).toLocaleDateString()}</td>
-                                <td style={styles.td}>
-                                    {user.username === 'admin' ? (
-                                        <span style={{ color: '#888', fontSize: '12px' }}>Primary Admin</span>
-                                    ) : (
-                                        <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            {showForm && (
-                <div style={styles.modal} onClick={() => setShowForm(false)}>
-                    <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
-                        <h3>Add New Admin</h3>
-                        <form onSubmit={handleCreateUser}>
-                            <input type="text" placeholder="Username" value={newUser.username} onChange={e => setNewUser({...newUser, username: e.target.value})} style={styles.input} required />
-                            <input type="password" placeholder="Password" value={newUser.password} onChange={e => setNewUser({...newUser, password: e.target.value})} style={styles.input} required />
-                            <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                                <button type="submit" style={styles.saveBtn}>Create Admin</button>
-                                <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>Cancel</button>
+            {clicks.length === 0 ? (
+                <p style={{ textAlign: 'center', padding: '40px' }}>No clicks recorded yet.</p>
+            ) : (
+                Object.entries(groupedClicks).map(([title, items]) => (
+                    <div key={title} style={{ marginBottom: '15px', border: '1px solid #e0e0e0', borderRadius: '8px', overflow: 'hidden' }}>
+                        <div onClick={() => toggleGroup(title)} style={{ padding: '12px 15px', background: '#f8f9fa', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 'bold' }}>
+                            <span>🔗 {title}</span>
+                            <span>({items.length} clicks) {expanded[title] ? '▼' : '▶'}</span>
+                        </div>
+                        {expanded[title] && (
+                            <div style={{ padding: '10px' }}>
+                                <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
+                                    <thead>
+                                        <tr style={{ background: '#f5f5f5' }}>
+                                            <th style={{ padding: '8px', textAlign: 'left' }}>#</th>
+                                            <th style={{ padding: '8px', textAlign: 'left' }}>Date & Time</th>
+                                            <th style={{ padding: '8px', textAlign: 'left' }}>IP Address</th>
+                                            <th style={{ padding: '8px', textAlign: 'left' }}>Page URL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {items.map((click, idx) => (
+                                            <tr key={click.id}>
+                                                <td style={{ padding: '8px' }}>{idx + 1}</td>
+                                                <td style={{ padding: '8px' }}>{new Date(click.clicked_at).toLocaleString()}</td>
+                                                <td style={{ padding: '8px' }}>{click.ip_address || 'unknown'}</td>
+                                                <td style={{ padding: '8px', wordBreak: 'break-all' }}>{click.link_url || click.link_title}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
-                        </form>
+                        )}
                     </div>
-                </div>
+                ))
             )}
         </div>
     );
 };
-
-// Placeholder components for other managers (BlogManager, JobManager, etc.)
-// Add your existing implementations here...
 
 // ============================================
 // MAIN ADMIN PAGE
@@ -312,7 +622,7 @@ const AdminPage = () => {
     useEffect(() => {
         if (isLoggedIn) {
             loadStats();
-            loadAllClicks();
+            loadClicks();
         }
     }, [isLoggedIn]);
 
@@ -321,7 +631,7 @@ const AdminPage = () => {
         if (res.success) setStats(res.stats);
     };
 
-    const loadAllClicks = async () => {
+    const loadClicks = async () => {
         try {
             const res = await axios.get(`${API_BASE_URL}/clicks`, getAuthConfig());
             if (res.data.success && res.data.clicks) {
@@ -333,6 +643,9 @@ const AdminPage = () => {
                     grouped[title].push(click);
                 });
                 setGroupedClicks(grouped);
+                const initExpanded = {};
+                Object.keys(grouped).forEach(key => { initExpanded[key] = false; });
+                setExpanded(initExpanded);
             }
         } catch (err) {
             console.error('Error loading clicks:', err);
@@ -343,6 +656,7 @@ const AdminPage = () => {
         setExpanded(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
+    const isSuperAdmin = adminRole === 'super_admin';
     const totalClicks = allClicks.length;
     const uniqueLinks = Object.keys(groupedClicks).length;
     const last24Hours = allClicks.filter(click => {
@@ -355,26 +669,36 @@ const AdminPage = () => {
     if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>;
     if (!isLoggedIn) return <AdminLogin onLogin={handleLogin} />;
 
+    const tabs = [
+        { id: 'dashboard', label: '📊 Dashboard' },
+        { id: 'clickAnalytics', label: '📈 Click Analytics' },
+        { id: 'blogs', label: '📝 Blogs' },
+        { id: 'jobs', label: '💼 Jobs' },
+        { id: 'applications', label: '📋 Applications' },
+        { id: 'quotes', label: '📧 Quotes' },
+        { id: 'socialLinks', label: '🔗 Social Links' },
+        { id: 'users', label: '👥 Admins' },
+        { id: 'profile', label: '👤 Profile' },
+    ];
+
     return (
         <div style={{ display: 'flex', minHeight: '100vh' }}>
             <div style={styles.sidebar}>
-                <div style={styles.sidebarHeader}>
-                    <h2>⚡ Admin Panel</h2>
-                    <p style={{ fontSize: '12px', color: '#aaa' }}>{adminUsername}</p>
-                </div>
+                <div style={styles.sidebarHeader}><h2>⚡ Admin Panel</h2><p>{adminUsername}</p></div>
                 <nav>
-                    <button onClick={() => setActiveTab('dashboard')} style={{...styles.navBtn, background: activeTab === 'dashboard' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>📊 Dashboard</button>
-                    <button onClick={() => setActiveTab('clickAnalytics')} style={{...styles.navBtn, background: activeTab === 'clickAnalytics' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>📈 Click Analytics</button>
-                    <button onClick={() => setActiveTab('profile')} style={{...styles.navBtn, background: activeTab === 'profile' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>👤 Profile</button>
-                    <button onClick={() => setActiveTab('users')} style={{...styles.navBtn, background: activeTab === 'users' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>👥 Admins</button>
-                    <button onClick={handleLogout} style={{...styles.navBtn, marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#ff6b6b'}}>🚪 Logout</button>
+                    {tabs.map(tab => (
+                        <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{...styles.navBtn, background: activeTab === tab.id ? '#667eea' : 'transparent'}}>
+                            {tab.label}
+                        </button>
+                    ))}
+                    <button onClick={handleLogout} style={{...styles.navBtn, marginTop: '20px', color: '#ff6b6b'}}>🚪 Logout</button>
                 </nav>
             </div>
 
             <div style={styles.mainContent}>
                 {activeTab === 'dashboard' && (
                     <div>
-                        <h1 style={{ marginBottom: '20px' }}>Dashboard</h1>
+                        <h1>Dashboard</h1>
                         <div style={styles.statsGrid}>
                             <div style={styles.statCard}><div>📝</div><h3>{stats.totalBlogs || 0}</h3><p>Total Blogs</p></div>
                             <div style={styles.statCard}><div>✅</div><h3>{stats.publishedBlogs || 0}</h3><p>Published Blogs</p></div>
@@ -390,54 +714,24 @@ const AdminPage = () => {
                 )}
 
                 {activeTab === 'clickAnalytics' && (
-                    <div style={styles.dashboardCard}>
-                        <h2>📈 Click Analytics</h2>
-                        <div style={styles.statsGrid}>
-                            <div style={styles.statCard}><div>📈</div><h3>{totalClicks}</h3><p>Total Clicks</p></div>
-                            <div style={styles.statCard}><div>🔗</div><h3>{uniqueLinks}</h3><p>Unique Links</p></div>
-                            <div style={styles.statCard}><div>⏰</div><h3>{last24Hours}</h3><p>Last 24 Hours</p></div>
-                        </div>
-                        {Object.keys(groupedClicks).length === 0 ? (
-                            <p style={{ textAlign: 'center', padding: '40px' }}>No clicks recorded yet.</p>
-                        ) : (
-                            Object.entries(groupedClicks).map(([title, clicks]) => (
-                                <div key={title} style={{ marginBottom: '15px', border: '1px solid #e0e0e0', borderRadius: '8px', overflow: 'hidden' }}>
-                                    <div onClick={() => toggleGroup(title)} style={{ padding: '12px 15px', background: '#f8f9fa', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 'bold' }}>
-                                        <span>🔗 {title}</span>
-                                        <span>({clicks.length} clicks) {expanded[title] ? '▼' : '▶'}</span>
-                                    </div>
-                                    {expanded[title] && (
-                                        <div style={{ padding: '10px' }}>
-                                            <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
-                                                <thead>
-                                                    <tr style={{ background: '#f5f5f5' }}>
-                                                        <th style={{ padding: '8px', textAlign: 'left' }}>#</th>
-                                                        <th style={{ padding: '8px', textAlign: 'left' }}>Date & Time</th>
-                                                        <th style={{ padding: '8px', textAlign: 'left' }}>IP Address</th>
-                                                        <th style={{ padding: '8px', textAlign: 'left' }}>Page URL</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {clicks.map((click, idx) => (
-                                                        <tr key={click.id}>
-                                                            <td style={{ padding: '8px' }}>{idx + 1}</td>
-                                                            <td style={{ padding: '8px' }}>{new Date(click.clicked_at).toLocaleString()}</td>
-                                                            <td style={{ padding: '8px' }}>{click.ip_address || 'unknown'}</td>
-                                                            <td style={{ padding: '8px', wordBreak: 'break-all' }}>{click.link_url || click.link_title}</td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    )}
-                                </div>
-                            ))
-                        )}
-                    </div>
+                    <ClickAnalytics 
+                        clicks={allClicks}
+                        totalClicks={totalClicks}
+                        uniqueLinks={uniqueLinks}
+                        last24Hours={last24Hours}
+                        expanded={expanded}
+                        toggleGroup={toggleGroup}
+                        groupedClicks={groupedClicks}
+                    />
                 )}
 
-                {activeTab === 'profile' && <ProfileSettings username={adminUsername} onLogout={handleLogout} />}
+                {activeTab === 'blogs' && <BlogManager token={token} />}
+                {activeTab === 'jobs' && <JobManager token={token} />}
+                {activeTab === 'applications' && <ApplicationsManager token={token} />}
+                {activeTab === 'quotes' && <QuotesManager token={token} />}
+                {activeTab === 'socialLinks' && <AdminSocialLinks token={token} />}
                 {activeTab === 'users' && <UserManager token={token} />}
+                {activeTab === 'profile' && <ProfileSettings username={adminUsername} onLogout={handleLogout} />}
             </div>
         </div>
     );
