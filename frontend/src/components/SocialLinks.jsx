@@ -43,7 +43,8 @@ const trackSocialClick = async (link) => {
             })
         });
         const data = await response.json();
-        console.log('Click tracked:', data);
+        console.log('Social click tracked:', data);
+        return data;
     } catch (error) {
         console.error('Tracking failed:', error);
     }
