@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import AdminSocialLinks from '../admin/AdminSocialLinks';
+import AdminSocialLinks from './AdminSocialLinks';
 import { 
   getAdminBlogs, createBlog, updateBlog, deleteBlog,
   getAdminJobs, createJob, updateJob, deleteJob,
