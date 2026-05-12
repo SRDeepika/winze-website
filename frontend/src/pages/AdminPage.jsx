@@ -82,47 +82,20 @@ const AdminLogin = ({ onLogin }) => {
                 <h2 style={styles.title}>Admin Login</h2>
                 <p style={styles.subtitle}>Enter your credentials to access dashboard</p>
                 <form onSubmit={handleSubmit}>
-                    <input 
-                        type="text" 
-                        placeholder="Username" 
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)} 
-                        style={styles.input} 
-                        required 
-                    />
+                    <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} style={styles.input} required />
                     <div style={{ position: 'relative' }}>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            style={styles.input}
-                            required
-                        />
-                        <span onClick={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
-                            {showPassword ? '🙈' : '👁️'}
-                        </span>
+                        <input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={styles.input} required />
+                        <span onClick={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>{showPassword ? '🙈' : '👁️'}</span>
                     </div>
-                    
                     <div style={styles.captchaContainer}>
                         <div style={styles.captchaBox}>
                             <span style={styles.captchaText}>{captchaValue}</span>
                             <button type="button" onClick={refreshCaptcha} style={styles.captchaRefresh}>⟳</button>
                         </div>
-                        <input
-                            type="text"
-                            placeholder="Enter CAPTCHA"
-                            value={captchaInput}
-                            onChange={(e) => setCaptchaInput(e.target.value)}
-                            style={styles.input}
-                            required
-                        />
+                        <input type="text" placeholder="Enter CAPTCHA" value={captchaInput} onChange={(e) => setCaptchaInput(e.target.value)} style={styles.input} required />
                     </div>
-                    
                     {error && <div style={styles.error}>{error}</div>}
-                    <button type="submit" disabled={loading} style={styles.button}>
-                        {loading ? 'Logging in...' : 'Login'}
-                    </button>
+                    <button type="submit" disabled={loading} style={styles.button}>{loading ? 'Logging in...' : 'Login'}</button>
                 </form>
             </div>
         </div>
@@ -204,13 +177,9 @@ const BlogManager = ({ token }) => {
                             <tr key={blog.id}>
                                 <td style={styles.td}>{blog.title}</td>
                                 <td style={styles.td}>{blog.category}</td>
-                                <td style={styles.td}>
-                                    <span style={{...styles.statusBadge, background: blog.status === 'published' ? '#d4edda' : '#ffeaa7'}}>
-                                        {blog.status}
-                                    </span>
-                                </td>
+                                <td style={styles.td}><span style={{...styles.statusBadge, background: blog.status === 'published' ? '#d4edda' : '#ffeaa7'}}>{blog.status}</span></td>
                                 <td style={styles.td}>{blog.views || 0}</td>
-                                <td style={styles.td}>{new Date(blog.created_at).toLocaleDateString()}<tr>
+                                <td style={styles.td}>{new Date(blog.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
                                     <button onClick={() => handleEdit(blog)} style={styles.editBtn}>Edit</button>
                                     <button onClick={() => handleDelete(blog.id)} style={styles.deleteBtn}>Delete</button>
@@ -218,11 +187,7 @@ const BlogManager = ({ token }) => {
                             </tr>
                         ))}
                         {blogs.length === 0 && (
-                            <tr>
-                                <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
-                                    No blogs yet. Create your first blog!
-                                </td>
-                            </tr>
+                            <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>No blogs yet. Create your first blog!</td></tr>
                         )}
                     </tbody>
                 </table>
@@ -242,9 +207,7 @@ const BlogManager = ({ token }) => {
                                 <option value="published">Published</option>
                             </select>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                                <button type="submit" disabled={loading} style={styles.saveBtn}>
-                                    {loading ? 'Saving...' : (editingBlog ? 'Update' : 'Create')}
-                                </button>
+                                <button type="submit" disabled={loading} style={styles.saveBtn}>{loading ? 'Saving...' : (editingBlog ? 'Update' : 'Create')}</button>
                                 <button type="button" onClick={() => { setShowForm(false); setEditingBlog(null); }} style={styles.cancelBtn}>Cancel</button>
                             </div>
                         </form>
@@ -297,6 +260,12 @@ const JobManager = ({ token }) => {
         }
     };
 
+    const handleEdit = (job) => {
+        setEditingJob(job);
+        setFormData(job);
+        setShowForm(true);
+    };
+
     return (
         <div style={styles.dashboardCard}>
             <div style={styles.cardHeader}>
@@ -322,23 +291,15 @@ const JobManager = ({ token }) => {
                                 <td style={styles.td}>{job.department}</td>
                                 <td style={styles.td}>{job.location}</td>
                                 <td style={styles.td}>{job.type}</td>
+                                <td style={styles.td}><span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>{job.status}</span></td>
                                 <td style={styles.td}>
-                                    <span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>
-                                        {job.status}
-                                    </span>
-                                </td>
-                                <td style={styles.td}>
-                                    <button onClick={() => { setEditingJob(job); setFormData(job); setShowForm(true); }} style={styles.editBtn}>Edit</button>
+                                    <button onClick={() => handleEdit(job)} style={styles.editBtn}>Edit</button>
                                     <button onClick={() => handleDelete(job.id)} style={styles.deleteBtn}>Delete</button>
                                 </td>
                             </tr>
                         ))}
                         {jobs.length === 0 && (
-                            <tr>
-                                <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
-                                    No jobs posted. Create your first job!
-                                </td>
-                            </tr>
+                            <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>No jobs posted. Create your first job!</td></tr>
                         )}
                     </tbody>
                 </table>
@@ -352,23 +313,17 @@ const JobManager = ({ token }) => {
                             <input type="text" placeholder="Department" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} style={styles.input} required />
                             <input type="text" placeholder="Location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} style={styles.input} required />
                             <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={styles.input}>
-                                <option>Full-time</option>
-                                <option>Part-time</option>
-                                <option>Remote</option>
-                                <option>Hybrid</option>
+                                <option>Full-time</option><option>Part-time</option><option>Remote</option><option>Hybrid</option>
                             </select>
                             <input type="text" placeholder="Experience" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} style={styles.input} />
                             <input type="text" placeholder="Salary" value={formData.salary} onChange={e => setFormData({...formData, salary: e.target.value})} style={styles.input} />
                             <textarea placeholder="Description" rows="4" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={styles.textarea} required />
                             <textarea placeholder="Requirements" rows="3" value={formData.requirements} onChange={e => setFormData({...formData, requirements: e.target.value})} style={styles.textarea} />
                             <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={styles.input}>
-                                <option value="active">Active</option>
-                                <option value="closed">Closed</option>
+                                <option value="active">Active</option><option value="closed">Closed</option>
                             </select>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                                <button type="submit" disabled={loading} style={styles.saveBtn}>
-                                    {loading ? 'Saving...' : (editingJob ? 'Update' : 'Post')}
-                                </button>
+                                <button type="submit" disabled={loading} style={styles.saveBtn}>{loading ? 'Saving...' : (editingJob ? 'Update' : 'Post')}</button>
                                 <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>Cancel</button>
                             </div>
                         </form>
@@ -408,40 +363,26 @@ const ApplicationsManager = ({ token }) => {
                 <table style={styles.table}>
                     <thead>
                         <tr>
-                            <th style={styles.th}>Name</th>
-                            <th style={styles.th}>Job</th>
-                            <th style={styles.th}>Email</th>
-                            <th style={styles.th}>Experience</th>
-                            <th style={styles.th}>Status</th>
-                            <th style={styles.th}>Action</th>
+                            <th style={styles.th}>Name</th><th style={styles.th}>Job</th><th style={styles.th}>Email</th>
+                            <th style={styles.th}>Experience</th><th style={styles.th}>Status</th><th style={styles.th}>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {applications.map(app => (
                             <tr key={app.id}>
-                                <td style={styles.td}>{app.name}</td>
-                                <td style={styles.td}>{app.job_title}</td>
-                                <td style={styles.td}>{app.email}</td>
+                                <td style={styles.td}>{app.name}</td><td style={styles.td}>{app.job_title}</td><td style={styles.td}>{app.email}</td>
                                 <td style={styles.td}>{app.experience || 'N/A'} yrs</td>
                                 <td style={styles.td}>
                                     <select value={app.status} onChange={e => updateStatus(app.id, e.target.value)} style={styles.select}>
-                                        <option value="pending">Pending</option>
-                                        <option value="reviewed">Reviewed</option>
-                                        <option value="shortlisted">Shortlisted</option>
-                                        <option value="rejected">Rejected</option>
+                                        <option value="pending">Pending</option><option value="reviewed">Reviewed</option>
+                                        <option value="shortlisted">Shortlisted</option><option value="rejected">Rejected</option>
                                     </select>
                                 </td>
-                                <td style={styles.td}>
-                                    <button onClick={() => setSelectedApp(app)} style={styles.viewBtn}>View</button>
-                                </td>
-                            <tr>
+                                <td style={styles.td}><button onClick={() => setSelectedApp(app)} style={styles.viewBtn}>View</button></td>
+                            </tr>
                         ))}
                         {applications.length === 0 && (
-                            <tr>
-                                <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
-                                    No applications received yet.
-                                </td>
-                            </tr>
+                            <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>No applications received yet.</td></tr>
                         )}
                     </tbody>
                 </table>
@@ -456,9 +397,7 @@ const ApplicationsManager = ({ token }) => {
                         <p><strong>Experience:</strong> {selectedApp.experience} years</p>
                         <p><strong>Company:</strong> {selectedApp.current_company}</p>
                         <p><strong>Cover Letter:</strong></p>
-                        <div style={{ background: '#f5f5f5', padding: '10px', borderRadius: '5px' }}>
-                            {selectedApp.cover_letter}
-                        </div>
+                        <div style={{ background: '#f5f5f5', padding: '10px', borderRadius: '5px' }}>{selectedApp.cover_letter}</div>
                         <button onClick={() => setSelectedApp(null)} style={styles.closeModalBtn}>Close</button>
                     </div>
                 </div>
@@ -490,29 +429,20 @@ const QuotesManager = ({ token }) => {
                 <table style={styles.table}>
                     <thead>
                         <tr>
-                            <th style={styles.th}>Name</th>
-                            <th style={styles.th}>Email</th>
-                            <th style={styles.th}>Service</th>
-                            <th style={styles.th}>Date</th>
-                            <th style={styles.th}>Message</th>
+                            <th style={styles.th}>Name</th><th style={styles.th}>Email</th>
+                            <th style={styles.th}>Service</th><th style={styles.th}>Date</th><th style={styles.th}>Message</th>
                         </tr>
                     </thead>
                     <tbody>
                         {quotes.map(quote => (
                             <tr key={quote.id}>
-                                <td style={styles.td}>{quote.name}</td>
-                                <td style={styles.td}>{quote.email}</td>
-                                <td style={styles.td}>{quote.service}</td>
-                                <td style={styles.td}>{new Date(quote.created_at).toLocaleDateString()}</td>
+                                <td style={styles.td}>{quote.name}</td><td style={styles.td}>{quote.email}</td>
+                                <td style={styles.td}>{quote.service}</td><td style={styles.td}>{new Date(quote.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>{quote.message?.substring(0, 50)}...</td>
                             </tr>
                         ))}
                         {quotes.length === 0 && (
-                            <tr>
-                                <td colSpan="5" style={{ textAlign: 'center', padding: '40px' }}>
-                                    No quote requests yet.
-                                </td>
-                            </tr>
+                            <td><td colSpan="5" style={{ textAlign: 'center', padding: '40px' }}>No quote requests yet.</td></tr>
                         )}
                     </tbody>
                 </table>
@@ -561,29 +491,19 @@ const UserManager = ({ token }) => {
                 <table style={styles.table}>
                     <thead>
                         <tr>
-                            <th style={styles.th}>Username</th>
-                            <th style={styles.th}>Role</th>
-                            <th style={styles.th}>Created</th>
-                            <th style={styles.th}>Actions</th>
+                            <th style={styles.th}>Username</th><th style={styles.th}>Role</th>
+                            <th style={styles.th}>Created</th><th style={styles.th}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map(user => (
                             <tr key={user.id}>
                                 <td style={styles.td}>{user.username}</td>
-                                <td style={styles.td}>
-                                    <span style={{...styles.statusBadge, background: user.role === 'super_admin' ? '#ffeaa7' : '#d4edda'}}>
-                                        {user.role}
-                                    </span>
-                                </td>
+                                <td style={styles.td}><span style={{...styles.statusBadge, background: user.role === 'super_admin' ? '#ffeaa7' : '#d4edda'}}>{user.role}</span></td>
                                 <td style={styles.td}>{new Date(user.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
-                                    {user.username !== 'superadmin' && (
-                                        <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>
-                                    )}
-                                    {user.username === 'superadmin' && (
-                                        <span style={{ color: '#888', fontSize: '12px' }}>Primary Admin</span>
-                                    )}
+                                    {user.username !== 'superadmin' && <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>}
+                                    {user.username === 'superadmin' && <span style={{ color: '#888', fontSize: '12px' }}>Primary Admin</span>}
                                 </td>
                             </tr>
                         ))}
@@ -664,9 +584,7 @@ const ProfileSettings = ({ username, onLogout }) => {
                 <form onSubmit={handleUpdateUsername}>
                     <div style={{ position: 'relative' }}>
                         <input type={showCurrent ? "text" : "password"} placeholder="Current Password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} style={styles.input} required />
-                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>
-                            {showCurrent ? '🙈' : '👁️'}
-                        </span>
+                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>{showCurrent ? '🙈' : '👁️'}</span>
                     </div>
                     <input type="text" placeholder="New Username" value={newUsername} onChange={e => setNewUsername(e.target.value)} style={styles.input} required />
                     <button type="submit" style={styles.saveBtn}>Update Username</button>
@@ -677,15 +595,11 @@ const ProfileSettings = ({ username, onLogout }) => {
                 <form onSubmit={handleUpdatePassword}>
                     <div style={{ position: 'relative' }}>
                         <input type={showCurrent ? "text" : "password"} placeholder="Current Password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} style={styles.input} required />
-                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>
-                            {showCurrent ? '🙈' : '👁️'}
-                        </span>
+                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>{showCurrent ? '🙈' : '👁️'}</span>
                     </div>
                     <div style={{ position: 'relative' }}>
                         <input type={showNew ? "text" : "password"} placeholder="New Password" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={styles.input} required />
-                        <span onClick={() => setShowNew(!showNew)} style={styles.eyeIcon}>
-                            {showNew ? '🙈' : '👁️'}
-                        </span>
+                        <span onClick={() => setShowNew(!showNew)} style={styles.eyeIcon}>{showNew ? '🙈' : '👁️'}</span>
                     </div>
                     <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} style={styles.input} required />
                     <button type="submit" style={styles.saveBtn}>Update Password</button>
@@ -784,47 +698,25 @@ const AdminPage = () => {
 
     return (
         <div style={{ display: 'flex', minHeight: '100vh' }}>
-            {/* Sidebar */}
             <div style={styles.sidebar}>
                 <div style={styles.sidebarHeader}>
                     <h2>⚡ Winze Admin</h2>
                     <p style={{ fontSize: '12px', color: '#aaa' }}>{adminUsername}</p>
                 </div>
                 <nav>
-                    <button onClick={() => setActiveTab('dashboard')} style={{...styles.navBtn, background: activeTab === 'dashboard' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>
-                        📊 Dashboard
-                    </button>
-                    <button onClick={() => setActiveTab('clickAnalytics')} style={{...styles.navBtn, background: activeTab === 'clickAnalytics' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>
-                        📈 Click Analytics
-                    </button>
-                    <button onClick={() => setActiveTab('blogs')} style={{...styles.navBtn, background: activeTab === 'blogs' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>
-                        📝 Blogs
-                    </button>
-                    <button onClick={() => setActiveTab('jobs')} style={{...styles.navBtn, background: activeTab === 'jobs' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>
-                        💼 Jobs
-                    </button>
-                    <button onClick={() => setActiveTab('applications')} style={{...styles.navBtn, background: activeTab === 'applications' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>
-                        📋 Applications
-                    </button>
-                    <button onClick={() => setActiveTab('quotes')} style={{...styles.navBtn, background: activeTab === 'quotes' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>
-                        📧 Quotes
-                    </button>
-                    <button onClick={() => setActiveTab('socialLinks')} style={{...styles.navBtn, background: activeTab === 'socialLinks' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>
-                        🔗 Social Links
-                    </button>
-                    <button onClick={() => setActiveTab('profile')} style={{...styles.navBtn, background: activeTab === 'profile' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>
-                        👤 Profile
-                    </button>
-                    <button onClick={() => setActiveTab('users')} style={{...styles.navBtn, background: activeTab === 'users' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>
-                        👥 Admins
-                    </button>
-                    <button onClick={handleLogout} style={{...styles.navBtn, marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#ff6b6b'}}>
-                        🚪 Logout
-                    </button>
+                    <button onClick={() => setActiveTab('dashboard')} style={{...styles.navBtn, background: activeTab === 'dashboard' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>📊 Dashboard</button>
+                    <button onClick={() => setActiveTab('clickAnalytics')} style={{...styles.navBtn, background: activeTab === 'clickAnalytics' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>📈 Click Analytics</button>
+                    <button onClick={() => setActiveTab('blogs')} style={{...styles.navBtn, background: activeTab === 'blogs' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>📝 Blogs</button>
+                    <button onClick={() => setActiveTab('jobs')} style={{...styles.navBtn, background: activeTab === 'jobs' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>💼 Jobs</button>
+                    <button onClick={() => setActiveTab('applications')} style={{...styles.navBtn, background: activeTab === 'applications' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>📋 Applications</button>
+                    <button onClick={() => setActiveTab('quotes')} style={{...styles.navBtn, background: activeTab === 'quotes' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>📧 Quotes</button>
+                    <button onClick={() => setActiveTab('socialLinks')} style={{...styles.navBtn, background: activeTab === 'socialLinks' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>🔗 Social Links</button>
+                    <button onClick={() => setActiveTab('profile')} style={{...styles.navBtn, background: activeTab === 'profile' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>👤 Profile</button>
+                    <button onClick={() => setActiveTab('users')} style={{...styles.navBtn, background: activeTab === 'users' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'}}>👥 Admins</button>
+                    <button onClick={handleLogout} style={{...styles.navBtn, marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#ff6b6b'}}>🚪 Logout</button>
                 </nav>
             </div>
 
-            {/* Main Content */}
             <div style={styles.mainContent}>
                 {activeTab === 'dashboard' && (
                     <div>
@@ -864,16 +756,16 @@ const AdminPage = () => {
                                         <div style={{ padding: '10px' }}>
                                             <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
                                                 <thead>
-                                                    <tr style={{ background: '#f5f5f5', borderBottom: '1px solid #ddd' }}>
+                                                    <tr style={{ background: '#f5f5f5' }}>
                                                         <th style={{ padding: '8px', textAlign: 'left' }}>#</th>
                                                         <th style={{ padding: '8px', textAlign: 'left' }}>Date & Time</th>
                                                         <th style={{ padding: '8px', textAlign: 'left' }}>IP Address</th>
                                                         <th style={{ padding: '8px', textAlign: 'left' }}>Page URL</th>
-                                                    </td>
+                                                    </tr>
                                                 </thead>
                                                 <tbody>
                                                     {clicks.map((click, idx) => (
-                                                        <tr key={click.id} style={{ borderBottom: '1px solid #eee' }}>
+                                                        <tr key={click.id}>
                                                             <td style={{ padding: '8px' }}>{idx + 1}</td>
                                                             <td style={{ padding: '8px' }}>{new Date(click.clicked_at).toLocaleString()}</td>
                                                             <td style={{ padding: '8px' }}>{click.ip_address || 'unknown'}</td>
@@ -906,286 +798,45 @@ const AdminPage = () => {
 // STYLES
 // ============================================
 const styles = {
-    container: { 
-        minHeight: '100vh', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)', 
-        padding: '20px' 
-    },
-    card: { 
-        background: 'rgba(255,255,255,0.1)', 
-        backdropFilter: 'blur(10px)', 
-        borderRadius: '20px', 
-        padding: '40px', 
-        width: '100%', 
-        maxWidth: '450px', 
-        textAlign: 'center' 
-    },
-    dashboardCard: { 
-        background: 'white', 
-        borderRadius: '12px', 
-        padding: '25px', 
-        boxShadow: '0 2px 10px rgba(0,0,0,0.05)', 
-        marginBottom: '20px' 
-    },
-    cardHeader: { 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '20px', 
-        flexWrap: 'wrap', 
-        gap: '10px' 
-    },
-    iconContainer: { 
-        width: '70px', 
-        height: '70px', 
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
-        borderRadius: '50%', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        margin: '0 auto 20px' 
-    },
+    container: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)', padding: '20px' },
+    card: { background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', borderRadius: '20px', padding: '40px', width: '100%', maxWidth: '450px', textAlign: 'center' },
+    dashboardCard: { background: 'white', borderRadius: '12px', padding: '25px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', marginBottom: '20px' },
+    cardHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' },
+    iconContainer: { width: '70px', height: '70px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' },
     icon: { fontSize: '35px' },
     title: { color: 'white', marginBottom: '10px', fontSize: '28px' },
     subtitle: { color: 'rgba(255,255,255,0.7)', marginBottom: '30px', fontSize: '14px' },
-    input: { 
-        width: '100%', 
-        padding: '12px', 
-        marginBottom: '10px', 
-        borderRadius: '8px', 
-        border: '1px solid rgba(255,255,255,0.2)', 
-        background: 'rgba(255,255,255,0.1)', 
-        color: 'white', 
-        fontSize: '14px', 
-        boxSizing: 'border-box' 
-    },
-    textarea: { 
-        width: '100%', 
-        padding: '12px', 
-        marginBottom: '10px', 
-        borderRadius: '8px', 
-        border: '1px solid #ddd', 
-        fontSize: '14px', 
-        resize: 'vertical', 
-        boxSizing: 'border-box' 
-    },
-    select: { 
-        padding: '8px', 
-        borderRadius: '6px', 
-        border: '1px solid #ddd', 
-        background: 'white', 
-        width: '100%', 
-        marginBottom: '10px' 
-    },
-    button: { 
-        width: '100%', 
-        padding: '14px', 
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
-        color: 'white', 
-        border: 'none', 
-        borderRadius: '10px', 
-        fontSize: '16px', 
-        fontWeight: '600', 
-        cursor: 'pointer', 
-        marginTop: '10px' 
-    },
-    error: { 
-        color: '#ff6b6b', 
-        marginBottom: '15px', 
-        padding: '10px', 
-        background: 'rgba(255,107,107,0.1)', 
-        borderRadius: '8px', 
-        fontSize: '14px', 
-        textAlign: 'center' 
-    },
-    successMessage: { 
-        background: '#d4edda', 
-        color: '#155724', 
-        padding: '10px', 
-        borderRadius: '8px', 
-        marginBottom: '20px', 
-        textAlign: 'center' 
-    },
-    eyeIcon: { 
-        position: 'absolute', 
-        right: '12px', 
-        top: '50%', 
-        transform: 'translateY(-50%)', 
-        cursor: 'pointer', 
-        fontSize: '18px' 
-    },
+    input: { width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '14px', boxSizing: 'border-box' },
+    textarea: { width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '14px', resize: 'vertical', boxSizing: 'border-box' },
+    select: { padding: '8px', borderRadius: '6px', border: '1px solid #ddd', background: 'white', width: '100%', marginBottom: '10px' },
+    button: { width: '100%', padding: '14px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', marginTop: '10px' },
+    error: { color: '#ff6b6b', marginBottom: '15px', padding: '10px', background: 'rgba(255,107,107,0.1)', borderRadius: '8px', fontSize: '14px', textAlign: 'center' },
+    successMessage: { background: '#d4edda', color: '#155724', padding: '10px', borderRadius: '8px', marginBottom: '20px', textAlign: 'center' },
+    eyeIcon: { position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', fontSize: '18px' },
     captchaContainer: { marginBottom: '15px' },
-    captchaBox: { 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        gap: '10px', 
-        marginBottom: '10px', 
-        padding: '10px', 
-        background: 'rgba(255,255,255,0.15)', 
-        borderRadius: '8px' 
-    },
-    captchaText: { 
-        fontFamily: 'monospace', 
-        fontSize: '24px', 
-        fontWeight: 'bold', 
-        letterSpacing: '5px', 
-        color: '#FFD700', 
-        background: '#1a1a2e', 
-        padding: '8px 15px', 
-        borderRadius: '8px' 
-    },
-    captchaRefresh: { 
-        background: '#667eea', 
-        color: 'white', 
-        border: 'none', 
-        borderRadius: '5px', 
-        padding: '8px 12px', 
-        cursor: 'pointer', 
-        fontSize: '16px' 
-    },
-    sidebar: { 
-        width: '260px', 
-        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', 
-        color: 'white', 
-        padding: '20px 0', 
-        position: 'fixed', 
-        height: '100vh', 
-        overflowY: 'auto' 
-    },
-    sidebarHeader: { 
-        padding: '0 20px 20px 20px', 
-        borderBottom: '1px solid rgba(255,255,255,0.1)', 
-        marginBottom: '20px', 
-        textAlign: 'center' 
-    },
-    navBtn: { 
-        width: '100%', 
-        padding: '12px 20px', 
-        border: 'none', 
-        color: 'white', 
-        textAlign: 'left', 
-        cursor: 'pointer', 
-        fontSize: '15px', 
-        background: 'transparent' 
-    },
-    mainContent: { 
-        marginLeft: '260px', 
-        flex: 1, 
-        padding: '30px', 
-        background: '#f5f6fa', 
-        minHeight: '100vh' 
-    },
-    statsGrid: { 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', 
-        gap: '20px', 
-        marginBottom: '30px' 
-    },
-    statCard: { 
-        background: 'white', 
-        padding: '20px', 
-        borderRadius: '12px', 
-        textAlign: 'center', 
-        boxShadow: '0 2px 10px rgba(0,0,0,0.05)' 
-    },
-    addButton: { 
-        padding: '10px 20px', 
-        background: '#667eea', 
-        color: 'white', 
-        border: 'none', 
-        borderRadius: '8px', 
-        cursor: 'pointer' 
-    },
-    refreshBtn: { 
-        padding: '10px 20px', 
-        background: '#48c774', 
-        color: 'white', 
-        border: 'none', 
-        borderRadius: '8px', 
-        cursor: 'pointer' 
-    },
-    editBtn: { 
-        padding: '6px 12px', 
-        background: '#4facfe', 
-        color: 'white', 
-        border: 'none', 
-        borderRadius: '4px', 
-        cursor: 'pointer', 
-        marginRight: '5px' 
-    },
-    deleteBtn: { 
-        padding: '6px 12px', 
-        background: '#ff6b6b', 
-        color: 'white', 
-        border: 'none', 
-        borderRadius: '4px', 
-        cursor: 'pointer' 
-    },
-    viewBtn: { 
-        padding: '6px 12px', 
-        background: '#667eea', 
-        color: 'white', 
-        border: 'none', 
-        borderRadius: '4px', 
-        cursor: 'pointer' 
-    },
-    saveBtn: { 
-        padding: '10px 20px', 
-        background: '#48c774', 
-        color: 'white', 
-        border: 'none', 
-        borderRadius: '8px', 
-        cursor: 'pointer' 
-    },
-    cancelBtn: { 
-        padding: '10px 20px', 
-        background: '#ccc', 
-        color: '#333', 
-        border: 'none', 
-        borderRadius: '8px', 
-        cursor: 'pointer' 
-    },
-    closeModalBtn: { 
-        marginTop: '15px', 
-        padding: '10px 20px', 
-        background: '#667eea', 
-        color: 'white', 
-        border: 'none', 
-        borderRadius: '8px', 
-        cursor: 'pointer', 
-        width: '100%' 
-    },
+    captchaBox: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '10px', padding: '10px', background: 'rgba(255,255,255,0.15)', borderRadius: '8px' },
+    captchaText: { fontFamily: 'monospace', fontSize: '24px', fontWeight: 'bold', letterSpacing: '5px', color: '#FFD700', background: '#1a1a2e', padding: '8px 15px', borderRadius: '8px' },
+    captchaRefresh: { background: '#667eea', color: 'white', border: 'none', borderRadius: '5px', padding: '8px 12px', cursor: 'pointer', fontSize: '16px' },
+    sidebar: { width: '260px', background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', color: 'white', padding: '20px 0', position: 'fixed', height: '100vh', overflowY: 'auto' },
+    sidebarHeader: { padding: '0 20px 20px 20px', borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '20px', textAlign: 'center' },
+    navBtn: { width: '100%', padding: '12px 20px', border: 'none', color: 'white', textAlign: 'left', cursor: 'pointer', fontSize: '15px', background: 'transparent' },
+    mainContent: { marginLeft: '260px', flex: 1, padding: '30px', background: '#f5f6fa', minHeight: '100vh' },
+    statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '20px', marginBottom: '30px' },
+    statCard: { background: 'white', padding: '20px', borderRadius: '12px', textAlign: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' },
+    addButton: { padding: '10px 20px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
+    refreshBtn: { padding: '10px 20px', background: '#48c774', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
+    editBtn: { padding: '6px 12px', background: '#4facfe', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', marginRight: '5px' },
+    deleteBtn: { padding: '6px 12px', background: '#ff6b6b', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' },
+    viewBtn: { padding: '6px 12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' },
+    saveBtn: { padding: '10px 20px', background: '#48c774', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
+    cancelBtn: { padding: '10px 20px', background: '#ccc', color: '#333', border: 'none', borderRadius: '8px', cursor: 'pointer' },
+    closeModalBtn: { marginTop: '15px', padding: '10px 20px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', width: '100%' },
     table: { width: '100%', borderCollapse: 'collapse' },
     th: { padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' },
     td: { padding: '12px', borderBottom: '1px solid #eee' },
     statusBadge: { padding: '4px 12px', borderRadius: '20px', fontSize: '12px' },
-    modal: { 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        right: 0, 
-        bottom: 0, 
-        background: 'rgba(0,0,0,0.8)', 
-        zIndex: 1000, 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        padding: '20px', 
-        overflow: 'auto' 
-    },
-    modalContent: { 
-        background: 'white', 
-        borderRadius: '15px', 
-        padding: '30px', 
-        maxWidth: '700px', 
-        width: '100%', 
-        maxHeight: '85vh', 
-        overflow: 'auto' 
-    },
+    modal: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', overflow: 'auto' },
+    modalContent: { background: 'white', borderRadius: '15px', padding: '30px', maxWidth: '700px', width: '100%', maxHeight: '85vh', overflow: 'auto' },
 };
 
 export default AdminPage;
