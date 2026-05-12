@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getJobs, applyForJob, trackClick } from '../services/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarker, faBriefcase, faClock, faMoneyBill } from '@fortawesome/free-solid-svg-icons';
 
 const CareersSection = () => {
+    const [jobs, setJobs] = useState([]);
     const [selectedJob, setSelectedJob] = useState(null);
     const [showApplyForm, setShowApplyForm] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [formData, setFormData] = useState({
@@ -12,49 +15,68 @@ const CareersSection = () => {
         currentCTC: '', noticePeriod: '', coverLetter: '', resume: null
     });
 
-    // Hardcoded job data
-    const jobs = [
-        {
-            id: 1,
-            title: "Senior Software Engineer",
-            department: "Engineering",
-            location: "Bangalore, India",
-            type: "Full-time",
-            experience: "5-8 years",
-            salary: "15-22 LPA",
-            description: "<p>We are looking for a Senior Software Engineer to lead our development team in building cutting-edge enterprise solutions.</p><h4>Key Responsibilities:</h4><ul><li>Design and develop scalable web applications</li><li>Lead technical architecture decisions</li><li>Mentor junior developers</li><li>Collaborate with product managers</li></ul>",
-            requirements: "Bachelor's degree in Computer Science, 5+ years experience with React and Node.js",
-            benefits: "Health insurance, flexible work hours, learning budget"
-        },
-        {
-            id: 2,
-            title: "Cybersecurity Specialist",
-            department: "Security",
-            location: "Remote",
-            type: "Full-time",
-            experience: "3-6 years",
-            salary: "10-16 LPA",
-            description: "<p>Join our security team to protect enterprise clients from evolving cyber threats.</p><h4>Key Responsibilities:</h4><ul><li>Conduct security assessments and penetration testing</li><li>Implement security solutions for clients</li><li>Monitor and respond to security incidents</li><li>Stay updated on latest security threats</li></ul>",
-            requirements: "Experience with security tools, Certifications like CEH, CISSP preferred",
-            benefits: "Professional certification sponsorship, learning budget"
-        },
-        {
-            id: 3,
-            title: "Sales Manager - Enterprise Solutions",
-            department: "Sales",
-            location: "Mumbai, India",
-            type: "Full-time",
-            experience: "6-10 years",
-            salary: "18-25 LPA + Commission",
-            description: "<p>Drive enterprise sales of our technology solutions to large corporations.</p><h4>Key Responsibilities:</h4><ul><li>Develop and execute sales strategies</li><li>Build relationships with C-level executives</li><li>Meet and exceed sales targets</li><li>Lead a team of sales professionals</li></ul>",
-            requirements: "Proven track record in enterprise technology sales",
-            benefits: "Performance bonuses, international travel opportunities"
-        }
-    ];
+    useEffect(() => { loadJobs(); }, []);
 
-    const handleApply = (job) => {
+    const loadJobs = async () => {
+        try {
+            const response = await getJobs();
+            if (response.success && response.jobs.length > 0) {
+                setJobs(response.jobs);
+            } else {
+                // Fallback dummy data
+                setJobs([
+                    {
+                        id: 1,
+                        title: "Senior Software Engineer",
+                        department: "Engineering",
+                        location: "Bangalore, India",
+                        type: "Full-time",
+                        experience: "5-8 years",
+                        salary: "15-22 LPA",
+                        description: "<p>We are looking for a Senior Software Engineer to lead our development team.</p>",
+                        requirements: "Bachelor's degree in CS",
+                        benefits: "Health insurance"
+                    },
+                    {
+                        id: 2,
+                        title: "Cybersecurity Specialist",
+                        department: "Security",
+                        location: "Remote",
+                        type: "Full-time",
+                        experience: "3-6 years",
+                        salary: "10-16 LPA",
+                        description: "<p>Join our security team to protect enterprise clients.</p>",
+                        requirements: "Security certifications",
+                        benefits: "Professional development"
+                    }
+                ]);
+            }
+        } catch (error) {
+            console.error('Error loading jobs:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleApply = async (job) => {
+        // Track the click
+        await trackClick({
+            link_url: window.location.href,
+            link_title: `Apply for Job: ${job.title}`,
+            ip_address: await getIpAddress()
+        });
         setSelectedJob(job);
         setShowApplyForm(true);
+    };
+
+    const getIpAddress = async () => {
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip;
+        } catch (err) {
+            return '0.0.0.0';
+        }
     };
 
     const handleInputChange = (e) => {
@@ -70,15 +92,37 @@ const CareersSection = () => {
         e.preventDefault();
         setSubmitting(true);
         
-        // Simulate API call
-        setTimeout(() => {
+        try {
+            // Track application submission
+            await trackClick({
+                link_url: window.location.href,
+                link_title: `Job Application Submitted: ${selectedJob?.title} by ${formData.name}`,
+                ip_address: await getIpAddress()
+            });
+            
+            await applyForJob(selectedJob.id, {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                experience: formData.experience,
+                current_company: formData.currentCompany,
+                current_ctc: formData.currentCTC,
+                notice_period: formData.noticePeriod,
+                cover_letter: formData.coverLetter,
+                resume: formData.resume
+            });
             setSuccessMessage('Application submitted successfully! We will contact you soon.');
             setShowApplyForm(false);
             setFormData({ name: '', email: '', phone: '', experience: '', currentCompany: '', currentCTC: '', noticePeriod: '', coverLetter: '', resume: null });
             setTimeout(() => setSuccessMessage(''), 3000);
+        } catch (error) {
+            alert('Error submitting application. Please try again.');
+        } finally {
             setSubmitting(false);
-        }, 1000);
+        }
     };
+
+    if (loading) return null;
 
     return (
         <section style={{
@@ -117,7 +161,7 @@ const CareersSection = () => {
                                 <span><FontAwesomeIcon icon={faMoneyBill} /> {job.salary}</span>
                             </div>
                             <p style={{ color: '#666', marginBottom: '15px', fontSize: '14px' }}><strong>Experience:</strong> {job.experience}</p>
-                            <div dangerouslySetInnerHTML={{ __html: job.description.substring(0, 150) + '...' }} style={{ color: '#666', marginBottom: '20px' }} />
+                            <div dangerouslySetInnerHTML={{ __html: job.description?.substring(0, 150) + '...' }} style={{ color: '#666', marginBottom: '20px' }} />
                             <button
                                 onClick={() => handleApply(job)}
                                 style={{
