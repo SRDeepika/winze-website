@@ -66,10 +66,7 @@ const AdminLogin = ({ onLogin }) => {
                             style={styles.input}
                             required
                         />
-                        <span
-                            onClick={() => setShowPassword(!showPassword)}
-                            style={styles.eyeIcon}
-                        >
+                        <span onClick={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
                             {showPassword ? '🙈' : '👁️'}
                         </span>
                     </div>
@@ -87,7 +84,7 @@ const AdminLogin = ({ onLogin }) => {
 };
 
 // ============================================
-// BLOG MANAGER
+// BLOG MANAGER - FIXED VERSION
 // ============================================
 const BlogManager = ({ token }) => {
     const [blogs, setBlogs] = useState([]);
@@ -146,14 +143,19 @@ const BlogManager = ({ token }) => {
             </div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
-                    <thead><tr style={styles.tableHeader}>
-                        <th style={styles.th}>Title</th><th style={styles.th}>Category</th>
-                        <th style={styles.th}>Status</th><th style={styles.th}>Views</th>
-                        <th style={styles.th}>Created</th><th style={styles.th}>Actions</th>
-                    <tr></thead>
+                    <thead>
+                        <tr>
+                            <th style={styles.th}>Title</th>
+                            <th style={styles.th}>Category</th>
+                            <th style={styles.th}>Status</th>
+                            <th style={styles.th}>Views</th>
+                            <th style={styles.th}>Created</th>
+                            <th style={styles.th}>Actions</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         {blogs.map(blog => (
-                            <tr key={blog.id} style={styles.tableRow}>
+                            <tr key={blog.id}>
                                 <td style={styles.td}>{blog.title}</td>
                                 <td style={styles.td}>{blog.category}</td>
                                 <td style={styles.td}>
@@ -170,7 +172,11 @@ const BlogManager = ({ token }) => {
                             </tr>
                         ))}
                         {blogs.length === 0 && (
-                            <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>No blogs yet. Create your first blog!</td></tr>
+                            <tr>
+                                <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
+                                    No blogs yet. Create your first blog!
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>
@@ -186,10 +192,13 @@ const BlogManager = ({ token }) => {
                             <textarea placeholder="Content (HTML)" rows="6" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} style={styles.textarea} required />
                             <input type="file" accept="image/*" onChange={e => setFormData({...formData, image: e.target.files[0]})} style={styles.input} />
                             <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={styles.input}>
-                                <option value="draft">Draft</option><option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                                <option value="published">Published</option>
                             </select>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                                <button type="submit" style={styles.saveBtn}>{editingBlog ? 'Update' : 'Create'}</button>
+                                <button type="submit" disabled={loading} style={styles.saveBtn}>
+                                    {loading ? 'Saving...' : (editingBlog ? 'Update' : 'Create')}
+                                </button>
                                 <button type="button" onClick={() => { setShowForm(false); setEditingBlog(null); }} style={styles.cancelBtn}>Cancel</button>
                             </div>
                         </form>
@@ -201,8 +210,8 @@ const BlogManager = ({ token }) => {
 };
 
 // ============================================
-// JOB MANAGER
-// ============================================  
+// JOB MANAGER - FIXED VERSION
+// ============================================
 const JobManager = ({ token }) => {
     const [jobs, setJobs] = useState([]);
     const [showForm, setShowForm] = useState(false);
@@ -250,14 +259,19 @@ const JobManager = ({ token }) => {
             </div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
-                    <thead><tr style={styles.tableHeader}>
-                        <th style={styles.th}>Title</th><th style={styles.th}>Department</th>
-                        <th style={styles.th}>Location</th><th style={styles.th}>Type</th>
-                        <th style={styles.th}>Status</th><th style={styles.th}>Actions</th>
-                    </tr></thead>
+                    <thead>
+                        <tr>
+                            <th style={styles.th}>Title</th>
+                            <th style={styles.th}>Department</th>
+                            <th style={styles.th}>Location</th>
+                            <th style={styles.th}>Type</th>
+                            <th style={styles.th}>Status</th>
+                            <th style={styles.th}>Actions</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         {jobs.map(job => (
-                            <tr key={job.id} style={styles.tableRow}>
+                            <tr key={job.id}>
                                 <td style={styles.td}>{job.title}</td>
                                 <td style={styles.td}>{job.department}</td>
                                 <td style={styles.td}>{job.location}</td>
@@ -273,6 +287,13 @@ const JobManager = ({ token }) => {
                                 </td>
                             </tr>
                         ))}
+                        {jobs.length === 0 && (
+                            <tr>
+                                <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
+                                    No jobs posted. Create your first job!
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -285,17 +306,23 @@ const JobManager = ({ token }) => {
                             <input type="text" placeholder="Department" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} style={styles.input} required />
                             <input type="text" placeholder="Location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} style={styles.input} required />
                             <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={styles.input}>
-                                <option>Full-time</option><option>Part-time</option><option>Remote</option><option>Hybrid</option>
+                                <option>Full-time</option>
+                                <option>Part-time</option>
+                                <option>Remote</option>
+                                <option>Hybrid</option>
                             </select>
                             <input type="text" placeholder="Experience" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} style={styles.input} />
                             <input type="text" placeholder="Salary" value={formData.salary} onChange={e => setFormData({...formData, salary: e.target.value})} style={styles.input} />
                             <textarea placeholder="Description" rows="4" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={styles.textarea} required />
                             <textarea placeholder="Requirements" rows="3" value={formData.requirements} onChange={e => setFormData({...formData, requirements: e.target.value})} style={styles.textarea} />
                             <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={styles.input}>
-                                <option value="active">Active</option><option value="closed">Closed</option>
+                                <option value="active">Active</option>
+                                <option value="closed">Closed</option>
                             </select>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                                <button type="submit" style={styles.saveBtn}>{editingJob ? 'Update' : 'Post'}</button>
+                                <button type="submit" disabled={loading} style={styles.saveBtn}>
+                                    {loading ? 'Saving...' : (editingJob ? 'Update' : 'Post')}
+                                </button>
                                 <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>Cancel</button>
                             </div>
                         </form>
@@ -333,17 +360,22 @@ const ApplicationsManager = ({ token }) => {
             </div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
-                    <thead><tr style={styles.tableHeader}>
-                        <th style={styles.th}>Name</th><th style={styles.th}>Job</th>
-                        <th style={styles.th}>Email</th><th style={styles.th}>Experience</th>
-                        <th style={styles.th}>Status</th><th style={styles.th}>Action</th>
-                    </tr></thead>
+                    <thead>
+                        <tr>
+                            <th style={styles.th}>Name</th>
+                            <th style={styles.th}>Job</th>
+                            <th style={styles.th}>Email</th>
+                            <th style={styles.th}>Experience</th>
+                            <th style={styles.th}>Status</th>
+                            <th style={styles.th}>Action</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         {applications.map(app => (
-                            <tr key={app.id} style={styles.tableRow}>
+                            <tr key={app.id}>
                                 <td style={styles.td}>{app.name}</td>
                                 <td style={styles.td}>{app.job_title}</td>
-                                <td style={styles.td}>{app.email}<tr>
+                                <td style={styles.td}>{app.email}</td>
                                 <td style={styles.td}>{app.experience || 'N/A'} yrs</td>
                                 <td style={styles.td}>
                                     <select value={app.status} onChange={e => updateStatus(app.id, e.target.value)} style={styles.select}>
@@ -358,6 +390,13 @@ const ApplicationsManager = ({ token }) => {
                                 </td>
                             </tr>
                         ))}
+                        {applications.length === 0 && (
+                            <tr>
+                                <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
+                                    No applications received yet.
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -401,14 +440,18 @@ const QuotesManager = ({ token }) => {
             </div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
-                    <thead><tr style={styles.tableHeader}>
-                        <th style={styles.th}>Name</th><th style={styles.th}>Email</th>
-                        <th style={styles.th}>Service</th><th style={styles.th}>Date</th>
-                        <th style={styles.th}>Message</th>
-                    </tr></thead>
+                    <thead>
+                        <tr>
+                            <th style={styles.th}>Name</th>
+                            <th style={styles.th}>Email</th>
+                            <th style={styles.th}>Service</th>
+                            <th style={styles.th}>Date</th>
+                            <th style={styles.th}>Message</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         {quotes.map(quote => (
-                            <tr key={quote.id} style={styles.tableRow}>
+                            <tr key={quote.id}>
                                 <td style={styles.td}>{quote.name}</td>
                                 <td style={styles.td}>{quote.email}</td>
                                 <td style={styles.td}>{quote.service}</td>
@@ -416,6 +459,13 @@ const QuotesManager = ({ token }) => {
                                 <td style={styles.td}>{quote.message?.substring(0, 50)}...</td>
                             </tr>
                         ))}
+                        {quotes.length === 0 && (
+                            <tr>
+                                <td colSpan="5" style={{ textAlign: 'center', padding: '40px' }}>
+                                    No quote requests yet.
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -461,13 +511,17 @@ const UserManager = ({ token }) => {
             </div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
-                    <thead><tr style={styles.tableHeader}>
-                        <th style={styles.th}>Username</th><th style={styles.th}>Role</th>
-                        <th style={styles.th}>Created</th><th style={styles.th}>Actions</th>
-                    </tr></thead>
+                    <thead>
+                        <tr>
+                            <th style={styles.th}>Username</th>
+                            <th style={styles.th}>Role</th>
+                            <th style={styles.th}>Created</th>
+                            <th style={styles.th}>Actions</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         {users.map(user => (
-                            <tr key={user.id} style={styles.tableRow}>
+                            <tr key={user.id}>
                                 <td style={styles.td}>{user.username}</td>
                                 <td style={styles.td}>{user.role}</td>
                                 <td style={styles.td}>{new Date(user.created_at).toLocaleDateString()}</td>
@@ -576,7 +630,7 @@ const ProfileSettings = ({ username, onLogout }) => {
                         <input type={showNew ? "text" : "password"} placeholder="New Password" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={styles.input} required />
                         <span onClick={() => setShowNew(!showNew)} style={styles.eyeIcon}>{showNew ? '🙈' : '👁️'}</span>
                     </div>
-                    <input type={showNew ? "text" : "password"} placeholder="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} style={styles.input} required />
+                    <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} style={styles.input} required />
                     <button type="submit" style={styles.saveBtn}>Update Password</button>
                 </form>
             </div>
@@ -641,7 +695,6 @@ const AdminPage = () => {
             const res = await axios.get(`${API_BASE_URL}/clicks`, getAuthConfig());
             if (res.data.success) {
                 setAllClicks(res.data.clicks);
-                // Group clicks by link_title
                 const grouped = {};
                 res.data.clicks.forEach(click => {
                     const title = click.link_title || 'Unknown';
@@ -649,8 +702,6 @@ const AdminPage = () => {
                     grouped[title].push(click);
                 });
                 setGroupedClicks(grouped);
-                
-                // Initialize expanded state
                 const initExpanded = {};
                 Object.keys(grouped).forEach(key => {
                     initExpanded[key] = false;
@@ -669,8 +720,6 @@ const AdminPage = () => {
     const isSuperAdmin = adminRole === 'super_admin';
     const totalClicks = allClicks.length;
     const uniqueLinks = Object.keys(groupedClicks).length;
-
-    // Calculate last 24 hours clicks
     const last24Hours = allClicks.filter(click => {
         const clickDate = new Date(click.clicked_at);
         const now = new Date();
@@ -683,7 +732,6 @@ const AdminPage = () => {
 
     return (
         <div style={{ display: 'flex', minHeight: '100vh' }}>
-            {/* Sidebar */}
             <div style={styles.sidebar}>
                 <div style={styles.sidebarHeader}>
                     <h2>⚡ Winze Admin</h2>
@@ -702,82 +750,31 @@ const AdminPage = () => {
                 </nav>
             </div>
 
-            {/* Main Content */}
             <div style={styles.mainContent}>
                 {activeTab === 'dashboard' && (
                     <div>
                         <h1>Dashboard</h1>
                         <div style={styles.statsGrid}>
-                            <div style={styles.statCard}>
-                                <div>📝</div>
-                                <h3>{stats.totalBlogs || 0}</h3>
-                                <p>Total Blogs</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>✅</div>
-                                <h3>{stats.publishedBlogs || 0}</h3>
-                                <p>Published Blogs</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>💼</div>
-                                <h3>{stats.totalJobs || 0}</h3>
-                                <p>Total Jobs</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>🔴</div>
-                                <h3>{stats.activeJobs || 0}</h3>
-                                <p>Active Jobs</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>📋</div>
-                                <h3>{stats.totalApplications || 0}</h3>
-                                <p>Applications</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>📧</div>
-                                <h3>{stats.totalQuotes || 0}</h3>
-                                <p>Quotes</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>📈</div>
-                                <h3>{totalClicks}</h3>
-                                <p>Total Clicks</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>⏰</div>
-                                <h3>{last24Hours}</h3>
-                                <p>Last 24 Hours</p>
-                            </div>
-                            <div style={styles.statCard}>
-                                <div>🔗</div>
-                                <h3>{uniqueLinks}</h3>
-                                <p>Unique Links</p>
-                            </div>
+                            <div style={styles.statCard}><div>📝</div><h3>{stats.totalBlogs || 0}</h3><p>Total Blogs</p></div>
+                            <div style={styles.statCard}><div>✅</div><h3>{stats.publishedBlogs || 0}</h3><p>Published Blogs</p></div>
+                            <div style={styles.statCard}><div>💼</div><h3>{stats.totalJobs || 0}</h3><p>Total Jobs</p></div>
+                            <div style={styles.statCard}><div>🔴</div><h3>{stats.activeJobs || 0}</h3><p>Active Jobs</p></div>
+                            <div style={styles.statCard}><div>📋</div><h3>{stats.totalApplications || 0}</h3><p>Applications</p></div>
+                            <div style={styles.statCard}><div>📧</div><h3>{stats.totalQuotes || 0}</h3><p>Quotes</p></div>
+                            <div style={styles.statCard}><div>📈</div><h3>{totalClicks}</h3><p>Total Clicks</p></div>
+                            <div style={styles.statCard}><div>⏰</div><h3>{last24Hours}</h3><p>Last 24 Hours</p></div>
+                            <div style={styles.statCard}><div>🔗</div><h3>{uniqueLinks}</h3><p>Unique Links</p></div>
                         </div>
 
-                        {/* Click Analytics Section - Detailed View */}
                         <div style={styles.dashboardCard}>
                             <h2>📈 Click Analytics - Detailed View</h2>
                             <p style={{ color: '#666', marginBottom: '20px' }}>All clicks with IP addresses and timestamps</p>
-                            
                             {allClicks.length === 0 ? (
                                 <p style={{ textAlign: 'center', padding: '40px' }}>No clicks recorded yet.</p>
                             ) : (
                                 Object.entries(groupedClicks).map(([title, clicks]) => (
                                     <div key={title} style={{ marginBottom: '15px', border: '1px solid #e0e0e0', borderRadius: '8px', overflow: 'hidden' }}>
-                                        <div 
-                                            onClick={() => toggleExpand(title)} 
-                                            style={{ 
-                                                padding: '12px 15px', 
-                                                background: '#f8f9fa', 
-                                                cursor: 'pointer', 
-                                                display: 'flex', 
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                borderBottom: expanded[title] ? '1px solid #e0e0e0' : 'none',
-                                                fontWeight: 'bold'
-                                            }}
-                                        >
+                                        <div onClick={() => toggleExpand(title)} style={{ padding: '12px 15px', background: '#f8f9fa', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 'bold' }}>
                                             <span>🔗 {title}</span>
                                             <span>({clicks.length} clicks) {expanded[title] ? '▼' : '▶'}</span>
                                         </div>
@@ -785,7 +782,7 @@ const AdminPage = () => {
                                             <div style={{ padding: '10px' }}>
                                                 <table style={{ width: '100%', fontSize: '13px' }}>
                                                     <thead>
-                                                        <tr style={{ background: '#f5f5f5', borderBottom: '1px solid #ddd' }}>
+                                                        <tr style={{ background: '#f5f5f5' }}>
                                                             <th style={{ padding: '8px', textAlign: 'left' }}>#</th>
                                                             <th style={{ padding: '8px', textAlign: 'left' }}>Date & Time</th>
                                                             <th style={{ padding: '8px', textAlign: 'left' }}>IP Address</th>
@@ -794,7 +791,7 @@ const AdminPage = () => {
                                                     </thead>
                                                     <tbody>
                                                         {clicks.map((click, idx) => (
-                                                            <tr key={click.id} style={{ borderBottom: '1px solid #eee' }}>
+                                                            <tr key={click.id}>
                                                                 <td style={{ padding: '8px' }}>{idx + 1}</td>
                                                                 <td style={{ padding: '8px' }}>{new Date(click.clicked_at).toLocaleString()}</td>
                                                                 <td style={{ padding: '8px' }}>{click.ip_address || 'unknown'}</td>
