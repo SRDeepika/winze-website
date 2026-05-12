@@ -29,7 +29,7 @@ const generateCaptcha = () => {
 };
 
 // ============================================
-// SUPER ADMIN LOGIN COMPONENT WITH CAPTCHA
+// ADMIN LOGIN COMPONENT WITH CAPTCHA
 // ============================================
 const AdminLogin = ({ onLogin }) => {
     const [username, setUsername] = useState('');
@@ -57,15 +57,15 @@ const AdminLogin = ({ onLogin }) => {
             return;
         }
 
-        // SUPER ADMIN ONLY - Hardcoded credentials for now
-        if (username === 'superadmin' && password === 'SuperAdmin@2024') {
+        // Admin credentials (hardcoded for now - can connect to backend later)
+        if (username === 'admin' && password === 'admin123') {
             sessionStorage.clear();
-            sessionStorage.setItem('adminToken', 'superadmin-token');
-            sessionStorage.setItem('adminUsername', 'superadmin');
-            sessionStorage.setItem('adminRole', 'super_admin');
-            onLogin('superadmin', 'super_admin');
+            sessionStorage.setItem('adminToken', 'admin-token');
+            sessionStorage.setItem('adminUsername', 'admin');
+            sessionStorage.setItem('adminRole', 'admin');
+            onLogin('admin', 'admin');
         } else {
-            setError('Invalid credentials. Only Super Admin can access.');
+            setError('Invalid credentials. Please try again.');
             refreshCaptcha();
         }
         setLoading(false);
@@ -75,9 +75,9 @@ const AdminLogin = ({ onLogin }) => {
         <div style={styles.container}>
             <div style={styles.card}>
                 <div style={styles.iconContainer}>
-                    <span style={styles.icon}>👑</span>
+                    <span style={styles.icon}>🔐</span>
                 </div>
-                <h2 style={styles.title}>Super Admin Login</h2>
+                <h2 style={styles.title}>Admin Login</h2>
                 <p style={styles.subtitle}>Enter your credentials to access dashboard</p>
                 <form onSubmit={handleSubmit}>
                     <input 
@@ -119,7 +119,7 @@ const AdminLogin = ({ onLogin }) => {
                     
                     {error && <div style={styles.error}>{error}</div>}
                     <button type="submit" disabled={loading} style={styles.button}>
-                        {loading ? 'Logging in...' : 'Login as Super Admin'}
+                        {loading ? 'Logging in...' : 'Login'}
                     </button>
                 </form>
             </div>
@@ -128,7 +128,7 @@ const AdminLogin = ({ onLogin }) => {
 };
 
 // ============================================
-// BLOG MANAGER - COMPLETELY FIXED VERSION
+// BLOG MANAGER
 // ============================================
 const BlogManager = ({ token }) => {
     const [blogs, setBlogs] = useState([]);
@@ -188,7 +188,7 @@ const BlogManager = ({ token }) => {
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
                     <thead>
-                        <tr>
+                        <table>
                             <th style={styles.th}>Title</th>
                             <th style={styles.th}>Category</th>
                             <th style={styles.th}>Status</th>
@@ -250,7 +250,7 @@ const BlogManager = ({ token }) => {
 };
 
 // ============================================
-// JOB MANAGER - FIXED VERSION
+// JOB MANAGER
 // ============================================
 const JobManager = ({ token }) => {
     const [jobs, setJobs] = useState([]);
@@ -348,14 +348,18 @@ const JobManager = ({ token }) => {
                             <input type="text" placeholder="Department" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} style={styles.input} required />
                             <input type="text" placeholder="Location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} style={styles.input} required />
                             <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={styles.input}>
-                                <option>Full-time</option><option>Part-time</option><option>Remote</option><option>Hybrid</option>
+                                <option>Full-time</option>
+                                <option>Part-time</option>
+                                <option>Remote</option>
+                                <option>Hybrid</option>
                             </select>
                             <input type="text" placeholder="Experience" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} style={styles.input} />
                             <input type="text" placeholder="Salary" value={formData.salary} onChange={e => setFormData({...formData, salary: e.target.value})} style={styles.input} />
                             <textarea placeholder="Description" rows="4" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={styles.textarea} required />
                             <textarea placeholder="Requirements" rows="3" value={formData.requirements} onChange={e => setFormData({...formData, requirements: e.target.value})} style={styles.textarea} />
                             <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={styles.input}>
-                                <option value="active">Active</option><option value="closed">Closed</option>
+                                <option value="active">Active</option>
+                                <option value="closed">Closed</option>
                             </select>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
                                 <button type="submit" disabled={loading} style={styles.saveBtn}>
@@ -456,7 +460,7 @@ const ApplicationsManager = ({ token }) => {
 };
 
 // ============================================
-// QUOTES MANAGER - FIXED VERSION
+// QUOTES MANAGER
 // ============================================
 const QuotesManager = ({ token }) => {
     const [quotes, setQuotes] = useState([]);
@@ -472,7 +476,7 @@ const QuotesManager = ({ token }) => {
         <div style={styles.dashboardCard}>
             <div style={styles.cardHeader}>
                 <h2>📧 Quote Requests</h2>
-                <button onClick={loadQuotes} style={styles.refreshBtn}>🔄 Refresh</button>
+                <button onClick={loadQuotes} style={styles.refreshBtn}>Refresh</button>
             </div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
@@ -488,7 +492,7 @@ const QuotesManager = ({ token }) => {
                     <tbody>
                         {quotes.map(quote => (
                             <tr key={quote.id}>
-                                <td style={styles.td}>{quote.name}</td>
+                                <td style={styles.td}>{quote.name}<tr>
                                 <td style={styles.td}>{quote.email}</td>
                                 <td style={styles.td}>{quote.service}</td>
                                 <td style={styles.td}>{new Date(quote.created_at).toLocaleDateString()}</td>
@@ -510,12 +514,12 @@ const QuotesManager = ({ token }) => {
 };
 
 // ============================================
-// USER MANAGER (SUPER ADMIN ONLY) - FIXED VERSION
+// USER MANAGER - ADMIN CAN CREATE OTHER ADMINS
 // ============================================
 const UserManager = ({ token }) => {
     const [users, setUsers] = useState([]);
     const [showForm, setShowForm] = useState(false);
-    const [newUser, setNewUser] = useState({ username: '', password: '', role: 'super_admin' });
+    const [newUser, setNewUser] = useState({ username: '', password: '', role: 'admin' });
 
     useEffect(() => { loadUsers(); }, []);
 
@@ -529,7 +533,7 @@ const UserManager = ({ token }) => {
         await createUser(newUser, token);
         await loadUsers();
         setShowForm(false);
-        setNewUser({ username: '', password: '', role: 'super_admin' });
+        setNewUser({ username: '', password: '', role: 'admin' });
     };
 
     const handleDeleteUser = async (id) => {
@@ -542,8 +546,8 @@ const UserManager = ({ token }) => {
     return (
         <div style={styles.dashboardCard}>
             <div style={styles.cardHeader}>
-                <h2>👥 Admin Management</h2>
-                <button onClick={() => setShowForm(true)} style={styles.addButton}>+ Add Admin</button>
+                <h2>👥 Admin Management - Create Other Admins</h2>
+                <button onClick={() => setShowForm(true)} style={styles.addButton}>+ Add New Admin</button>
             </div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
@@ -560,16 +564,16 @@ const UserManager = ({ token }) => {
                             <tr key={user.id}>
                                 <td style={styles.td}>{user.username}</td>
                                 <td style={styles.td}>
-                                    <span style={{...styles.statusBadge, background: user.role === 'super_admin' ? '#ffeaa7' : '#d4edda'}}>
+                                    <span style={{...styles.statusBadge, background: user.role === 'admin' ? '#d4edda' : '#ffeaa7'}}>
                                         {user.role}
                                     </span>
                                 </td>
                                 <td style={styles.td}>{new Date(user.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
-                                    {user.username !== 'superadmin' && (
+                                    {user.username !== 'admin' && (
                                         <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>
                                     )}
-                                    {user.username === 'superadmin' && (
+                                    {user.username === 'admin' && (
                                         <span style={{ color: '#888', fontSize: '12px' }}>Primary Admin</span>
                                     )}
                                 </td>
@@ -596,8 +600,9 @@ const UserManager = ({ token }) => {
         </div>
     );
 };
+
 // ============================================
-// PROFILE SETTINGS - FIXED VERSION
+// PROFILE SETTINGS
 // ============================================
 const ProfileSettings = ({ username, onLogout }) => {
     const [currentPassword, setCurrentPassword] = useState('');
@@ -651,9 +656,7 @@ const ProfileSettings = ({ username, onLogout }) => {
                 <form onSubmit={handleUpdateUsername}>
                     <div style={{ position: 'relative' }}>
                         <input type={showCurrent ? "text" : "password"} placeholder="Current Password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} style={styles.input} required />
-                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>
-                            {showCurrent ? '🙈' : '👁️'}
-                        </span>
+                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>{showCurrent ? '🙈' : '👁️'}</span>
                     </div>
                     <input type="text" placeholder="New Username" value={newUsername} onChange={e => setNewUsername(e.target.value)} style={styles.input} required />
                     <button type="submit" style={styles.saveBtn}>Update Username</button>
@@ -664,15 +667,11 @@ const ProfileSettings = ({ username, onLogout }) => {
                 <form onSubmit={handleUpdatePassword}>
                     <div style={{ position: 'relative' }}>
                         <input type={showCurrent ? "text" : "password"} placeholder="Current Password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} style={styles.input} required />
-                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>
-                            {showCurrent ? '🙈' : '👁️'}
-                        </span>
+                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>{showCurrent ? '🙈' : '👁️'}</span>
                     </div>
                     <div style={{ position: 'relative' }}>
                         <input type={showNew ? "text" : "password"} placeholder="New Password" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={styles.input} required />
-                        <span onClick={() => setShowNew(!showNew)} style={styles.eyeIcon}>
-                            {showNew ? '🙈' : '👁️'}
-                        </span>
+                        <span onClick={() => setShowNew(!showNew)} style={styles.eyeIcon}>{showNew ? '🙈' : '👁️'}</span>
                     </div>
                     <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} style={styles.input} required />
                     <button type="submit" style={styles.saveBtn}>Update Password</button>
@@ -756,7 +755,6 @@ const AdminPage = () => {
         setExpanded(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
-    const isSuperAdmin = adminRole === 'super_admin';
     const totalClicks = allClicks.length;
     const uniqueLinks = Object.keys(groupedClicks).length;
     const last24Hours = allClicks.filter(click => {
@@ -773,7 +771,7 @@ const AdminPage = () => {
         <div style={{ display: 'flex', minHeight: '100vh' }}>
             <div style={styles.sidebar}>
                 <div style={styles.sidebarHeader}>
-                    <h2>⚡ Winze Admin</h2>
+                    <h2>⚡ Admin Panel</h2>
                     <p style={{ fontSize: '12px', color: '#aaa' }}>{adminUsername}</p>
                 </div>
                 <nav>
