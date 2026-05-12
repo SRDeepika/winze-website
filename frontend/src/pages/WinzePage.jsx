@@ -1,5 +1,3 @@
-import BlogsSection from '../components/BlogsSection';
-import CareersSection from '../components/CareersSection';
 import SocialLinks from '../components/SocialLinks';
 import React, { useState, useEffect, useRef } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
@@ -518,7 +516,6 @@ const WinzePage = () => {
     const partnersRef = useRef(null);
     const clientsRef = useRef(null);
     const workwithRef = useRef(null);
-    const careersRef = useRef(null);  // NEW: Careers ref
 
     useEffect(() => {
         window.addEventListener('scroll', () => {
@@ -674,7 +671,6 @@ const WinzePage = () => {
         { name: "Industries", ref: industriesRef },
         { name: "Partners", ref: partnersRef },
         { name: "Clients", ref: clientsRef },
-        { name: "Careers", ref: careersRef },  // NEW: Careers in navbar
         { name: "Work With Winze", ref: workwithRef }
     ];
 
@@ -1627,14 +1623,6 @@ const WinzePage = () => {
                         </div>
                     </div>
                 </section>
-
-                {/* Blogs Section */}
-                <BlogsSection />
-
-                {/* Careers Section */}
-                <div ref={careersRef}>
-                    <CareersSection />
-                </div>
 
                 {/* Work With Winze Section */}
                 <section ref={workwithRef} id="workwith" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>

@@ -57,7 +57,7 @@ const AdminLogin = ({ onLogin }) => {
             return;
         }
 
-        // Super Admin only
+        // SUPER ADMIN ONLY - Hardcoded credentials for now
         if (username === 'superadmin' && password === 'SuperAdmin@2024') {
             sessionStorage.clear();
             sessionStorage.setItem('adminToken', 'superadmin-token');
