@@ -377,10 +377,6 @@ const QuotesManager = ({ token }) => {
         </div>
     );
 };
-
-// ============================================
-// USER MANAGER
-// ============================================
 const UserManager = ({ token }) => {
     const [users, setUsers] = useState([]);
     const [showForm, setShowForm] = useState(false);
@@ -402,7 +398,7 @@ const UserManager = ({ token }) => {
     };
 
     const handleDeleteUser = async (id) => {
-        if (window.confirm('Delete this user?')) {
+        if (window.confirm('Delete this user permanently?')) {
             await deleteUser(id, token);
             await loadUsers();
         }
@@ -410,18 +406,41 @@ const UserManager = ({ token }) => {
 
     return (
         <div style={styles.dashboardCard}>
-            <div style={styles.cardHeader}><h2>👥 Admin Management</h2><button onClick={() => setShowForm(true)} style={styles.addButton}>+ Add Admin</button></div>
+            <div style={styles.cardHeader}>
+                <h2>👥 Admin Management</h2>
+                <button onClick={() => setShowForm(true)} style={styles.addButton}>+ Add Admin</button>
+            </div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
-                    <thead><tr><th style={styles.th}>Username</th><th style={styles.th}>Role</th><th style={styles.th}>Created</th><th style={styles.th}>Actions</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th style={styles.th}>Username</th>
+                            <th style={styles.th}>Role</th>
+                            <th style={styles.th}>Created</th>
+                            <th style={styles.th}>Actions</th>
+                        </tr>
+                    </thead>
                     <tbody>
-                        {users.map(user => (
+                        {users.map((user) => (
                             <tr key={user.id}>
                                 <td style={styles.td}>{user.username}</td>
-                                <td style={styles.td}>{user.role}</td>
+                                <td style={styles.td}>
+                                    <span style={{...styles.statusBadge, background: user.role === 'admin' ? '#d4edda' : '#ffeaa7'}}>
+                                        {user.role}
+                                    </span>
+                                </td>
                                 <td style={styles.td}>{new Date(user.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
-                                    {user.username !== 'admin' && <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>}
+                                    {/* Allow deleting any user except the current logged-in admin */}
+                                    {user.username !== 'admin' && (
+                                        <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>
+                                    )}
+                                    {user.username === 'admin' && (
+                                        <span style={{ color: '#888', fontSize: '12px' }}>Primary Admin</span>
+                                    )}
+                                    {user.username === 'superadmin' && user.username !== 'admin' && (
+                                        <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>
+                                    )}
                                 </td>
                             </tr>
                         ))}
@@ -430,13 +449,13 @@ const UserManager = ({ token }) => {
             </div>
             {showForm && (
                 <div style={styles.modal} onClick={() => setShowForm(false)}>
-                    <div style={styles.modalContent}>
+                    <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
                         <h3>Add New Admin</h3>
                         <form onSubmit={handleCreateUser}>
                             <input type="text" placeholder="Username" value={newUser.username} onChange={e => setNewUser({...newUser, username: e.target.value})} style={styles.input} required />
                             <input type="password" placeholder="Password" value={newUser.password} onChange={e => setNewUser({...newUser, password: e.target.value})} style={styles.input} required />
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <button type="submit" style={styles.saveBtn}>Create</button>
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+                                <button type="submit" style={styles.saveBtn}>Create Admin</button>
                                 <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>Cancel</button>
                             </div>
                         </form>
@@ -446,7 +465,6 @@ const UserManager = ({ token }) => {
         </div>
     );
 };
-
 // ============================================
 // PROFILE SETTINGS
 // ============================================
