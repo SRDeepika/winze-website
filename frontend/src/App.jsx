@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import WinzePage from './pages/WinzePage';
-import AdminPage from './pages/AdminPage';
+import AdminPage from './pages/AdminPage';  // Correct path
 
 function App() {
     return (

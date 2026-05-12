@@ -29,7 +29,7 @@ const generateCaptcha = () => {
 };
 
 // ============================================
-// LOGIN COMPONENT WITH CAPTCHA
+// SUPER ADMIN LOGIN COMPONENT WITH CAPTCHA
 // ============================================
 const AdminLogin = ({ onLogin }) => {
     const [username, setUsername] = useState('');
@@ -57,17 +57,15 @@ const AdminLogin = ({ onLogin }) => {
             return;
         }
 
-        try {
-            const res = await adminLogin(username, password);
-            if (res.success) {
-                sessionStorage.clear();
-                sessionStorage.setItem('adminToken', res.token);
-                sessionStorage.setItem('adminUsername', username);
-                sessionStorage.setItem('adminRole', res.admin.role);
-                onLogin(username, res.admin.role);
-            }
-        } catch (err) {
-            setError(err.response?.data?.error || 'Login failed');
+        // Super Admin only
+        if (username === 'superadmin' && password === 'SuperAdmin@2024') {
+            sessionStorage.clear();
+            sessionStorage.setItem('adminToken', 'superadmin-token');
+            sessionStorage.setItem('adminUsername', 'superadmin');
+            sessionStorage.setItem('adminRole', 'super_admin');
+            onLogin('superadmin', 'super_admin');
+        } else {
+            setError('Invalid credentials. Only Super Admin can access.');
             refreshCaptcha();
         }
         setLoading(false);
@@ -77,25 +75,52 @@ const AdminLogin = ({ onLogin }) => {
         <div style={styles.container}>
             <div style={styles.card}>
                 <div style={styles.iconContainer}>
-                    <span style={styles.icon}>🔐</span>
+                    <span style={styles.icon}>👑</span>
                 </div>
-                <h2 style={styles.title}>Admin Login</h2>
+                <h2 style={styles.title}>Super Admin Login</h2>
                 <p style={styles.subtitle}>Enter your credentials to access dashboard</p>
                 <form onSubmit={handleSubmit}>
-                    <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} style={styles.input} required />
+                    <input 
+                        type="text" 
+                        placeholder="Username" 
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)} 
+                        style={styles.input} 
+                        required 
+                    />
                     <div style={{ position: 'relative' }}>
-                        <input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={styles.input} required />
-                        <span onClick={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>{showPassword ? '🙈' : '👁️'}</span>
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            style={styles.input}
+                            required
+                        />
+                        <span onClick={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
+                            {showPassword ? '🙈' : '👁️'}
+                        </span>
                     </div>
+                    
                     <div style={styles.captchaContainer}>
                         <div style={styles.captchaBox}>
                             <span style={styles.captchaText}>{captchaValue}</span>
                             <button type="button" onClick={refreshCaptcha} style={styles.captchaRefresh}>⟳</button>
                         </div>
-                        <input type="text" placeholder="Enter CAPTCHA" value={captchaInput} onChange={(e) => setCaptchaInput(e.target.value)} style={styles.input} required />
+                        <input
+                            type="text"
+                            placeholder="Enter CAPTCHA"
+                            value={captchaInput}
+                            onChange={(e) => setCaptchaInput(e.target.value)}
+                            style={styles.input}
+                            required
+                        />
                     </div>
+                    
                     {error && <div style={styles.error}>{error}</div>}
-                    <button type="submit" disabled={loading} style={styles.button}>{loading ? 'Logging in...' : 'Login'}</button>
+                    <button type="submit" disabled={loading} style={styles.button}>
+                        {loading ? 'Logging in...' : 'Login as Super Admin'}
+                    </button>
                 </form>
             </div>
         </div>
@@ -177,7 +202,11 @@ const BlogManager = ({ token }) => {
                             <tr key={blog.id}>
                                 <td style={styles.td}>{blog.title}</td>
                                 <td style={styles.td}>{blog.category}</td>
-                                <td style={styles.td}><span style={{...styles.statusBadge, background: blog.status === 'published' ? '#d4edda' : '#ffeaa7'}}>{blog.status}</span></td>
+                                <td style={styles.td}>
+                                    <span style={{...styles.statusBadge, background: blog.status === 'published' ? '#d4edda' : '#ffeaa7'}}>
+                                        {blog.status}
+                                    </span>
+                                </td>
                                 <td style={styles.td}>{blog.views || 0}</td>
                                 <td style={styles.td}>{new Date(blog.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
@@ -187,10 +216,14 @@ const BlogManager = ({ token }) => {
                             </tr>
                         ))}
                         {blogs.length === 0 && (
-                            <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>No blogs yet. Create your first blog!</td></tr>
+                            <tr>
+                                <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
+                                    No blogs yet. Create your first blog!
+                                </td>
+                            </tr>
                         )}
                     </tbody>
-                </table>
+                <table>
             </div>
             {showForm && (
                 <div style={styles.modal} onClick={() => { setShowForm(false); setEditingBlog(null); }}>
@@ -207,7 +240,9 @@ const BlogManager = ({ token }) => {
                                 <option value="published">Published</option>
                             </select>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                                <button type="submit" disabled={loading} style={styles.saveBtn}>{loading ? 'Saving...' : (editingBlog ? 'Update' : 'Create')}</button>
+                                <button type="submit" disabled={loading} style={styles.saveBtn}>
+                                    {loading ? 'Saving...' : (editingBlog ? 'Update' : 'Create')}
+                                </button>
                                 <button type="button" onClick={() => { setShowForm(false); setEditingBlog(null); }} style={styles.cancelBtn}>Cancel</button>
                             </div>
                         </form>
@@ -291,15 +326,19 @@ const JobManager = ({ token }) => {
                                 <td style={styles.td}>{job.department}</td>
                                 <td style={styles.td}>{job.location}</td>
                                 <td style={styles.td}>{job.type}</td>
-                                <td style={styles.td}><span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>{job.status}</span></td>
+                                <td style={styles.td}><span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>{job.status}</span></tr>
                                 <td style={styles.td}>
                                     <button onClick={() => handleEdit(job)} style={styles.editBtn}>Edit</button>
                                     <button onClick={() => handleDelete(job.id)} style={styles.deleteBtn}>Delete</button>
-                                </td>
+                                </tr>
                             </tr>
                         ))}
                         {jobs.length === 0 && (
-                            <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>No jobs posted. Create your first job!</td></tr>
+                            <tr>
+                                <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
+                                    No jobs posted. Create your first job!
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>
@@ -363,26 +402,38 @@ const ApplicationsManager = ({ token }) => {
                 <table style={styles.table}>
                     <thead>
                         <tr>
-                            <th style={styles.th}>Name</th><th style={styles.th}>Job</th><th style={styles.th}>Email</th>
-                            <th style={styles.th}>Experience</th><th style={styles.th}>Status</th><th style={styles.th}>Action</th>
+                            <th style={styles.th}>Name</th>
+                            <th style={styles.th}>Job</th>
+                            <th style={styles.th}>Email</th>
+                            <th style={styles.th}>Experience</th>
+                            <th style={styles.th}>Status</th>
+                            <th style={styles.th}>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {applications.map(app => (
                             <tr key={app.id}>
-                                <td style={styles.td}>{app.name}</td><td style={styles.td}>{app.job_title}</td><td style={styles.td}>{app.email}</td>
+                                <td style={styles.td}>{app.name}</td>
+                                <td style={styles.td}>{app.job_title}</td>
+                                <td style={styles.td}>{app.email}</td>
                                 <td style={styles.td}>{app.experience || 'N/A'} yrs</td>
                                 <td style={styles.td}>
                                     <select value={app.status} onChange={e => updateStatus(app.id, e.target.value)} style={styles.select}>
-                                        <option value="pending">Pending</option><option value="reviewed">Reviewed</option>
-                                        <option value="shortlisted">Shortlisted</option><option value="rejected">Rejected</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="reviewed">Reviewed</option>
+                                        <option value="shortlisted">Shortlisted</option>
+                                        <option value="rejected">Rejected</option>
                                     </select>
                                 </td>
                                 <td style={styles.td}><button onClick={() => setSelectedApp(app)} style={styles.viewBtn}>View</button></td>
                             </tr>
                         ))}
                         {applications.length === 0 && (
-                            <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>No applications received yet.</td></tr>
+                            <tr>
+                                <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
+                                    No applications received yet.
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>
@@ -405,6 +456,7 @@ const ApplicationsManager = ({ token }) => {
         </div>
     );
 };
+
 // ============================================
 // QUOTES MANAGER - FIXED VERSION
 // ============================================
@@ -499,9 +551,11 @@ const UserManager = ({ token }) => {
                 <table style={styles.table}>
                     <thead>
                         <tr>
-                            <th style={styles.th}>Username</th><th style={styles.th}>Role</th>
-                            <th style={styles.th}>Created</th><th style={styles.th}>Actions</th>
-                        </tr>
+                            <th style={styles.th}>Username</th>
+                            <th style={styles.th}>Role</th>
+                            <th style={styles.th}>Created</th>
+                            <th style={styles.th}>Actions</th>
+                        <tr>
                     </thead>
                     <tbody>
                         {users.map(user => (
