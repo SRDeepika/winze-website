@@ -210,7 +210,7 @@ const BlogManager = ({ token }) => {
                                     </span>
                                 </td>
                                 <td style={styles.td}>{blog.views || 0}</td>
-                                <td style={styles.td}>{new Date(blog.created_at).toLocaleDateString()}</td>
+                                <td style={styles.td}>{new Date(blog.created_at).toLocaleDateString()}<tr>
                                 <td style={styles.td}>
                                     <button onClick={() => handleEdit(blog)} style={styles.editBtn}>Edit</button>
                                     <button onClick={() => handleDelete(blog.id)} style={styles.deleteBtn}>Delete</button>
@@ -434,7 +434,7 @@ const ApplicationsManager = ({ token }) => {
                                 <td style={styles.td}>
                                     <button onClick={() => setSelectedApp(app)} style={styles.viewBtn}>View</button>
                                 </td>
-                            </tr>
+                            <tr>
                         ))}
                         {applications.length === 0 && (
                             <tr>
@@ -784,6 +784,7 @@ const AdminPage = () => {
 
     return (
         <div style={{ display: 'flex', minHeight: '100vh' }}>
+            {/* Sidebar */}
             <div style={styles.sidebar}>
                 <div style={styles.sidebarHeader}>
                     <h2>⚡ Winze Admin</h2>
@@ -823,6 +824,7 @@ const AdminPage = () => {
                 </nav>
             </div>
 
+            {/* Main Content */}
             <div style={styles.mainContent}>
                 {activeTab === 'dashboard' && (
                     <div>
@@ -867,7 +869,7 @@ const AdminPage = () => {
                                                         <th style={{ padding: '8px', textAlign: 'left' }}>Date & Time</th>
                                                         <th style={{ padding: '8px', textAlign: 'left' }}>IP Address</th>
                                                         <th style={{ padding: '8px', textAlign: 'left' }}>Page URL</th>
-                                                    </tr>
+                                                    </td>
                                                 </thead>
                                                 <tbody>
                                                     {clicks.map((click, idx) => (
@@ -876,7 +878,7 @@ const AdminPage = () => {
                                                             <td style={{ padding: '8px' }}>{new Date(click.clicked_at).toLocaleString()}</td>
                                                             <td style={{ padding: '8px' }}>{click.ip_address || 'unknown'}</td>
                                                             <td style={{ padding: '8px', wordBreak: 'break-all' }}>{click.link_url || click.link_title}</td>
-                                                        </td>
+                                                        </tr>
                                                     ))}
                                                 </tbody>
                                             </table>
