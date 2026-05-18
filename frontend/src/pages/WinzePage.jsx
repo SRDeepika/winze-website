@@ -11,7 +11,8 @@ import {
     faTruck, faShoppingCart, faHandshake, faStar, faRocket,
     faInfinity, faCrown, faGem, faBolt, faUsers,
     faBriefcase, faTrophy, faGlobe, faLightbulb, faProjectDiagram,
-    faChevronLeft, faChevronRight, faTimes, faArrowRight, faCheckCircle
+    faChevronLeft, faChevronRight, faTimes, faArrowRight, faCheckCircle,
+    faCamera, faNetworkWired, faBroadcastTower, faBell
 } from '@fortawesome/free-solid-svg-icons';
 import { 
     faLinkedin, 
@@ -53,8 +54,6 @@ const industryImages = {
     healthcare: "/images/healthcare.jpg",
     manufacturing: "/images/manufacturing.jpg",
     education: "/images/education.jpg",
-    finance: "/images/finance.jpg",
-    retail: "/images/retail.jpg",
     logistics: "/images/logistics.jpg"
 };
 
@@ -85,18 +84,145 @@ const clientLogos = [
     { name: "Skidata", url: "/images/skidata.png" }
 ];
 
-// Detailed content for solution cards
+// Extended content for solution cards (5+ extra points)
+const getSolutionExtraPoints = (title) => {
+    const pointsMap = {
+        "Video Conferencing": [
+            "4K Ultra HD video with automatic lighting adjustment",
+            "End-to-end encryption for secure communications",
+            "Supports up to 500 participants per meeting",
+            "Screen sharing, virtual backgrounds & breakout rooms",
+            "Integration with Slack, Teams, Zoom & Google Workspace",
+            "AI-powered recording summaries & transcription"
+        ],
+        "Smart Eye AI": [
+            "Real-time threat detection with 99.5% accuracy",
+            "Facial recognition with watchlist alerts",
+            "Automatic number plate recognition (ANPR)",
+            "Abandoned object & loitering detection",
+            "Crowd density monitoring & social distancing alerts",
+            "Fire and smoke detection from video feeds"
+        ],
+        "Rental IT Infrastructure": [
+            "Pay only for what you use - daily/weekly/monthly",
+            "Latest generation laptops, desktops & servers",
+            "Free delivery, setup & on-site support",
+            "4-hour faulty equipment replacement SLA",
+            "Scale up/down based on project requirements",
+            "No long-term commitment or capital expenditure"
+        ],
+        "SaaS Products": [
+            "Subscription-based pricing with no upfront costs",
+            "Automatic updates & maintenance included",
+            "99.99% uptime SLA with multi-region redundancy",
+            "GDPR and SOC2 compliant data handling",
+            "Customizable to match your business processes",
+            "Integration APIs for third-party apps"
+        ],
+        "Enterprise Software Licensing": [
+            "Volume licensing discounts up to 40% off retail",
+            "Centralized license management across organization",
+            "Compliance audits to prevent penalties",
+            "Flexible payment terms (monthly/quarterly/annually)",
+            "Dedicated licensing specialist assigned",
+            "Software asset management (SAM) services"
+        ],
+        "IT Infrastructure": [
+            "99.999% uptime with redundant architecture",
+            "24/7 proactive monitoring and alerting",
+            "Scalable design that grows with your business",
+            "On-premise, cloud, or hybrid deployment",
+            "Energy-efficient hardware reduces costs",
+            "Disaster recovery and backup solutions included"
+        ],
+        "CCTV Services": [
+            "24/7 recording with 30-day cloud storage",
+            "Remote viewing from any device",
+            "Motion-triggered alerts & email notifications",
+            "AI-powered people counting & heat mapping",
+            "License plate recognition for parking",
+            "Tamper detection & camera health monitoring"
+        ],
+        "Cabling Services": [
+            "Cat6, Cat6a, Cat7 & Cat8 copper cabling",
+            "Single-mode & multi-mode fiber optics",
+            "Cable management & labeling for easy maintenance",
+            "Fluke testing & certification for every drop",
+            "Greenfield & brownfield project experience",
+            "Minimum 25-year warranty on cabling components"
+        ],
+        "WiFi as a Service": [
+            "Predictive monthly subscription pricing",
+            "Access points, controllers & licenses included",
+            "Guest WiFi with social login & captive portal",
+            "Bandwidth management & traffic shaping",
+            "Usage analytics & heat mapping",
+            "Automatic firmware updates & security patches"
+        ],
+        "Smart Live Classroom": [
+            "Live HD video classes with recording option",
+            "Interactive digital whiteboard with annotations",
+            "Automated attendance tracking & reporting",
+            "Assignment submission & grading system",
+            "Parent portal for progress monitoring",
+            "Breakout rooms for group activities"
+        ],
+        "Web & Mobile Development": [
+            "End-to-end development from concept to deployment",
+            "Agile methodology with 2-week sprints",
+            "Responsive design for all screen sizes",
+            "API development & third-party integrations",
+            "SEO-optimized architecture",
+            "Ongoing maintenance & support"
+        ],
+        "Cyber Security": [
+            "24/7 security operations center (SOC) monitoring",
+            "Automated threat detection & response",
+            "Weekly vulnerability scans & monthly penetration tests",
+            "GDPR, HIPAA, PCI-DSS & ISO 27001 compliance",
+            "Security awareness training for employees",
+            "Incident response & disaster recovery planning"
+        ],
+        "Unified Communications": [
+            "VoIP phone system with auto-attendant",
+            "HD video conferencing & screen sharing",
+            "Instant messaging with file sharing",
+            "Presence detection & calendar integration",
+            "Mobile & desktop apps for anywhere access",
+            "Call recording & voicemail-to-email"
+        ],
+        "Contact Center": [
+            "Omnichannel queue (voice, email, chat, social)",
+            "AI-powered chatbots for instant responses",
+            "Sentiment analysis to prioritize upset customers",
+            "Real-time dashboards & performance analytics",
+            "Skills-based routing to the right agent",
+            "Call recording & quality management"
+        ],
+        "Emergency Notification (Code Blue)": [
+            "Mass instant alerts via SMS, email & push",
+            "Two-way emergency response coordination",
+            "Geo-fencing & indoor positioning",
+            "Integration with fire & safety systems",
+            "Crisis communication templates",
+            "Real-time incident tracking & escalation"
+        ]
+    };
+    return pointsMap[title] || [
+        "Enterprise-grade reliability & performance",
+        "24/7 dedicated support team",
+        "Scalable architecture for growth",
+        "Industry compliance certified",
+        "Seamless integration capabilities",
+        "Regular updates & improvements"
+    ];
+};
+
+// Detailed content for solution cards (for landing page)
 const solutionDetailedContent = {
     "Video Conferencing": {
         overview: "Our Video Conferencing solution provides enterprise-grade virtual meeting capabilities with crystal-clear HD video, advanced security features, and seamless integration with your existing workflow.",
-        benefits: [
-            "4K Ultra HD video quality with automatic lighting adjustment",
-            "End-to-end encryption for secure business communications",
-            "Supports up to 500 participants in a single meeting",
-            "Screen sharing, virtual backgrounds, and breakout rooms",
-            "Integration with Slack, Teams, Zoom, and Google Workspace",
-            "Recording and transcription with AI-powered summaries"
-        ],
+        benefits: getSolutionExtraPoints("Video Conferencing"),
         features: [
             "Smart gallery view that highlights active speakers",
             "Virtual hand raise, polls, and Q&A sessions",
@@ -114,14 +240,7 @@ const solutionDetailedContent = {
     },
     "Smart Eye AI": {
         overview: "Smart Eye AI is an advanced video analytics platform that transforms ordinary CCTV cameras into intelligent security systems.",
-        benefits: [
-            "Real-time threat detection with 99.5% accuracy",
-            "Facial recognition with watchlist alerts",
-            "Automatic number plate recognition (ANPR)",
-            "Abandoned object and loitering detection",
-            "Crowd density monitoring and social distancing alerts",
-            "Fire and smoke detection from video feeds"
-        ],
+        benefits: getSolutionExtraPoints("Smart Eye AI"),
         features: [
             "Centralized dashboard for multiple camera feeds",
             "Mobile app notifications for instant alerts",
@@ -139,14 +258,7 @@ const solutionDetailedContent = {
     },
     "Rental IT Infrastructure": {
         overview: "Rental IT Infrastructure provides cost-effective, flexible hardware solutions for businesses of all sizes.",
-        benefits: [
-            "Pay only for what you use with flexible daily/weekly/monthly rentals",
-            "Latest generation laptops, desktops, and servers",
-            "Free delivery, setup, and on-site support",
-            "Replace faulty equipment within 4 hours",
-            "Scale up or down based on project requirements",
-            "No long-term commitment or capital expenditure"
-        ],
+        benefits: getSolutionExtraPoints("Rental IT Infrastructure"),
         features: [
             "Enterprise-grade laptops (Dell, HP, Lenovo)",
             "High-performance desktops and workstations",
@@ -164,14 +276,7 @@ const solutionDetailedContent = {
     },
     "SaaS Products": {
         overview: "Our custom SaaS products are designed to solve specific business challenges with scalable, cloud-native architecture.",
-        benefits: [
-            "Subscription-based pricing with no upfront costs",
-            "Automatic updates and maintenance included",
-            "99.99% uptime SLA with multi-region redundancy",
-            "GDPR and SOC2 compliant data handling",
-            "Customizable to match your business processes",
-            "Integration APIs for third-party apps"
-        ],
+        benefits: getSolutionExtraPoints("SaaS Products"),
         features: [
             "White-label options for your brand",
             "Role-based access control and permissions",
@@ -189,14 +294,7 @@ const solutionDetailedContent = {
     },
     "Enterprise Software Licensing": {
         overview: "We simplify enterprise software licensing by offering volume discounts, compliance management, and dedicated account support.",
-        benefits: [
-            "Volume licensing discounts up to 40% off retail",
-            "Centralized license management across your organization",
-            "Compliance audits to prevent over-licensing or penalties",
-            "Flexible payment terms (monthly, quarterly, annually)",
-            "Dedicated licensing specialist assigned to your account",
-            "Software asset management (SAM) services"
-        ],
+        benefits: getSolutionExtraPoints("Enterprise Software Licensing"),
         features: [
             "Microsoft 365 and Azure licensing",
             "Adobe Creative Cloud and Document Cloud",
@@ -214,14 +312,7 @@ const solutionDetailedContent = {
     },
     "IT Infrastructure": {
         overview: "Our IT Infrastructure solutions provide enterprise-grade networking, server, and storage systems designed for optimal performance.",
-        benefits: [
-            "99.999% uptime with redundant architecture",
-            "24/7 proactive monitoring and alerting",
-            "Scalable design that grows with your business",
-            "On-premise, cloud, or hybrid deployment options",
-            "Energy-efficient hardware reduces operating costs",
-            "Disaster recovery and backup solutions included"
-        ],
+        benefits: getSolutionExtraPoints("IT Infrastructure"),
         features: [
             "Hyper-converged infrastructure (HCI)",
             "Enterprise switches, routers, and firewalls",
@@ -239,14 +330,7 @@ const solutionDetailedContent = {
     },
     "CCTV Services": {
         overview: "Our comprehensive CCTV services include site survey, camera installation, configuration, cloud storage, and ongoing maintenance.",
-        benefits: [
-            "24/7 recording with 30-day cloud storage",
-            "Remote viewing from any device",
-            "Motion-triggered alerts and email notifications",
-            "AI-powered people counting and heat mapping",
-            "License plate recognition for parking management",
-            "Tamper detection and camera health monitoring"
-        ],
+        benefits: getSolutionExtraPoints("CCTV Services"),
         features: [
             "4MP and 8MP HD cameras",
             "PTZ (Pan-Tilt-Zoom) cameras for active monitoring",
@@ -264,14 +348,7 @@ const solutionDetailedContent = {
     },
     "Cabling Services": {
         overview: "We provide professional structured cabling solutions for data centers, offices, and industrial facilities.",
-        benefits: [
-            "Cat6, Cat6a, Cat7, and Cat8 copper cabling",
-            "Single-mode and multi-mode fiber optics",
-            "Cable management and labeling for easy maintenance",
-            "Fluke testing and certification for every drop",
-            "Greenfield and brownfield project experience",
-            "Minimum 25-year warranty on cabling components"
-        ],
+        benefits: getSolutionExtraPoints("Cabling Services"),
         features: [
             "Rack mounting and cable tray installation",
             "Patch panel termination and testing",
@@ -289,14 +366,7 @@ const solutionDetailedContent = {
     },
     "WiFi as a Service": {
         overview: "WiFi as a Service delivers enterprise-grade wireless networking without the capital expense.",
-        benefits: [
-            "Predictive monthly subscription pricing",
-            "Access points, controllers, and licenses included",
-            "Guest WiFi with social login and captive portal",
-            "Bandwidth management and traffic shaping",
-            "Usage analytics and heat mapping",
-            "Automatic firmware updates and security patches"
-        ],
+        benefits: getSolutionExtraPoints("WiFi as a Service"),
         features: [
             "WiFi 6 (802.11ax) access points for high density",
             "Cloud-based or on-premise controller options",
@@ -314,14 +384,7 @@ const solutionDetailedContent = {
     },
     "Smart Live Classroom": {
         overview: "Smart Live Classroom is an interactive virtual learning platform that brings teachers and students together in an engaging digital environment.",
-        benefits: [
-            "Live HD video classes with recording option",
-            "Interactive digital whiteboard with annotations",
-            "Automated attendance tracking and reporting",
-            "Assignment submission and grading system",
-            "Parent portal for progress monitoring",
-            "Breakout rooms for group activities"
-        ],
+        benefits: getSolutionExtraPoints("Smart Live Classroom"),
         features: [
             "Quiz and poll creation for real-time assessment",
             "Class recordings accessible anytime",
@@ -339,14 +402,7 @@ const solutionDetailedContent = {
     },
     "Web & Mobile Development": {
         overview: "Our Web & Mobile Development team builds custom applications using modern technologies like React, Node.js, Flutter, and React Native.",
-        benefits: [
-            "End-to-end development from concept to deployment",
-            "Agile methodology with 2-week sprints",
-            "Responsive design for all screen sizes",
-            "API development and third-party integrations",
-            "SEO-optimized architecture",
-            "Ongoing maintenance and support"
-        ],
+        benefits: getSolutionExtraPoints("Web & Mobile Development"),
         features: [
             "Frontend: React, Angular, Vue.js",
             "Backend: Node.js, Python, Java, PHP",
@@ -364,14 +420,7 @@ const solutionDetailedContent = {
     },
     "Cyber Security": {
         overview: "Our comprehensive cyber security services protect your business from evolving threats.",
-        benefits: [
-            "24/7 security operations center (SOC) monitoring",
-            "Automated threat detection and response",
-            "Weekly vulnerability scans and monthly penetration tests",
-            "GDPR, HIPAA, PCI-DSS, and ISO 27001 compliance",
-            "Security awareness training for employees",
-            "Incident response and disaster recovery planning"
-        ],
+        benefits: getSolutionExtraPoints("Cyber Security"),
         features: [
             "Next-generation firewall (NGFW) management",
             "Endpoint detection and response (EDR)",
@@ -389,14 +438,7 @@ const solutionDetailedContent = {
     },
     "Unified Communications": {
         overview: "Unified Communications brings voice, video, messaging, and collaboration tools into a single platform.",
-        benefits: [
-            "VoIP phone system with auto-attendant",
-            "HD video conferencing and screen sharing",
-            "Instant messaging with file sharing",
-            "Presence detection and calendar integration",
-            "Mobile and desktop apps for anywhere access",
-            "Call recording and voicemail-to-email"
-        ],
+        benefits: getSolutionExtraPoints("Unified Communications"),
         features: [
             "Auto-attendant and call routing",
             "Ring groups and call queues",
@@ -414,14 +456,7 @@ const solutionDetailedContent = {
     },
     "Contact Center": {
         overview: "Our AI-powered Contact Center solution transforms customer service with intelligent routing, chatbots, sentiment analysis, and omnichannel support.",
-        benefits: [
-            "Omnichannel queue (voice, email, chat, social)",
-            "AI-powered chatbots for instant responses",
-            "Sentiment analysis to prioritize upset customers",
-            "Real-time dashboards and performance analytics",
-            "Skills-based routing to the right agent",
-            "Call recording and quality management"
-        ],
+        benefits: getSolutionExtraPoints("Contact Center"),
         features: [
             "Interactive voice response (IVR) with NLP",
             "Click-to-call from your website",
@@ -436,54 +471,226 @@ const solutionDetailedContent = {
             "Healthcare appointment scheduling",
             "IT service desk (ITSM)"
         ]
+    },
+    "Emergency Notification (Code Blue)": {
+        overview: "Emergency Notification System provides real-time mass alerts and crisis communication for critical situations.",
+        benefits: getSolutionExtraPoints("Emergency Notification (Code Blue)"),
+        features: [
+            "Multi-channel alert delivery (SMS, Email, Push, Voice)",
+            "Real-time incident tracking dashboard",
+            "Automated escalation procedures",
+            "Two-way communication with responders",
+            "Integration with existing safety systems"
+        ],
+        useCases: [
+            "Corporate emergency response",
+            "Healthcare facility code alerts",
+            "Educational campus safety",
+            "Industrial plant emergencies",
+            "Public venue security"
+        ]
     }
+};
+
+// Extended content for delivery items (5+ extra points)
+const getDeliveryExtraPoints = (title) => {
+    const pointsMap = {
+        "End-to-End Solutions": [
+            "Strategy consulting and roadmap planning",
+            "Vendor selection and procurement",
+            "Project management and implementation",
+            "User training and change management",
+            "24/7 support and maintenance",
+            "Continuous optimization and upgrades"
+        ],
+        "Enterprise Excellence": [
+            "SLA-backed uptime guarantees (99.9%)",
+            "Real-time performance dashboards",
+            "Regular business reviews",
+            "Continuous improvement programs",
+            "ISO and compliance certifications",
+            "Disaster recovery and business continuity"
+        ],
+        "Flexible Engagement": [
+            "Time and material projects",
+            "Fixed-price deliverables",
+            "Dedicated team engagement",
+            "Co-managed IT services",
+            "Fully outsourced IT operations",
+            "Pay-as-you-go options"
+        ],
+        "Rapid Deployment": [
+            "Agile implementation methodology",
+            "Automated provisioning and configuration",
+            "Minimal downtime during cutover",
+            "Parallel run and testing phase",
+            "Phased rollout options",
+            "Post-deployment hyper-care"
+        ],
+        "Analytics & Insights": [
+            "Real-time data visualization",
+            "Predictive modeling and forecasting",
+            "Custom report builder",
+            "Data warehousing and ETL",
+            "Business intelligence tools (Power BI, Tableau)",
+            "Self-service analytics for business users"
+        ],
+        "24/7 Premium Support": [
+            "24/7 phone, chat, and email support",
+            "15-minute response SLA for critical issues",
+            "Dedicated account manager",
+            "Quarterly business reviews",
+            "Proactive monitoring and alerting",
+            "Root cause analysis and preventive actions"
+        ]
+    };
+    return pointsMap[title] || [
+        "Professional service delivery",
+        "Quality assurance processes",
+        "Risk management framework",
+        "Stakeholder communication",
+        "Knowledge transfer sessions",
+        "Post-implementation review"
+    ];
 };
 
 // Detailed content for delivery items
 const deliveryDetailedContent = {
     "End-to-End Solutions": {
         overview: "We provide complete lifecycle management from initial planning and strategy to deployment, training, and ongoing support.",
-        benefits: ["Strategy consulting and roadmap planning", "Vendor selection and procurement", "Project management and implementation", "User training and change management", "24/7 support and maintenance", "Continuous optimization and upgrades"]
+        benefits: getDeliveryExtraPoints("End-to-End Solutions")
     },
     "Enterprise Excellence": {
         overview: "We guarantee enterprise-grade excellence with 99.9% uptime, comprehensive performance metrics, and measurable business results.",
-        benefits: ["SLA-backed uptime guarantees", "Real-time performance dashboards", "Regular business reviews", "Continuous improvement programs", "ISO and compliance certifications", "Disaster recovery and business continuity"]
+        benefits: getDeliveryExtraPoints("Enterprise Excellence")
     },
     "Flexible Engagement": {
         overview: "Choose the engagement model that works best for your business - strategic consulting, project-based delivery, or fully managed services.",
-        benefits: ["Time and material projects", "Fixed-price deliverables", "Dedicated team engagement", "Co-managed IT services", "Fully outsourced IT operations", "Pay-as-you-go options"]
+        benefits: getDeliveryExtraPoints("Flexible Engagement")
     },
     "Rapid Deployment": {
         overview: "Our accelerated deployment methodology gets your solutions up and running quickly without disrupting daily operations.",
-        benefits: ["Agile implementation methodology", "Automated provisioning and configuration", "Minimal downtime during cutover", "Parallel run and testing phase", "Phased rollout options", "Post-deployment hyper-care"]
+        benefits: getDeliveryExtraPoints("Rapid Deployment")
     },
     "Analytics & Insights": {
         overview: "Gain valuable insights from your data with our advanced analytics solutions.",
-        benefits: ["Real-time data visualization", "Predictive modeling and forecasting", "Custom report builder", "Data warehousing and ETL", "Business intelligence tools (Power BI, Tableau)", "Self-service analytics for business users"]
+        benefits: getDeliveryExtraPoints("Analytics & Insights")
     },
     "24/7 Premium Support": {
         overview: "Our dedicated support team is available 24/7/365 to assist with any technical issues.",
-        benefits: ["24/7 phone, chat, and email support", "15-minute response SLA for critical issues", "Dedicated account manager", "Quarterly business reviews", "Proactive monitoring and alerting", "Root cause analysis and preventive actions"]
+        benefits: getDeliveryExtraPoints("24/7 Premium Support")
     }
+};
+
+// Extended content for work with winze (5+ extra points)
+const getWorkExtraPoints = (title) => {
+    const pointsMap = {
+        "Strategic Partnership": [
+            "Dedicated strategic advisor",
+            "Quarterly strategy sessions",
+            "Innovation roadmap planning",
+            "Co-investment in new capabilities",
+            "Long-term commercial flexibility",
+            "Joint go-to-market opportunities"
+        ],
+        "Enterprise Value": [
+            "ROI guarantee on qualified projects",
+            "Value-based pricing options",
+            "Outcome-focused KPIs",
+            "Regular value realization reviews",
+            "Cost optimization recommendations",
+            "Competitive benchmarking"
+        ],
+        "Innovation First": [
+            "Dedicated R&D team",
+            "Early access to beta technologies",
+            "Innovation workshops and hackathons",
+            "Technology watch and trend reports",
+            "Proof of concept (POC) at no cost",
+            "Patent and IP collaboration"
+        ],
+        "Client Success": [
+            "Case studies and reference calls",
+            "Client success manager assigned",
+            "Annual user conferences and events",
+            "Client advisory board participation",
+            "Loyalty rewards and discounts",
+            "Referral program benefits"
+        ]
+    };
+    return pointsMap[title] || [
+        "Trusted partnership approach",
+        "Transparent communication",
+        "Shared goals & objectives",
+        "Regular progress reviews",
+        "Continuous feedback loop",
+        "Long-term relationship focus"
+    ];
 };
 
 const workDetailedContent = {
     "Strategic Partnership": {
         overview: "As a strategic partner, we align our goals with yours. We invest time to understand your business challenges and work collaboratively.",
-        benefits: ["Dedicated strategic advisor", "Quarterly strategy sessions", "Innovation roadmap planning", "Co-investment in new capabilities", "Long-term commercial flexibility", "Joint go-to-market opportunities"]
+        benefits: getWorkExtraPoints("Strategic Partnership")
     },
     "Enterprise Value": {
         overview: "We measure our success by your success. Every project is executed with a focus on delivering measurable business value.",
-        benefits: ["ROI guarantee on qualified projects", "Value-based pricing options", "Outcome-focused KPIs", "Regular value realization reviews", "Cost optimization recommendations", "Competitive benchmarking"]
+        benefits: getWorkExtraPoints("Enterprise Value")
     },
     "Innovation First": {
         overview: "We continuously invest in research and development to bring you the latest technologies and innovative solutions.",
-        benefits: ["Dedicated R&D team", "Early access to beta technologies", "Innovation workshops and hackathons", "Technology watch and trend reports", "Proof of concept (POC) at no cost", "Patent and IP collaboration"]
+        benefits: getWorkExtraPoints("Innovation First")
     },
     "Client Success": {
         overview: "Our track record speaks for itself. With over 100 successful deployments, 500+ satisfied clients, and 16+ years of excellence.",
-        benefits: ["Case studies and reference calls", "Client success manager assigned", "Annual user conferences and events", "Client advisory board participation", "Loyalty rewards and discounts", "Referral program benefits"]
+        benefits: getWorkExtraPoints("Client Success")
     }
+};
+
+// Extended content for industries (5+ extra points)
+const getIndustryExtraPoints = (name) => {
+    const pointsMap = {
+        "Healthcare": [
+            "HIPAA-compliant telemedicine platforms",
+            "EHR systems and patient portals",
+            "Secure messaging for care teams",
+            "Remote patient monitoring solutions",
+            "Medical IoT device integration",
+            "99.9% uptime for critical systems"
+        ],
+        "Manufacturing": [
+            "IoT sensors and SCADA systems",
+            "Predictive maintenance algorithms",
+            "Real-time production monitoring",
+            "Supply chain integration",
+            "Quality control automation",
+            "Digital twin simulation"
+        ],
+        "Education": [
+            "Virtual classrooms and LMS platforms",
+            "Student information systems",
+            "Parent portal for progress monitoring",
+            "Digital library and resources",
+            "Exam proctoring solutions",
+            "Campus-wide Wi-Fi and security"
+        ],
+        "Logistics & Supply Chain": [
+            "Real-time tracking and visibility",
+            "Route optimization algorithms",
+            "Warehouse management systems",
+            "Inventory forecasting tools",
+            "Last-mile delivery optimization",
+            "Cross-border compliance solutions"
+        ]
+    };
+    return pointsMap[name] || [
+        "Industry-specific compliance",
+        "Tailored solution architecture",
+        "Domain expert consulting",
+        "Seamless legacy integration",
+        "Scalable infrastructure",
+        "24/7 operational support"
+    ];
 };
 
 const WinzePage = () => {
@@ -595,6 +802,11 @@ const WinzePage = () => {
             detailedContent = deliveryDetailedContent[item.title];
         } else if (type === 'work') {
             detailedContent = workDetailedContent[item.title];
+        } else if (type === 'industry') {
+            detailedContent = {
+                overview: item.detailedDesc || `Comprehensive ${item.name} solutions tailored for your business needs.`,
+                benefits: getIndustryExtraPoints(item.name)
+            };
         }
         
         setLandingData({
@@ -630,6 +842,7 @@ const WinzePage = () => {
         await handleTrackClick(`Quote Request from ${formData.name} - ${formData.service}`, 'quote');
         setShowQuoteModal(false);
         setFormData({ name: '', email: '', phone: '', service: '', message: '' });
+        alert(`Thank you ${formData.name}! We'll contact you within 24 hours about ${formData.service}.`);
     };
 
     const scrollToSection = (ref, sectionName) => {
@@ -639,6 +852,7 @@ const WinzePage = () => {
         }
     };
 
+    // Solutions with differentiated icons - added Emergency Notification card
     const solutions = [
         { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video },
         { title: "Smart Eye AI", desc: "Advanced video analytics for proactive security monitoring.", icon: faRobot, img: solutionImages.ai },
@@ -646,22 +860,22 @@ const WinzePage = () => {
         { title: "SaaS Products", desc: "Scalable cloud solutions customized for your business needs.", icon: faCloud, img: solutionImages.saas },
         { title: "Enterprise Software Licensing", desc: "Flexible licensing options for major enterprise software.", icon: faFileAlt, img: solutionImages.software },
         { title: "IT Infrastructure", desc: "Enterprise-grade networking and server solutions for optimal performance.", icon: faServer, img: solutionImages.it },
-        { title: "CCTV Services", desc: "End-to-end surveillance solutions with H.265 HD cameras, cloud storage, and AI-powered video analytics.", icon: faVideo, img: "/images/cctv-services.jpg" },
-        { title: "Cabling Services", desc: "Active & Passive Cabling solutions including Greenfield projects.", icon: faWifi, img: "/images/cabling-services.jpg" },
-        { title: "WiFi as a Service", desc: "Managed wireless solutions for seamless connectivity anywhere.", icon: faWifi, img: solutionImages.wifi },
+        { title: "CCTV Services", desc: "End-to-end surveillance solutions with H.265 HD cameras, cloud storage, and AI-powered video analytics.", icon: faCamera, img: "/images/cctv-services.jpg" },
+        { title: "Cabling Services", desc: "Active & Passive Cabling solutions including Greenfield projects.", icon: faNetworkWired, img: "/images/cabling-services.jpg" },
+        { title: "WiFi as a Service", desc: "Managed wireless solutions for seamless connectivity anywhere.", icon: faBroadcastTower, img: solutionImages.wifi },
         { title: "Smart Live Classroom", desc: "Interactive virtual learning platform with parent access features.", icon: faChalkboard, img: solutionImages.classroom },
         { title: "Web & Mobile Development", desc: "Custom web and mobile applications for your business needs.", icon: faMobileAlt, img: solutionImages.webMobile },
         { title: "Cyber Security", desc: "Advanced threat protection and security compliance solutions.", icon: faLock, img: solutionImages.cyberSecurity },
         { title: "Unified Communications", desc: "Seamless integration of voice, video, and messaging for enterprise collaboration.", icon: faChartLine, img: solutionImages.unified },
-        { title: "Contact Center", desc: "AI-powered customer service solutions for enhanced agent productivity.", icon: faHeadset, img: solutionImages.contact }
+        { title: "Contact Center", desc: "AI-powered customer service solutions for enhanced agent productivity.", icon: faHeadset, img: solutionImages.contact },
+        { title: "Emergency Notification (Code Blue)", desc: "Real-time mass alerts and crisis communication for critical situations.", icon: faBell, img: "/images/emergency-notification.jpg" }
     ];
 
+    // Industries - removed Banking & Finance and Retail & E-commerce
     const industries = [
         { name: "Healthcare", desc: "HIPAA-compliant IT solutions for modern healthcare facilities.", icon: faHospital, img: industryImages.healthcare, detailedDesc: "HIPAA-compliant healthcare IT solutions including telemedicine platforms, EHR systems, patient portals, secure messaging, and remote patient monitoring with 99.9% uptime." },
         { name: "Manufacturing", desc: "IoT and automation solutions for Industry 4.0 transformation.", icon: faIndustry, img: industryImages.manufacturing, detailedDesc: "Industry 4.0 solutions including IoT sensors, SCADA systems, predictive maintenance, real-time production monitoring, and supply chain integration for smart manufacturing." },
         { name: "Education", desc: "Digital learning platforms for institutions of all sizes.", icon: faGraduationCap, img: industryImages.education, detailedDesc: "Digital learning platforms with virtual classrooms, learning management systems, student information systems, parent portals, and analytics for K-12 and higher education." },
-        { name: "Banking & Finance", desc: "Secure financial technology solutions for modern banking.", icon: faBuilding, img: industryImages.finance, detailedDesc: "Secure fintech solutions including digital banking platforms, payment gateways, fraud detection systems, compliance management, and data analytics for financial institutions." },
-        { name: "Retail & E-commerce", desc: "Digital transformation solutions for retail businesses.", icon: faShoppingCart, img: industryImages.retail, detailedDesc: "Retail digital transformation including POS systems, inventory management, e-commerce platforms, customer analytics, loyalty programs, and omnichannel integration." },
         { name: "Logistics & Supply Chain", desc: "Intelligent logistics and supply chain management systems.", icon: faTruck, img: industryImages.logistics, detailedDesc: "Intelligent logistics solutions with real-time tracking, route optimization, warehouse management, inventory forecasting, and supply chain analytics for improved efficiency." }
     ];
 
@@ -690,7 +904,56 @@ const WinzePage = () => {
         { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients, and 16+ years of excellence." }
     ];
 
-    // Landing Page Modal Component
+    // Card color gradients for different sections
+    const getCardGradient = (index, type) => {
+        const gradients = {
+            delivery: [
+                'linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb4d)',
+                'linear-gradient(135deg, #0f2027, #203a43, #2c5364)',
+                'linear-gradient(135deg, #23074d, #cc5333)',
+                'linear-gradient(135deg, #1f1c2c, #928dab)',
+                'linear-gradient(135deg, #000000, #434343)',
+                'linear-gradient(135deg, #134e5e, #71b280)'
+            ],
+            solution: [
+                'linear-gradient(135deg, #2b1b4e, #4a2c7a, #7b4c9e)',
+                'linear-gradient(135deg, #1a3c2c, #2d6a4f, #40916c)',
+                'linear-gradient(135deg, #4a0e4e, #8a2387, #e94057)',
+                'linear-gradient(135deg, #0f2027, #203a43, #2c5364)',
+                'linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b)',
+                'linear-gradient(135deg, #004e92, #000428)',
+                'linear-gradient(135deg, #2b1b4e, #4a2c7a, #7b4c9e)',
+                'linear-gradient(135deg, #1a3c2c, #2d6a4f, #40916c)',
+                'linear-gradient(135deg, #4a0e4e, #8a2387, #e94057)',
+                'linear-gradient(135deg, #0f2027, #203a43, #2c5364)',
+                'linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b)',
+                'linear-gradient(135deg, #004e92, #000428)',
+                'linear-gradient(135deg, #2b1b4e, #4a2c7a, #7b4c9e)',
+                'linear-gradient(135deg, #1a3c2c, #2d6a4f, #40916c)',
+                'linear-gradient(135deg, #4a0e4e, #8a2387, #e94057)'
+            ],
+            industry: [
+                'linear-gradient(135deg, #0f3443, #34e89e)',
+                'linear-gradient(135deg, #f12711, #f5af19)',
+                'linear-gradient(135deg, #4b6cb7, #182848)',
+                'linear-gradient(135deg, #ff6a00, #ee0979)'
+            ],
+            work: [
+                'linear-gradient(135deg, #360033, #0b8793)',
+                'linear-gradient(135deg, #2193b0, #6dd5ed)',
+                'linear-gradient(135deg, #7f00ff, #e100ff)',
+                'linear-gradient(135deg, #1f4037, #99f2c8)'
+            ]
+        };
+        
+        if (type === 'delivery') return gradients.delivery[index % gradients.delivery.length];
+        if (type === 'solution') return gradients.solution[index % gradients.solution.length];
+        if (type === 'industry') return gradients.industry[index % gradients.industry.length];
+        if (type === 'work') return gradients.work[index % gradients.work.length];
+        return 'linear-gradient(135deg, #667eea, #764ba2)';
+    };
+
+    // Landing Page Modal Component with royal colors
     const LandingPage = ({ item, onClose, onRequestQuote }) => {
         if (!item) return null;
         
@@ -716,6 +979,9 @@ const WinzePage = () => {
             alert(`Thank you! We'll contact you about ${item.title} within 24 hours.`);
         };
         
+        // Royal gradient for landing page
+        const royalGradient = 'linear-gradient(145deg, #1a1a2e, #16213e, #0f3460)';
+        
         return (
             <div style={{
                 position: 'fixed',
@@ -723,7 +989,7 @@ const WinzePage = () => {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                background: 'rgba(0,0,0,0.95)',
+                background: 'rgba(0,0,0,0.96)',
                 zIndex: 10000,
                 display: 'flex',
                 alignItems: 'center',
@@ -733,31 +999,34 @@ const WinzePage = () => {
                 padding: '20px'
             }} onClick={onClose}>
                 <div style={{
-                    background: 'white',
-                    borderRadius: '20px',
+                    background: royalGradient,
+                    borderRadius: '28px',
                     maxWidth: '1000px',
                     width: '100%',
                     cursor: 'default',
                     maxHeight: '90vh',
                     overflow: 'auto',
-                    position: 'relative'
+                    position: 'relative',
+                    boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
+                    border: '1px solid rgba(255,215,0,0.3)'
                 }} onClick={(e) => e.stopPropagation()}>
                     <button onClick={onClose} style={{
                         position: 'sticky',
                         top: '20px',
                         right: '20px',
                         float: 'right',
-                        background: '#667eea',
+                        background: '#FFD700',
                         border: 'none',
-                        fontSize: '18px',
+                        fontSize: '20px',
                         cursor: 'pointer',
-                        color: 'white',
-                        width: '35px',
-                        height: '35px',
+                        color: '#1a1a2e',
+                        width: '40px',
+                        height: '40px',
                         borderRadius: '50%',
                         marginTop: '20px',
                         marginRight: '20px',
-                        zIndex: 10
+                        zIndex: 10,
+                        fontWeight: 'bold'
                     }}>×</button>
                     
                     <div style={{ padding: '40px', paddingTop: '20px' }}>
@@ -767,34 +1036,35 @@ const WinzePage = () => {
                                 alt={item.title || item.name}
                                 style={{ 
                                     width: '100%', 
-                                    height: '300px', 
+                                    height: '280px', 
                                     objectFit: 'cover', 
-                                    borderRadius: '15px',
-                                    marginBottom: '30px'
+                                    borderRadius: '20px',
+                                    marginBottom: '30px',
+                                    boxShadow: '0 15px 35px rgba(0,0,0,0.3)'
                                 }}
                                 onError={(e) => {
                                     e.target.onerror = null;
-                                    e.target.src = 'https://placehold.co/1200x400/667eea/white?text=' + encodeURIComponent(item.title || item.name);
+                                    e.target.src = 'https://placehold.co/1200x400/FFD700/1a1a2e?text=' + encodeURIComponent(item.title || item.name);
                                 }}
                             />
                         )}
                         
                         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '60px', color: '#667eea', marginBottom: '20px' }} />
-                            <h1 style={{ color: '#1a1a2e', marginBottom: '15px', fontSize: '36px' }}>{item.title || item.name}</h1>
-                            <p style={{ color: '#666', fontSize: '18px', maxWidth: '800px', margin: '0 auto' }}>
+                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '60px', color: '#FFD700', marginBottom: '20px' }} />
+                            <h1 style={{ color: 'white', marginBottom: '15px', fontSize: '36px', fontWeight: '800' }}>{item.title || item.name}</h1>
+                            <p style={{ color: '#ccc', fontSize: '18px', maxWidth: '800px', margin: '0 auto' }}>
                                 {content?.overview || "Enterprise-grade solution designed to transform your business operations."}
                             </p>
                         </div>
                         
                         {content && content.benefits && (
                             <div style={{ marginBottom: '30px' }}>
-                                <h3 style={{ color: '#333', marginBottom: '20px', fontSize: '24px', borderLeft: '4px solid #667eea', paddingLeft: '15px' }}>Key Benefits</h3>
+                                <h3 style={{ color: '#FFD700', marginBottom: '20px', fontSize: '24px', borderLeft: '4px solid #FFD700', paddingLeft: '15px' }}>Key Benefits</h3>
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '15px' }}>
-                                    {content.benefits.map((benefit, idx) => (
-                                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', background: '#f8f9ff', borderRadius: '10px' }}>
-                                            <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#667eea', fontSize: '18px' }} />
-                                            <span style={{ color: '#555' }}>{benefit}</span>
+                                    {content.benefits.slice(0,8).map((benefit, idx) => (
+                                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: 'rgba(255,255,255,0.1)', borderRadius: '15px', backdropFilter: 'blur(5px)' }}>
+                                            <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#FFD700', fontSize: '18px' }} />
+                                            <span style={{ color: '#eee' }}>{benefit}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -803,12 +1073,12 @@ const WinzePage = () => {
                         
                         {content && content.features && (
                             <div style={{ marginBottom: '30px' }}>
-                                <h3 style={{ color: '#333', marginBottom: '20px', fontSize: '24px', borderLeft: '4px solid #667eea', paddingLeft: '15px' }}>Key Features</h3>
+                                <h3 style={{ color: '#FFD700', marginBottom: '20px', fontSize: '24px', borderLeft: '4px solid #FFD700', paddingLeft: '15px' }}>Key Features</h3>
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '15px' }}>
                                     {content.features.map((feature, idx) => (
-                                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', background: '#f8f9ff', borderRadius: '10px' }}>
+                                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: 'rgba(255,255,255,0.08)', borderRadius: '15px' }}>
                                             <FontAwesomeIcon icon={faStar} style={{ color: '#FFD700', fontSize: '18px' }} />
-                                            <span style={{ color: '#555' }}>{feature}</span>
+                                            <span style={{ color: '#ddd' }}>{feature}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -817,10 +1087,10 @@ const WinzePage = () => {
                         
                         {content && content.useCases && (
                             <div style={{ marginBottom: '30px' }}>
-                                <h3 style={{ color: '#333', marginBottom: '20px', fontSize: '24px', borderLeft: '4px solid #667eea', paddingLeft: '15px' }}>Use Cases</h3>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                                <h3 style={{ color: '#FFD700', marginBottom: '20px', fontSize: '24px', borderLeft: '4px solid #FFD700', paddingLeft: '15px' }}>Use Cases</h3>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
                                     {content.useCases.map((useCase, idx) => (
-                                        <span key={idx} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', padding: '8px 20px', borderRadius: '30px', fontSize: '14px' }}>
+                                        <span key={idx} style={{ background: 'linear-gradient(135deg, #FFD700, #FFA500)', color: '#1a1a2e', padding: '8px 20px', borderRadius: '30px', fontSize: '14px', fontWeight: '600' }}>
                                             {useCase}
                                         </span>
                                     ))}
@@ -829,25 +1099,25 @@ const WinzePage = () => {
                         )}
                         
                         {!showInnerQuoteForm ? (
-                            <div style={{ textAlign: 'center', marginTop: '40px', padding: '30px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '15px' }}>
-                                <h3 style={{ color: 'white', marginBottom: '15px', fontSize: '22px' }}>Ready to get started with {item.title}?</h3>
-                                <p style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '20px' }}>Get a personalized quote tailored to your specific requirements.</p>
+                            <div style={{ textAlign: 'center', marginTop: '40px', padding: '35px', background: 'rgba(255,215,0,0.15)', borderRadius: '20px', border: '1px solid rgba(255,215,0,0.3)' }}>
+                                <h3 style={{ color: '#FFD700', marginBottom: '15px', fontSize: '22px' }}>Ready to get started with {item.title}?</h3>
+                                <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '25px' }}>Get a personalized quote tailored to your specific requirements.</p>
                                 <button 
                                     onClick={() => setShowInnerQuoteForm(true)}
                                     style={{
-                                        padding: '14px 40px',
-                                        background: 'white',
-                                        color: '#667eea',
+                                        padding: '14px 45px',
+                                        background: '#FFD700',
+                                        color: '#1a1a2e',
                                         border: 'none',
                                         borderRadius: '50px',
                                         cursor: 'pointer',
                                         fontSize: '16px',
-                                        fontWeight: '600',
+                                        fontWeight: '700',
                                         transition: 'all 0.3s'
                                     }}
                                     onMouseEnter={(e) => {
                                         e.target.style.transform = 'scale(1.05)';
-                                        e.target.style.boxShadow = '0 8px 25px rgba(0,0,0,0.2)';
+                                        e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.4)';
                                     }}
                                     onMouseLeave={(e) => {
                                         e.target.style.transform = 'scale(1)';
@@ -858,9 +1128,9 @@ const WinzePage = () => {
                                 </button>
                             </div>
                         ) : (
-                            <div style={{ marginTop: '40px', padding: '30px', background: '#f8f9ff', borderRadius: '15px' }}>
-                                <h3 style={{ color: '#333', marginBottom: '20px', textAlign: 'center' }}>
-                                    Request a Quote for <span style={{ color: '#667eea' }}>{item.title}</span>
+                            <div style={{ marginTop: '40px', padding: '30px', background: 'rgba(255,255,255,0.1)', borderRadius: '20px', backdropFilter: 'blur(10px)' }}>
+                                <h3 style={{ color: '#FFD700', marginBottom: '20px', textAlign: 'center' }}>
+                                    Request a Quote for <span style={{ color: '#FFD700' }}>{item.title}</span>
                                 </h3>
                                 <form onSubmit={handleInnerSubmit}>
                                     <input 
@@ -874,8 +1144,10 @@ const WinzePage = () => {
                                             width: '100%', 
                                             padding: '14px', 
                                             marginBottom: '15px', 
-                                            borderRadius: '10px', 
-                                            border: '1px solid #ddd',
+                                            borderRadius: '12px', 
+                                            border: '1px solid rgba(255,215,0,0.3)',
+                                            background: 'rgba(255,255,255,0.1)',
+                                            color: 'white',
                                             fontSize: '15px',
                                             boxSizing: 'border-box'
                                         }} 
@@ -891,8 +1163,10 @@ const WinzePage = () => {
                                             width: '100%', 
                                             padding: '14px', 
                                             marginBottom: '15px', 
-                                            borderRadius: '10px', 
-                                            border: '1px solid #ddd',
+                                            borderRadius: '12px', 
+                                            border: '1px solid rgba(255,215,0,0.3)',
+                                            background: 'rgba(255,255,255,0.1)',
+                                            color: 'white',
                                             fontSize: '15px',
                                             boxSizing: 'border-box'
                                         }} 
@@ -908,8 +1182,10 @@ const WinzePage = () => {
                                             width: '100%', 
                                             padding: '14px', 
                                             marginBottom: '15px', 
-                                            borderRadius: '10px', 
-                                            border: '1px solid #ddd',
+                                            borderRadius: '12px', 
+                                            border: '1px solid rgba(255,215,0,0.3)',
+                                            background: 'rgba(255,255,255,0.1)',
+                                            color: 'white',
                                             fontSize: '15px',
                                             boxSizing: 'border-box'
                                         }} 
@@ -924,8 +1200,10 @@ const WinzePage = () => {
                                             width: '100%', 
                                             padding: '14px', 
                                             marginBottom: '20px', 
-                                            borderRadius: '10px', 
-                                            border: '1px solid #ddd',
+                                            borderRadius: '12px', 
+                                            border: '1px solid rgba(255,215,0,0.3)',
+                                            background: 'rgba(255,255,255,0.1)',
+                                            color: 'white',
                                             fontSize: '15px',
                                             boxSizing: 'border-box',
                                             resize: 'vertical'
@@ -938,10 +1216,10 @@ const WinzePage = () => {
                                             style={{
                                                 flex: 1,
                                                 padding: '14px',
-                                                background: '#ccc',
-                                                color: '#333',
+                                                background: 'rgba(255,255,255,0.2)',
+                                                color: 'white',
                                                 border: 'none',
-                                                borderRadius: '10px',
+                                                borderRadius: '12px',
                                                 cursor: 'pointer',
                                                 fontSize: '16px',
                                                 fontWeight: '600'
@@ -954,13 +1232,13 @@ const WinzePage = () => {
                                             style={{
                                                 flex: 1,
                                                 padding: '14px',
-                                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                                color: 'white',
+                                                background: '#FFD700',
+                                                color: '#1a1a2e',
                                                 border: 'none',
-                                                borderRadius: '10px',
+                                                borderRadius: '12px',
                                                 cursor: 'pointer',
                                                 fontSize: '16px',
-                                                fontWeight: '600'
+                                                fontWeight: '700'
                                             }}
                                         >
                                             Submit Request →
@@ -1042,7 +1320,7 @@ const WinzePage = () => {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                background: 'linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.7) 100%)'
+                background: 'linear-gradient(135deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.75) 100%)'
             }} />
         </div>
     );
@@ -1061,80 +1339,116 @@ const WinzePage = () => {
                     100% { transform: translateX(-50%); }
                 }
                 @keyframes premiumGlow {
-                    0% { box-shadow: 0 0 10px rgba(102,126,234,0.3), 0 0 20px rgba(102,126,234,0.2); filter: brightness(1); transform: translateY(0px); }
-                    30% { box-shadow: 0 0 40px rgba(255,215,0,0.5), 0 0 60px rgba(102,126,234,0.4); filter: brightness(1.05); transform: translateY(-5px); }
-                    60% { box-shadow: 0 0 60px rgba(255,215,0,0.7), 0 0 80px rgba(102,126,234,0.6); filter: brightness(1.08); transform: translateY(-8px); }
-                    100% { box-shadow: 0 0 10px rgba(102,126,234,0.3), 0 0 20px rgba(102,126,234,0.2); filter: brightness(1); transform: translateY(0px); }
+                    0% { box-shadow: 0 0 10px rgba(255,215,0,0.3), 0 0 20px rgba(255,215,0,0.2); filter: brightness(1); transform: translateY(0px); }
+                    30% { box-shadow: 0 0 40px rgba(255,215,0,0.5), 0 0 60px rgba(255,215,0,0.4); filter: brightness(1.05); transform: translateY(-5px); }
+                    60% { box-shadow: 0 0 60px rgba(255,215,0,0.7), 0 0 80px rgba(255,215,0,0.6); filter: brightness(1.08); transform: translateY(-8px); }
+                    100% { box-shadow: 0 0 10px rgba(255,215,0,0.3), 0 0 20px rgba(255,215,0,0.2); filter: brightness(1); transform: translateY(0px); }
                 }
                 .marquee-container { width: 100%; overflow: hidden; position: relative; }
                 .marquee-content { display: flex; gap: 20px; padding: 20px 10px; width: fit-content; animation: marqueeScroll 25s linear infinite; }
                 .marquee-container:hover .marquee-content { animation-play-state: paused; }
                 section { position: relative; z-index: 1; }
                 .section-content { position: relative; z-index: 2; }
-                .delivery-card, .work-card, .solution-card, .industry-card {
-                    background: white;
-                    border-radius: 20px;
-                    text-align: center;
-                    transition: all 0.4s ease-in-out;
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-                    border: 1px solid rgba(0,0,0,0.05);
+                
+                /* Modern Card Styles */
+                .modern-card {
+                    background: linear-gradient(145deg, #1a1a2e, #16213e);
+                    border-radius: 24px;
+                    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
                     cursor: pointer;
                     overflow: hidden;
+                    backdrop-filter: blur(2px);
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+                    border: 1px solid rgba(255,215,0,0.15);
                 }
-                .delivery-card:hover, .work-card:hover, .solution-card:hover, .industry-card:hover {
-                    transform: translateY(-10px);
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                .modern-card:hover {
+                    transform: translateY(-12px);
+                    box-shadow: 0 25px 45px rgba(0,0,0,0.35);
+                    border-color: rgba(255,215,0,0.4);
                 }
-                .delivery-card:hover h3, .delivery-card:hover p,
-                .work-card:hover h3, .work-card:hover p,
-                .solution-card:hover h3, .solution-card:hover p,
-                .industry-card:hover h3, .industry-card:hover p {
-                    color: white;
+                .card-inner {
+                    padding: 28px 24px 32px;
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
                 }
-                .delivery-card:hover .icon, .work-card:hover .icon,
-                .solution-card:hover .icon, .industry-card:hover .icon {
-                    color: white !important;
+                .extra-points {
+                    margin-top: 20px;
+                    border-top: 1px solid rgba(255,215,0,0.2);
+                    padding-top: 16px;
                 }
-                .solution-card-image, .industry-card-image {
+                .point-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin-bottom: 10px;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                }
+                .card-image {
                     width: 100%;
                     height: 200px;
                     object-fit: cover;
+                    transition: transform 0.5s;
                 }
-                .solution-card-content, .industry-card-content {
-                    padding: 25px;
-                    text-align: center;
-                    transition: all 0.4s ease-in-out;
+                .modern-card:hover .card-image {
+                    transform: scale(1.03);
                 }
-                .solution-card:hover .solution-card-content,
-                .industry-card:hover .industry-card-content {
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                .btn-learn {
+                    background: rgba(255,215,0,0.2);
+                    backdrop-filter: blur(4px);
+                    border: 1px solid rgba(255,215,0,0.5);
+                    padding: 10px 24px;
+                    border-radius: 40px;
+                    font-weight: 600;
+                    font-size: 0.85rem;
+                    transition: 0.3s;
+                    cursor: pointer;
+                    width: fit-content;
+                    margin-top: 20px;
+                    color: #FFD700;
                 }
-                .delivery-card .learn-more-btn,
-                .work-card .learn-more-btn,
-                .solution-card .learn-more-btn,
-                .industry-card .learn-more-btn {
-                    background-color: #667eea;
-                    color: white;
-                    border: none;
-                }
-                .delivery-card:hover .learn-more-btn,
-                .work-card:hover .learn-more-btn,
-                .solution-card:hover .learn-more-btn,
-                .industry-card:hover .learn-more-btn {
-                    background: white !important;
-                    color: #667eea !important;
-                    border: 1px solid #667eea !important;
+                .btn-learn:hover {
+                    background: #FFD700;
+                    color: #1a1a2e;
+                    border-color: #FFD700;
+                    transform: scale(1.02);
                 }
                 .client-logo-item, .partner-logo-item {
-                    background: white; padding: 20px; border-radius: 12px; text-align: center; cursor: pointer;
-                    transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.08); min-width: 150px;
-                    border: 1px solid rgba(0,0,0,0.05); flex-shrink: 0;
+                    background: white; 
+                    padding: 20px; 
+                    border-radius: 16px; 
+                    text-align: center; 
+                    cursor: pointer;
+                    transition: all 0.3s ease; 
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+                    min-width: 150px;
+                    border: 1px solid rgba(0,0,0,0.05); 
+                    flex-shrink: 0;
                 }
-                .client-logo-item:hover, .partner-logo-item:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.12); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-                .client-logo-item:hover h3, .partner-logo-item:hover h3 { color: white; }
+                .client-logo-item:hover, .partner-logo-item:hover { 
+                    transform: translateY(-5px); 
+                    box-shadow: 0 15px 30px rgba(0,0,0,0.15); 
+                    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); 
+                }
+                .client-logo-item:hover h3, .partner-logo-item:hover h3 { color: #1a1a2e; }
                 .client-logo-img, .partner-logo-img { width: 80px; height: 80px; margin: 0 auto 12px; display: flex; align-items: center; justifyContent: center; }
                 .client-logo-img img, .partner-logo-img img { width: 100%; height: 100%; object-fit: contain; }
+                
+                .stat-card {
+                    background: rgba(255,255,255,0.1);
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255,215,0,0.3);
+                    transition: all 0.3s;
+                }
+                .stat-card:hover {
+                    transform: translateY(-8px);
+                    background: rgba(255,215,0,0.2);
+                    border-color: #FFD700;
+                }
             `}</style>
             
             <SEO 
@@ -1146,56 +1460,55 @@ const WinzePage = () => {
                 type="website"
             />
             
-            <div style={{ fontFamily: "'Poppins', 'Montserrat', sans-serif", overflowX: 'hidden', position: 'relative' }}>
+            <div style={{ fontFamily: "'Poppins', 'Montserrat', sans-serif", overflowX: 'hidden', position: 'relative', background: '#0a0a1a' }}>
                 
                 <SocialLinks />
                 
-                {/* Navigation Bar */}
+                {/* Navigation Bar - Logo without blue button background */}
                 <nav style={{
                     position: 'sticky',
                     top: 0,
                     left: 0,
                     right: 0,
-                    background: scrolled ? 'rgba(15,12,41,0.98)' : 'rgba(15,12,41,0.95)',
+                    background: scrolled ? 'rgba(10,10,26,0.98)' : 'rgba(10,10,26,0.95)',
                     backdropFilter: 'blur(20px)',
-                    padding: '15px 5%',
+                    padding: '12px 5%',
                     zIndex: 1000,
                     transition: 'all 0.3s',
-                    boxShadow: scrolled ? '0 2px 30px rgba(0,0,0,0.2)' : 'none'
+                    boxShadow: scrolled ? '0 2px 30px rgba(0,0,0,0.3)' : 'none',
+                    borderBottom: '1px solid rgba(255,215,0,0.1)'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <div 
-                                style={{
-                                    width: '50px',
-                                    height: '50px',
-                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                    borderRadius: '15px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.3s',
-                                    boxShadow: '0 4px 15px rgba(102,126,234,0.3)'
+                        {/* Logo - no blue button background */}
+                        <div 
+                            style={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: '12px',
+                                cursor: 'pointer'
+                            }}
+                            onClick={() => setShowLogoModal(true)}
+                        >
+                            <img 
+                                src="/winze-logo.jpg" 
+                                alt="Winze Technologies Logo" 
+                                style={{ 
+                                    width: '48px', 
+                                    height: '48px', 
+                                    borderRadius: '12px', 
+                                    objectFit: 'contain',
+                                    background: 'white',
+                                    padding: '6px'
                                 }}
-                                onClick={() => setShowLogoModal(true)}
-                                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                            >
-                                <img 
-                                    src="/winze-logo.jpg" 
-                                    alt="Winze Technologies Logo" 
-                                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px' }}
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        e.target.parentElement.innerHTML = '<span style="color:white;font-size:24px;font-weight:bold">W</span>';
-                                    }}
-                                />
-                            </div>
+                                onError={(e) => {
+                                    e.target.style.display = 'none';
+                                    e.target.parentElement.innerHTML = '<div style="width:48px;height:48px;background:#FFD700;border-radius:12px;display:flex;align-items:center;justify-content:center;"><span style="color:#1a1a2e;font-size:24px;font-weight:bold">W</span></div>';
+                                }}
+                            />
                             <span style={{ 
                                 fontWeight: '800', 
-                                fontSize: '1.5rem', 
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                fontSize: '1.4rem', 
+                                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
                                 fontFamily: "'Playfair Display', serif",
@@ -1203,7 +1516,7 @@ const WinzePage = () => {
                             }}>Winze Technologies</span>
                         </div>
                         
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
                             {navItems.map((item) => (
                                 <button
                                     key={item.name}
@@ -1216,7 +1529,7 @@ const WinzePage = () => {
                                         background: 'transparent',
                                         color: '#ddd',
                                         fontWeight: '600',
-                                        padding: '10px 22px',
+                                        padding: '8px 18px',
                                         borderRadius: '30px',
                                         transition: 'all 0.3s',
                                         cursor: 'pointer',
@@ -1225,49 +1538,47 @@ const WinzePage = () => {
                                         border: 'none'
                                     }}
                                     onMouseEnter={(e) => {
-                                        e.target.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                                        e.target.style.color = 'white';
+                                        e.target.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
+                                        e.target.style.color = '#1a1a2e';
                                         e.target.style.transform = 'translateY(-2px)';
-                                        e.target.style.boxShadow = '0 4px 15px rgba(102,126,234,0.3)';
                                     }}
                                     onMouseLeave={(e) => {
                                         e.target.style.background = 'transparent';
                                         e.target.style.color = '#ddd';
                                         e.target.style.transform = 'translateY(0)';
-                                        e.target.style.boxShadow = 'none';
                                     }}
                                 >
                                     {item.name}
                                 </button>
                             ))}
                             <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Get Quote Button', 'cta'); }} style={{
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                color: 'white',
+                                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                                color: '#1a1a2e',
                                 border: 'none',
-                                padding: '10px 28px',
+                                padding: '8px 24px',
                                 borderRadius: '30px',
                                 cursor: 'pointer',
                                 fontWeight: '700',
                                 transition: 'all 0.3s',
                                 fontFamily: "'Poppins', sans-serif",
-                                boxShadow: '0 4px 15px rgba(102,126,234,0.3)'
+                                boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
                             }}
                             onMouseEnter={(e) => {
                                 e.target.style.transform = 'scale(1.05)';
-                                e.target.style.boxShadow = '0 8px 25px rgba(102,126,234,0.4)';
+                                e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)';
                             }}
                             onMouseLeave={(e) => {
                                 e.target.style.transform = 'scale(1)';
-                                e.target.style.boxShadow = '0 4px 15px rgba(102,126,234,0.3)';
+                                e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)';
                             }}
                             >✨ Get a Quote</button>
                         </div>
                     </div>
                 </nav>
 
-                {/* Hero Section */}
+                {/* Hero Section - Removed CEO line, title adjusted to appear on same line as badge */}
                 <section ref={homeRef} id="home" style={{
-                    minHeight: '100vh',
+                    minHeight: '90vh',
                     position: 'relative',
                     display: 'flex',
                     alignItems: 'center',
@@ -1278,44 +1589,50 @@ const WinzePage = () => {
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
                             <div>
-                                <div style={{ marginBottom: '25px' }}>
+                                <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap' }}>
                                     <span style={{ 
-                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                        padding: '8px 24px',
+                                        background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                                        padding: '6px 20px',
                                         borderRadius: '30px',
-                                        fontSize: '14px',
-                                        color: 'white',
+                                        fontSize: '13px',
+                                        color: '#1a1a2e',
                                         display: 'inline-block',
-                                        boxShadow: '0 4px 15px rgba(102,126,234,0.3)'
+                                        fontWeight: '700',
+                                        boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
                                     }}>🏆 16+ Years of Excellence</span>
+                                    <h1 style={{ 
+                                        fontSize: '2.2rem', 
+                                        color: 'white', 
+                                        display: 'inline-block',
+                                        fontFamily: "'Playfair Display', serif", 
+                                        fontWeight: '700',
+                                        margin: 0,
+                                        letterSpacing: '-0.5px'
+                                    }}>Winze Technologies</h1>
                                 </div>
-                                <h1 style={{ fontSize: '4.5rem', marginBottom: '20px', color: 'white', lineHeight: '1.2', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Winze Technologies</h1>
                                 <p style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ddd', lineHeight: '1.6' }}>Leading Enterprise Communication, Security, and AI Technology Solutions Provider</p>
                                 <p style={{ marginBottom: '30px', color: '#aaa', lineHeight: '1.7' }}>With over 16 years of industry experience, Winze Technologies Pvt Ltd specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.</p>
-                                <div style={{ marginBottom: '35px', borderLeft: '3px solid #667eea', paddingLeft: '20px' }}>
-                                    <strong style={{ fontSize: '1.1rem', color: 'white' }}>Arun N</strong><br />
-                                    <span style={{ fontSize: '14px', color: '#aaa' }}>Chief Executive Officer</span>
-                                </div>
+                                
                                 <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
                                     <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} style={{
-                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                        color: 'white',
+                                        background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                                        color: '#1a1a2e',
                                         border: 'none',
                                         padding: '14px 40px',
                                         borderRadius: '50px',
                                         fontSize: '16px',
-                                        fontWeight: '600',
+                                        fontWeight: '700',
                                         cursor: 'pointer',
                                         transition: 'all 0.3s',
-                                        boxShadow: '0 4px 15px rgba(102,126,234,0.3)'
+                                        boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
                                     }}
                                     onMouseEnter={(e) => {
                                         e.target.style.transform = 'translateY(-2px)';
-                                        e.target.style.boxShadow = '0 8px 25px rgba(102,126,234,0.4)';
+                                        e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)';
                                     }}
                                     onMouseLeave={(e) => {
                                         e.target.style.transform = 'translateY(0)';
-                                        e.target.style.boxShadow = '0 4px 15px rgba(102,126,234,0.3)';
+                                        e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)';
                                     }}>✨ Get a Free Consultation →</button>
                                     <button onClick={(e) => {
                                         e.stopPropagation();
@@ -1325,8 +1642,8 @@ const WinzePage = () => {
                                         }
                                     }} style={{
                                         background: 'transparent',
-                                        color: 'white',
-                                        border: '2px solid #667eea',
+                                        color: '#FFD700',
+                                        border: '2px solid #FFD700',
                                         padding: '14px 40px',
                                         borderRadius: '50px',
                                         fontSize: '16px',
@@ -1335,7 +1652,7 @@ const WinzePage = () => {
                                         transition: 'all 0.3s'
                                     }}
                                     onMouseEnter={(e) => {
-                                        e.target.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                                        e.target.style.background = 'rgba(255,215,0,0.1)';
                                         e.target.style.transform = 'translateY(-2px)';
                                     }}
                                     onMouseLeave={(e) => {
@@ -1352,7 +1669,7 @@ const WinzePage = () => {
                                         cursor: 'pointer',
                                         display: 'inline-block',
                                         animation: 'premiumGlow 3s ease-in-out infinite',
-                                        background: 'linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1))',
+                                        background: 'linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,165,0,0.1))',
                                         padding: '3px',
                                         borderRadius: '23px'
                                     }}
@@ -1374,7 +1691,7 @@ const WinzePage = () => {
                                             height: 'auto',
                                             borderRadius: '20px', 
                                             boxShadow: '0 25px 50px rgba(0,0,0,0.3)', 
-                                            border: '2px solid rgba(102,126,234,0.5)',
+                                            border: '2px solid rgba(255,215,0,0.5)',
                                             transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                             display: 'block'
                                         }} 
@@ -1385,162 +1702,153 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* What We Deliver Section */}
+                {/* What We Deliver Section - Modern cards with extra points */}
                 <section id="delivery" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.delivery} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>What We Deliver</h2>
+                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px', fontWeight: '800' }}>What We Deliver</h2>
                         <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Comprehensive lifecycle for technology integration</p>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '35px' }}>
-                            {deliveryItems.map((item, i) => (
-                                <div 
-                                    key={i} 
-                                    className="delivery-card"
-                                    onMouseEnter={() => setHoveredCard(i)} 
-                                    onMouseLeave={() => setHoveredCard(null)} 
-                                >
-                                    <FontAwesomeIcon icon={item.icon} className="icon" style={{ fontSize: '50px', marginBottom: '20px', color: hoveredCard === i ? 'white' : '#667eea' }} />
-                                    <h3 style={{ marginBottom: '15px', color: hoveredCard === i ? 'white' : '#1a1a2e', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
-                                    <p style={{ color: hoveredCard === i ? 'rgba(255,255,255,0.9)' : '#666', lineHeight: '1.5' }}>{item.desc}</p>
-                                    <button 
-                                        className="learn-more-btn"
-                                        style={{
-                                            display: 'inline-block',
-                                            marginTop: '15px',
-                                            padding: '10px 25px',
-                                            backgroundColor: '#667eea',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '30px',
-                                            cursor: 'pointer',
-                                            fontWeight: '600',
-                                            fontSize: '14px',
-                                            transition: 'all 0.3s'
-                                        }}
-                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
-                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleTrackClick(item.title, 'delivery');
-                                            openLandingPage(item, 'delivery');
-                                        }}
+                            {deliveryItems.map((item, i) => {
+                                const extraPoints = getDeliveryExtraPoints(item.title);
+                                return (
+                                    <div 
+                                        key={i} 
+                                        className="modern-card"
+                                        style={{ background: getCardGradient(i, 'delivery') }}
+                                        onMouseEnter={() => setHoveredCard(i)} 
+                                        onMouseLeave={() => setHoveredCard(null)} 
                                     >
-                                        Learn More →
-                                    </button>
-                                </div>
-                            ))}
+                                        <div className="card-inner">
+                                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '50px', marginBottom: '20px', color: '#FFD700' }} />
+                                            <h3 style={{ marginBottom: '15px', color: 'white', fontSize: '1.4rem', fontWeight: '700' }}>{item.title}</h3>
+                                            <p style={{ color: 'rgba(255,255,255,0.85)', lineHeight: '1.5', marginBottom: '15px' }}>{item.desc}</p>
+                                            <div className="extra-points">
+                                                {extraPoints.slice(0,5).map((point, idx) => (
+                                                    <div key={idx} className="point-item">
+                                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#FFD700', fontSize: '14px' }} />
+                                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '13px' }}>{point}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button 
+                                                className="btn-learn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleTrackClick(item.title, 'delivery');
+                                                    openLandingPage(item, 'delivery');
+                                                }}
+                                            >
+                                                Learn More →
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </section>
 
-                {/* Solutions Portfolio Section */}
+                {/* Solutions Portfolio Section - Royal colors with extra points */}
                 <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.solutions} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Our Solutions Portfolio</h2>
+                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px', fontWeight: '800' }}>Our Solutions Portfolio</h2>
                         <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '10px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Our SOLUTIONS — Practical Action, Bold Ambition, Endless Possibilities</p>
                         <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '60px', fontSize: '1rem' }}>Enterprise-grade technology solutions for modern businesses</p>
                         
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '30px' }}>
-                            {solutions.map((solution, idx) => (
-                                <div 
-                                    key={idx} 
-                                    className="solution-card"
-                                    onMouseEnter={() => setHoveredCard(`sol-${idx}`)} 
-                                    onMouseLeave={() => setHoveredCard(null)} 
-                                >
-                                    <img 
-                                        src={solution.img} 
-                                        alt={solution.title} 
-                                        className="solution-card-image"
-                                        onError={(e) => {
-                                            e.target.onerror = null;
-                                            e.target.src = 'https://placehold.co/600x400/667eea/white?text=' + encodeURIComponent(solution.title);
-                                        }}
-                                    />
-                                    <div className="solution-card-content">
-                                        <FontAwesomeIcon icon={solution.icon} className="icon" style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
-                                        <h3 style={{ marginBottom: '12px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
-                                        <p style={{ color: '#666', lineHeight: '1.5', marginBottom: '20px' }}>{solution.desc}</p>
-                                        <button 
-                                            className="learn-more-btn"
-                                            style={{
-                                                display: 'inline-block',
-                                                padding: '12px 30px',
-                                                backgroundColor: '#667eea',
-                                                color: 'white',
-                                                borderRadius: '50px',
-                                                fontSize: '14px',
-                                                fontWeight: '600',
-                                                cursor: 'pointer',
-                                                textAlign: 'center',
-                                                transition: 'all 0.3s',
-                                                marginTop: '10px',
-                                                border: 'none'
+                            {solutions.map((solution, idx) => {
+                                const extraPoints = getSolutionExtraPoints(solution.title);
+                                return (
+                                    <div 
+                                        key={idx} 
+                                        className="modern-card"
+                                        style={{ background: getCardGradient(idx, 'solution') }}
+                                        onMouseEnter={() => setHoveredCard(`sol-${idx}`)} 
+                                        onMouseLeave={() => setHoveredCard(null)} 
+                                    >
+                                        <img 
+                                            src={solution.img} 
+                                            alt={solution.title} 
+                                            className="card-image"
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = 'https://placehold.co/600x400/FFD700/1a1a2e?text=' + encodeURIComponent(solution.title);
                                             }}
-                                            onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
-                                            onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
-                                            onClick={() => {
-                                                handleTrackClick(solution.title, 'solution');
-                                                openLandingPage(solution, 'solution');
-                                            }}
-                                        >
-                                            Learn More →
-                                        </button>
+                                        />
+                                        <div className="card-inner">
+                                            <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#FFD700' }} />
+                                            <h3 style={{ marginBottom: '12px', color: 'white', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
+                                            <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.5', marginBottom: '15px', fontSize: '14px' }}>{solution.desc}</p>
+                                            <div className="extra-points">
+                                                {extraPoints.slice(0,4).map((point, pid) => (
+                                                    <div key={pid} className="point-item">
+                                                        <FontAwesomeIcon icon={faStar} style={{ color: '#FFD700', fontSize: '12px' }} />
+                                                        <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '12px' }}>{point}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button 
+                                                className="btn-learn"
+                                                onClick={() => {
+                                                    handleTrackClick(solution.title, 'solution');
+                                                    openLandingPage(solution, 'solution');
+                                                }}
+                                            >
+                                                Learn More →
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </section>
 
-                {/* Industries Section */}
+                {/* Industries Section - Only 4 industries with royal colors */}
                 <section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.industries} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Industries We Serve</h2>
+                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px', fontWeight: '800' }}>Industries We Serve</h2>
                         <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Transforming businesses across sectors with innovative solutions</p>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '30px' }}>
-                            {industries.map((industry, idx) => (
-                                <div 
-                                    key={idx} 
-                                    className="industry-card"
-                                    onMouseEnter={() => setHoveredCard(`ind-${idx}`)} 
-                                    onMouseLeave={() => setHoveredCard(null)} 
-                                >
-                                    <img src={industry.img} alt={industry.name} className="industry-card-image" />
-                                    <div className="industry-card-content">
-                                        <FontAwesomeIcon icon={industry.icon} className="icon" style={{ fontSize: '40px', marginBottom: '15px', color: '#667eea' }} />
-                                        <h3 style={{ marginBottom: '10px', color: '#1a1a2e', fontSize: '1.2rem', fontWeight: '700' }}>{industry.name}</h3>
-                                        <p style={{ color: '#666', lineHeight: '1.5', fontSize: '0.9rem', marginBottom: '20px' }}>{industry.desc}</p>
-                                        <button 
-                                            className="learn-more-btn"
-                                            style={{
-                                                display: 'inline-block',
-                                                padding: '12px 30px',
-                                                backgroundColor: '#667eea',
-                                                color: 'white',
-                                                borderRadius: '50px',
-                                                fontSize: '14px',
-                                                fontWeight: '600',
-                                                cursor: 'pointer',
-                                                textAlign: 'center',
-                                                transition: 'all 0.3s',
-                                                marginTop: '10px',
-                                                border: 'none'
-                                            }}
-                                            onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
-                                            onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
-                                            onClick={() => {
-                                                handleTrackClick(industry.name, 'industry');
-                                                openLandingPage(industry, 'industry');
-                                            }}
-                                        >
-                                            Learn More →
-                                        </button>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '35px' }}>
+                            {industries.map((industry, idx) => {
+                                const extraPoints = getIndustryExtraPoints(industry.name);
+                                return (
+                                    <div 
+                                        key={idx} 
+                                        className="modern-card"
+                                        style={{ background: getCardGradient(idx, 'industry') }}
+                                        onMouseEnter={() => setHoveredCard(`ind-${idx}`)} 
+                                        onMouseLeave={() => setHoveredCard(null)} 
+                                    >
+                                        <img src={industry.img} alt={industry.name} className="card-image" />
+                                        <div className="card-inner">
+                                            <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '45px', marginBottom: '15px', color: '#FFD700' }} />
+                                            <h3 style={{ marginBottom: '10px', color: 'white', fontSize: '1.3rem', fontWeight: '700' }}>{industry.name}</h3>
+                                            <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.5', fontSize: '0.9rem', marginBottom: '15px' }}>{industry.desc}</p>
+                                            <div className="extra-points">
+                                                {extraPoints.slice(0,5).map((point, pid) => (
+                                                    <div key={pid} className="point-item">
+                                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#FFD700', fontSize: '12px' }} />
+                                                        <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '12px' }}>{point}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button 
+                                                className="btn-learn"
+                                                onClick={() => {
+                                                    handleTrackClick(industry.name, 'industry');
+                                                    openLandingPage(industry, 'industry');
+                                                }}
+                                            >
+                                                Learn More →
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </section>
@@ -1550,7 +1858,7 @@ const WinzePage = () => {
                     padding: '80px 5%',
                     position: 'relative',
                     overflow: 'hidden',
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'
                 }}>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Trusted Partners</h2>
@@ -1573,7 +1881,7 @@ const WinzePage = () => {
                                                 style={{ filter: 'none' }}
                                                 onError={(e) => {
                                                     e.target.onerror = null;
-                                                    e.target.src = `https://placehold.co/100x100/667eea/white?text=${partner.name.charAt(0)}`;
+                                                    e.target.src = `https://placehold.co/100x100/FFD700/1a1a2e?text=${partner.name.charAt(0)}`;
                                                 }}
                                             />
                                         </div>
@@ -1590,7 +1898,7 @@ const WinzePage = () => {
                     padding: '80px 5%',
                     position: 'relative',
                     overflow: 'hidden',
-                    background: 'linear-gradient(135deg, #1a1a3e 0%, #2d2d5e 100%)'
+                    background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)'
                 }}>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Valued Clients</h2>
@@ -1612,7 +1920,7 @@ const WinzePage = () => {
                                                 style={{ filter: 'none' }}
                                                 onError={(e) => {
                                                     e.target.onerror = null;
-                                                    e.target.src = `https://placehold.co/100x100/667eea/white?text=${client.name.charAt(0)}`;
+                                                    e.target.src = `https://placehold.co/100x100/FFD700/1a1a2e?text=${client.name.charAt(0)}`;
                                                 }}
                                             />
                                         </div>
@@ -1624,50 +1932,48 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Work With Winze Section */}
+                {/* Work With Winze Section - Royal cards with extra points */}
                 <section ref={workwithRef} id="workwith" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.workwith} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Why Work With Winze?</h2>
                         <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.1rem' }}>Partner with us for a transformative technology experience</p>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
-                            {workWithWinze.map((item, idx) => (
-                                <div 
-                                    key={idx}
-                                    className="work-card"
-                                    onMouseEnter={() => setHoveredCard(`work-${idx}`)} 
-                                    onMouseLeave={() => setHoveredCard(null)} 
-                                >
-                                    <FontAwesomeIcon icon={item.icon} className="icon" style={{ fontSize: '50px', marginBottom: '20px', color: hoveredCard === `work-${idx}` ? 'white' : '#667eea' }} />
-                                    <h3 style={{ marginBottom: '15px', color: hoveredCard === `work-${idx}` ? 'white' : '#1a1a2e', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
-                                    <p style={{ color: hoveredCard === `work-${idx}` ? 'rgba(255,255,255,0.9)' : '#666', lineHeight: '1.5', marginBottom: '20px' }}>{item.desc}</p>
-                                    <button 
-                                        className="learn-more-btn"
-                                        style={{
-                                            display: 'inline-block',
-                                            padding: '12px 30px',
-                                            backgroundColor: '#667eea',
-                                            color: 'white',
-                                            borderRadius: '50px',
-                                            fontSize: '14px',
-                                            fontWeight: '600',
-                                            cursor: 'pointer',
-                                            textAlign: 'center',
-                                            transition: 'all 0.3s',
-                                            marginTop: '10px',
-                                            border: 'none'
-                                        }}
-                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#764ba2'}
-                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
-                                        onClick={() => {
-                                            handleTrackClick(item.title, 'workwith');
-                                            openLandingPage(item, 'work');
-                                        }}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '35px' }}>
+                            {workWithWinze.map((item, idx) => {
+                                const extraPoints = getWorkExtraPoints(item.title);
+                                return (
+                                    <div 
+                                        key={idx}
+                                        className="modern-card"
+                                        style={{ background: getCardGradient(idx, 'work') }}
+                                        onMouseEnter={() => setHoveredCard(`work-${idx}`)} 
+                                        onMouseLeave={() => setHoveredCard(null)} 
                                     >
-                                        Learn More →
-                                    </button>
-                                </div>
-                            ))}
+                                        <div className="card-inner">
+                                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '55px', marginBottom: '20px', color: '#FFD700' }} />
+                                            <h3 style={{ marginBottom: '15px', color: 'white', fontSize: '1.4rem', fontWeight: '700' }}>{item.title}</h3>
+                                            <p style={{ color: 'rgba(255,255,255,0.85)', lineHeight: '1.5', marginBottom: '15px' }}>{item.desc}</p>
+                                            <div className="extra-points">
+                                                {extraPoints.slice(0,5).map((point, pid) => (
+                                                    <div key={pid} className="point-item">
+                                                        <FontAwesomeIcon icon={faGem} style={{ color: '#FFD700', fontSize: '12px' }} />
+                                                        <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '12px' }}>{point}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button 
+                                                className="btn-learn"
+                                                onClick={() => {
+                                                    handleTrackClick(item.title, 'workwith');
+                                                    openLandingPage(item, 'work');
+                                                }}
+                                            >
+                                                Learn More →
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </section>
@@ -1680,34 +1986,34 @@ const WinzePage = () => {
                         <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Delivering excellence through measurable results and proven success</p>
                         
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '30px' }}>
-                            <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '30px 20px', borderRadius: '15px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite' }}>
-                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.years}+</div>
+                            <div className="stat-card" style={{ animation: 'pulse 2s infinite' }}>
+                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '15px' }}>{counters.years}+</div>
                                 <h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Years in Business</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Extensive Experience in delivering IT Solutions & Services</p>
                             </div>
 
-                            <div style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', padding: '30px 20px', borderRadius: '15px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.3s' }}>
-                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.expertise}+</div>
+                            <div className="stat-card" style={{ animation: 'pulse 2s infinite 0.3s' }}>
+                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '15px' }}>{counters.expertise}+</div>
                                 <h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Expertise</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Domain experts delivering cutting-edge solutions</p>
                             </div>
 
-                            <div style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', padding: '30px 20px', borderRadius: '15px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.6s' }}>
-                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.clients}+</div>
+                            <div className="stat-card" style={{ animation: 'pulse 2s infinite 0.6s' }}>
+                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '15px' }}>{counters.clients}+</div>
                                 <h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Clients</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Trusted by businesses across the globe</p>
                             </div>
 
-                            <div style={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', padding: '30px 20px', borderRadius: '15px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.9s' }}>
-                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.awards}+</div>
+                            <div className="stat-card" style={{ animation: 'pulse 2s infinite 0.9s' }}>
+                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '15px' }}>{counters.awards}+</div>
                                 <h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Awards</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Industry recognition for excellence & innovation</p>
                             </div>
 
-                            <div style={{ background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', padding: '30px 20px', borderRadius: '15px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 1.2s' }}>
-                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: '#333', marginBottom: '15px' }}>{counters.projects}+</div>
-                                <h3 style={{ fontSize: '1.3rem', color: '#333', marginBottom: '10px', fontWeight: 'bold' }}>Projects</h3>
-                                <p style={{ color: '#555', fontSize: '0.9rem', lineHeight: '1.4' }}>Successfully delivered with exceptional quality</p>
+                            <div className="stat-card" style={{ animation: 'pulse 2s infinite 1.2s' }}>
+                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '15px' }}>{counters.projects}+</div>
+                                <h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Projects</h3>
+                                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Successfully delivered with exceptional quality</p>
                             </div>
                         </div>
                     </div>
@@ -1731,9 +2037,9 @@ const WinzePage = () => {
                     }} onClick={() => setShowLogoModal(false)}>
                         <div style={{ maxWidth: '90vw', maxHeight: '90vh', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
                             <button onClick={() => setShowLogoModal(false)} style={{
-                                position: 'absolute', top: '-50px', right: '-50px', background: 'rgba(255,255,255,0.2)', border: 'none',
-                                fontSize: '30px', cursor: 'pointer', color: 'white', width: '40px', height: '40px', borderRadius: '50%',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s'
+                                position: 'absolute', top: '-50px', right: '-50px', background: '#FFD700', border: 'none',
+                                fontSize: '30px', cursor: 'pointer', color: '#1a1a2e', width: '40px', height: '40px', borderRadius: '50%',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', fontWeight: 'bold'
                             }}>×</button>
                             <div style={{ background: 'white', borderRadius: '20px', padding: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 25px 50px rgba(0,0,0,0.5)' }}>
                                 <img src="/winze-logo.jpg" alt="Winze Technologies Logo" style={{ maxWidth: '70vw', maxHeight: '70vh', objectFit: 'contain' }} />
@@ -1759,13 +2065,13 @@ const WinzePage = () => {
                         padding: '20px' 
                     }} onClick={() => setShowQuoteModal(false)}>
                         <div style={{ 
-                            background: 'linear-gradient(135deg, #1a1a3e 0%, #2d2d5e 100%)', 
-                            borderRadius: '20px', 
+                            background: 'linear-gradient(145deg, #1a1a2e, #16213e)', 
+                            borderRadius: '28px', 
                             padding: '45px', 
                             maxWidth: '550px', 
                             width: '100%', 
                             position: 'relative', 
-                            border: '1px solid rgba(255,255,255,0.2)',
+                            border: '1px solid rgba(255,215,0,0.3)',
                             maxHeight: '85vh',
                             overflow: 'auto'
                         }} onClick={(e) => e.stopPropagation()}>
@@ -1775,20 +2081,21 @@ const WinzePage = () => {
                                     position: 'absolute', 
                                     top: '20px', 
                                     right: '25px', 
-                                    background: 'rgba(255,255,255,0.1)', 
+                                    background: '#FFD700', 
                                     border: 'none', 
-                                    fontSize: '24px', 
+                                    fontSize: '20px', 
                                     cursor: 'pointer', 
-                                    color: 'white', 
+                                    color: '#1a1a2e', 
                                     width: '35px', 
                                     height: '35px', 
                                     borderRadius: '50%', 
                                     display: 'flex', 
                                     alignItems: 'center', 
-                                    justifyContent: 'center' 
+                                    justifyContent: 'center',
+                                    fontWeight: 'bold'
                                 }}
                             >×</button>
-                            <h2 style={{ color: 'white', marginBottom: '25px', textAlign: 'center' }}>✨ Request a Quote</h2>
+                            <h2 style={{ color: '#FFD700', marginBottom: '25px', textAlign: 'center' }}>✨ Request a Quote</h2>
                             <p style={{ color: '#ccc', textAlign: 'center', marginBottom: '30px', fontSize: '14px' }}>Fill out the form and our team will contact you within 24 hours</p>
                             
                             <form onSubmit={handleSubmitQuote}>
@@ -1803,7 +2110,7 @@ const WinzePage = () => {
                                         padding: '14px', 
                                         marginBottom: '15px', 
                                         borderRadius: '12px', 
-                                        border: '1px solid rgba(255,255,255,0.2)', 
+                                        border: '1px solid rgba(255,215,0,0.3)', 
                                         background: 'rgba(255,255,255,0.1)', 
                                         color: 'white', 
                                         fontSize: '15px',
@@ -1821,7 +2128,7 @@ const WinzePage = () => {
                                         padding: '14px', 
                                         marginBottom: '15px', 
                                         borderRadius: '12px', 
-                                        border: '1px solid rgba(255,255,255,0.2)', 
+                                        border: '1px solid rgba(255,215,0,0.3)', 
                                         background: 'rgba(255,255,255,0.1)', 
                                         color: 'white', 
                                         fontSize: '15px',
@@ -1839,7 +2146,7 @@ const WinzePage = () => {
                                         padding: '14px', 
                                         marginBottom: '15px', 
                                         borderRadius: '12px', 
-                                        border: '1px solid rgba(255,255,255,0.2)', 
+                                        border: '1px solid rgba(255,215,0,0.3)', 
                                         background: 'rgba(255,255,255,0.1)', 
                                         color: 'white', 
                                         fontSize: '15px',
@@ -1857,7 +2164,7 @@ const WinzePage = () => {
                                             width: '100%', 
                                             padding: '14px', 
                                             borderRadius: '12px', 
-                                            border: '1px solid rgba(255,255,255,0.2)', 
+                                            border: '1px solid rgba(255,215,0,0.3)', 
                                             background: 'rgba(255,255,255,0.1)', 
                                             color: 'white', 
                                             fontSize: '15px',
@@ -1865,9 +2172,9 @@ const WinzePage = () => {
                                             cursor: 'pointer'
                                         }}
                                     >
-                                        <option value="" style={{ background: '#1a1a3e', color: 'white' }}>Select a Service</option>
+                                        <option value="" style={{ background: '#1a1a2e', color: 'white' }}>Select a Service</option>
                                         {solutions.map((s, idx) => (
-                                            <option key={idx} value={s.title} style={{ background: '#1a1a3e', color: 'white', padding: '10px' }}>
+                                            <option key={idx} value={s.title} style={{ background: '#1a1a2e', color: 'white', padding: '10px' }}>
                                                 {s.title}
                                             </option>
                                         ))}
@@ -1884,7 +2191,7 @@ const WinzePage = () => {
                                         padding: '14px', 
                                         marginBottom: '20px', 
                                         borderRadius: '12px', 
-                                        border: '1px solid rgba(255,255,255,0.2)', 
+                                        border: '1px solid rgba(255,215,0,0.3)', 
                                         background: 'rgba(255,255,255,0.1)', 
                                         color: 'white', 
                                         fontSize: '15px',
@@ -1897,13 +2204,13 @@ const WinzePage = () => {
                                     type="submit" 
                                     style={{ 
                                         width: '100%', 
-                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
-                                        color: 'white', 
+                                        background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', 
+                                        color: '#1a1a2e', 
                                         padding: '14px', 
                                         border: 'none', 
                                         borderRadius: '12px', 
                                         fontSize: '16px', 
-                                        fontWeight: '600', 
+                                        fontWeight: '700', 
                                         cursor: 'pointer', 
                                         transition: 'all 0.3s' 
                                     }}
@@ -1918,31 +2225,31 @@ const WinzePage = () => {
                 )}
                 
                 {/* Landing Page Modal */}
-                <LandingPage 
-                    item={landingData} 
-                    onClose={closeLandingPage} 
-                    onRequestQuote={openQuoteModalForItem}
-                />
+                {landingModalOpen && (
+                    <LandingPage 
+                        item={landingData} 
+                        onClose={closeLandingPage} 
+                        onRequestQuote={openQuoteModalForItem}
+                    />
+                )}
 
-                {/* Footer */}
-                <footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                {/* Footer - Updated email to sales@winzetech.com */}
+                <footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,215,0,0.1)' }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '45px', marginBottom: '45px' }}>
                             <div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                                    <div style={{ width: '45px', height: '45px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}>
-                                        <img src="/winze-logo.jpg" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px' }} />
-                                    </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}>
+                                    <img src="/winze-logo.jpg" alt="Logo" style={{ width: '45px', height: '45px', objectFit: 'contain', background: 'white', padding: '6px', borderRadius: '10px' }} />
                                     <span style={{ fontWeight: '800', fontSize: '1.2rem', color: 'white' }}>Winze Technologies</span>
                                 </div>
                                 <p style={{ color: '#aaa', lineHeight: '1.6' }}>Driving Innovation through Customer-Centric Technology Solutions.</p>
                             </div>
                             <div>
-                                <h4 style={{ marginBottom: '20px', color: '#667eea', fontSize: '1.1rem' }}>Quick Links</h4>
+                                <h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Quick Links</h4>
                                 {navItems.map((item) => (
                                     <p key={item.name}>
                                         <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollToSection(item.ref, item.name); }} style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '12px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s' }}
-                                        onMouseEnter={(e) => e.target.style.color = '#667eea'}
+                                        onMouseEnter={(e) => e.target.style.color = '#FFD700'}
                                         onMouseLeave={(e) => e.target.style.color = '#aaa'}>
                                             {item.name}
                                         </button>
@@ -1950,14 +2257,14 @@ const WinzePage = () => {
                                 ))}
                             </div>
                             <div>
-                                <h4 style={{ marginBottom: '20px', color: '#667eea', fontSize: '1.1rem' }}>Contact Info</h4>
-                                <p style={{ color: '#aaa', marginBottom: '12px' }}>📧 arunnsales@winzetech.com</p>
+                                <h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Contact Info</h4>
+                                <p style={{ color: '#aaa', marginBottom: '12px' }}>📧 sales@winzetech.com</p>
                                 <p style={{ color: '#aaa', marginBottom: '12px' }}>📞 +91 95500 10417</p>
                                 <p style={{ color: '#aaa', marginBottom: '12px' }}>🌐 www.winzetech.com</p>
                             </div>
                         </div>
                         <div style={{ textAlign: 'center', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#666' }}>
-                            <p>© 2024 Winze Technologies Pvt Ltd. All rights reserved.</p>
+                            <p>© 2025 Winze Technologies Pvt Ltd. All rights reserved.</p>
                         </div>
                     </div>
                 </footer>
