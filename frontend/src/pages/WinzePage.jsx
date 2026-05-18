@@ -12,7 +12,7 @@ import {
     faInfinity, faCrown, faGem, faBolt, faUsers,
     faBriefcase, faTrophy, faGlobe, faLightbulb, faProjectDiagram,
     faChevronLeft, faChevronRight, faTimes, faArrowRight, faCheckCircle,
-    faCamera, faNetworkWired, faBroadcastTower, faBell, faPhoneAlt
+    faCamera, faNetworkWired, faBroadcastTower, faBell, faPhoneAlt, faPhoneVolume
 } from '@fortawesome/free-solid-svg-icons';
 import { 
     faLinkedin, 
@@ -201,11 +201,11 @@ const getSolutionExtraPoints = (title) => {
             "Call recording & quality management"
         ],
         "Emergency Notification": [
+            "Automated voice broadcast to thousands of numbers simultaneously",
             "Two-way emergency response coordination with live agent routing",
-            "Geo-fencing & indoor positioning technology for精准 alerts",
-            "Integration with fire alarm, CCTV & safety systems",
-            "Crisis communication templates with one-click activation",
-            "Real-time incident tracking with automated number logging"
+            "Click-to-call integration with automatic number logging",
+            "Crisis communication templates with one-click voice activation",
+            "Real-time incident tracking with automated call records"
         ]
     };
     return pointsMap[title] || [
@@ -473,22 +473,22 @@ const solutionDetailedContent = {
         ]
     },
     "Emergency Notification": {
-        overview: "Emergency Notification System provides real-time mass alerts and crisis communication. When users click alerts, calls are routed directly to the emergency response center with automatic caller ID tracking.",
+        overview: "Emergency Notification System provides automated voice-based mass alerting and crisis communication. When users receive voice alerts, calls are routed directly to the emergency response center with automatic caller ID tracking.",
         benefits: getSolutionExtraPoints("Emergency Notification"),
         features: [
-            "Multi-channel alert delivery (SMS, Email, Push, Voice)",
-            "Real-time incident tracking dashboard with number logging",
+            "Automated voice broadcast to thousands of recipients instantly",
+            "Real-time incident tracking dashboard with call logging",
             "Automated escalation procedures with click-to-call routing",
-            "Two-way communication with responders",
-            "Integration with existing safety systems and CCTV",
-            "Emergency broadcast with automatic number capture"
+            "Two-way voice communication with emergency responders",
+            "Integration with existing PBX and phone systems",
+            "Emergency voice broadcast with automatic number capture"
         ],
         useCases: [
-            "Corporate emergency response & evacuation with caller tracking",
-            "Healthcare facility emergency alerts with staff routing",
-            "Educational campus safety notifications",
-            "Industrial plant emergency management",
-            "Public venue security & crowd control with response coordination"
+            "Corporate emergency response & evacuation with voice alerts",
+            "Healthcare facility emergency codes via phone broadcast",
+            "Educational campus safety voice notifications",
+            "Industrial plant emergency voice communication",
+            "Public venue security & crowd control with voice response"
         ]
     }
 };
@@ -648,7 +648,7 @@ const workDetailedContent = {
     }
 };
 
-// Extended content for industries (5+ extra points) - Updated Healthcare content
+// Extended content for industries (5+ extra points)
 const getIndustryExtraPoints = (name) => {
     const pointsMap = {
         "Healthcare": [
@@ -853,7 +853,7 @@ const WinzePage = () => {
         }
     };
 
-    // Solutions with differentiated icons - Emergency Notification (updated points)
+    // Solutions - Emergency Notification with voice-only focus
     const solutions = [
         { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video },
         { title: "Smart Eye AI", desc: "Advanced video analytics for proactive security monitoring.", icon: faRobot, img: solutionImages.ai },
@@ -869,10 +869,10 @@ const WinzePage = () => {
         { title: "Cyber Security", desc: "Advanced threat protection and security compliance solutions.", icon: faLock, img: solutionImages.cyberSecurity },
         { title: "Unified Communications", desc: "Seamless integration of voice, video, and messaging for enterprise collaboration.", icon: faChartLine, img: solutionImages.unified },
         { title: "Contact Center", desc: "AI-powered customer service solutions for enhanced agent productivity.", icon: faHeadset, img: solutionImages.contact },
-        { title: "Emergency Notification", desc: "Real-time mass alerts and crisis communication. Calls route directly to emergency response center with automatic number tracking.", icon: faBell, img: solutionImages.emergency }
+        { title: "Emergency Notification", desc: "Automated voice-based mass alerts and crisis communication. Calls route directly to emergency response center with automatic number tracking.", icon: faPhoneVolume, img: solutionImages.emergency }
     ];
 
-    // Industries - removed Banking & Finance and Retail & E-commerce
+    // Industries
     const industries = [
         { name: "Healthcare", desc: "Comprehensive healthcare IT solutions including telemedicine, EHR systems, patient portals, and remote patient monitoring.", icon: faHospital, img: industryImages.healthcare, detailedDesc: "End-to-end healthcare technology solutions including AI-powered telemedicine platforms, integrated Electronic Health Records (EHR), secure patient communication portals, remote patient monitoring with IoT devices, pharmacy management systems, and compliance with HIPAA and healthcare regulations." },
         { name: "Manufacturing", desc: "IoT and automation solutions for Industry 4.0 transformation.", icon: faIndustry, img: industryImages.manufacturing, detailedDesc: "Industry 4.0 solutions including IoT sensors, SCADA systems, predictive maintenance, real-time production monitoring, and supply chain integration for smart manufacturing." },
@@ -905,7 +905,7 @@ const WinzePage = () => {
         { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients, and 16+ years of excellence." }
     ];
 
-    // Card color gradients for different sections
+    // Card color gradients
     const getCardGradient = (index, type) => {
         const gradients = {
             delivery: [
