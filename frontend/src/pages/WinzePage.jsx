@@ -47,6 +47,7 @@ const solutionImages = {
     cyberSecurity: "/images/cyber-security.jpg",
     cctv: "/images/cctv-services.jpg",
     cabling: "/images/cabling-services.jpg",
+    emergency: "https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?q=80&w=2070&auto=format"
 };
 
 // Industry Images for Cards
@@ -200,12 +201,12 @@ const getSolutionExtraPoints = (title) => {
             "Call recording & quality management"
         ],
         "Emergency Notification (Code Blue)": [
-            "Mass instant alerts via SMS, email & push",
+            "Mass instant alerts via SMS, email & push notification",
             "Two-way emergency response coordination",
-            "Geo-fencing & indoor positioning",
-            "Integration with fire & safety systems",
-            "Crisis communication templates",
-            "Real-time incident tracking & escalation"
+            "Geo-fencing & indoor positioning technology",
+            "Integration with fire alarm & safety systems",
+            "Crisis communication templates & automation",
+            "Real-time incident tracking & escalation protocols"
         ]
     };
     return pointsMap[title] || [
@@ -473,21 +474,22 @@ const solutionDetailedContent = {
         ]
     },
     "Emergency Notification (Code Blue)": {
-        overview: "Emergency Notification System provides real-time mass alerts and crisis communication for critical situations.",
+        overview: "Emergency Notification System provides real-time mass alerts and crisis communication for critical situations, ensuring safety and rapid response.",
         benefits: getSolutionExtraPoints("Emergency Notification (Code Blue)"),
         features: [
             "Multi-channel alert delivery (SMS, Email, Push, Voice)",
             "Real-time incident tracking dashboard",
             "Automated escalation procedures",
             "Two-way communication with responders",
-            "Integration with existing safety systems"
+            "Integration with existing safety systems",
+            "Emergency broadcast capabilities"
         ],
         useCases: [
-            "Corporate emergency response",
-            "Healthcare facility code alerts",
-            "Educational campus safety",
-            "Industrial plant emergencies",
-            "Public venue security"
+            "Corporate emergency response & evacuation",
+            "Healthcare facility code blue alerts",
+            "Educational campus safety notifications",
+            "Industrial plant emergency management",
+            "Public venue security & crowd control"
         ]
     }
 };
@@ -647,49 +649,49 @@ const workDetailedContent = {
     }
 };
 
-// Extended content for industries (5+ extra points)
+// Extended content for industries (5+ extra points) - Updated Healthcare content
 const getIndustryExtraPoints = (name) => {
     const pointsMap = {
         "Healthcare": [
-            "HIPAA-compliant telemedicine platforms",
-            "EHR systems and patient portals",
-            "Secure messaging for care teams",
-            "Remote patient monitoring solutions",
-            "Medical IoT device integration",
-            "99.9% uptime for critical systems"
+            "Advanced telemedicine platforms with multi-specialty support",
+            "Integrated Electronic Health Records (EHR) with AI diagnostics",
+            "Secure patient portals with 24/7 access to medical records",
+            "Remote patient monitoring with real-time vitals tracking",
+            "HIPAA-compliant messaging for care team collaboration",
+            "Pharmacy management and e-prescription systems"
         ],
         "Manufacturing": [
-            "IoT sensors and SCADA systems",
-            "Predictive maintenance algorithms",
-            "Real-time production monitoring",
-            "Supply chain integration",
-            "Quality control automation",
-            "Digital twin simulation"
+            "IoT sensors and SCADA systems for real-time monitoring",
+            "Predictive maintenance algorithms to reduce downtime",
+            "Real-time production monitoring and quality control",
+            "Supply chain integration with automated inventory",
+            "Digital twin simulation for process optimization",
+            "Energy management and sustainability tracking"
         ],
         "Education": [
-            "Virtual classrooms and LMS platforms",
-            "Student information systems",
-            "Parent portal for progress monitoring",
-            "Digital library and resources",
-            "Exam proctoring solutions",
-            "Campus-wide Wi-Fi and security"
+            "Virtual classrooms with interactive whiteboard capabilities",
+            "Comprehensive Learning Management Systems (LMS)",
+            "Student information systems for admissions and grading",
+            "Parent portal for real-time progress monitoring",
+            "Digital library with AI-powered content recommendations",
+            "Exam proctoring and anti-cheating solutions"
         ],
         "Logistics & Supply Chain": [
-            "Real-time tracking and visibility",
-            "Route optimization algorithms",
-            "Warehouse management systems",
-            "Inventory forecasting tools",
-            "Last-mile delivery optimization",
-            "Cross-border compliance solutions"
+            "Real-time GPS tracking with geofencing alerts",
+            "AI-powered route optimization for fuel efficiency",
+            "Warehouse management with automated picking systems",
+            "Inventory forecasting using machine learning",
+            "Last-mile delivery optimization with live tracking",
+            "Cross-border compliance and customs documentation"
         ]
     };
     return pointsMap[name] || [
-        "Industry-specific compliance",
-        "Tailored solution architecture",
-        "Domain expert consulting",
-        "Seamless legacy integration",
-        "Scalable infrastructure",
-        "24/7 operational support"
+        "Industry-specific compliance certifications",
+        "Tailored solution architecture for unique needs",
+        "Domain expert consulting and support",
+        "Seamless integration with legacy systems",
+        "Scalable infrastructure for business growth",
+        "24/7 operational support and monitoring"
     ];
 };
 
@@ -852,7 +854,7 @@ const WinzePage = () => {
         }
     };
 
-    // Solutions with differentiated icons - added Emergency Notification card
+    // Solutions with differentiated icons - added Emergency Notification card with image
     const solutions = [
         { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video },
         { title: "Smart Eye AI", desc: "Advanced video analytics for proactive security monitoring.", icon: faRobot, img: solutionImages.ai },
@@ -868,12 +870,12 @@ const WinzePage = () => {
         { title: "Cyber Security", desc: "Advanced threat protection and security compliance solutions.", icon: faLock, img: solutionImages.cyberSecurity },
         { title: "Unified Communications", desc: "Seamless integration of voice, video, and messaging for enterprise collaboration.", icon: faChartLine, img: solutionImages.unified },
         { title: "Contact Center", desc: "AI-powered customer service solutions for enhanced agent productivity.", icon: faHeadset, img: solutionImages.contact },
-        { title: "Emergency Notification (Code Blue)", desc: "Real-time mass alerts and crisis communication for critical situations.", icon: faBell, img: "/images/emergency-notification.jpg" }
+        { title: "Emergency Notification (Code Blue)", desc: "Real-time mass alerts and crisis communication for critical situations.", icon: faBell, img: solutionImages.emergency }
     ];
 
-    // Industries - removed Banking & Finance and Retail & E-commerce
+    // Industries - removed Banking & Finance and Retail & E-commerce, updated Healthcare description
     const industries = [
-        { name: "Healthcare", desc: "HIPAA-compliant IT solutions for modern healthcare facilities.", icon: faHospital, img: industryImages.healthcare, detailedDesc: "HIPAA-compliant healthcare IT solutions including telemedicine platforms, EHR systems, patient portals, secure messaging, and remote patient monitoring with 99.9% uptime." },
+        { name: "Healthcare", desc: "Comprehensive healthcare IT solutions including telemedicine, EHR systems, patient portals, and remote patient monitoring.", icon: faHospital, img: industryImages.healthcare, detailedDesc: "End-to-end healthcare technology solutions including AI-powered telemedicine platforms, integrated Electronic Health Records (EHR), secure patient communication portals, remote patient monitoring with IoT devices, pharmacy management systems, and compliance with HIPAA and healthcare regulations." },
         { name: "Manufacturing", desc: "IoT and automation solutions for Industry 4.0 transformation.", icon: faIndustry, img: industryImages.manufacturing, detailedDesc: "Industry 4.0 solutions including IoT sensors, SCADA systems, predictive maintenance, real-time production monitoring, and supply chain integration for smart manufacturing." },
         { name: "Education", desc: "Digital learning platforms for institutions of all sizes.", icon: faGraduationCap, img: industryImages.education, detailedDesc: "Digital learning platforms with virtual classrooms, learning management systems, student information systems, parent portals, and analytics for K-12 and higher education." },
         { name: "Logistics & Supply Chain", desc: "Intelligent logistics and supply chain management systems.", icon: faTruck, img: industryImages.logistics, detailedDesc: "Intelligent logistics solutions with real-time tracking, route optimization, warehouse management, inventory forecasting, and supply chain analytics for improved efficiency." }
@@ -1438,9 +1440,13 @@ const WinzePage = () => {
                 .client-logo-img, .partner-logo-img { width: 80px; height: 80px; margin: 0 auto 12px; display: flex; align-items: center; justifyContent: center; }
                 .client-logo-img img, .partner-logo-img img { width: 100%; height: 100%; object-fit: contain; }
                 
+                /* Original Stats Cards Style */
                 .stat-card {
                     background: rgba(255,255,255,0.1);
                     backdrop-filter: blur(10px);
+                    padding: 30px 20px;
+                    border-radius: 15px;
+                    text-align: center;
                     border: 1px solid rgba(255,215,0,0.3);
                     transition: all 0.3s;
                 }
@@ -1806,7 +1812,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Industries Section - Only 4 industries with royal colors */}
+                {/* Industries Section - Only 4 industries with updated Healthcare content */}
                 <section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.industries} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -1978,7 +1984,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Our Impact in Numbers Section */}
+                {/* Our Impact in Numbers Section - Original style restored */}
                 <section ref={statsRef} style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.stats} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
