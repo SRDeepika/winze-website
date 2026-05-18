@@ -201,12 +201,11 @@ const getSolutionExtraPoints = (title) => {
             "Call recording & quality management"
         ],
         "Emergency Notification": [
-            "Instant mass alerts via SMS, email & push notification",
-            "Two-way emergency response coordination",
-            "Geo-fencing & indoor positioning technology",
-            "Integration with fire alarm & safety systems",
-            "Crisis communication templates & automation",
-            "Real-time incident tracking with click-to-call center integration"
+            "Two-way emergency response coordination with live agent routing",
+            "Geo-fencing & indoor positioning technology for精准 alerts",
+            "Integration with fire alarm, CCTV & safety systems",
+            "Crisis communication templates with one-click activation",
+            "Real-time incident tracking with automated number logging"
         ]
     };
     return pointsMap[title] || [
@@ -474,22 +473,22 @@ const solutionDetailedContent = {
         ]
     },
     "Emergency Notification": {
-        overview: "Emergency Notification System provides real-time mass alerts and crisis communication for critical situations. When users click alerts, calls are routed directly to the emergency response center with automatic caller ID tracking.",
+        overview: "Emergency Notification System provides real-time mass alerts and crisis communication. When users click alerts, calls are routed directly to the emergency response center with automatic caller ID tracking.",
         benefits: getSolutionExtraPoints("Emergency Notification"),
         features: [
             "Multi-channel alert delivery (SMS, Email, Push, Voice)",
-            "Real-time incident tracking dashboard",
-            "Automated escalation procedures with click-to-call",
+            "Real-time incident tracking dashboard with number logging",
+            "Automated escalation procedures with click-to-call routing",
             "Two-way communication with responders",
-            "Integration with existing safety systems",
-            "Emergency broadcast with number tracking"
+            "Integration with existing safety systems and CCTV",
+            "Emergency broadcast with automatic number capture"
         ],
         useCases: [
-            "Corporate emergency response & evacuation",
-            "Healthcare facility emergency alerts",
+            "Corporate emergency response & evacuation with caller tracking",
+            "Healthcare facility emergency alerts with staff routing",
             "Educational campus safety notifications",
             "Industrial plant emergency management",
-            "Public venue security & crowd control"
+            "Public venue security & crowd control with response coordination"
         ]
     }
 };
@@ -854,7 +853,7 @@ const WinzePage = () => {
         }
     };
 
-    // Solutions with differentiated icons - Emergency Notification (removed Code Blue)
+    // Solutions with differentiated icons - Emergency Notification (updated points)
     const solutions = [
         { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video },
         { title: "Smart Eye AI", desc: "Advanced video analytics for proactive security monitoring.", icon: faRobot, img: solutionImages.ai },
@@ -873,7 +872,7 @@ const WinzePage = () => {
         { title: "Emergency Notification", desc: "Real-time mass alerts and crisis communication. Calls route directly to emergency response center with automatic number tracking.", icon: faBell, img: solutionImages.emergency }
     ];
 
-    // Industries - removed Banking & Finance and Retail & E-commerce, updated Healthcare description
+    // Industries - removed Banking & Finance and Retail & E-commerce
     const industries = [
         { name: "Healthcare", desc: "Comprehensive healthcare IT solutions including telemedicine, EHR systems, patient portals, and remote patient monitoring.", icon: faHospital, img: industryImages.healthcare, detailedDesc: "End-to-end healthcare technology solutions including AI-powered telemedicine platforms, integrated Electronic Health Records (EHR), secure patient communication portals, remote patient monitoring with IoT devices, pharmacy management systems, and compliance with HIPAA and healthcare regulations." },
         { name: "Manufacturing", desc: "IoT and automation solutions for Industry 4.0 transformation.", icon: faIndustry, img: industryImages.manufacturing, detailedDesc: "Industry 4.0 solutions including IoT sensors, SCADA systems, predictive maintenance, real-time production monitoring, and supply chain integration for smart manufacturing." },
@@ -906,7 +905,7 @@ const WinzePage = () => {
         { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients, and 16+ years of excellence." }
     ];
 
-    // Card color gradients for different sections - keeping original vibrant colors
+    // Card color gradients for different sections
     const getCardGradient = (index, type) => {
         const gradients = {
             delivery: [
@@ -955,7 +954,7 @@ const WinzePage = () => {
         return 'linear-gradient(135deg, #667eea, #764ba2)';
     };
 
-    // Landing Page Modal Component with royal colors
+    // Landing Page Modal Component
     const LandingPage = ({ item, onClose, onRequestQuote }) => {
         if (!item) return null;
         
@@ -981,7 +980,6 @@ const WinzePage = () => {
             alert(`Thank you! We'll contact you about ${item.title} within 24 hours.`);
         };
         
-        // Royal gradient for landing page
         const royalGradient = 'linear-gradient(145deg, #1a1a2e, #16213e, #0f3460)';
         
         return (
@@ -1063,7 +1061,7 @@ const WinzePage = () => {
                             <div style={{ marginBottom: '30px' }}>
                                 <h3 style={{ color: '#FFD700', marginBottom: '20px', fontSize: '24px', borderLeft: '4px solid #FFD700', paddingLeft: '15px' }}>Key Benefits</h3>
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '15px' }}>
-                                    {content.benefits.slice(0,8).map((benefit, idx) => (
+                                    {content.benefits.map((benefit, idx) => (
                                         <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: 'rgba(255,255,255,0.1)', borderRadius: '15px', backdropFilter: 'blur(5px)' }}>
                                             <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#FFD700', fontSize: '18px' }} />
                                             <span style={{ color: '#eee' }}>{benefit}</span>
@@ -1346,38 +1344,79 @@ const WinzePage = () => {
                     60% { box-shadow: 0 0 60px rgba(255,215,0,0.7), 0 0 80px rgba(255,215,0,0.6); filter: brightness(1.08); transform: translateY(-8px); }
                     100% { box-shadow: 0 0 10px rgba(255,215,0,0.3), 0 0 20px rgba(255,215,0,0.2); filter: brightness(1); transform: translateY(0px); }
                 }
-                /* Floating animation for cards - continuous animation without hover */
-                @keyframes floatAnimation {
-                    0% { transform: translateY(0px); }
-                    50% { transform: translateY(-8px); box-shadow: 0 20px 35px rgba(0,0,0,0.25); }
-                    100% { transform: translateY(0px); }
+                
+                /* Different floating animations for each section */
+                
+                /* Delivery Section - Bounce Up & Down */
+                @keyframes floatDelivery {
+                    0%, 100% { transform: translateY(0px); }
+                    50% { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
                 }
-                @keyframes floatAnimationDelay1 {
-                    0% { transform: translateY(0px); }
-                    50% { transform: translateY(-10px); box-shadow: 0 25px 40px rgba(0,0,0,0.3); }
-                    100% { transform: translateY(0px); }
+                .delivery-card-animate {
+                    animation: floatDelivery 3.5s ease-in-out infinite;
                 }
-                @keyframes floatAnimationDelay2 {
-                    0% { transform: translateY(0px); }
-                    50% { transform: translateY(-6px); box-shadow: 0 18px 30px rgba(0,0,0,0.22); }
-                    100% { transform: translateY(0px); }
+                .delivery-card-animate:nth-child(even) {
+                    animation: floatDelivery 4s ease-in-out infinite;
+                    animation-delay: 0.5s;
                 }
+                .delivery-card-animate:nth-child(3n) {
+                    animation: floatDelivery 3s ease-in-out infinite;
+                    animation-delay: 0.2s;
+                }
+                
+                /* Solutions Section - Slide Left/Right */
+                @keyframes floatSolutions {
+                    0%, 100% { transform: translateX(0px); }
+                    25% { transform: translateX(-6px); }
+                    75% { transform: translateX(6px); }
+                }
+                .solution-card-animate {
+                    animation: floatSolutions 4s ease-in-out infinite;
+                }
+                .solution-card-animate:nth-child(odd) {
+                    animation: floatSolutions 3.5s ease-in-out infinite;
+                    animation-delay: 0.3s;
+                }
+                .solution-card-animate:nth-child(3n) {
+                    animation: floatSolutions 4.5s ease-in-out infinite;
+                    animation-delay: 0.6s;
+                }
+                
+                /* Industries Section - Rotate & Scale subtle */
+                @keyframes floatIndustries {
+                    0%, 100% { transform: rotate(0deg) scale(1); }
+                    50% { transform: rotate(1deg) scale(1.02); box-shadow: 0 25px 45px rgba(0,0,0,0.35); }
+                }
+                .industry-card-animate {
+                    animation: floatIndustries 3.8s ease-in-out infinite;
+                }
+                .industry-card-animate:nth-child(2) {
+                    animation: floatIndustries 4.2s ease-in-out infinite;
+                    animation-delay: 0.4s;
+                }
+                
+                /* Work Section - Pulse Glow Effect */
+                @keyframes floatWork {
+                    0%, 100% { box-shadow: 0 10px 30px rgba(255,215,0,0.1), 0 0 10px rgba(255,215,0,0.2); transform: translateY(0px); }
+                    50% { box-shadow: 0 20px 50px rgba(255,215,0,0.3), 0 0 25px rgba(255,215,0,0.4); transform: translateY(-8px); }
+                }
+                .work-card-animate {
+                    animation: floatWork 3.2s ease-in-out infinite;
+                }
+                .work-card-animate:nth-child(3) {
+                    animation: floatWork 3.8s ease-in-out infinite;
+                    animation-delay: 0.3s;
+                }
+                .work-card-animate:nth-child(4) {
+                    animation: floatWork 4s ease-in-out infinite;
+                    animation-delay: 0.6s;
+                }
+                
+                /* Card glow pulse animation for all cards */
                 @keyframes glowPulse {
                     0% { border-color: rgba(255,215,0,0.15); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
                     50% { border-color: rgba(255,215,0,0.5); box-shadow: 0 15px 35px rgba(255,215,0,0.2); }
                     100% { border-color: rgba(255,215,0,0.15); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-                }
-                @keyframes slideInLeft {
-                    0% { opacity: 0; transform: translateX(-30px); }
-                    100% { opacity: 1; transform: translateX(0); }
-                }
-                @keyframes slideInRight {
-                    0% { opacity: 0; transform: translateX(30px); }
-                    100% { opacity: 1; transform: translateX(0); }
-                }
-                @keyframes fadeInUp {
-                    0% { opacity: 0; transform: translateY(30px); }
-                    100% { opacity: 1; transform: translateY(0); }
                 }
                 
                 .marquee-container { width: 100%; overflow: hidden; position: relative; }
@@ -1399,16 +1438,6 @@ const WinzePage = () => {
                     flex-direction: column;
                     border: 1px solid rgba(255,215,0,0.2);
                     animation: glowPulse 3s ease-in-out infinite;
-                }
-                /* Different animation delays for staggered floating effect */
-                .modern-card:nth-child(odd) {
-                    animation: floatAnimation 4s ease-in-out infinite, glowPulse 3s ease-in-out infinite;
-                }
-                .modern-card:nth-child(even) {
-                    animation: floatAnimationDelay1 4.5s ease-in-out infinite, glowPulse 3.5s ease-in-out infinite;
-                }
-                .modern-card:nth-child(3n) {
-                    animation: floatAnimationDelay2 3.8s ease-in-out infinite, glowPulse 2.8s ease-in-out infinite;
                 }
                 .modern-card:hover {
                     transform: translateY(-15px) scale(1.02);
@@ -1485,7 +1514,7 @@ const WinzePage = () => {
                 .client-logo-img, .partner-logo-img { width: 80px; height: 80px; margin: 0 auto 12px; display: flex; align-items: center; justifyContent: center; }
                 .client-logo-img img, .partner-logo-img img { width: 100%; height: 100%; object-fit: contain; }
                 
-                /* Original Stats Cards Style with vibrant gradients */
+                /* Stats Cards Style with vibrant gradients */
                 .stat-card {
                     padding: 30px 20px;
                     border-radius: 15px;
@@ -1495,6 +1524,11 @@ const WinzePage = () => {
                 }
                 .stat-card:hover {
                     transform: translateY(-8px);
+                }
+                
+                @keyframes fadeInUp {
+                    from { opacity: 0; transform: translateY(30px); }
+                    to { opacity: 1; transform: translateY(0); }
                 }
                 
                 /* Logo styling - no button background */
@@ -1543,7 +1577,6 @@ const WinzePage = () => {
                     borderBottom: '1px solid rgba(255,215,0,0.1)'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
-                        {/* Logo - clean without any button background */}
                         <div 
                             className="logo-clean"
                             onClick={() => setShowLogoModal(true)}
@@ -1628,7 +1661,7 @@ const WinzePage = () => {
                     </div>
                 </nav>
 
-                {/* Hero Section - Removed CEO line */}
+                {/* Hero Section */}
                 <section ref={homeRef} id="home" style={{
                     minHeight: '90vh',
                     position: 'relative',
@@ -1754,7 +1787,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* What We Deliver Section - Modern cards with continuous floating animation */}
+                {/* What We Deliver Section - Bounce Up & Down Animation */}
                 <section id="delivery" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.delivery} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -1766,7 +1799,7 @@ const WinzePage = () => {
                                 return (
                                     <div 
                                         key={i} 
-                                        className="modern-card"
+                                        className="modern-card delivery-card-animate"
                                         style={{ background: getCardGradient(i, 'delivery') }}
                                     >
                                         <div className="card-inner">
@@ -1799,7 +1832,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Solutions Portfolio Section - Royal colors with continuous animation */}
+                {/* Solutions Portfolio Section - Slide Left/Right Animation */}
                 <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.solutions} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -1813,7 +1846,7 @@ const WinzePage = () => {
                                 return (
                                     <div 
                                         key={idx} 
-                                        className="modern-card"
+                                        className="modern-card solution-card-animate"
                                         style={{ background: getCardGradient(idx, 'solution') }}
                                     >
                                         <img 
@@ -1854,7 +1887,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Industries Section - Only 4 industries with updated Healthcare content */}
+                {/* Industries Section - Rotate & Scale Animation */}
                 <section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.industries} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -1866,7 +1899,7 @@ const WinzePage = () => {
                                 return (
                                     <div 
                                         key={idx} 
-                                        className="modern-card"
+                                        className="modern-card industry-card-animate"
                                         style={{ background: getCardGradient(idx, 'industry') }}
                                     >
                                         <img src={industry.img} alt={industry.name} className="card-image" />
@@ -1978,7 +2011,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Work With Winze Section - Royal cards with continuous animation */}
+                {/* Work With Winze Section - Pulse Glow Animation */}
                 <section ref={workwithRef} id="workwith" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.workwith} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
@@ -1990,7 +2023,7 @@ const WinzePage = () => {
                                 return (
                                     <div 
                                         key={idx}
-                                        className="modern-card"
+                                        className="modern-card work-card-animate"
                                         style={{ background: getCardGradient(idx, 'work') }}
                                     >
                                         <div className="card-inner">
@@ -2022,7 +2055,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Our Impact in Numbers Section - Original colorful style restored */}
+                {/* Our Impact in Numbers Section - Original colorful style */}
                 <section ref={statsRef} style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.stats} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
@@ -2277,7 +2310,7 @@ const WinzePage = () => {
                     />
                 )}
 
-                {/* Footer - Clean logo without button background */}
+                {/* Footer */}
                 <footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,215,0,0.1)' }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '45px', marginBottom: '45px' }}>
