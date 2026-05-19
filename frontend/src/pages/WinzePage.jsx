@@ -1531,7 +1531,7 @@ const WinzePage = () => {
                     to { opacity: 1; transform: translateY(0); }
                 }
                 
-                /* Logo styling - no button background */
+                /* Logo styling */
                 .logo-clean {
                     display: flex;
                     align-items: center;
