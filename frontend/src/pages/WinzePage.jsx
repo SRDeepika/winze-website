@@ -2,7 +2,7 @@ import SocialLinks from '../components/SocialLinks';
 import React, { useState, useEffect, useRef } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 import SEO from '../components/SEO';
-import { trackClick } from '../services/api';
+import { trackClick, submitQuote } from '../services/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faChartLine, faShieldAlt, faHeadset, faVideo, faServer, faRobot, 
@@ -816,7 +816,7 @@ const WinzePage = () => {
             detailedContent: detailedContent
         });
         setLandingModalOpen(true);
-        handleTrackClick(item.title || item.name, 'landing_page_view');
+        // REMOVED: handleTrackClick(item.title || item.name, 'landing_page_view');
     };
 
     const closeLandingPage = () => {
@@ -840,27 +840,29 @@ const WinzePage = () => {
 
     const handleSubmitQuote = async (e) => {
         e.preventDefault();
-        // Submit quote to API (this goes to quotes database, not tracking)
+        
+        // Prepare quote data for database - NO TRACKING HERE
+        const quoteData = {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            service: formData.service,
+            message: formData.message,
+            source: 'Winze Website Quote Form',
+            status: 'pending'
+        };
+        
         try {
-            const submitQuoteData = {
-                name: formData.name,
-                email: formData.email,
-                phone: formData.phone,
-                service: formData.service,
-                message: formData.message,
-                source: 'Winze Website Quote Form'
-            };
-            
-            // Import submitQuote from api if available, otherwise just log
-            console.log('Quote submitted:', submitQuoteData);
+            // This saves to quotes table in database - NO tracking call
+            const response = await submitQuote(quoteData);
+            console.log('Quote saved to database:', response);
             alert(`Thank you ${formData.name}! We'll contact you within 24 hours about ${formData.service}.`);
+            setShowQuoteModal(false);
+            setFormData({ name: '', email: '', phone: '', service: '', message: '' });
         } catch (error) {
             console.error('Quote submission failed:', error);
             alert('There was an error submitting your quote. Please try again later.');
         }
-        
-        setShowQuoteModal(false);
-        setFormData({ name: '', email: '', phone: '', service: '', message: '' });
     };
 
     const scrollToSection = (ref, sectionName) => {
@@ -991,11 +993,27 @@ const WinzePage = () => {
 
         const handleInnerSubmit = async (e) => {
             e.preventDefault();
-            // This is quote submission from landing page - goes to quotes database
-            console.log('Quote submitted from landing page:', innerFormData);
-            alert(`Thank you! We'll contact you about ${item.title} within 24 hours.`);
-            setShowInnerQuoteForm(false);
-            setInnerFormData({ name: '', email: '', phone: '', message: '' });
+            // This is quote submission from landing page - goes to quotes database, NO tracking
+            const quoteData = {
+                name: innerFormData.name,
+                email: innerFormData.email,
+                phone: innerFormData.phone,
+                message: innerFormData.message,
+                service: item.title || item.name,
+                source: 'Landing Page Quote Form',
+                status: 'pending'
+            };
+            
+            try {
+                const response = await submitQuote(quoteData);
+                console.log('Quote saved from landing page:', response);
+                alert(`Thank you! We'll contact you about ${item.title} within 24 hours.`);
+                setShowInnerQuoteForm(false);
+                setInnerFormData({ name: '', email: '', phone: '', message: '' });
+            } catch (error) {
+                console.error('Quote submission failed:', error);
+                alert('There was an error. Please try again later.');
+            }
         };
         
         const royalGradient = 'linear-gradient(145deg, #1a1a2e, #16213e, #0f3460)';
@@ -1580,7 +1598,7 @@ const WinzePage = () => {
                 
                 <SocialLinks />
                 
-                {/* Navigation Bar - Clean logo without button background */}
+                {/* Navigation Bar */}
                 <nav style={{
                     position: 'sticky',
                     top: 0,
@@ -1595,217 +1613,68 @@ const WinzePage = () => {
                     borderBottom: '1px solid rgba(255,215,0,0.1)'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
-                        <div 
-                            className="logo-clean"
-                            onClick={() => setShowLogoModal(true)}
-                        >
-                            <img 
-                                src="/winze-logo.jpg" 
-                                alt="Winze Technologies Logo" 
-                                className="logo-image"
-                                onError={(e) => {
-                                    e.target.style.display = 'none';
-                                    e.target.parentElement.innerHTML = '<div style="width:48px;height:48px;background:#FFD700;border-radius:12px;display:flex;align-items:center;justify-content:center;"><span style="color:#1a1a2e;font-size:24px;font-weight:bold">W</span></div><span style="font-weight:800;font-size:1.4rem;background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Winze Technologies</span>';
-                                }}
-                            />
-                            <span style={{ 
-                                fontWeight: '800', 
-                                fontSize: '1.4rem', 
-                                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                fontFamily: "'Playfair Display', serif",
-                                letterSpacing: '-0.5px'
-                            }}>Winze Technologies</span>
+                        <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
+                            <img src="/winze-logo.jpg" alt="Winze Technologies Logo" className="logo-image" onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.parentElement.innerHTML = '<div style="width:48px;height:48px;background:#FFD700;border-radius:12px;display:flex;align-items:center;justify-content:center;"><span style="color:#1a1a2e;font-size:24px;font-weight:bold">W</span></div><span style="font-weight:800;font-size:1.4rem;background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Winze Technologies</span>';
+                            }} />
+                            <span style={{ fontWeight: '800', fontSize: '1.4rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: "'Playfair Display', serif", letterSpacing: '-0.5px' }}>Winze Technologies</span>
                         </div>
                         
                         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
                             {navItems.map((item) => (
-                                <button
-                                    key={item.name}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        scrollToSection(item.ref, item.name);
-                                    }}
-                                    style={{ 
-                                        background: 'transparent',
-                                        color: '#ddd',
-                                        fontWeight: '600',
-                                        padding: '8px 18px',
-                                        borderRadius: '30px',
-                                        transition: 'all 0.3s',
-                                        cursor: 'pointer',
-                                        fontSize: '14px',
-                                        fontFamily: "'Poppins', sans-serif",
-                                        border: 'none'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.target.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
-                                        e.target.style.color = '#1a1a2e';
-                                        e.target.style.transform = 'translateY(-2px)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.target.style.background = 'transparent';
-                                        e.target.style.color = '#ddd';
-                                        e.target.style.transform = 'translateY(0)';
-                                    }}
-                                >
+                                <button key={item.name} onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollToSection(item.ref, item.name); }} style={{ background: 'transparent', color: '#ddd', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none' }}
+                                onMouseEnter={(e) => { e.target.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)'; e.target.style.color = '#1a1a2e'; e.target.style.transform = 'translateY(-2px)'; }}
+                                onMouseLeave={(e) => { e.target.style.background = 'transparent'; e.target.style.color = '#ddd'; e.target.style.transform = 'translateY(0)'; }}>
                                     {item.name}
                                 </button>
                             ))}
                             <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Get Quote Button', 'cta'); }} style={{
-                                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                                color: '#1a1a2e',
-                                border: 'none',
-                                padding: '8px 24px',
-                                borderRadius: '30px',
-                                cursor: 'pointer',
-                                fontWeight: '700',
-                                transition: 'all 0.3s',
-                                fontFamily: "'Poppins', sans-serif",
-                                boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
+                                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#1a1a2e', border: 'none', padding: '8px 24px', borderRadius: '30px', cursor: 'pointer', fontWeight: '700', transition: 'all 0.3s', fontFamily: "'Poppins', sans-serif", boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
                             }}
-                            onMouseEnter={(e) => {
-                                e.target.style.transform = 'scale(1.05)';
-                                e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.target.style.transform = 'scale(1)';
-                                e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)';
-                            }}
-                            >✨ Get a Quote</button>
+                            onMouseEnter={(e) => { e.target.style.transform = 'scale(1.05)'; e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)'; }}
+                            onMouseLeave={(e) => { e.target.style.transform = 'scale(1)'; e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)'; }}>
+                                ✨ Get a Quote
+                            </button>
                         </div>
                     </div>
                 </nav>
 
                 {/* Hero Section */}
-                <section ref={homeRef} id="home" style={{
-                    minHeight: '90vh',
-                    position: 'relative',
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: '80px 5%',
-                    overflow: 'hidden'
-                }}>
+                <section ref={homeRef} id="home" style={{ minHeight: '90vh', position: 'relative', display: 'flex', alignItems: 'center', padding: '80px 5%', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.hero} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
                             <div>
                                 <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap' }}>
-                                    <span style={{ 
-                                        background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                                        padding: '6px 20px',
-                                        borderRadius: '30px',
-                                        fontSize: '13px',
-                                        color: '#1a1a2e',
-                                        display: 'inline-block',
-                                        fontWeight: '700',
-                                        boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
-                                    }}>🏆 16+ Years of Excellence</span>
-                                    <h1 style={{ 
-                                        fontSize: '2.2rem', 
-                                        color: 'white', 
-                                        display: 'inline-block',
-                                        fontFamily: "'Playfair Display', serif", 
-                                        fontWeight: '700',
-                                        margin: 0,
-                                        letterSpacing: '-0.5px'
-                                    }}>Winze Technologies</h1>
+                                    <span style={{ background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', padding: '6px 20px', borderRadius: '30px', fontSize: '13px', color: '#1a1a2e', display: 'inline-block', fontWeight: '700', boxShadow: '0 4px 15px rgba(255,215,0,0.3)' }}>🏆 16+ Years of Excellence</span>
+                                    <h1 style={{ fontSize: '2.2rem', color: 'white', display: 'inline-block', fontFamily: "'Playfair Display', serif", fontWeight: '700', margin: 0, letterSpacing: '-0.5px' }}>Winze Technologies</h1>
                                 </div>
                                 <p style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ddd', lineHeight: '1.6' }}>Leading Enterprise Communication, Security, and AI Technology Solutions Provider</p>
                                 <p style={{ marginBottom: '30px', color: '#aaa', lineHeight: '1.7' }}>With over 16 years of industry experience, Winze Technologies Pvt Ltd specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.</p>
                                 
                                 <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-                                    <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} style={{
-                                        background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                                        color: '#1a1a2e',
-                                        border: 'none',
-                                        padding: '14px 40px',
-                                        borderRadius: '50px',
-                                        fontSize: '16px',
-                                        fontWeight: '700',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.3s',
-                                        boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.target.style.transform = 'translateY(-2px)';
-                                        e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.target.style.transform = 'translateY(0)';
-                                        e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)';
-                                    }}>✨ Get a Free Consultation →</button>
-                                    <button onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleTrackClick('Explore Solutions', 'cta');
-                                        if (solutionsRef.current) {
-                                            solutionsRef.current.scrollIntoView({ behavior: 'smooth' });
-                                        }
-                                    }} style={{
-                                        background: 'transparent',
-                                        color: '#FFD700',
-                                        border: '2px solid #FFD700',
-                                        padding: '14px 40px',
-                                        borderRadius: '50px',
-                                        fontSize: '16px',
-                                        fontWeight: '600',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.3s'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.target.style.background = 'rgba(255,215,0,0.1)';
-                                        e.target.style.transform = 'translateY(-2px)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.target.style.background = 'transparent';
-                                        e.target.style.transform = 'translateY(0)';
-                                    }}>Explore Solutions</button>
+                                    <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} style={{ background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#1a1a2e', border: 'none', padding: '14px 40px', borderRadius: '50px', fontSize: '16px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.3s', boxShadow: '0 4px 15px rgba(255,215,0,0.3)' }}
+                                    onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)'; }}
+                                    onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)'; }}>✨ Get a Free Consultation →</button>
+                                    <button onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} style={{ background: 'transparent', color: '#FFD700', border: '2px solid #FFD700', padding: '14px 40px', borderRadius: '50px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.3s' }}
+                                    onMouseEnter={(e) => { e.target.style.background = 'rgba(255,215,0,0.1)'; e.target.style.transform = 'translateY(-2px)'; }}
+                                    onMouseLeave={(e) => { e.target.style.background = 'transparent'; e.target.style.transform = 'translateY(0)'; }}>Explore Solutions</button>
                                 </div>
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                <div
-                                    style={{
-                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        cursor: 'pointer',
-                                        display: 'inline-block',
-                                        animation: 'premiumGlow 3s ease-in-out infinite',
-                                        background: 'linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,165,0,0.1))',
-                                        padding: '3px',
-                                        borderRadius: '23px'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.animation = 'premiumGlow 0.8s ease-in-out infinite';
-                                        e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.animation = 'premiumGlow 3s ease-in-out infinite';
-                                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                                    }}
-                                >
-                                    <img 
-                                        src="/images/hero-image.jpg" 
-                                        alt="Hero" 
-                                        style={{ 
-                                            width: '100%', 
-                                            maxWidth: '550px',
-                                            height: 'auto',
-                                            borderRadius: '20px', 
-                                            boxShadow: '0 25px 50px rgba(0,0,0,0.3)', 
-                                            border: '2px solid rgba(255,215,0,0.5)',
-                                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                            display: 'block'
-                                        }} 
-                                    />
+                                <div style={{ transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer', display: 'inline-block', animation: 'premiumGlow 3s ease-in-out infinite', background: 'linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,165,0,0.1))', padding: '3px', borderRadius: '23px' }}
+                                    onMouseEnter={(e) => { e.currentTarget.style.animation = 'premiumGlow 0.8s ease-in-out infinite'; e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.animation = 'premiumGlow 3s ease-in-out infinite'; e.currentTarget.style.transform = 'translateY(0) scale(1)'; }}>
+                                    <img src="/images/hero-image.jpg" alt="Hero" style={{ width: '100%', maxWidth: '550px', height: 'auto', borderRadius: '20px', boxShadow: '0 25px 50px rgba(0,0,0,0.3)', border: '2px solid rgba(255,215,0,0.5)', transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', display: 'block' }} />
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* What We Deliver Section - Bounce Up & Down Animation */}
+                {/* What We Deliver Section */}
                 <section id="delivery" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.delivery} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -1815,11 +1684,7 @@ const WinzePage = () => {
                             {deliveryItems.map((item, i) => {
                                 const extraPoints = getDeliveryExtraPoints(item.title);
                                 return (
-                                    <div 
-                                        key={i} 
-                                        className="modern-card delivery-card-animate"
-                                        style={{ background: getCardGradient(i, 'delivery') }}
-                                    >
+                                    <div key={i} className="modern-card delivery-card-animate" style={{ background: getCardGradient(i, 'delivery') }}>
                                         <div className="card-inner">
                                             <FontAwesomeIcon icon={item.icon} style={{ fontSize: '50px', marginBottom: '20px', color: '#FFD700' }} />
                                             <h3 style={{ marginBottom: '15px', color: 'white', fontSize: '1.4rem', fontWeight: '700' }}>{item.title}</h3>
@@ -1832,16 +1697,7 @@ const WinzePage = () => {
                                                     </div>
                                                 ))}
                                             </div>
-                                            <button 
-                                                className="btn-learn"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleTrackClick(item.title, 'delivery');
-                                                    openLandingPage(item, 'delivery');
-                                                }}
-                                            >
-                                                Learn More →
-                                            </button>
+                                            <button className="btn-learn" onClick={(e) => { e.stopPropagation(); handleTrackClick(item.title, 'delivery'); openLandingPage(item, 'delivery'); }}>Learn More →</button>
                                         </div>
                                     </div>
                                 );
@@ -1850,7 +1706,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Solutions Portfolio Section - Slide Left/Right Animation */}
+                {/* Solutions Portfolio Section - WITH stopPropagation on buttons */}
                 <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.solutions} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -1862,20 +1718,8 @@ const WinzePage = () => {
                             {solutions.map((solution, idx) => {
                                 const extraPoints = getSolutionExtraPoints(solution.title);
                                 return (
-                                    <div 
-                                        key={idx} 
-                                        className="modern-card solution-card-animate"
-                                        style={{ background: getCardGradient(idx, 'solution') }}
-                                    >
-                                        <img 
-                                            src={solution.img} 
-                                            alt={solution.title} 
-                                            className="card-image"
-                                            onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = 'https://placehold.co/600x400/FFD700/1a1a2e?text=' + encodeURIComponent(solution.title);
-                                            }}
-                                        />
+                                    <div key={idx} className="modern-card solution-card-animate" style={{ background: getCardGradient(idx, 'solution') }}>
+                                        <img src={solution.img} alt={solution.title} className="card-image" onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x400/FFD700/1a1a2e?text=' + encodeURIComponent(solution.title); }} />
                                         <div className="card-inner">
                                             <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#FFD700' }} />
                                             <h3 style={{ marginBottom: '12px', color: 'white', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
@@ -1888,16 +1732,7 @@ const WinzePage = () => {
                                                     </div>
                                                 ))}
                                             </div>
-                                            <button 
-                                                className="btn-learn"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleTrackClick(solution.title, 'solution');
-                                                    openLandingPage(solution, 'solution');
-                                                }}
-                                            >
-                                                Learn More →
-                                            </button>
+                                            <button className="btn-learn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleTrackClick(solution.title, 'solution'); openLandingPage(solution, 'solution'); }}>Learn More →</button>
                                         </div>
                                     </div>
                                 );
@@ -1906,7 +1741,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Industries Section - Rotate & Scale Animation */}
+                {/* Industries Section - WITH stopPropagation on buttons */}
                 <section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.industries} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -1916,11 +1751,7 @@ const WinzePage = () => {
                             {industries.map((industry, idx) => {
                                 const extraPoints = getIndustryExtraPoints(industry.name);
                                 return (
-                                    <div 
-                                        key={idx} 
-                                        className="modern-card industry-card-animate"
-                                        style={{ background: getCardGradient(idx, 'industry') }}
-                                    >
+                                    <div key={idx} className="modern-card industry-card-animate" style={{ background: getCardGradient(idx, 'industry') }}>
                                         <img src={industry.img} alt={industry.name} className="card-image" />
                                         <div className="card-inner">
                                             <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '45px', marginBottom: '15px', color: '#FFD700' }} />
@@ -1934,16 +1765,7 @@ const WinzePage = () => {
                                                     </div>
                                                 ))}
                                             </div>
-                                            <button 
-                                                className="btn-learn"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleTrackClick(industry.name, 'industry');
-                                                    openLandingPage(industry, 'industry');
-                                                }}
-                                            >
-                                                Learn More →
-                                            </button>
+                                            <button className="btn-learn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleTrackClick(industry.name, 'industry'); openLandingPage(industry, 'industry'); }}>Learn More →</button>
                                         </div>
                                     </div>
                                 );
@@ -1952,86 +1774,26 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Our Trusted Partners Section */}
-                <section ref={partnersRef} id="partners" style={{
-                    padding: '80px 5%',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'
-                }}>
+                {/* Partners Section */}
+                <section ref={partnersRef} id="partners" style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)' }}>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Trusted Partners</h2>
                         <p style={{ color: '#FFD700', marginBottom: '20px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Innovation. Excellence. Trust.</p>
                         <p style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '50px', fontSize: '1rem', fontWeight: '500', letterSpacing: '0.5px' }}>Partnering with industry leaders to deliver world-class technology solutions</p>
-                        
-                        <div className="marquee-container">
-                            <div className="marquee-content">
-                                {[...partnerLogos, ...partnerLogos, ...partnerLogos].map((partner, idx) => (
-                                    <div 
-                                        key={idx}
-                                        className="partner-logo-item"
-                                        onClick={() => handleTrackClick(partner.name, 'partner')}
-                                        style={{ background: 'white' }}
-                                    >
-                                        <div className="partner-logo-img">
-                                            <img 
-                                                src={partner.url} 
-                                                alt={partner.name}
-                                                style={{ filter: 'none' }}
-                                                onError={(e) => {
-                                                    e.target.onerror = null;
-                                                    e.target.src = `https://placehold.co/100x100/FFD700/1a1a2e?text=${partner.name.charAt(0)}`;
-                                                }}
-                                            />
-                                        </div>
-                                        <h3 style={{ color: '#333', fontSize: '0.9rem', margin: 0, fontWeight: '600' }}>{partner.name}</h3>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                        <div className="marquee-container"><div className="marquee-content">{[...partnerLogos, ...partnerLogos, ...partnerLogos].map((partner, idx) => (<div key={idx} className="partner-logo-item" onClick={() => handleTrackClick(partner.name, 'partner')} style={{ background: 'white' }}><div className="partner-logo-img"><img src={partner.url} alt={partner.name} style={{ filter: 'none' }} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/FFD700/1a1a2e?text=${partner.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.9rem', margin: 0, fontWeight: '600' }}>{partner.name}</h3></div>))}</div></div>
                     </div>
                 </section>
 
-                {/* Our Valued Clients Section */}
-                <section ref={clientsRef} id="clients" style={{
-                    padding: '80px 5%',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)'
-                }}>
+                {/* Clients Section */}
+                <section ref={clientsRef} id="clients" style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)' }}>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Valued Clients</h2>
                         <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.1rem' }}>Trusted by industry leaders across India</p>
-                        
-                        <div className="marquee-container">
-                            <div className="marquee-content">
-                                {[...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (
-                                    <div 
-                                        key={idx}
-                                        className="client-logo-item"
-                                        onClick={() => handleTrackClick(client.name, 'client')}
-                                        style={{ background: 'white' }}
-                                    >
-                                        <div className="client-logo-img">
-                                            <img 
-                                                src={client.url} 
-                                                alt={client.name}
-                                                style={{ filter: 'none' }}
-                                                onError={(e) => {
-                                                    e.target.onerror = null;
-                                                    e.target.src = `https://placehold.co/100x100/FFD700/1a1a2e?text=${client.name.charAt(0)}`;
-                                                }}
-                                            />
-                                        </div>
-                                        <h3 style={{ color: '#333', fontSize: '0.9rem', margin: 0, fontWeight: '600' }}>{client.name}</h3>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                        <div className="marquee-container"><div className="marquee-content">{[...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (<div key={idx} className="client-logo-item" onClick={() => handleTrackClick(client.name, 'client')} style={{ background: 'white' }}><div className="client-logo-img"><img src={client.url} alt={client.name} style={{ filter: 'none' }} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/FFD700/1a1a2e?text=${client.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.9rem', margin: 0, fontWeight: '600' }}>{client.name}</h3></div>))}</div></div>
                     </div>
                 </section>
 
-                {/* Work With Winze Section - Pulse Glow Animation */}
+                {/* Work With Winze Section - WITH stopPropagation on buttons */}
                 <section ref={workwithRef} id="workwith" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.workwith} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
@@ -2041,11 +1803,7 @@ const WinzePage = () => {
                             {workWithWinze.map((item, idx) => {
                                 const extraPoints = getWorkExtraPoints(item.title);
                                 return (
-                                    <div 
-                                        key={idx}
-                                        className="modern-card work-card-animate"
-                                        style={{ background: getCardGradient(idx, 'work') }}
-                                    >
+                                    <div key={idx} className="modern-card work-card-animate" style={{ background: getCardGradient(idx, 'work') }}>
                                         <div className="card-inner">
                                             <FontAwesomeIcon icon={item.icon} style={{ fontSize: '55px', marginBottom: '20px', color: '#FFD700' }} />
                                             <h3 style={{ marginBottom: '15px', color: 'white', fontSize: '1.4rem', fontWeight: '700' }}>{item.title}</h3>
@@ -2058,16 +1816,7 @@ const WinzePage = () => {
                                                     </div>
                                                 ))}
                                             </div>
-                                            <button 
-                                                className="btn-learn"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleTrackClick(item.title, 'workwith');
-                                                    openLandingPage(item, 'work');
-                                                }}
-                                            >
-                                                Learn More →
-                                            </button>
+                                            <button className="btn-learn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleTrackClick(item.title, 'workwith'); openLandingPage(item, 'work'); }}>Learn More →</button>
                                         </div>
                                     </div>
                                 );
@@ -2076,294 +1825,48 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Our Impact in Numbers Section - Original colorful style */}
+                {/* Stats Section */}
                 <section ref={statsRef} style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.stats} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Impact in Numbers</h2>
                         <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Delivering excellence through measurable results and proven success</p>
-                        
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '30px' }}>
-                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite' }}>
-                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.years}+</div>
-                                <h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Years in Business</h3>
-                                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Extensive Experience in delivering IT Solutions & Services</p>
-                            </div>
-
-                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.3s' }}>
-                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.expertise}+</div>
-                                <h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Expertise</h3>
-                                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Domain experts delivering cutting-edge solutions</p>
-                            </div>
-
-                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.6s' }}>
-                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.clients}+</div>
-                                <h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Clients</h3>
-                                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Trusted by businesses across the globe</p>
-                            </div>
-
-                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.9s' }}>
-                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.awards}+</div>
-                                <h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Awards</h3>
-                                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Industry recognition for excellence & innovation</p>
-                            </div>
-
-                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 1.2s' }}>
-                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: '#333', marginBottom: '15px' }}>{counters.projects}+</div>
-                                <h3 style={{ fontSize: '1.3rem', color: '#333', marginBottom: '10px', fontWeight: 'bold' }}>Projects</h3>
-                                <p style={{ color: '#555', fontSize: '0.9rem', lineHeight: '1.4' }}>Successfully delivered with exceptional quality</p>
-                            </div>
+                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite' }}><div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.years}+</div><h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Years in Business</h3><p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Extensive Experience in delivering IT Solutions & Services</p></div>
+                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.3s' }}><div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.expertise}+</div><h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Expertise</h3><p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Domain experts delivering cutting-edge solutions</p></div>
+                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.6s' }}><div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.clients}+</div><h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Clients</h3><p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Trusted by businesses across the globe</p></div>
+                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.9s' }}><div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.awards}+</div><h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Awards</h3><p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Industry recognition for excellence & innovation</p></div>
+                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 1.2s' }}><div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: '#333', marginBottom: '15px' }}>{counters.projects}+</div><h3 style={{ fontSize: '1.3rem', color: '#333', marginBottom: '10px', fontWeight: 'bold' }}>Projects</h3><p style={{ color: '#555', fontSize: '0.9rem', lineHeight: '1.4' }}>Successfully delivered with exceptional quality</p></div>
                         </div>
                     </div>
                 </section>
 
                 {/* Logo Modal */}
-                {showLogoModal && (
-                    <div style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        background: 'rgba(0,0,0,0.95)',
-                        backdropFilter: 'blur(20px)',
-                        zIndex: 2000,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer'
-                    }} onClick={() => setShowLogoModal(false)}>
-                        <div style={{ maxWidth: '90vw', maxHeight: '90vh', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
-                            <button onClick={() => setShowLogoModal(false)} style={{
-                                position: 'absolute', top: '-50px', right: '-50px', background: '#FFD700', border: 'none',
-                                fontSize: '30px', cursor: 'pointer', color: '#1a1a2e', width: '40px', height: '40px', borderRadius: '50%',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', fontWeight: 'bold'
-                            }}>×</button>
-                            <div style={{ background: 'white', borderRadius: '20px', padding: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 25px 50px rgba(0,0,0,0.5)' }}>
-                                <img src="/winze-logo.jpg" alt="Winze Technologies Logo" style={{ maxWidth: '70vw', maxHeight: '70vh', objectFit: 'contain' }} />
-                            </div>
-                        </div>
-                    </div>
-                )}
+                {showLogoModal && (<div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(20px)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} onClick={() => setShowLogoModal(false)}><div style={{ maxWidth: '90vw', maxHeight: '90vh', position: 'relative' }} onClick={(e) => e.stopPropagation()}><button onClick={() => setShowLogoModal(false)} style={{ position: 'absolute', top: '-50px', right: '-50px', background: '#FFD700', border: 'none', fontSize: '30px', cursor: 'pointer', color: '#1a1a2e', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', fontWeight: 'bold' }}>×</button><div style={{ background: 'white', borderRadius: '20px', padding: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 25px 50px rgba(0,0,0,0.5)' }}><img src="/winze-logo.jpg" alt="Winze Technologies Logo" style={{ maxWidth: '70vw', maxHeight: '70vh', objectFit: 'contain' }} /></div></div></div>)}
 
-                {/* Quote Modal - THIS DOES NOT TRACK, ONLY SUBMITS TO QUOTES DATABASE */}
-                {showQuoteModal && (
-                    <div style={{ 
-                        position: 'fixed', 
-                        top: 0, 
-                        left: 0, 
-                        right: 0, 
-                        bottom: 0, 
-                        background: 'rgba(0,0,0,0.95)', 
-                        backdropFilter: 'blur(10px)', 
-                        zIndex: 2000, 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        padding: '20px' 
-                    }} onClick={() => setShowQuoteModal(false)}>
-                        <div style={{ 
-                            background: 'linear-gradient(145deg, #1a1a2e, #16213e)', 
-                            borderRadius: '28px', 
-                            padding: '45px', 
-                            maxWidth: '550px', 
-                            width: '100%', 
-                            position: 'relative', 
-                            border: '1px solid rgba(255,215,0,0.3)',
-                            maxHeight: '85vh',
-                            overflow: 'auto'
-                        }} onClick={(e) => e.stopPropagation()}>
-                            <button 
-                                onClick={() => setShowQuoteModal(false)} 
-                                style={{ 
-                                    position: 'absolute', 
-                                    top: '20px', 
-                                    right: '25px', 
-                                    background: '#FFD700', 
-                                    border: 'none', 
-                                    fontSize: '20px', 
-                                    cursor: 'pointer', 
-                                    color: '#1a1a2e', 
-                                    width: '35px', 
-                                    height: '35px', 
-                                    borderRadius: '50%', 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    justifyContent: 'center',
-                                    fontWeight: 'bold'
-                                }}
-                            >×</button>
-                            <h2 style={{ color: '#FFD700', marginBottom: '25px', textAlign: 'center' }}>✨ Request a Quote</h2>
-                            <p style={{ color: '#ccc', textAlign: 'center', marginBottom: '30px', fontSize: '14px' }}>Fill out the form and our team will contact you within 24 hours</p>
-                            
-                            <form onSubmit={handleSubmitQuote}>
-                                <input 
-                                    type="text" 
-                                    name="name" 
-                                    placeholder="Full Name" 
-                                    required 
-                                    onChange={handleInputChange} 
-                                    style={{ 
-                                        width: '100%', 
-                                        padding: '14px', 
-                                        marginBottom: '15px', 
-                                        borderRadius: '12px', 
-                                        border: '1px solid rgba(255,215,0,0.3)', 
-                                        background: 'rgba(255,255,255,0.1)', 
-                                        color: 'white', 
-                                        fontSize: '15px',
-                                        boxSizing: 'border-box'
-                                    }} 
-                                />
-                                <input 
-                                    type="email" 
-                                    name="email" 
-                                    placeholder="Email Address" 
-                                    required 
-                                    onChange={handleInputChange} 
-                                    style={{ 
-                                        width: '100%', 
-                                        padding: '14px', 
-                                        marginBottom: '15px', 
-                                        borderRadius: '12px', 
-                                        border: '1px solid rgba(255,215,0,0.3)', 
-                                        background: 'rgba(255,255,255,0.1)', 
-                                        color: 'white', 
-                                        fontSize: '15px',
-                                        boxSizing: 'border-box'
-                                    }} 
-                                />
-                                <input 
-                                    type="tel" 
-                                    name="phone" 
-                                    placeholder="Phone Number" 
-                                    required 
-                                    onChange={handleInputChange} 
-                                    style={{ 
-                                        width: '100%', 
-                                        padding: '14px', 
-                                        marginBottom: '15px', 
-                                        borderRadius: '12px', 
-                                        border: '1px solid rgba(255,215,0,0.3)', 
-                                        background: 'rgba(255,255,255,0.1)', 
-                                        color: 'white', 
-                                        fontSize: '15px',
-                                        boxSizing: 'border-box'
-                                    }} 
-                                />
-                                
-                                <div style={{ position: 'relative', marginBottom: '15px' }}>
-                                    <select 
-                                        name="service" 
-                                        required
-                                        value={formData.service}
-                                        onChange={handleInputChange} 
-                                        style={{ 
-                                            width: '100%', 
-                                            padding: '14px', 
-                                            borderRadius: '12px', 
-                                            border: '1px solid rgba(255,215,0,0.3)', 
-                                            background: 'rgba(255,255,255,0.1)', 
-                                            color: 'white', 
-                                            fontSize: '15px',
-                                            boxSizing: 'border-box',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <option value="" style={{ background: '#1a1a2e', color: 'white' }}>Select a Service</option>
-                                        {solutions.map((s, idx) => (
-                                            <option key={idx} value={s.title} style={{ background: '#1a1a2e', color: 'white', padding: '10px' }}>
-                                                {s.title}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                
-                                <textarea 
-                                    name="message" 
-                                    placeholder="Tell us about your requirements..." 
-                                    rows="4" 
-                                    onChange={handleInputChange} 
-                                    style={{ 
-                                        width: '100%', 
-                                        padding: '14px', 
-                                        marginBottom: '20px', 
-                                        borderRadius: '12px', 
-                                        border: '1px solid rgba(255,215,0,0.3)', 
-                                        background: 'rgba(255,255,255,0.1)', 
-                                        color: 'white', 
-                                        fontSize: '15px',
-                                        boxSizing: 'border-box',
-                                        resize: 'vertical'
-                                    }} 
-                                ></textarea>
-                                
-                                <button 
-                                    type="submit" 
-                                    style={{ 
-                                        width: '100%', 
-                                        background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', 
-                                        color: '#1a1a2e', 
-                                        padding: '14px', 
-                                        border: 'none', 
-                                        borderRadius: '12px', 
-                                        fontSize: '16px', 
-                                        fontWeight: '700', 
-                                        cursor: 'pointer', 
-                                        transition: 'all 0.3s' 
-                                    }}
-                                    onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'}
-                                    onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-                                >
-                                    Submit Request →
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                )}
-                
+                {/* Quote Modal - NO TRACKING, only saves to database */}
+                {showQuoteModal && (<div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(10px)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowQuoteModal(false)}><div style={{ background: 'linear-gradient(145deg, #1a1a2e, #16213e)', borderRadius: '28px', padding: '45px', maxWidth: '550px', width: '100%', position: 'relative', border: '1px solid rgba(255,215,0,0.3)', maxHeight: '85vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}><button onClick={() => setShowQuoteModal(false)} style={{ position: 'absolute', top: '20px', right: '25px', background: '#FFD700', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#1a1a2e', width: '35px', height: '35px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>×</button><h2 style={{ color: '#FFD700', marginBottom: '25px', textAlign: 'center' }}>✨ Request a Quote</h2><p style={{ color: '#ccc', textAlign: 'center', marginBottom: '30px', fontSize: '14px' }}>Fill out the form and our team will contact you within 24 hours</p>
+                <form onSubmit={handleSubmitQuote}>
+                    <input type="text" name="name" placeholder="Full Name" required onChange={handleInputChange} style={{ width: '100%', padding: '14px', marginBottom: '15px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.3)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px', boxSizing: 'border-box' }} />
+                    <input type="email" name="email" placeholder="Email Address" required onChange={handleInputChange} style={{ width: '100%', padding: '14px', marginBottom: '15px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.3)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px', boxSizing: 'border-box' }} />
+                    <input type="tel" name="phone" placeholder="Phone Number" required onChange={handleInputChange} style={{ width: '100%', padding: '14px', marginBottom: '15px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.3)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px', boxSizing: 'border-box' }} />
+                    <div style={{ position: 'relative', marginBottom: '15px' }}><select name="service" required value={formData.service} onChange={handleInputChange} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.3)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px', boxSizing: 'border-box', cursor: 'pointer' }}><option value="" style={{ background: '#1a1a2e', color: 'white' }}>Select a Service</option>{solutions.map((s, idx) => (<option key={idx} value={s.title} style={{ background: '#1a1a2e', color: 'white', padding: '10px' }}>{s.title}</option>))}</select></div>
+                    <textarea name="message" placeholder="Tell us about your requirements..." rows="4" onChange={handleInputChange} style={{ width: '100%', padding: '14px', marginBottom: '20px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.3)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px', boxSizing: 'border-box', resize: 'vertical' }}></textarea>
+                    <button type="submit" style={{ width: '100%', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#1a1a2e', padding: '14px', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.3s' }} onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}>Submit Request →</button>
+                </form></div></div>)}
+
                 {/* Landing Page Modal */}
-                {landingModalOpen && (
-                    <LandingPage 
-                        item={landingData} 
-                        onClose={closeLandingPage} 
-                        onRequestQuote={openQuoteModalForItem}
-                    />
-                )}
+                {landingModalOpen && (<LandingPage item={landingData} onClose={closeLandingPage} onRequestQuote={openQuoteModalForItem} />)}
 
                 {/* Footer */}
                 <footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,215,0,0.1)' }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '45px', marginBottom: '45px' }}>
-                            <div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}>
-                                    <img src="/winze-logo.jpg" alt="Logo" style={{ width: '45px', height: '45px', objectFit: 'contain', background: 'white', padding: '6px', borderRadius: '10px' }} />
-                                    <span style={{ fontWeight: '800', fontSize: '1.2rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span>
-                                </div>
-                                <p style={{ color: '#aaa', lineHeight: '1.6' }}>Driving Innovation through Customer-Centric Technology Solutions.</p>
-                            </div>
-                            <div>
-                                <h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Quick Links</h4>
-                                {navItems.map((item) => (
-                                    <p key={item.name}>
-                                        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollToSection(item.ref, item.name); }} style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '12px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s' }}
-                                        onMouseEnter={(e) => e.target.style.color = '#FFD700'}
-                                        onMouseLeave={(e) => e.target.style.color = '#aaa'}>
-                                            {item.name}
-                                        </button>
-                                    </p>
-                                ))}
-                            </div>
-                            <div>
-                                <h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Contact Info</h4>
-                                <p style={{ color: '#aaa', marginBottom: '12px' }}>📧 sales@winzetech.com</p>
-                                <p style={{ color: '#aaa', marginBottom: '12px' }}>📞 +91 95500 10417</p>
-                                <p style={{ color: '#aaa', marginBottom: '12px' }}>🌐 www.winzetech.com</p>
-                            </div>
+                            <div><div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}><img src="/winze-logo.jpg" alt="Logo" style={{ width: '45px', height: '45px', objectFit: 'contain', background: 'white', padding: '6px', borderRadius: '10px' }} /><span style={{ fontWeight: '800', fontSize: '1.2rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span></div><p style={{ color: '#aaa', lineHeight: '1.6' }}>Driving Innovation through Customer-Centric Technology Solutions.</p></div>
+                            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Quick Links</h4>{navItems.map((item) => (<p key={item.name}><button onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollToSection(item.ref, item.name); }} style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '12px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s' }} onMouseEnter={(e) => e.target.style.color = '#FFD700'} onMouseLeave={(e) => e.target.style.color = '#aaa'}>{item.name}</button></p>))}</div>
+                            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Contact Info</h4><p style={{ color: '#aaa', marginBottom: '12px' }}>📧 sales@winzetech.com</p><p style={{ color: '#aaa', marginBottom: '12px' }}>📞 +91 95500 10417</p><p style={{ color: '#aaa', marginBottom: '12px' }}>🌐 www.winzetech.com</p></div>
                         </div>
-                        <div style={{ textAlign: 'center', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#666' }}>
-                            <p>© 2025 Winze Technologies Pvt Ltd. All rights reserved.</p>
-                        </div>
+                        <div style={{ textAlign: 'center', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#666' }}><p>© 2025 Winze Technologies Pvt Ltd. All rights reserved.</p></div>
                     </div>
                 </footer>
             </div>
