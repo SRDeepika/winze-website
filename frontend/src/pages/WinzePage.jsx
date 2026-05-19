@@ -713,6 +713,7 @@ const WinzePage = () => {
         service: '',
         message: ''
     });
+    const [isTracking, setIsTracking] = useState(false);
     
     const [landingModalOpen, setLandingModalOpen] = useState(false);
     const [landingData, setLandingData] = useState(null);
@@ -724,8 +725,15 @@ const WinzePage = () => {
     const partnersRef = useRef(null);
     const clientsRef = useRef(null);
     const workwithRef = useRef(null);
+    const hasTrackedInitialView = useRef(false);
 
     useEffect(() => {
+        // Track initial page view ONLY ONCE
+        if (!hasTrackedInitialView.current) {
+            hasTrackedInitialView.current = true;
+            handleTrackClick('Page View - Home', 'page_view');
+        }
+        
         window.addEventListener('scroll', () => {
             setScrolled(window.scrollY > 50);
         });
@@ -773,6 +781,10 @@ const WinzePage = () => {
     }, []);
 
     const handleTrackClick = async (itemName, category) => {
+        // Prevent duplicate tracking
+        if (isTracking) return;
+        
+        setIsTracking(true);
         try {
             let userIp = '0.0.0.0';
             try {
@@ -791,6 +803,8 @@ const WinzePage = () => {
             });
         } catch (error) {
             console.error('Tracking failed:', error);
+        } finally {
+            setTimeout(() => setIsTracking(false), 1000);
         }
     };
 
