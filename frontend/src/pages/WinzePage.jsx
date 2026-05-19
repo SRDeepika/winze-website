@@ -713,7 +713,6 @@ const WinzePage = () => {
         service: '',
         message: ''
     });
-    const [isTracking, setIsTracking] = useState(false);
     
     const [landingModalOpen, setLandingModalOpen] = useState(false);
     const [landingData, setLandingData] = useState(null);
@@ -725,15 +724,8 @@ const WinzePage = () => {
     const partnersRef = useRef(null);
     const clientsRef = useRef(null);
     const workwithRef = useRef(null);
-    const hasTrackedInitialView = useRef(false);
 
     useEffect(() => {
-        // Track initial page view ONLY ONCE
-        if (!hasTrackedInitialView.current) {
-            hasTrackedInitialView.current = true;
-            handleTrackClick('Page View - Home', 'page_view');
-        }
-        
         window.addEventListener('scroll', () => {
             setScrolled(window.scrollY > 50);
         });
@@ -781,10 +773,6 @@ const WinzePage = () => {
     }, []);
 
     const handleTrackClick = async (itemName, category) => {
-        // Prevent duplicate tracking
-        if (isTracking) return;
-        
-        setIsTracking(true);
         try {
             let userIp = '0.0.0.0';
             try {
@@ -803,8 +791,6 @@ const WinzePage = () => {
             });
         } catch (error) {
             console.error('Tracking failed:', error);
-        } finally {
-            setTimeout(() => setIsTracking(false), 1000);
         }
     };
 
@@ -1545,7 +1531,7 @@ const WinzePage = () => {
                     to { opacity: 1; transform: translateY(0); }
                 }
                 
-                /* Logo styling - TRANSPARENT background */
+                /* Logo styling */
                 .logo-clean {
                     display: flex;
                     align-items: center;
@@ -1558,8 +1544,8 @@ const WinzePage = () => {
                     height: 48px;
                     border-radius: 12px;
                     object-fit: contain;
-                    background: transparent;
-                    padding: 0;
+                    background: white;
+                    padding: 6px;
                 }
             `}</style>
             
@@ -1576,7 +1562,7 @@ const WinzePage = () => {
                 
                 <SocialLinks />
                 
-                {/* Navigation Bar - Clean logo with TRANSPARENT background */}
+                {/* Navigation Bar - Clean logo without button background */}
                 <nav style={{
                     position: 'sticky',
                     top: 0,
@@ -1596,12 +1582,12 @@ const WinzePage = () => {
                             onClick={() => setShowLogoModal(true)}
                         >
                             <img 
-                                src="/winze-logo.png" 
+                                src="/winze-logo.jpg" 
                                 alt="Winze Technologies Logo" 
                                 className="logo-image"
                                 onError={(e) => {
                                     e.target.style.display = 'none';
-                                    e.target.parentElement.innerHTML = '<div style="width:48px;height:48px;background:transparent;border-radius:12px;display:flex;align-items:center;justify-content:center;"><span style="color:#FFD700;font-size:28px;font-weight:bold">W</span></div><span style="font-weight:800;font-size:1.4rem;background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Winze Technologies</span>';
+                                    e.target.parentElement.innerHTML = '<div style="width:48px;height:48px;background:#FFD700;border-radius:12px;display:flex;align-items:center;justify-content:center;"><span style="color:#1a1a2e;font-size:24px;font-weight:bold">W</span></div><span style="font-weight:800;font-size:1.4rem;background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Winze Technologies</span>';
                                 }}
                             />
                             <span style={{ 
@@ -1886,8 +1872,7 @@ const WinzePage = () => {
                                             </div>
                                             <button 
                                                 className="btn-learn"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
+                                                onClick={() => {
                                                     handleTrackClick(solution.title, 'solution');
                                                     openLandingPage(solution, 'solution');
                                                 }}
@@ -1932,8 +1917,7 @@ const WinzePage = () => {
                                             </div>
                                             <button 
                                                 className="btn-learn"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
+                                                onClick={() => {
                                                     handleTrackClick(industry.name, 'industry');
                                                     openLandingPage(industry, 'industry');
                                                 }}
@@ -2056,8 +2040,7 @@ const WinzePage = () => {
                                             </div>
                                             <button 
                                                 className="btn-learn"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
+                                                onClick={() => {
                                                     handleTrackClick(item.title, 'workwith');
                                                     openLandingPage(item, 'work');
                                                 }}
@@ -2136,7 +2119,7 @@ const WinzePage = () => {
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', fontWeight: 'bold'
                             }}>×</button>
                             <div style={{ background: 'white', borderRadius: '20px', padding: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 25px 50px rgba(0,0,0,0.5)' }}>
-                                <img src="/winze-logo.png" alt="Winze Technologies Logo" style={{ maxWidth: '70vw', maxHeight: '70vh', objectFit: 'contain' }} />
+                                <img src="/winze-logo.jpg" alt="Winze Technologies Logo" style={{ maxWidth: '70vw', maxHeight: '70vh', objectFit: 'contain' }} />
                             </div>
                         </div>
                     </div>
@@ -2327,13 +2310,13 @@ const WinzePage = () => {
                     />
                 )}
 
-                {/* Footer - with TRANSPARENT logo */}
+                {/* Footer */}
                 <footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,215,0,0.1)' }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '45px', marginBottom: '45px' }}>
                             <div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}>
-                                    <img src="/winze-logo.png" alt="Logo" style={{ width: '45px', height: '45px', objectFit: 'contain', background: 'transparent', padding: '0', borderRadius: '10px' }} />
+                                    <img src="/winze-logo.jpg" alt="Logo" style={{ width: '45px', height: '45px', objectFit: 'contain', background: 'white', padding: '6px', borderRadius: '10px' }} />
                                     <span style={{ fontWeight: '800', fontSize: '1.2rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span>
                                 </div>
                                 <p style={{ color: '#aaa', lineHeight: '1.6' }}>Driving Innovation through Customer-Centric Technology Solutions.</p>
