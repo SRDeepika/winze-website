@@ -1531,7 +1531,7 @@ const WinzePage = () => {
                     to { opacity: 1; transform: translateY(0); }
                 }
                 
-                /* Logo styling - TRANSPARENT background - NO white/blue button */
+                /* Logo styling - no button background */
                 .logo-clean {
                     display: flex;
                     align-items: center;
@@ -1544,8 +1544,8 @@ const WinzePage = () => {
                     height: 48px;
                     border-radius: 12px;
                     object-fit: contain;
-                    background: transparent;
-                    padding: 0;
+                    background: white;
+                    padding: 6px;
                 }
             `}</style>
             
@@ -1562,7 +1562,7 @@ const WinzePage = () => {
                 
                 <SocialLinks />
                 
-                {/* Navigation Bar - Clean logo with TRANSPARENT background */}
+                {/* Navigation Bar - Clean logo without button background */}
                 <nav style={{
                     position: 'sticky',
                     top: 0,
@@ -1577,7 +1577,6 @@ const WinzePage = () => {
                     borderBottom: '1px solid rgba(255,215,0,0.1)'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
-                        {/* Logo - TRANSPARENT background, no button styling */}
                         <div 
                             className="logo-clean"
                             onClick={() => setShowLogoModal(true)}
@@ -1588,7 +1587,7 @@ const WinzePage = () => {
                                 className="logo-image"
                                 onError={(e) => {
                                     e.target.style.display = 'none';
-                                    e.target.parentElement.innerHTML = '<div style="width:48px;height:48px;background:transparent;border-radius:12px;display:flex;align-items:center;justify-content:center;"><span style="color:#FFD700;font-size:28px;font-weight:bold">W</span></div><span style="font-weight:800;font-size:1.4rem;background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Winze Technologies</span>';
+                                    e.target.parentElement.innerHTML = '<div style="width:48px;height:48px;background:#FFD700;border-radius:12px;display:flex;align-items:center;justify-content:center;"><span style="color:#1a1a2e;font-size:24px;font-weight:bold">W</span></div><span style="font-weight:800;font-size:1.4rem;background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Winze Technologies</span>';
                                 }}
                             />
                             <span style={{ 
@@ -1662,7 +1661,6 @@ const WinzePage = () => {
                     </div>
                 </nav>
 
-                {/* Rest of the component remains the same... */}
                 {/* Hero Section */}
                 <section ref={homeRef} id="home" style={{
                     minHeight: '90vh',
@@ -1789,10 +1787,564 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* The remaining sections (What We Deliver, Solutions, Industries, Partners, Clients, Work With Winze, Stats, Footer) 
-                    remain exactly the same as in your original code... */}
-                {/* ... (rest of your existing code for other sections) ... */}
+                {/* What We Deliver Section - Bounce Up & Down Animation */}
+                <section id="delivery" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+                    <DarkBackgroundImage imageSrc={bgImages.delivery} />
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px', fontWeight: '800' }}>What We Deliver</h2>
+                        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Comprehensive lifecycle for technology integration</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '35px' }}>
+                            {deliveryItems.map((item, i) => {
+                                const extraPoints = getDeliveryExtraPoints(item.title);
+                                return (
+                                    <div 
+                                        key={i} 
+                                        className="modern-card delivery-card-animate"
+                                        style={{ background: getCardGradient(i, 'delivery') }}
+                                    >
+                                        <div className="card-inner">
+                                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '50px', marginBottom: '20px', color: '#FFD700' }} />
+                                            <h3 style={{ marginBottom: '15px', color: 'white', fontSize: '1.4rem', fontWeight: '700' }}>{item.title}</h3>
+                                            <p style={{ color: 'rgba(255,255,255,0.85)', lineHeight: '1.5', marginBottom: '15px' }}>{item.desc}</p>
+                                            <div className="extra-points">
+                                                {extraPoints.slice(0,5).map((point, idx) => (
+                                                    <div key={idx} className="point-item">
+                                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#FFD700', fontSize: '14px' }} />
+                                                        <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '13px' }}>{point}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button 
+                                                className="btn-learn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleTrackClick(item.title, 'delivery');
+                                                    openLandingPage(item, 'delivery');
+                                                }}
+                                            >
+                                                Learn More →
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </section>
 
+                {/* Solutions Portfolio Section - Slide Left/Right Animation */}
+                <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+                    <BackgroundImage imageSrc={bgImages.solutions} />
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px', fontWeight: '800' }}>Our Solutions Portfolio</h2>
+                        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '10px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Our SOLUTIONS — Practical Action, Bold Ambition, Endless Possibilities</p>
+                        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '60px', fontSize: '1rem' }}>Enterprise-grade technology solutions for modern businesses</p>
+                        
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '30px' }}>
+                            {solutions.map((solution, idx) => {
+                                const extraPoints = getSolutionExtraPoints(solution.title);
+                                return (
+                                    <div 
+                                        key={idx} 
+                                        className="modern-card solution-card-animate"
+                                        style={{ background: getCardGradient(idx, 'solution') }}
+                                    >
+                                        <img 
+                                            src={solution.img} 
+                                            alt={solution.title} 
+                                            className="card-image"
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = 'https://placehold.co/600x400/FFD700/1a1a2e?text=' + encodeURIComponent(solution.title);
+                                            }}
+                                        />
+                                        <div className="card-inner">
+                                            <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#FFD700' }} />
+                                            <h3 style={{ marginBottom: '12px', color: 'white', fontSize: '1.2rem', fontWeight: '700' }}>{solution.title}</h3>
+                                            <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.5', marginBottom: '15px', fontSize: '14px' }}>{solution.desc}</p>
+                                            <div className="extra-points">
+                                                {extraPoints.slice(0,4).map((point, pid) => (
+                                                    <div key={pid} className="point-item">
+                                                        <FontAwesomeIcon icon={faStar} style={{ color: '#FFD700', fontSize: '12px' }} />
+                                                        <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '12px' }}>{point}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button 
+                                                className="btn-learn"
+                                                onClick={() => {
+                                                    handleTrackClick(solution.title, 'solution');
+                                                    openLandingPage(solution, 'solution');
+                                                }}
+                                            >
+                                                Learn More →
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Industries Section - Rotate & Scale Animation */}
+                <section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+                    <DarkBackgroundImage imageSrc={bgImages.industries} />
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+                        <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px', fontWeight: '800' }}>Industries We Serve</h2>
+                        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '60px', fontSize: '1.1rem' }}>Transforming businesses across sectors with innovative solutions</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '35px' }}>
+                            {industries.map((industry, idx) => {
+                                const extraPoints = getIndustryExtraPoints(industry.name);
+                                return (
+                                    <div 
+                                        key={idx} 
+                                        className="modern-card industry-card-animate"
+                                        style={{ background: getCardGradient(idx, 'industry') }}
+                                    >
+                                        <img src={industry.img} alt={industry.name} className="card-image" />
+                                        <div className="card-inner">
+                                            <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '45px', marginBottom: '15px', color: '#FFD700' }} />
+                                            <h3 style={{ marginBottom: '10px', color: 'white', fontSize: '1.3rem', fontWeight: '700' }}>{industry.name}</h3>
+                                            <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.5', fontSize: '0.9rem', marginBottom: '15px' }}>{industry.desc}</p>
+                                            <div className="extra-points">
+                                                {extraPoints.slice(0,5).map((point, pid) => (
+                                                    <div key={pid} className="point-item">
+                                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#FFD700', fontSize: '12px' }} />
+                                                        <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '12px' }}>{point}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button 
+                                                className="btn-learn"
+                                                onClick={() => {
+                                                    handleTrackClick(industry.name, 'industry');
+                                                    openLandingPage(industry, 'industry');
+                                                }}
+                                            >
+                                                Learn More →
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Our Trusted Partners Section */}
+                <section ref={partnersRef} id="partners" style={{
+                    padding: '80px 5%',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'
+                }}>
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
+                        <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Trusted Partners</h2>
+                        <p style={{ color: '#FFD700', marginBottom: '20px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Innovation. Excellence. Trust.</p>
+                        <p style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '50px', fontSize: '1rem', fontWeight: '500', letterSpacing: '0.5px' }}>Partnering with industry leaders to deliver world-class technology solutions</p>
+                        
+                        <div className="marquee-container">
+                            <div className="marquee-content">
+                                {[...partnerLogos, ...partnerLogos, ...partnerLogos].map((partner, idx) => (
+                                    <div 
+                                        key={idx}
+                                        className="partner-logo-item"
+                                        onClick={() => handleTrackClick(partner.name, 'partner')}
+                                        style={{ background: 'white' }}
+                                    >
+                                        <div className="partner-logo-img">
+                                            <img 
+                                                src={partner.url} 
+                                                alt={partner.name}
+                                                style={{ filter: 'none' }}
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = `https://placehold.co/100x100/FFD700/1a1a2e?text=${partner.name.charAt(0)}`;
+                                                }}
+                                            />
+                                        </div>
+                                        <h3 style={{ color: '#333', fontSize: '0.9rem', margin: 0, fontWeight: '600' }}>{partner.name}</h3>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Our Valued Clients Section */}
+                <section ref={clientsRef} id="clients" style={{
+                    padding: '80px 5%',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)'
+                }}>
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
+                        <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Valued Clients</h2>
+                        <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.1rem' }}>Trusted by industry leaders across India</p>
+                        
+                        <div className="marquee-container">
+                            <div className="marquee-content">
+                                {[...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (
+                                    <div 
+                                        key={idx}
+                                        className="client-logo-item"
+                                        onClick={() => handleTrackClick(client.name, 'client')}
+                                        style={{ background: 'white' }}
+                                    >
+                                        <div className="client-logo-img">
+                                            <img 
+                                                src={client.url} 
+                                                alt={client.name}
+                                                style={{ filter: 'none' }}
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = `https://placehold.co/100x100/FFD700/1a1a2e?text=${client.name.charAt(0)}`;
+                                                }}
+                                            />
+                                        </div>
+                                        <h3 style={{ color: '#333', fontSize: '0.9rem', margin: 0, fontWeight: '600' }}>{client.name}</h3>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Work With Winze Section - Pulse Glow Animation */}
+                <section ref={workwithRef} id="workwith" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+                    <DarkBackgroundImage imageSrc={bgImages.workwith} />
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
+                        <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Why Work With Winze?</h2>
+                        <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.1rem' }}>Partner with us for a transformative technology experience</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '35px' }}>
+                            {workWithWinze.map((item, idx) => {
+                                const extraPoints = getWorkExtraPoints(item.title);
+                                return (
+                                    <div 
+                                        key={idx}
+                                        className="modern-card work-card-animate"
+                                        style={{ background: getCardGradient(idx, 'work') }}
+                                    >
+                                        <div className="card-inner">
+                                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '55px', marginBottom: '20px', color: '#FFD700' }} />
+                                            <h3 style={{ marginBottom: '15px', color: 'white', fontSize: '1.4rem', fontWeight: '700' }}>{item.title}</h3>
+                                            <p style={{ color: 'rgba(255,255,255,0.85)', lineHeight: '1.5', marginBottom: '15px' }}>{item.desc}</p>
+                                            <div className="extra-points">
+                                                {extraPoints.slice(0,5).map((point, pid) => (
+                                                    <div key={pid} className="point-item">
+                                                        <FontAwesomeIcon icon={faGem} style={{ color: '#FFD700', fontSize: '12px' }} />
+                                                        <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '12px' }}>{point}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button 
+                                                className="btn-learn"
+                                                onClick={() => {
+                                                    handleTrackClick(item.title, 'workwith');
+                                                    openLandingPage(item, 'work');
+                                                }}
+                                            >
+                                                Learn More →
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Our Impact in Numbers Section - Original colorful style */}
+                <section ref={statsRef} style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+                    <BackgroundImage imageSrc={bgImages.stats} />
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
+                        <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Impact in Numbers</h2>
+                        <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Delivering excellence through measurable results and proven success</p>
+                        
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '30px' }}>
+                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite' }}>
+                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.years}+</div>
+                                <h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Years in Business</h3>
+                                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Extensive Experience in delivering IT Solutions & Services</p>
+                            </div>
+
+                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.3s' }}>
+                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.expertise}+</div>
+                                <h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Expertise</h3>
+                                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Domain experts delivering cutting-edge solutions</p>
+                            </div>
+
+                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.6s' }}>
+                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.clients}+</div>
+                                <h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Clients</h3>
+                                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Trusted by businesses across the globe</p>
+                            </div>
+
+                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.9s' }}>
+                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: 'white', marginBottom: '15px' }}>{counters.awards}+</div>
+                                <h3 style={{ fontSize: '1.3rem', color: 'white', marginBottom: '10px', fontWeight: 'bold' }}>Awards</h3>
+                                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', lineHeight: '1.4' }}>Industry recognition for excellence & innovation</p>
+                            </div>
+
+                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 1.2s' }}>
+                                <div style={{ fontSize: '3.5rem', fontWeight: 'bold', color: '#333', marginBottom: '15px' }}>{counters.projects}+</div>
+                                <h3 style={{ fontSize: '1.3rem', color: '#333', marginBottom: '10px', fontWeight: 'bold' }}>Projects</h3>
+                                <p style={{ color: '#555', fontSize: '0.9rem', lineHeight: '1.4' }}>Successfully delivered with exceptional quality</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Logo Modal */}
+                {showLogoModal && (
+                    <div style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'rgba(0,0,0,0.95)',
+                        backdropFilter: 'blur(20px)',
+                        zIndex: 2000,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer'
+                    }} onClick={() => setShowLogoModal(false)}>
+                        <div style={{ maxWidth: '90vw', maxHeight: '90vh', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+                            <button onClick={() => setShowLogoModal(false)} style={{
+                                position: 'absolute', top: '-50px', right: '-50px', background: '#FFD700', border: 'none',
+                                fontSize: '30px', cursor: 'pointer', color: '#1a1a2e', width: '40px', height: '40px', borderRadius: '50%',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', fontWeight: 'bold'
+                            }}>×</button>
+                            <div style={{ background: 'white', borderRadius: '20px', padding: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 25px 50px rgba(0,0,0,0.5)' }}>
+                                <img src="/winze-logo.jpg" alt="Winze Technologies Logo" style={{ maxWidth: '70vw', maxHeight: '70vh', objectFit: 'contain' }} />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Quote Modal */}
+                {showQuoteModal && (
+                    <div style={{ 
+                        position: 'fixed', 
+                        top: 0, 
+                        left: 0, 
+                        right: 0, 
+                        bottom: 0, 
+                        background: 'rgba(0,0,0,0.95)', 
+                        backdropFilter: 'blur(10px)', 
+                        zIndex: 2000, 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        padding: '20px' 
+                    }} onClick={() => setShowQuoteModal(false)}>
+                        <div style={{ 
+                            background: 'linear-gradient(145deg, #1a1a2e, #16213e)', 
+                            borderRadius: '28px', 
+                            padding: '45px', 
+                            maxWidth: '550px', 
+                            width: '100%', 
+                            position: 'relative', 
+                            border: '1px solid rgba(255,215,0,0.3)',
+                            maxHeight: '85vh',
+                            overflow: 'auto'
+                        }} onClick={(e) => e.stopPropagation()}>
+                            <button 
+                                onClick={() => setShowQuoteModal(false)} 
+                                style={{ 
+                                    position: 'absolute', 
+                                    top: '20px', 
+                                    right: '25px', 
+                                    background: '#FFD700', 
+                                    border: 'none', 
+                                    fontSize: '20px', 
+                                    cursor: 'pointer', 
+                                    color: '#1a1a2e', 
+                                    width: '35px', 
+                                    height: '35px', 
+                                    borderRadius: '50%', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    fontWeight: 'bold'
+                                }}
+                            >×</button>
+                            <h2 style={{ color: '#FFD700', marginBottom: '25px', textAlign: 'center' }}>✨ Request a Quote</h2>
+                            <p style={{ color: '#ccc', textAlign: 'center', marginBottom: '30px', fontSize: '14px' }}>Fill out the form and our team will contact you within 24 hours</p>
+                            
+                            <form onSubmit={handleSubmitQuote}>
+                                <input 
+                                    type="text" 
+                                    name="name" 
+                                    placeholder="Full Name" 
+                                    required 
+                                    onChange={handleInputChange} 
+                                    style={{ 
+                                        width: '100%', 
+                                        padding: '14px', 
+                                        marginBottom: '15px', 
+                                        borderRadius: '12px', 
+                                        border: '1px solid rgba(255,215,0,0.3)', 
+                                        background: 'rgba(255,255,255,0.1)', 
+                                        color: 'white', 
+                                        fontSize: '15px',
+                                        boxSizing: 'border-box'
+                                    }} 
+                                />
+                                <input 
+                                    type="email" 
+                                    name="email" 
+                                    placeholder="Email Address" 
+                                    required 
+                                    onChange={handleInputChange} 
+                                    style={{ 
+                                        width: '100%', 
+                                        padding: '14px', 
+                                        marginBottom: '15px', 
+                                        borderRadius: '12px', 
+                                        border: '1px solid rgba(255,215,0,0.3)', 
+                                        background: 'rgba(255,255,255,0.1)', 
+                                        color: 'white', 
+                                        fontSize: '15px',
+                                        boxSizing: 'border-box'
+                                    }} 
+                                />
+                                <input 
+                                    type="tel" 
+                                    name="phone" 
+                                    placeholder="Phone Number" 
+                                    required 
+                                    onChange={handleInputChange} 
+                                    style={{ 
+                                        width: '100%', 
+                                        padding: '14px', 
+                                        marginBottom: '15px', 
+                                        borderRadius: '12px', 
+                                        border: '1px solid rgba(255,215,0,0.3)', 
+                                        background: 'rgba(255,255,255,0.1)', 
+                                        color: 'white', 
+                                        fontSize: '15px',
+                                        boxSizing: 'border-box'
+                                    }} 
+                                />
+                                
+                                <div style={{ position: 'relative', marginBottom: '15px' }}>
+                                    <select 
+                                        name="service" 
+                                        required
+                                        value={formData.service}
+                                        onChange={handleInputChange} 
+                                        style={{ 
+                                            width: '100%', 
+                                            padding: '14px', 
+                                            borderRadius: '12px', 
+                                            border: '1px solid rgba(255,215,0,0.3)', 
+                                            background: 'rgba(255,255,255,0.1)', 
+                                            color: 'white', 
+                                            fontSize: '15px',
+                                            boxSizing: 'border-box',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <option value="" style={{ background: '#1a1a2e', color: 'white' }}>Select a Service</option>
+                                        {solutions.map((s, idx) => (
+                                            <option key={idx} value={s.title} style={{ background: '#1a1a2e', color: 'white', padding: '10px' }}>
+                                                {s.title}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                
+                                <textarea 
+                                    name="message" 
+                                    placeholder="Tell us about your requirements..." 
+                                    rows="4" 
+                                    onChange={handleInputChange} 
+                                    style={{ 
+                                        width: '100%', 
+                                        padding: '14px', 
+                                        marginBottom: '20px', 
+                                        borderRadius: '12px', 
+                                        border: '1px solid rgba(255,215,0,0.3)', 
+                                        background: 'rgba(255,255,255,0.1)', 
+                                        color: 'white', 
+                                        fontSize: '15px',
+                                        boxSizing: 'border-box',
+                                        resize: 'vertical'
+                                    }} 
+                                ></textarea>
+                                
+                                <button 
+                                    type="submit" 
+                                    style={{ 
+                                        width: '100%', 
+                                        background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', 
+                                        color: '#1a1a2e', 
+                                        padding: '14px', 
+                                        border: 'none', 
+                                        borderRadius: '12px', 
+                                        fontSize: '16px', 
+                                        fontWeight: '700', 
+                                        cursor: 'pointer', 
+                                        transition: 'all 0.3s' 
+                                    }}
+                                    onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'}
+                                    onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                                >
+                                    Submit Request →
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                )}
+                
+                {/* Landing Page Modal */}
+                {landingModalOpen && (
+                    <LandingPage 
+                        item={landingData} 
+                        onClose={closeLandingPage} 
+                        onRequestQuote={openQuoteModalForItem}
+                    />
+                )}
+
+                {/* Footer */}
+                <footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,215,0,0.1)' }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '45px', marginBottom: '45px' }}>
+                            <div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}>
+                                    <img src="/winze-logo.jpg" alt="Logo" style={{ width: '45px', height: '45px', objectFit: 'contain', background: 'white', padding: '6px', borderRadius: '10px' }} />
+                                    <span style={{ fontWeight: '800', fontSize: '1.2rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span>
+                                </div>
+                                <p style={{ color: '#aaa', lineHeight: '1.6' }}>Driving Innovation through Customer-Centric Technology Solutions.</p>
+                            </div>
+                            <div>
+                                <h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Quick Links</h4>
+                                {navItems.map((item) => (
+                                    <p key={item.name}>
+                                        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollToSection(item.ref, item.name); }} style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '12px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s' }}
+                                        onMouseEnter={(e) => e.target.style.color = '#FFD700'}
+                                        onMouseLeave={(e) => e.target.style.color = '#aaa'}>
+                                            {item.name}
+                                        </button>
+                                    </p>
+                                ))}
+                            </div>
+                            <div>
+                                <h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Contact Info</h4>
+                                <p style={{ color: '#aaa', marginBottom: '12px' }}>📧 sales@winzetech.com</p>
+                                <p style={{ color: '#aaa', marginBottom: '12px' }}>📞 +91 95500 10417</p>
+                                <p style={{ color: '#aaa', marginBottom: '12px' }}>🌐 www.winzetech.com</p>
+                            </div>
+                        </div>
+                        <div style={{ textAlign: 'center', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#666' }}>
+                            <p>© 2025 Winze Technologies Pvt Ltd. All rights reserved.</p>
+                        </div>
+                    </div>
+                </footer>
             </div>
             </>
         </HelmetProvider>
