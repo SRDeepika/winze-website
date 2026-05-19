@@ -362,13 +362,63 @@ const QuotesManager = ({ token }) => {
             <div style={styles.cardHeader}><h2>📧 Quote Requests</h2><button onClick={loadQuotes} style={styles.refreshBtn}>Refresh</button></div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
-                    <thead><tr><th style={styles.th}>Name</th><th style={styles.th}>Email</th><th style={styles.th}>Service</th><th style={styles.th}>Date</th><th style={styles.th}>Message</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th style={styles.th}>Name</th>
+                            <th style={styles.th}>Email</th>
+                            <th style={styles.th}>Phone</th>     {/* ← ADD THIS COLUMN */}
+                            <th style={styles.th}>Service</th>
+                            <th style={styles.th}>Date</th>
+                            <th style={styles.th}>Message</th>
+                            <th style={styles.th}>Actions</th>    {/* ← ADD ACTIONS COLUMN */}
+                        </tr>
+                    </thead>
                     <tbody>
                         {quotes.map(quote => (
                             <tr key={quote.id}>
-                                <td style={styles.td}>{quote.name}</td><td style={styles.td}>{quote.email}</td>
-                                <td style={styles.td}>{quote.service}</td><td style={styles.td}>{new Date(quote.created_at).toLocaleDateString()}</td>
-                                <td style={styles.td}>{quote.message?.substring(0, 50)}...</td>
+                                <td style={styles.td}>{quote.name}</td>
+                                <td style={styles.td}>
+                                    <a href={`mailto:${quote.email}`} style={{ color: '#667eea', textDecoration: 'none' }}>
+                                        {quote.email}
+                                    </a>
+                                </td>
+                                <td style={styles.td}>
+                                    <div>
+                                        <strong>{quote.phone || 'N/A'}</strong>
+                                        <div style={{ marginTop: '5px' }}>
+                                            <a href={`tel:${quote.phone}`} style={{ color: '#4facfe', textDecoration: 'none', marginRight: '10px', fontSize: '12px' }}>
+                                                📞 Call
+                                            </a>
+                                            <a href={`https://wa.me/${quote.phone}`} target="_blank" rel="noopener noreferrer" style={{ color: '#25D366', textDecoration: 'none', fontSize: '12px' }}>
+                                                💬 WhatsApp
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style={styles.td}>{quote.service}</td>
+                                <td style={styles.td}>{new Date(quote.created_at).toLocaleDateString()}</td>
+                                <td style={styles.td}>
+                                    <details>
+                                        <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
+                                        <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px' }}>
+                                            {quote.message || 'No message provided'}
+                                        </div>
+                                    </details>
+                                </td>
+                                <td style={styles.td}>
+                                    <button 
+                                        onClick={() => window.open(`tel:${quote.phone}`)} 
+                                        style={{ ...styles.editBtn, marginRight: '5px', fontSize: '12px' }}
+                                    >
+                                        📞 Call
+                                    </button>
+                                    <button 
+                                        onClick={() => window.open(`mailto:${quote.email}`)} 
+                                        style={{ ...styles.viewBtn, fontSize: '12px' }}
+                                    >
+                                        ✉️ Email
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
