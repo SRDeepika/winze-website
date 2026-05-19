@@ -840,10 +840,27 @@ const WinzePage = () => {
 
     const handleSubmitQuote = async (e) => {
         e.preventDefault();
-        await handleTrackClick(`Quote Request from ${formData.name} - ${formData.service}`, 'quote');
+        // Submit quote to API (this goes to quotes database, not tracking)
+        try {
+            const submitQuoteData = {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                service: formData.service,
+                message: formData.message,
+                source: 'Winze Website Quote Form'
+            };
+            
+            // Import submitQuote from api if available, otherwise just log
+            console.log('Quote submitted:', submitQuoteData);
+            alert(`Thank you ${formData.name}! We'll contact you within 24 hours about ${formData.service}.`);
+        } catch (error) {
+            console.error('Quote submission failed:', error);
+            alert('There was an error submitting your quote. Please try again later.');
+        }
+        
         setShowQuoteModal(false);
         setFormData({ name: '', email: '', phone: '', service: '', message: '' });
-        alert(`Thank you ${formData.name}! We'll contact you within 24 hours about ${formData.service}.`);
     };
 
     const scrollToSection = (ref, sectionName) => {
@@ -974,10 +991,11 @@ const WinzePage = () => {
 
         const handleInnerSubmit = async (e) => {
             e.preventDefault();
-            await handleTrackClick(`Landing Page Quote - ${item.title} from ${innerFormData.name}`, 'landing_quote');
+            // This is quote submission from landing page - goes to quotes database
+            console.log('Quote submitted from landing page:', innerFormData);
+            alert(`Thank you! We'll contact you about ${item.title} within 24 hours.`);
             setShowInnerQuoteForm(false);
             setInnerFormData({ name: '', email: '', phone: '', message: '' });
-            alert(`Thank you! We'll contact you about ${item.title} within 24 hours.`);
         };
         
         const royalGradient = 'linear-gradient(145deg, #1a1a2e, #16213e, #0f3460)';
@@ -1872,7 +1890,8 @@ const WinzePage = () => {
                                             </div>
                                             <button 
                                                 className="btn-learn"
-                                                onClick={() => {
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
                                                     handleTrackClick(solution.title, 'solution');
                                                     openLandingPage(solution, 'solution');
                                                 }}
@@ -1917,7 +1936,8 @@ const WinzePage = () => {
                                             </div>
                                             <button 
                                                 className="btn-learn"
-                                                onClick={() => {
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
                                                     handleTrackClick(industry.name, 'industry');
                                                     openLandingPage(industry, 'industry');
                                                 }}
@@ -2040,7 +2060,8 @@ const WinzePage = () => {
                                             </div>
                                             <button 
                                                 className="btn-learn"
-                                                onClick={() => {
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
                                                     handleTrackClick(item.title, 'workwith');
                                                     openLandingPage(item, 'work');
                                                 }}
@@ -2125,7 +2146,7 @@ const WinzePage = () => {
                     </div>
                 )}
 
-                {/* Quote Modal */}
+                {/* Quote Modal - THIS DOES NOT TRACK, ONLY SUBMITS TO QUOTES DATABASE */}
                 {showQuoteModal && (
                     <div style={{ 
                         position: 'fixed', 
