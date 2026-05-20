@@ -85,12 +85,22 @@ export const getAdminBlogs = async (token) => {
 };
 
 export const createBlog = async (blogData, token) => {
-  const formData = new FormData();
-  Object.keys(blogData).forEach(key => {
-    if (blogData[key] !== undefined && blogData[key] !== null) {
-      formData.append(key, blogData[key]);
-    }
-  });
+  let formData;
+  
+  if (blogData instanceof FormData) {
+    formData = blogData;
+  } else {
+    formData = new FormData();
+    Object.keys(blogData).forEach(key => {
+      if (blogData[key] !== undefined && blogData[key] !== null) {
+        if (typeof blogData[key] === 'object' && !(blogData[key] instanceof File)) {
+          formData.append(key, JSON.stringify(blogData[key]));
+        } else {
+          formData.append(key, blogData[key]);
+        }
+      }
+    });
+  }
   
   try {
     const response = await api.post('/admin/blogs', formData, {
@@ -106,18 +116,13 @@ export const createBlog = async (blogData, token) => {
   }
 };
 
+// FIXED: Update blog using JSON
 export const updateBlog = async (id, blogData, token) => {
-  const formData = new FormData();
-  Object.keys(blogData).forEach(key => {
-    if (blogData[key] !== undefined && blogData[key] !== null) {
-      formData.append(key, blogData[key]);
-    }
-  });
-  
   try {
-    const response = await api.put(`/admin/blogs/${id}`, formData, {
+    console.log('Updating blog with data:', blogData);
+    const response = await api.put(`/admin/blogs/${id}`, blogData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       }
     });
@@ -288,7 +293,30 @@ export const getAdminStats = async (token) => {
   }
 };
 
-// ========== USER MANAGEMENT (Super Admin) ==========
+// ========== SOCIAL LINKS APIs ==========
+export const getSocialLinks = async () => {
+  try {
+    const response = await api.get('/social-links');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching social links:', error);
+    throw error;
+  }
+};
+
+export const updateSocialLinks = async (linksData, token) => {
+  try {
+    const response = await api.put('/admin/social-links', linksData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating social links:', error);
+    throw error;
+  }
+};
+
+// ========== USER MANAGEMENT ==========
 export const getUsers = async (token) => {
   try {
     const response = await api.get('/admin/users', {
