@@ -46,6 +46,7 @@ const JobsPage = () => {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
+        experience: formData.experience,      // ← ADD THIS
         cover_letter: formData.cover_letter
     };
 
@@ -59,7 +60,10 @@ const JobsPage = () => {
         if (response.data.success) {
             alert('Application submitted successfully!');
             setShowApplyForm(false);
-            setFormData({ name: '', email: '', phone: '', cover_letter: '', resume: null });
+            setFormData({ 
+                name: '', email: '', phone: '', experience: '',  // ← ADD experience here
+                cover_letter: '', resume: null 
+            });
         }
     } catch (error) {
         console.error('Error:', error);
