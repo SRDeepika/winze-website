@@ -15,13 +15,38 @@ app.use(express.json());
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Server is running' });
 });
-
-// ========== BLOGS ==========
-app.get('/api/blogs', async (req, res) => {
+// ========== BLOGS - ADMIN (UPDATE) ==========
+app.put('/api/admin/blogs/:id', async (req, res) => {
     try {
-        const result = await db.query(`SELECT id, title, excerpt, content, category, image, author, created_at FROM blogs WHERE status = 'published' ORDER BY created_at DESC`);
-        res.json({ success: true, blogs: result.rows });
+        const { id } = req.params;
+        const { title, excerpt, content, category, author, status } = req.body;
+        
+        console.log('Updating blog:', id);
+        console.log('Data:', { title, excerpt, content, category, author, status });
+        
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        
+        const result = await db.query(
+            `UPDATE blogs SET 
+                title = $1, 
+                slug = $2, 
+                excerpt = $3, 
+                content = $4, 
+                category = $5, 
+                author = $6, 
+                status = $7,
+                updated_at = NOW()
+             WHERE id = $8`,
+            [title, slug, excerpt, content, category, author, status, id]
+        );
+        
+        if (result.rowCount === 0) {
+            return res.status(404).json({ success: false, error: 'Blog not found' });
+        }
+        
+        res.json({ success: true, message: 'Blog updated successfully' });
     } catch (err) {
+        console.error('Error updating blog:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
@@ -36,24 +61,22 @@ app.get('/api/jobs', async (req, res) => {
     }
 });
 
-// ========== SIMPLE JOB APPLICATION - NO FILE UPLOAD ==========
 app.post('/api/jobs/:id/apply', async (req, res) => {
     try {
         const jobId = req.params.id;
-        const { name, email, phone, cover_letter } = req.body;
+        const { name, email, phone, experience, cover_letter } = req.body;
         
-        console.log('📝 Application received:', { jobId, name, email });
+        console.log('Application:', { jobId, name, email, experience });
         
-        // Simple insert
         const result = await db.query(
-            `INSERT INTO job_applications (job_id, name, email, phone, cover_letter, status) 
-             VALUES ($1, $2, $3, $4, $5, 'pending') RETURNING id`,
-            [jobId, name, email, phone || '', cover_letter || '']
+            `INSERT INTO job_applications (job_id, name, email, phone, experience, cover_letter, status) 
+             VALUES ($1, $2, $3, $4, $5, $6, 'pending') RETURNING id`,
+            [jobId, name, email, phone || '', experience || '', cover_letter || '']
         );
         
         res.json({ success: true, message: 'Application submitted', id: result.rows[0].id });
     } catch (err) {
-        console.error('❌ Error:', err.message);
+        console.error('Error:', err.message);
         res.status(500).json({ success: false, error: err.message });
     }
 });
