@@ -865,13 +865,19 @@ const WinzePage = () => {
         }
     };
 
-    const scrollToSection = (ref, sectionName) => {
-        handleTrackClick(`Navigation - ${sectionName}`, 'nav');
-        if (ref && ref.current) {
-            ref.current.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
-
+    const scrollToSection = (ref, sectionName, path) => {
+    handleTrackClick(`Navigation - ${sectionName}`, 'nav');
+    
+    // If it's a page link (Careers)
+    if (path) {
+        window.location.href = path;
+        return;
+    }
+    
+    if (ref && ref.current) {
+        ref.current.scrollIntoView({ behavior: 'smooth' });
+    }
+};
     // Solutions - Emergency Notification with voice-only focus
     const solutions = [
         { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video },
@@ -905,7 +911,8 @@ const WinzePage = () => {
         { name: "Industries", ref: industriesRef },
         { name: "Partners", ref: partnersRef },
         { name: "Clients", ref: clientsRef },
-        { name: "Work With Winze", ref: workwithRef }
+        { name: "Work With Winze", ref: workwithRef },
+         { name: "Careers", ref: null, path: "/careers" }  // ← ADD THIS
     ];
 
     const deliveryItems = [
@@ -1623,12 +1630,29 @@ const WinzePage = () => {
                         
                         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
                             {navItems.map((item) => (
-                                <button key={item.name} onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollToSection(item.ref, item.name); }} style={{ background: 'transparent', color: '#ddd', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none' }}
-                                onMouseEnter={(e) => { e.target.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)'; e.target.style.color = '#1a1a2e'; e.target.style.transform = 'translateY(-2px)'; }}
-                                onMouseLeave={(e) => { e.target.style.background = 'transparent'; e.target.style.color = '#ddd'; e.target.style.transform = 'translateY(0)'; }}>
-                                    {item.name}
-                                </button>
-                            ))}
+    <button key={item.name} onClick={(e) => { 
+        e.preventDefault(); 
+        e.stopPropagation(); 
+        if (item.path) {
+            window.location.href = item.path;
+        } else {
+            scrollToSection(item.ref, item.name);
+        }
+    }} style={{ background: 'transparent', color: '#ddd', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none' }}
+        onMouseEnter={(e) => {
+            e.target.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
+            e.target.style.color = '#1a1a2e';
+            e.target.style.transform = 'translateY(-2px)';
+        }}
+        onMouseLeave={(e) => {
+            e.target.style.background = 'transparent';
+            e.target.style.color = '#ddd';
+            e.target.style.transform = 'translateY(0)';
+        }}
+    >
+        {item.name}
+    </button>
+))}
                             <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Get Quote Button', 'cta'); }} style={{
                                 background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#1a1a2e', border: 'none', padding: '8px 24px', borderRadius: '30px', cursor: 'pointer', fontWeight: '700', transition: 'all 0.3s', fontFamily: "'Poppins', sans-serif", boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
                             }}
@@ -1859,16 +1883,16 @@ const WinzePage = () => {
                 {landingModalOpen && (<LandingPage item={landingData} onClose={closeLandingPage} onRequestQuote={openQuoteModalForItem} />)}
 
                 {/* Footer */}
-                <footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,215,0,0.1)' }}>
-                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '45px', marginBottom: '45px' }}>
-                            <div><div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}><img src="/winze-logo.jpg" alt="Logo" style={{ width: '45px', height: '45px', objectFit: 'contain', background: 'white', padding: '6px', borderRadius: '10px' }} /><span style={{ fontWeight: '800', fontSize: '1.2rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span></div><p style={{ color: '#aaa', lineHeight: '1.6' }}>Driving Innovation through Customer-Centric Technology Solutions.</p></div>
-                            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Quick Links</h4>{navItems.map((item) => (<p key={item.name}><button onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollToSection(item.ref, item.name); }} style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '12px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s' }} onMouseEnter={(e) => e.target.style.color = '#FFD700'} onMouseLeave={(e) => e.target.style.color = '#aaa'}>{item.name}</button></p>))}</div>
-                            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Contact Info</h4><p style={{ color: '#aaa', marginBottom: '12px' }}>📧 sales@winzetech.com</p><p style={{ color: '#aaa', marginBottom: '12px' }}>📞 +91 95500 10417</p><p style={{ color: '#aaa', marginBottom: '12px' }}>🌐 www.winzetech.com</p></div>
-                        </div>
-                        <div style={{ textAlign: 'center', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#666' }}><p>© 2025 Winze Technologies Pvt Ltd. All rights reserved.</p></div>
-                    </div>
-                </footer>
+<footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,215,0,0.1)' }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '45px', marginBottom: '45px' }}>
+            <div><div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}><img src="/winze-logo.jpg" alt="Logo" style={{ width: '45px', height: '45px', objectFit: 'contain', background: 'white', padding: '6px', borderRadius: '10px' }} /><span style={{ fontWeight: '800', fontSize: '1.2rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span></div><p style={{ color: '#aaa', lineHeight: '1.6' }}>Driving Innovation through Customer-Centric Technology Solutions.</p></div>
+            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Quick Links</h4>{navItems.map((item) => (<p key={item.name}><button onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (item.path) { window.location.href = item.path; } else { scrollToSection(item.ref, item.name); } }} style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '12px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s' }} onMouseEnter={(e) => e.target.style.color = '#FFD700'} onMouseLeave={(e) => e.target.style.color = '#aaa'}>{item.name}</button></p>))}</div>
+            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Contact Info</h4><p style={{ color: '#aaa', marginBottom: '12px' }}>📧 sales@winzetech.com</p><p style={{ color: '#aaa', marginBottom: '12px' }}>📞 +91 95500 10417</p><p style={{ color: '#aaa', marginBottom: '12px' }}>🌐 www.winzetech.com</p></div>
+        </div>
+        <div style={{ textAlign: 'center', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#666' }}><p>© 2025 Winze Technologies Pvt Ltd. All rights reserved.</p></div>
+    </div>
+</footer>
             </div>
             </>
         </HelmetProvider>
