@@ -219,67 +219,106 @@ app.delete('/api/admin/users/:id', async (req, res) => {
 });
 
 // ========== BLOGS (NO AUTH) ==========
+// Public route - Get published blogs for website
 app.get('/api/blogs', async (req, res) => {
     try {
         const result = await db.query(`SELECT id, title, slug, excerpt, category, image, author, author_role, read_time, views, created_at FROM blogs WHERE status = 'published' ORDER BY created_at DESC`);
         res.json({ success: true, blogs: result.rows });
     } catch (err) {
+        console.error('Error fetching blogs:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
+// Get single blog by slug (for blog detail page)
+app.get('/api/blogs/:slug', async (req, res) => {
+    try {
+        const { slug } = req.params;
+        // Increment view count
+        await db.query(`UPDATE blogs SET views = views + 1 WHERE slug = $1`, [slug]);
+        // Get blog
+        const result = await db.query(`SELECT * FROM blogs WHERE slug = $1 AND status = 'published'`, [slug]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, error: 'Blog not found' });
+        }
+        res.json({ success: true, blog: result.rows[0] });
+    } catch (err) {
+        console.error('Error fetching blog:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// Admin route - Get all blogs (including drafts)
 app.get('/api/admin/blogs', async (req, res) => {
     try {
         const result = await db.query(`SELECT * FROM blogs ORDER BY created_at DESC`);
         res.json({ success: true, blogs: result.rows });
     } catch (err) {
+        console.error('Error fetching admin blogs:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
+// Create blog
 app.post('/api/admin/blogs', upload.single('image'), async (req, res) => {
     try {
         const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
         const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         const image = req.file ? `/uploads/${req.file.filename}` : '';
-        await db.query(`INSERT INTO blogs (title, slug, excerpt, content, category, image, author, author_role, read_time, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`, [title, slug, excerpt, content, category, image, author, author_role, read_time || 5, status || 'draft']);
-        res.json({ success: true, message: 'Blog created successfully' });
+        
+        const result = await db.query(
+            `INSERT INTO blogs (title, slug, excerpt, content, category, image, author, author_role, read_time, status, views) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
+            [title, slug, excerpt, content, category, image, author, author_role, read_time || 5, status || 'draft', 0]
+        );
+        
+        res.json({ success: true, message: 'Blog created successfully', blogId: result.rows[0].id });
     } catch (err) {
+        console.error('Error creating blog:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
+// Update blog
 app.put('/api/admin/blogs/:id', upload.single('image'), async (req, res) => {
     try {
         const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
-        let query = `UPDATE blogs SET title=$1, excerpt=$2, content=$3, category=$4, author=$5, author_role=$6, read_time=$7, status=$8 WHERE id=$9`;
-        let params = [title, excerpt, content, category, author, author_role, read_time, status, req.params.id];
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        
+        let query, params;
         if (req.file) {
-            query = `UPDATE blogs SET title=$1, excerpt=$2, content=$3, category=$4, author=$5, author_role=$6, read_time=$7, status=$8, image=$9 WHERE id=$10`;
-            params = [title, excerpt, content, category, author, author_role, read_time, status, `/uploads/${req.file.filename}`, req.params.id];
+            query = `UPDATE blogs SET title=$1, slug=$2, excerpt=$3, content=$4, category=$5, author=$6, author_role=$7, read_time=$8, status=$9, image=$10, updated_at=NOW() WHERE id=$11`;
+            params = [title, slug, excerpt, content, category, author, author_role, read_time, status, `/uploads/${req.file.filename}`, req.params.id];
+        } else {
+            query = `UPDATE blogs SET title=$1, slug=$2, excerpt=$3, content=$4, category=$5, author=$6, author_role=$7, read_time=$8, status=$9, updated_at=NOW() WHERE id=$10`;
+            params = [title, slug, excerpt, content, category, author, author_role, read_time, status, req.params.id];
         }
+        
         await db.query(query, params);
         res.json({ success: true, message: 'Blog updated successfully' });
     } catch (err) {
+        console.error('Error updating blog:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
+// Delete blog
 app.delete('/api/admin/blogs/:id', async (req, res) => {
     try {
         await db.query(`DELETE FROM blogs WHERE id = $1`, [req.params.id]);
         res.json({ success: true, message: 'Blog deleted successfully' });
     } catch (err) {
+        console.error('Error deleting blog:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
-
 // ========== JOBS (NO AUTH) ==========
 app.get('/api/jobs', async (req, res) => {
     try {
         const result = await db.query(`SELECT id, title, department, location, type, experience, salary, description, requirements, benefits FROM jobs WHERE status = 'active' ORDER BY created_at DESC`);
         res.json({ success: true, jobs: result.rows });
     } catch (err) {
+        console.error('Error fetching jobs:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
@@ -289,16 +328,44 @@ app.get('/api/admin/jobs', async (req, res) => {
         const result = await db.query(`SELECT * FROM jobs ORDER BY created_at DESC`);
         res.json({ success: true, jobs: result.rows });
     } catch (err) {
+        console.error('Error fetching admin jobs:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
+// FIXED - Create Job
 app.post('/api/admin/jobs', async (req, res) => {
     try {
+        console.log('📝 Received job data:', req.body);
+        
         const { title, department, location, type, experience, salary, description, requirements, benefits, status, deadline } = req.body;
-        await db.query(`INSERT INTO jobs (title, department, location, type, experience, salary, description, requirements, benefits, status, deadline) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`, [title, department, location, type, experience, salary, description, requirements, benefits, status || 'active', deadline]);
-        res.json({ success: true, message: 'Job posted successfully' });
+        
+        // Check if required fields exist
+        if (!title) {
+            return res.status(400).json({ success: false, error: 'Job title is required' });
+        }
+        
+        const result = await db.query(
+            `INSERT INTO jobs (title, department, location, type, experience, salary, description, requirements, benefits, status, deadline) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
+            [
+                title,
+                department || '',
+                location || '',
+                type || 'Full-time',
+                experience || '',
+                salary || '',
+                description || '',
+                requirements || '',
+                benefits || '',
+                status || 'active',
+                deadline || null
+            ]
+        );
+        
+        res.json({ success: true, message: 'Job posted successfully', jobId: result.rows[0].id });
     } catch (err) {
+        console.error('❌ Error creating job:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
@@ -306,22 +373,38 @@ app.post('/api/admin/jobs', async (req, res) => {
 app.put('/api/admin/jobs/:id', async (req, res) => {
     try {
         const { title, department, location, type, experience, salary, description, requirements, benefits, status, deadline } = req.body;
-        await db.query(`UPDATE jobs SET title=$1, department=$2, location=$3, type=$4, experience=$5, salary=$6, description=$7, requirements=$8, benefits=$9, status=$10, deadline=$11 WHERE id=$12`, [title, department, location, type, experience, salary, description, requirements, benefits, status, deadline, req.params.id]);
+        
+        await db.query(
+            `UPDATE jobs SET 
+                title = $1, department = $2, location = $3, type = $4, 
+                experience = $5, salary = $6, description = $7, 
+                requirements = $8, benefits = $9, status = $10, deadline = $11,
+                updated_at = NOW()
+             WHERE id = $12`,
+            [
+                title, department, location, type, experience, salary,
+                description, requirements, benefits, status, deadline,
+                req.params.id
+            ]
+        );
+        
         res.json({ success: true, message: 'Job updated successfully' });
     } catch (err) {
+        console.error('Error updating job:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
 app.delete('/api/admin/jobs/:id', async (req, res) => {
     try {
+        await db.query(`DELETE FROM job_applications WHERE job_id = $1`, [req.params.id]);
         await db.query(`DELETE FROM jobs WHERE id = $1`, [req.params.id]);
         res.json({ success: true, message: 'Job deleted successfully' });
     } catch (err) {
+        console.error('Error deleting job:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
-
 // ========== APPLICATIONS (NO AUTH) ==========
 app.get('/api/admin/applications', async (req, res) => {
     try {
