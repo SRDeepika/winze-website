@@ -12,6 +12,7 @@ const BlogsPage = () => {
     const loadBlogs = async () => {
         try {
             const res = await getBlogs();
+            console.log('Blogs data:', res);
             if (res.success) {
                 setBlogs(res.blogs);
             }
@@ -39,8 +40,14 @@ const BlogsPage = () => {
                             <div style={{ color: '#999', fontSize: '12px', marginBottom: '15px' }}>
                                 {blog.category} | {new Date(blog.created_at).toLocaleDateString()} | By {blog.author || 'Winze Team'}
                             </div>
-                            {/* FULL CONTENT DISPLAYED HERE */}
-                            <div style={{ color: '#333', lineHeight: '1.6' }} dangerouslySetInnerHTML={{ __html: blog.content || blog.excerpt || 'No content' }} />
+                            {/* FULL CONTENT - Display the blog content */}
+                            <div style={{ color: '#333', lineHeight: '1.6', fontSize: '16px' }}>
+                                {blog.content ? (
+                                    <div>{blog.content}</div>
+                                ) : (
+                                    <p>{blog.excerpt || 'No content available'}</p>
+                                )}
+                            </div>
                         </div>
                     ))}
                 </div>
