@@ -912,7 +912,8 @@ const WinzePage = () => {
         { name: "Partners", ref: partnersRef },
         { name: "Clients", ref: clientsRef },
         { name: "Work With Winze", ref: workwithRef },
-         { name: "Careers", ref: null, path: "/careers" }  // ← ADD THIS
+        { name: "Careers", ref: null, path: "/careers" },  // ← ADD THIS
+        { name: "Blogs", ref: null, path: "/blogs" }  // ← ADD THIS
     ];
 
     const deliveryItems = [
