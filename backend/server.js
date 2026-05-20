@@ -41,20 +41,6 @@ app.get('/api/blogs', async (req, res) => {
     }
 });
 
-// ========== BLOGS - GET SINGLE ==========
-app.get('/api/blogs/:slug', async (req, res) => {
-    try {
-        const { slug } = req.params;
-        const result = await db.query(`SELECT * FROM blogs WHERE slug = $1 AND status = 'published'`, [slug]);
-        if (result.rows.length === 0) {
-            return res.status(404).json({ success: false, error: 'Blog not found' });
-        }
-        res.json({ success: true, blog: result.rows[0] });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
 // ========== BLOGS - ADMIN (GET ALL) ==========
 app.get('/api/admin/blogs', async (req, res) => {
     try {
@@ -81,7 +67,7 @@ app.post('/api/admin/blogs', upload.single('image'), async (req, res) => {
     }
 });
 
-// ========== BLOGS - ADMIN (UPDATE) ==========
+// ========== BLOGS - ADMIN (UPDATE) - FIXED ==========
 app.put('/api/admin/blogs/:id', upload.single('image'), async (req, res) => {
     try {
         const { title, excerpt, content, category, author, status } = req.body;
@@ -100,6 +86,7 @@ app.put('/api/admin/blogs/:id', upload.single('image'), async (req, res) => {
         }
         res.json({ success: true, message: 'Blog updated' });
     } catch (err) {
+        console.error('Error updating blog:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
