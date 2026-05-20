@@ -11,42 +11,70 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Simple test endpoint
+// ========== HEALTH ==========
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Server is running' });
 });
-// ========== BLOGS - ADMIN (UPDATE) ==========
+
+// ========== BLOGS - GET FOR WEBSITE ==========
+app.get('/api/blogs', async (req, res) => {
+    try {
+        const result = await db.query(`SELECT id, title, slug, excerpt, content, category, image, author, created_at FROM blogs WHERE status = 'published' ORDER BY created_at DESC`);
+        console.log('📝 Blogs found:', result.rows.length);
+        res.json({ success: true, blogs: result.rows });
+    } catch (err) {
+        console.error('Error fetching blogs:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ========== BLOGS - ADMIN ==========
+app.get('/api/admin/blogs', async (req, res) => {
+    try {
+        const result = await db.query(`SELECT * FROM blogs ORDER BY created_at DESC`);
+        res.json({ success: true, blogs: result.rows });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.post('/api/admin/blogs', async (req, res) => {
+    try {
+        const { title, excerpt, content, category, author, status } = req.body;
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        await db.query(
+            `INSERT INTO blogs (title, slug, excerpt, content, category, author, status) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [title, slug, excerpt, content, category, author || 'Admin', status || 'published']
+        );
+        res.json({ success: true, message: 'Blog created' });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 app.put('/api/admin/blogs/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { title, excerpt, content, category, author, status } = req.body;
-        
-        console.log('Updating blog:', id);
-        console.log('Data:', { title, excerpt, content, category, author, status });
-        
         const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         
-        const result = await db.query(
-            `UPDATE blogs SET 
-                title = $1, 
-                slug = $2, 
-                excerpt = $3, 
-                content = $4, 
-                category = $5, 
-                author = $6, 
-                status = $7,
-                updated_at = NOW()
-             WHERE id = $8`,
+        await db.query(
+            `UPDATE blogs SET title=$1, slug=$2, excerpt=$3, content=$4, category=$5, author=$6, status=$7 WHERE id=$8`,
             [title, slug, excerpt, content, category, author, status, id]
         );
         
-        if (result.rowCount === 0) {
-            return res.status(404).json({ success: false, error: 'Blog not found' });
-        }
-        
-        res.json({ success: true, message: 'Blog updated successfully' });
+        res.json({ success: true, message: 'Blog updated' });
     } catch (err) {
         console.error('Error updating blog:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.delete('/api/admin/blogs/:id', async (req, res) => {
+    try {
+        await db.query(`DELETE FROM blogs WHERE id = $1`, [req.params.id]);
+        res.json({ success: true });
+    } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
 });
@@ -58,67 +86,6 @@ app.get('/api/jobs', async (req, res) => {
         res.json({ success: true, jobs: result.rows });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-app.post('/api/jobs/:id/apply', async (req, res) => {
-    try {
-        const jobId = req.params.id;
-        const { name, email, phone, experience, cover_letter } = req.body;
-        
-        console.log('Application:', { jobId, name, email, experience });
-        
-        const result = await db.query(
-            `INSERT INTO job_applications (job_id, name, email, phone, experience, cover_letter, status) 
-             VALUES ($1, $2, $3, $4, $5, $6, 'pending') RETURNING id`,
-            [jobId, name, email, phone || '', experience || '', cover_letter || '']
-        );
-        
-        res.json({ success: true, message: 'Application submitted', id: result.rows[0].id });
-    } catch (err) {
-        console.error('Error:', err.message);
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-// ========== QUOTES ==========
-app.post('/api/quotes', async (req, res) => {
-    try {
-        const { name, email, phone, service, message } = req.body;
-        await db.query(`INSERT INTO quotes (name, email, phone, service, message) VALUES ($1, $2, $3, $4, $5)`, [name, email, phone, service, message]);
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-// ========== CLICKS ==========
-app.post('/api/track', async (req, res) => {
-    const { link_url, link_title, ip_address } = req.body;
-    try {
-        await db.query(`INSERT INTO clicks (link_url, link_title, ip_address) VALUES ($1, $2, $3)`, [link_url, link_title, ip_address || '0.0.0.0']);
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-app.get('/api/clicks', async (req, res) => {
-    try {
-        const result = await db.query(`SELECT * FROM clicks ORDER BY clicked_at DESC`);
-        res.json({ success: true, clicks: result.rows });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-// ========== ADMIN ==========
-app.post('/api/admin/login', (req, res) => {
-    const { username, password } = req.body;
-    if (username === 'admin' && password === 'Winzebglr') {
-        res.json({ success: true, admin: { username: 'admin', role: 'admin' }, token: 'admin-token' });
-    } else {
-        res.status(401).json({ success: false, error: 'Invalid credentials' });
     }
 });
 
@@ -153,10 +120,46 @@ app.delete('/api/admin/jobs/:id', async (req, res) => {
     }
 });
 
+// ========== JOB APPLICATION ==========
+app.post('/api/jobs/:id/apply', async (req, res) => {
+    try {
+        const jobId = req.params.id;
+        const { name, email, phone, experience, current_company, cover_letter } = req.body;
+        
+        console.log('Application:', { jobId, name, email, experience, current_company });
+        
+        // Add columns if missing
+        await db.query(`ALTER TABLE job_applications ADD COLUMN IF NOT EXISTS experience VARCHAR(255)`);
+        await db.query(`ALTER TABLE job_applications ADD COLUMN IF NOT EXISTS current_company VARCHAR(255)`);
+        
+        const result = await db.query(
+            `INSERT INTO job_applications (job_id, name, email, phone, experience, current_company, cover_letter, status) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending') RETURNING id`,
+            [jobId, name, email, phone || '', experience || '', current_company || '', cover_letter || '']
+        );
+        
+        res.json({ success: true, message: 'Application submitted', id: result.rows[0].id });
+    } catch (err) {
+        console.error('Error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 app.get('/api/admin/applications', async (req, res) => {
     try {
         const result = await db.query(`SELECT * FROM job_applications ORDER BY applied_at DESC`);
         res.json({ success: true, applications: result.rows });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ========== QUOTES ==========
+app.post('/api/quotes', async (req, res) => {
+    try {
+        const { name, email, phone, service, message } = req.body;
+        await db.query(`INSERT INTO quotes (name, email, phone, service, message) VALUES ($1, $2, $3, $4, $5)`, [name, email, phone, service, message]);
+        res.json({ success: true });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
@@ -171,37 +174,37 @@ app.get('/api/admin/quotes', async (req, res) => {
     }
 });
 
-app.get('/api/admin/blogs', async (req, res) => {
+// ========== CLICKS ==========
+app.post('/api/track', async (req, res) => {
+    const { link_url, link_title, ip_address } = req.body;
     try {
-        const result = await db.query(`SELECT * FROM blogs ORDER BY created_at DESC`);
-        res.json({ success: true, blogs: result.rows });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-app.post('/api/admin/blogs', async (req, res) => {
-    try {
-        const { title, excerpt, content, category, author, status } = req.body;
-        await db.query(
-            `INSERT INTO blogs (title, excerpt, content, category, author, status) VALUES ($1, $2, $3, $4, $5, $6)`,
-            [title, excerpt, content, category, author || 'Admin', status || 'published']
-        );
+        await db.query(`INSERT INTO clicks (link_url, link_title, ip_address) VALUES ($1, $2, $3)`, [link_url, link_title, ip_address || '0.0.0.0']);
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
-app.delete('/api/admin/blogs/:id', async (req, res) => {
+app.get('/api/clicks', async (req, res) => {
     try {
-        await db.query(`DELETE FROM blogs WHERE id = $1`, [req.params.id]);
-        res.json({ success: true });
+        const result = await db.query(`SELECT * FROM clicks ORDER BY clicked_at DESC`);
+        res.json({ success: true, clicks: result.rows });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
+// ========== ADMIN LOGIN ==========
+app.post('/api/admin/login', (req, res) => {
+    const { username, password } = req.body;
+    if (username === 'admin' && password === 'Winzebglr') {
+        res.json({ success: true, admin: { username: 'admin', role: 'admin' }, token: 'admin-token' });
+    } else {
+        res.status(401).json({ success: false, error: 'Invalid credentials' });
+    }
+});
+
+// ========== ADMIN STATS ==========
 app.get('/api/admin/stats', async (req, res) => {
     try {
         const jobCount = await db.query(`SELECT COUNT(*) FROM jobs`);
