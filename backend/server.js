@@ -31,7 +31,7 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok' });
 });
 
-// ========== BLOGS - GET ALL ==========
+// ========== BLOGS ==========
 app.get('/api/blogs', async (req, res) => {
     try {
         const result = await db.query(`SELECT id, title, slug, excerpt, content, category, image, author, created_at FROM blogs WHERE status = 'published' ORDER BY created_at DESC`);
@@ -41,7 +41,6 @@ app.get('/api/blogs', async (req, res) => {
     }
 });
 
-// ========== BLOGS - ADMIN (GET ALL) ==========
 app.get('/api/admin/blogs', async (req, res) => {
     try {
         const result = await db.query(`SELECT * FROM blogs ORDER BY created_at DESC`);
@@ -51,7 +50,6 @@ app.get('/api/admin/blogs', async (req, res) => {
     }
 });
 
-// ========== BLOGS - ADMIN (CREATE) ==========
 app.post('/api/admin/blogs', upload.single('image'), async (req, res) => {
     try {
         const { title, excerpt, content, category, author, status } = req.body;
@@ -61,18 +59,16 @@ app.post('/api/admin/blogs', upload.single('image'), async (req, res) => {
             `INSERT INTO blogs (title, slug, excerpt, content, category, image, author, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
             [title, slug, excerpt, content, category, image, author || 'Admin', status || 'published']
         );
-        res.json({ success: true, message: 'Blog created' });
+        res.json({ success: true });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
-// ========== BLOGS - ADMIN (UPDATE) - FIXED ==========
 app.put('/api/admin/blogs/:id', upload.single('image'), async (req, res) => {
     try {
         const { title, excerpt, content, category, author, status } = req.body;
         const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        
         if (req.file) {
             await db.query(
                 `UPDATE blogs SET title=$1, slug=$2, excerpt=$3, content=$4, category=$5, author=$6, status=$7, image=$8 WHERE id=$9`,
@@ -84,18 +80,16 @@ app.put('/api/admin/blogs/:id', upload.single('image'), async (req, res) => {
                 [title, slug, excerpt, content, category, author, status, req.params.id]
             );
         }
-        res.json({ success: true, message: 'Blog updated' });
+        res.json({ success: true });
     } catch (err) {
-        console.error('Error updating blog:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
-// ========== BLOGS - ADMIN (DELETE) ==========
 app.delete('/api/admin/blogs/:id', async (req, res) => {
     try {
         await db.query(`DELETE FROM blogs WHERE id = $1`, [req.params.id]);
-        res.json({ success: true, message: 'Blog deleted' });
+        res.json({ success: true });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
@@ -142,57 +136,34 @@ app.delete('/api/admin/jobs/:id', async (req, res) => {
     }
 });
 
-// ========== JOB APPLICATION WITH DEBUGGING ==========
-app.post('/api/jobs/:id/apply', upload.single('resume'), async (req, res) => {
+// ========== JOB APPLICATION - 6 COLUMNS ==========
+app.post('/api/jobs/:id/apply', async (req, res) => {
     try {
-        console.log('=== JOB APPLICATION DEBUG ===');
-        console.log('1. Job ID:', req.params.id);
-        console.log('2. Body:', req.body);
-        console.log('3. File:', req.file);
-        
         const jobId = req.params.id;
-        const { name, email, phone, experience, current_company, current_ctc, notice_period, cover_letter } = req.body;
-        const resume_url = req.file ? `/uploads/${req.file.filename}` : '';
+        const { name, email, phone, cover_letter } = req.body;
         
-        console.log('4. Parsed data:', { jobId, name, email, phone, experience, current_company, current_ctc, notice_period });
+        console.log('Application for job:', jobId);
+        console.log('Name:', name);
+        console.log('Email:', email);
         
-        // Check if required fields exist
-        if (!name || !email) {
-            console.log('ERROR: Missing name or email');
-            return res.status(400).json({ success: false, error: 'Name and email are required' });
-        }
+        const result = await db.query(
+            `INSERT INTO job_applications (job_id, name, email, phone, cover_letter, status) 
+             VALUES ($1, $2, $3, $4, $5, 'pending') RETURNING id`,
+            [jobId, name, email, phone || '', cover_letter || '']
+        );
         
-        const query = `
-            INSERT INTO job_applications (
-                job_id, name, email, phone, experience, current_company, 
-                current_ctc, notice_period, cover_letter, resume_url, status
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending') RETURNING id
-        `;
-        
-        const values = [
-            jobId, 
-            name, 
-            email, 
-            phone || '', 
-            experience || '', 
-            current_company || '', 
-            current_ctc || '', 
-            notice_period || '', 
-            cover_letter || '', 
-            resume_url
-        ];
-        
-        console.log('5. Query:', query);
-        console.log('6. Values:', values);
-        
-        const result = await db.query(query, values);
-        
-        console.log('7. Success! ID:', result.rows[0].id);
         res.json({ success: true, message: 'Application submitted successfully', id: result.rows[0].id });
     } catch (err) {
-        console.error('=== ERROR ===');
-        console.error('Message:', err.message);
-        console.error('Stack:', err.stack);
+        console.error('Error:', err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.get('/api/admin/applications', async (req, res) => {
+    try {
+        const result = await db.query(`SELECT * FROM job_applications ORDER BY applied_at DESC`);
+        res.json({ success: true, applications: result.rows });
+    } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
 });
