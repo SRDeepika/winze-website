@@ -41,12 +41,13 @@ app.post('/api/admin/blogs', async (req, res) => {
     try {
         const { title, excerpt, content, category, author, status } = req.body;
         const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        await db.query(
-            `INSERT INTO blogs (title, slug, excerpt, content, category, author, status) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        const result = await db.query(
+            `INSERT INTO blogs (title, slug, excerpt, content, category, author, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
             [title, slug, excerpt, content, category, author || 'Admin', status || 'published']
         );
-        res.json({ success: true });
+        res.json({ success: true, message: 'Blog created', id: result.rows[0].id });
     } catch (err) {
+        console.error('Error creating blog:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
@@ -55,10 +56,22 @@ app.put('/api/admin/blogs/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { title, excerpt, content, category, author, status } = req.body;
+        
+        console.log('Updating blog ID:', id);
+        
         const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         
         const result = await db.query(
-            `UPDATE blogs SET title=$1, slug=$2, excerpt=$3, content=$4, category=$5, author=$6, status=$7, updated_at=NOW() WHERE id=$8`,
+            `UPDATE blogs SET 
+                title = $1, 
+                slug = $2, 
+                excerpt = $3, 
+                content = $4, 
+                category = $5, 
+                author = $6, 
+                status = $7,
+                updated_at = NOW()
+             WHERE id = $8 RETURNING id`,
             [title, slug, excerpt, content, category, author, status, id]
         );
         
@@ -66,7 +79,7 @@ app.put('/api/admin/blogs/:id', async (req, res) => {
             return res.status(404).json({ success: false, error: 'Blog not found' });
         }
         
-        res.json({ success: true, message: 'Blog updated' });
+        res.json({ success: true, message: 'Blog updated successfully' });
     } catch (err) {
         console.error('Error updating blog:', err);
         res.status(500).json({ success: false, error: err.message });
@@ -129,16 +142,21 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
         const jobId = req.params.id;
         const { name, email, phone, experience, current_company, cover_letter } = req.body;
         
-        console.log('Application:', { jobId, name, email, experience, current_company });
+        // Get job title
+        const jobResult = await db.query(`SELECT title FROM jobs WHERE id = $1`, [jobId]);
+        const jobTitle = jobResult.rows[0]?.title || 'Unknown Job';
+        
+        console.log('Application:', { jobId, jobTitle, name, email });
         
         // Add columns if missing
         await db.query(`ALTER TABLE job_applications ADD COLUMN IF NOT EXISTS experience VARCHAR(255)`);
         await db.query(`ALTER TABLE job_applications ADD COLUMN IF NOT EXISTS current_company VARCHAR(255)`);
+        await db.query(`ALTER TABLE job_applications ADD COLUMN IF NOT EXISTS job_title VARCHAR(255)`);
         
         const result = await db.query(
-            `INSERT INTO job_applications (job_id, name, email, phone, experience, current_company, cover_letter, status) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending') RETURNING id`,
-            [jobId, name, email, phone || '', experience || '', current_company || '', cover_letter || '']
+            `INSERT INTO job_applications (job_id, job_title, name, email, phone, experience, current_company, cover_letter, status) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'pending') RETURNING id`,
+            [jobId, jobTitle, name, email, phone || '', experience || '', current_company || '', cover_letter || '']
         );
         
         res.json({ success: true, message: 'Application submitted', id: result.rows[0].id });
@@ -157,7 +175,6 @@ app.get('/api/admin/applications', async (req, res) => {
     }
 });
 
-// ========== UPDATE APPLICATION STATUS ==========
 app.put('/api/admin/applications/:id/status', async (req, res) => {
     try {
         const { id } = req.params;
