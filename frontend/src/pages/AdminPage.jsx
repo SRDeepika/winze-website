@@ -235,6 +235,44 @@ const JobManager = ({ token }) => {
         }
     };
 
+    // Form input styles for visibility
+    const formInputStyle = {
+        width: '100%',
+        padding: '12px',
+        marginBottom: '15px',
+        borderRadius: '8px',
+        border: '1px solid #ddd',
+        background: 'white',
+        color: '#333',
+        fontSize: '14px',
+        boxSizing: 'border-box'
+    };
+
+    const formTextareaStyle = {
+        width: '100%',
+        padding: '12px',
+        marginBottom: '15px',
+        borderRadius: '8px',
+        border: '1px solid #ddd',
+        background: 'white',
+        color: '#333',
+        fontSize: '14px',
+        resize: 'vertical',
+        boxSizing: 'border-box'
+    };
+
+    const formSelectStyle = {
+        width: '100%',
+        padding: '12px',
+        marginBottom: '15px',
+        borderRadius: '8px',
+        border: '1px solid #ddd',
+        background: 'white',
+        color: '#333',
+        fontSize: '14px',
+        boxSizing: 'border-box'
+    };
+
     return (
         <div style={styles.dashboardCard}>
             <div style={styles.cardHeader}><h2>💼 Job Management</h2><button onClick={() => setShowForm(true)} style={styles.addButton}>+ Post Job</button></div>
@@ -256,23 +294,41 @@ const JobManager = ({ token }) => {
             {showForm && (
                 <div style={styles.modal} onClick={() => setShowForm(false)}>
                     <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
-                        <h3>{editingJob ? 'Edit Job' : 'Post Job'}</h3>
+                        <h3 style={{ marginBottom: '20px', color: '#333' }}>{editingJob ? 'Edit Job' : 'Post New Job'}</h3>
                         <form onSubmit={handleSubmit}>
-                            <input type="text" placeholder="Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={styles.input} required />
-                            <input type="text" placeholder="Department" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} style={styles.input} required />
-                            <input type="text" placeholder="Location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} style={styles.input} required />
-                            <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={styles.input}>
-                                <option>Full-time</option><option>Part-time</option><option>Remote</option><option>Hybrid</option>
+                            <input type="text" placeholder="Job Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={formInputStyle} required />
+                            
+                            <input type="text" placeholder="Department (e.g., IT, Sales, Marketing)" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} style={formInputStyle} required />
+                            
+                            <input type="text" placeholder="Location (e.g., Bangalore, Remote, Hybrid)" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} style={formInputStyle} required />
+                            
+                            <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={formSelectStyle}>
+                                <option value="Full-time">Full-time</option>
+                                <option value="Part-time">Part-time</option>
+                                <option value="Remote">Remote</option>
+                                <option value="Hybrid">Hybrid</option>
+                                <option value="Contract">Contract</option>
                             </select>
-                            <input type="text" placeholder="Experience" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} style={styles.input} />
-                            <input type="text" placeholder="Salary" value={formData.salary} onChange={e => setFormData({...formData, salary: e.target.value})} style={styles.input} />
-                            <textarea placeholder="Description" rows="4" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={styles.textarea} required />
-                            <textarea placeholder="Requirements" rows="3" value={formData.requirements} onChange={e => setFormData({...formData, requirements: e.target.value})} style={styles.textarea} />
-                            <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={styles.input}>
-                                <option value="active">Active</option><option value="closed">Closed</option>
+                            
+                            <input type="text" placeholder="Experience Required (e.g., 2-4 years)" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} style={formInputStyle} />
+                            
+                            <input type="text" placeholder="Salary Range (e.g., ₹5-8 LPA)" value={formData.salary} onChange={e => setFormData({...formData, salary: e.target.value})} style={formInputStyle} />
+                            
+                            <textarea placeholder="Job Description (full details about the role)" rows="5" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={formTextareaStyle} required />
+                            
+                            <textarea placeholder="Requirements (one per line)&#10;Example:&#10;- Bachelor's degree in Computer Science&#10;- 3+ years of React experience&#10;- Strong communication skills" rows="4" value={formData.requirements} onChange={e => setFormData({...formData, requirements: e.target.value})} style={formTextareaStyle} />
+                            
+                            <textarea placeholder="Benefits (one per line)&#10;Example:&#10;- Health insurance&#10;- Flexible working hours&#10;- Learning budget" rows="3" value={formData.benefits} onChange={e => setFormData({...formData, benefits: e.target.value})} style={formTextareaStyle} />
+                            
+                            <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={formSelectStyle}>
+                                <option value="active">Active (Visible to applicants)</option>
+                                <option value="closed">Closed (Not visible)</option>
                             </select>
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <button type="submit" style={styles.saveBtn}>{editingJob ? 'Update' : 'Post'}</button>
+                            
+                            <div style={{ display: 'flex', gap: '15px', marginTop: '20px' }}>
+                                <button type="submit" disabled={loading} style={{ ...styles.saveBtn, opacity: loading ? 0.7 : 1 }}>
+                                    {loading ? 'Saving...' : (editingJob ? 'Update Job' : 'Post Job')}
+                                </button>
                                 <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>Cancel</button>
                             </div>
                         </form>
@@ -282,7 +338,6 @@ const JobManager = ({ token }) => {
         </div>
     );
 };
-
 // ============================================
 // APPLICATIONS MANAGER
 // ============================================
@@ -817,8 +872,8 @@ const styles = {
     icon: { fontSize: '35px' },
     title: { color: 'white', marginBottom: '10px', fontSize: '28px' },
     subtitle: { color: 'rgba(255,255,255,0.7)', marginBottom: '30px', fontSize: '14px' },
-    input: { width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '14px', boxSizing: 'border-box' },
-    textarea: { width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '14px', resize: 'vertical', boxSizing: 'border-box' },
+    input: { width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd', background: 'white', color: '#333', fontSize: '14px', boxSizing: 'border-box' },
+textarea: { width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd', background: 'white', color: '#333', fontSize: '14px', resize: 'vertical', boxSizing: 'border-box' },
     select: { padding: '8px', borderRadius: '6px', border: '1px solid #ddd', background: 'white', width: '100%', marginBottom: '10px' },
     button: { width: '100%', padding: '14px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', marginTop: '10px' },
     error: { color: '#ff6b6b', marginBottom: '15px', padding: '10px', background: 'rgba(255,107,107,0.1)', borderRadius: '8px', fontSize: '14px', textAlign: 'center' },
