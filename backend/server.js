@@ -86,8 +86,62 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// ========== IMPORT SOCIAL LINKS ROUTER ==========
-const socialLinksRouter = require('./routes/socialRoutes');
+// ========== DIRECT SOCIAL LINKS IMPLEMENTATION (NO EXTERNAL FILE) ==========
+// This is the working version - no database needed, just returns data
+
+// Social links data
+const SOCIAL_LINKS = [
+  { id: 1, platform: 'linkedin', url: 'https://www.linkedin.com/company/winze-technologies', icon: 'faLinkedin', color: '#0077b5', is_active: true, order: 1 },
+  { id: 2, platform: 'whatsapp', url: 'https://wa.me/919880010417', icon: 'faWhatsapp', color: '#25D366', is_active: true, order: 2 },
+  { id: 3, platform: 'facebook', url: 'https://www.facebook.com/winzetechnologies', icon: 'faFacebook', color: '#1877f2', is_active: true, order: 3 },
+  { id: 4, platform: 'instagram', url: 'https://www.instagram.com/winzetechnologies', icon: 'faInstagram', color: '#e4405f', is_active: true, order: 4 }
+];
+
+// PUBLIC: Get social links (no authentication needed)
+app.get('/api/social-links', (req, res) => {
+  console.log('✅ Social links API called at:', new Date().toISOString());
+  const activeLinks = SOCIAL_LINKS.filter(link => link.is_active === true);
+  res.json({ 
+    success: true, 
+    links: activeLinks,
+    count: activeLinks.length,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// ADMIN: Update social links (authentication required)
+app.put('/api/admin/social-links', authenticateToken, (req, res) => {
+  console.log('✅ Update social links called:', req.body);
+  
+  try {
+    const { links } = req.body;
+    
+    if (!links || !Array.isArray(links)) {
+      return res.status(400).json({ success: false, error: 'Invalid links data' });
+    }
+    
+    // Update the links
+    links.forEach(updatedLink => {
+      const index = SOCIAL_LINKS.findIndex(l => l.platform === updatedLink.platform);
+      if (index !== -1) {
+        if (updatedLink.url) SOCIAL_LINKS[index].url = updatedLink.url;
+        if (updatedLink.is_active !== undefined) SOCIAL_LINKS[index].is_active = updatedLink.is_active;
+        if (updatedLink.color) SOCIAL_LINKS[index].color = updatedLink.color;
+      }
+    });
+    
+    const activeLinks = SOCIAL_LINKS.filter(link => link.is_active === true);
+    
+    res.json({ 
+      success: true, 
+      message: 'Social links updated successfully',
+      links: activeLinks
+    });
+  } catch (error) {
+    console.error('Error updating social links:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
 // ========== Routes ==========
 
@@ -96,12 +150,21 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'Server is running', timestamp: new Date() });
 });
 
-// ========== MOUNT SOCIAL LINKS ROUTES ==========
-// Public routes (no authentication needed for GET)
-app.use('/api/social-links', socialLinksRouter);
-
-// Admin routes (authentication required for POST, PUT, DELETE)
-app.use('/api/admin/social-links', authenticateToken, socialLinksRouter);
+// Debug endpoint to see all routes
+app.get('/api/debug', (req, res) => {
+  const routes = [];
+  app._router.stack.forEach((r) => {
+    if (r.route && r.route.path) {
+      routes.push(r.route.path);
+    }
+  });
+  res.json({ 
+    success: true, 
+    message: 'Server is running',
+    routes: routes,
+    socialLinks: SOCIAL_LINKS 
+  });
+});
 
 // ========== BLOG ROUTES ==========
 
@@ -158,148 +221,58 @@ app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
 // Create blog
 app.post('/api/admin/blogs', authenticateToken, upload.single('image'), async (req, res) => {
   try {
-    console.log('Create blog request body:', req.body);
-    console.log('Uploaded file:', req.file);
-    
-    const { 
-      title, excerpt, content, category, 
-      author, author_role, read_time, status 
-    } = req.body;
-    
-    const slug = title.toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-    
+    const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     const image_url = req.file ? `/uploads/${req.file.filename}` : null;
     
     const [result] = await db.execute(
-      `INSERT INTO blogs 
-      (title, slug, excerpt, content, category, author, author_role, read_time, status, featured_image, created_at, updated_at) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
-      [title, slug, excerpt || '', content, category || 'General', 
-       author || 'Admin', author_role || 'Author', parseInt(read_time) || 5, 
-       status || 'draft', image_url]
+      `INSERT INTO blogs (title, slug, excerpt, content, category, author, author_role, read_time, status, featured_image, created_at, updated_at) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+      [title, slug, excerpt || '', content, category || 'General', author || 'Admin', author_role || 'Author', parseInt(read_time) || 5, status || 'draft', image_url]
     );
     
     const [newBlog] = await db.execute('SELECT * FROM blogs WHERE id = ?', [result.insertId]);
-    
-    res.json({ 
-      success: true, 
-      message: 'Blog created successfully',
-      blog: newBlog[0]
-    });
+    res.json({ success: true, message: 'Blog created successfully', blog: newBlog[0] });
   } catch (error) {
     console.error('Error creating blog:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// UPDATE BLOG
+// Update blog
 app.put('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
   try {
-    console.log('=== UPDATE BLOG REQUEST ===');
-    console.log('Blog ID:', req.params.id);
-    console.log('Request body:', req.body);
-    
     const { id } = req.params;
-    
-    if (!req.body || Object.keys(req.body).length === 0) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'No data provided for update' 
-      });
-    }
-    
     const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
     
     const updates = [];
     const values = [];
     
-    if (title !== undefined) {
-      updates.push('title = ?');
-      values.push(title);
-    }
-    if (excerpt !== undefined) {
-      updates.push('excerpt = ?');
-      values.push(excerpt);
-    }
-    if (content !== undefined) {
-      updates.push('content = ?');
-      values.push(content);
-    }
-    if (category !== undefined) {
-      updates.push('category = ?');
-      values.push(category);
-    }
-    if (author !== undefined) {
-      updates.push('author = ?');
-      values.push(author);
-    }
-    if (author_role !== undefined) {
-      updates.push('author_role = ?');
-      values.push(author_role);
-    }
-    if (read_time !== undefined) {
-      updates.push('read_time = ?');
-      values.push(parseInt(read_time));
-    }
-    if (status !== undefined) {
-      updates.push('status = ?');
-      values.push(status);
-    }
+    if (title !== undefined) { updates.push('title = ?'); values.push(title); }
+    if (excerpt !== undefined) { updates.push('excerpt = ?'); values.push(excerpt); }
+    if (content !== undefined) { updates.push('content = ?'); values.push(content); }
+    if (category !== undefined) { updates.push('category = ?'); values.push(category); }
+    if (author !== undefined) { updates.push('author = ?'); values.push(author); }
+    if (author_role !== undefined) { updates.push('author_role = ?'); values.push(author_role); }
+    if (read_time !== undefined) { updates.push('read_time = ?'); values.push(parseInt(read_time)); }
+    if (status !== undefined) { updates.push('status = ?'); values.push(status); }
     
     updates.push('updated_at = NOW()');
-    
-    if (updates.length === 1) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'No valid fields to update' 
-      });
-    }
-    
     values.push(id);
-    const query = `UPDATE blogs SET ${updates.join(', ')} WHERE id = ?`;
     
-    console.log('Executing query:', query);
-    console.log('With values:', values);
-    
-    const [result] = await db.execute(query, values);
-    
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Blog not found' 
-      });
-    }
-    
+    await db.execute(`UPDATE blogs SET ${updates.join(', ')} WHERE id = ?`, values);
     const [updatedBlog] = await db.execute('SELECT * FROM blogs WHERE id = ?', [id]);
-    
-    res.json({ 
-      success: true, 
-      message: 'Blog updated successfully',
-      blog: updatedBlog[0]
-    });
-    
+    res.json({ success: true, message: 'Blog updated successfully', blog: updatedBlog[0] });
   } catch (error) {
     console.error('Update blog error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
 // Delete blog
 app.delete('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
   try {
-    const { id } = req.params;
-    
-    const [result] = await db.execute('DELETE FROM blogs WHERE id = ?', [id]);
-    
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ success: false, error: 'Blog not found' });
-    }
-    
+    await db.execute('DELETE FROM blogs WHERE id = ?', [req.params.id]);
     res.json({ success: true, message: 'Blog deleted successfully' });
   } catch (error) {
     console.error('Error deleting blog:', error);
@@ -311,40 +284,11 @@ app.delete('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
 app.post('/api/admin/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-    
     if (username === 'admin' && password === 'Winzebglr') {
       const token = jwt.sign({ username, role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
-      return res.json({ 
-        success: true, 
-        token, 
-        username, 
-        role: 'admin',
-        message: 'Login successful' 
-      });
+      return res.json({ success: true, token, username, role: 'admin', message: 'Login successful' });
     }
-    
-    const [users] = await db.execute('SELECT * FROM admin_users WHERE username = ?', [username]);
-    
-    if (users.length === 0) {
-      return res.status(401).json({ success: false, error: 'Invalid credentials' });
-    }
-    
-    const user = users[0];
-    const validPassword = await bcrypt.compare(password, user.password);
-    
-    if (!validPassword) {
-      return res.status(401).json({ success: false, error: 'Invalid credentials' });
-    }
-    
-    const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '24h' });
-    
-    res.json({ 
-      success: true, 
-      token, 
-      username: user.username, 
-      role: user.role,
-      message: 'Login successful' 
-    });
+    res.status(401).json({ success: false, error: 'Invalid credentials' });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ success: false, error: error.message });
@@ -361,17 +305,14 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
     const [totalApplications] = await db.execute('SELECT COUNT(*) as count FROM applications');
     const [totalQuotes] = await db.execute('SELECT COUNT(*) as count FROM quotes');
     
-    res.json({ 
-      success: true, 
-      stats: {
-        totalBlogs: totalBlogs[0].count,
-        publishedBlogs: publishedBlogs[0].count,
-        totalJobs: totalJobs[0].count,
-        activeJobs: activeJobs[0].count,
-        totalApplications: totalApplications[0].count,
-        totalQuotes: totalQuotes[0].count
-      }
-    });
+    res.json({ success: true, stats: {
+      totalBlogs: totalBlogs[0].count,
+      publishedBlogs: publishedBlogs[0].count,
+      totalJobs: totalJobs[0].count,
+      activeJobs: activeJobs[0].count,
+      totalApplications: totalApplications[0].count,
+      totalQuotes: totalQuotes[0].count
+    }});
   } catch (error) {
     console.error('Error fetching stats:', error);
     res.status(500).json({ success: false, error: error.message });
@@ -381,9 +322,7 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
 // ========== JOB ROUTES ==========
 app.get('/api/jobs', async (req, res) => {
   try {
-    const [jobs] = await db.execute(
-      'SELECT * FROM jobs WHERE status = "active" ORDER BY created_at DESC'
-    );
+    const [jobs] = await db.execute('SELECT * FROM jobs WHERE status = "active" ORDER BY created_at DESC');
     res.json({ success: true, jobs });
   } catch (error) {
     console.error('Error fetching jobs:', error);
@@ -404,16 +343,12 @@ app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
 app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
     const { title, department, location, type, experience, salary, description, requirements, benefits, status } = req.body;
-    
     const [result] = await db.execute(
-      `INSERT INTO jobs 
-      (title, department, location, type, experience, salary, description, requirements, benefits, status, created_at, updated_at) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+      `INSERT INTO jobs (title, department, location, type, experience, salary, description, requirements, benefits, status, created_at, updated_at) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
       [title, department, location, type, experience, salary, description, requirements, benefits, status || 'active']
     );
-    
     const [newJob] = await db.execute('SELECT * FROM jobs WHERE id = ?', [result.insertId]);
-    
     res.json({ success: true, message: 'Job created successfully', job: newJob[0] });
   } catch (error) {
     console.error('Error creating job:', error);
@@ -426,19 +361,14 @@ app.put('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     const updates = [];
     const values = [];
-    
     Object.keys(req.body).forEach(key => {
       updates.push(`${key} = ?`);
       values.push(req.body[key]);
     });
-    
     updates.push('updated_at = NOW()');
     values.push(id);
-    
     await db.execute(`UPDATE jobs SET ${updates.join(', ')} WHERE id = ?`, values);
-    
     const [updatedJob] = await db.execute('SELECT * FROM jobs WHERE id = ?', [id]);
-    
     res.json({ success: true, message: 'Job updated successfully', job: updatedJob[0] });
   } catch (error) {
     console.error('Error updating job:', error);
@@ -487,12 +417,10 @@ app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res
 app.post('/api/quotes', async (req, res) => {
   try {
     const { name, email, phone, service, message } = req.body;
-    
     const [result] = await db.execute(
       'INSERT INTO quotes (name, email, phone, service, message, created_at) VALUES (?, ?, ?, ?, ?, NOW())',
       [name, email, phone, service, message]
     );
-    
     res.json({ success: true, message: 'Quote submitted successfully', id: result.insertId });
   } catch (error) {
     console.error('Error submitting quote:', error);
@@ -514,12 +442,10 @@ app.get('/api/admin/quotes', authenticateToken, async (req, res) => {
 app.post('/api/track', async (req, res) => {
   try {
     const { link_title, link_url, page_url, ip_address } = req.body;
-    
     const [result] = await db.execute(
       'INSERT INTO clicks (link_title, link_url, page_url, ip_address, clicked_at) VALUES (?, ?, ?, ?, NOW())',
       [link_title, link_url, page_url, ip_address]
     );
-    
     res.json({ success: true, message: 'Click tracked', id: result.insertId });
   } catch (error) {
     console.error('Error tracking click:', error);
@@ -543,14 +469,12 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // ========== ERROR HANDLING MIDDLEWARE ==========
 app.use((err, req, res, next) => {
   console.error('Global error handler:', err);
-  
   if (err instanceof multer.MulterError) {
     if (err.code === 'FILE_TOO_LARGE') {
       return res.status(400).json({ success: false, error: 'File too large (max 5MB)' });
     }
     return res.status(400).json({ success: false, error: err.message });
   }
-  
   res.status(500).json({ success: false, error: err.message || 'Internal server error' });
 });
 
@@ -561,9 +485,9 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`📍 API available at http://localhost:${PORT}/api`);
   console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
   console.log(`📍 Social links: http://localhost:${PORT}/api/social-links`);
+  console.log(`📍 Debug: http://localhost:${PORT}/api/debug`);
 });
 
-// Handle graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM signal received: closing HTTP server');
   process.exit(0);
