@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { getJobs, applyForJob } from '../services/api';
 
@@ -37,37 +38,36 @@ const JobsPage = () => {
         setFormData(prev => ({ ...prev, resume: e.target.files[0] }));
     };
 
-    const handleSubmitApplication = async (e) => {
-        e.preventDefault();
-        setSubmitting(true);
-        
-        const formDataToSend = new FormData();
-        formDataToSend.append('name', formData.name);
-        formDataToSend.append('email', formData.email);
-        formDataToSend.append('phone', formData.phone);
-        formDataToSend.append('experience', formData.experience);
-        formDataToSend.append('current_company', formData.current_company);
-        formDataToSend.append('current_ctc', formData.current_ctc);
-        formDataToSend.append('notice_period', formData.notice_period);
-        formDataToSend.append('cover_letter', formData.cover_letter);
-        if (formData.resume) formDataToSend.append('resume', formData.resume);
+   const handleSubmitApplication = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    
+    const applicationData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        cover_letter: formData.cover_letter
+    };
 
-        try {
-            await applyForJob(selectedJob.id, formDataToSend);
+    try {
+        const response = await axios.post(
+            `https://winze-backend-api.onrender.com/api/jobs/${selectedJob.id}/apply`,
+            applicationData,
+            { headers: { 'Content-Type': 'application/json' } }
+        );
+        
+        if (response.data.success) {
             alert('Application submitted successfully!');
             setShowApplyForm(false);
-            setFormData({ 
-                name: '', email: '', phone: '', experience: '', 
-                current_company: '', current_ctc: '', notice_period: '', 
-                cover_letter: '', resume: null 
-            });
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error submitting application. Please try again.');
-        } finally {
-            setSubmitting(false);
+            setFormData({ name: '', email: '', phone: '', cover_letter: '', resume: null });
         }
-    };
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error submitting application. Please try again.');
+    } finally {
+        setSubmitting(false);
+    }
+};
 
     if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>;
 
