@@ -60,12 +60,12 @@ const BlogsPage = () => {
                                 <h2 style={styles.blogTitle}>{blog.title}</h2>
                                 {/* Show FULL content directly - no Read More */}
                                 <div style={styles.fullContent}>
-                                    {blog.content ? (
-                                        <div dangerouslySetInnerHTML={{ __html: blog.content }} />
-                                    ) : (
-                                        <p>{blog.excerpt || 'No content available'}</p>
-                                    )}
-                                </div>
+    {blog.content ? (
+        <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+    ) : (
+        <p>{blog.excerpt || 'No content available'}</p>
+    )}
+</div>
                                 <div style={styles.blogFooter}>
                                     <span style={styles.author}>By {blog.author || 'Winze Team'}</span>
                                 </div>
