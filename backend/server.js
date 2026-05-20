@@ -41,43 +41,45 @@ app.post('/api/admin/blogs', async (req, res) => {
     try {
         const { title, excerpt, content, category, author, status } = req.body;
         const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        const result = await db.query(
-            `INSERT INTO blogs (title, slug, excerpt, content, category, author, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
+        await db.query(
+            `INSERT INTO blogs (title, slug, excerpt, content, category, author, status) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
             [title, slug, excerpt, content, category, author || 'Admin', status || 'published']
         );
-        res.json({ success: true, message: 'Blog created', id: result.rows[0].id });
+        res.json({ success: true, message: 'Blog created' });
     } catch (err) {
         console.error('Error creating blog:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
+// ========== SIMPLIFIED WORKING BLOG UPDATE ==========
 app.put('/api/admin/blogs/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { title, excerpt, content, category, author, status } = req.body;
         
         console.log('Updating blog ID:', id);
+        console.log('Title:', title);
         
-        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        
-        const result = await db.query(
-            `UPDATE blogs SET 
-                title = $1, 
-                slug = $2, 
-                excerpt = $3, 
-                content = $4, 
-                category = $5, 
-                author = $6, 
-                status = $7,
-                updated_at = NOW()
-             WHERE id = $8 RETURNING id`,
-            [title, slug, excerpt, content, category, author, status, id]
-        );
-        
-        if (result.rowCount === 0) {
+        // Check if blog exists
+        const checkBlog = await db.query(`SELECT id FROM blogs WHERE id = $1`, [id]);
+        if (checkBlog.rows.length === 0) {
             return res.status(404).json({ success: false, error: 'Blog not found' });
         }
+        
+        // Update blog
+        await db.query(
+            `UPDATE blogs 
+             SET title = $1, 
+                 excerpt = $2, 
+                 content = $3, 
+                 category = $4, 
+                 author = $5, 
+                 status = $6,
+                 updated_at = NOW()
+             WHERE id = $7`,
+            [title, excerpt || '', content || '', category || '', author || 'Admin', status || 'published', id]
+        );
         
         res.json({ success: true, message: 'Blog updated successfully' });
     } catch (err) {
@@ -179,15 +181,9 @@ app.put('/api/admin/applications/:id/status', async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
-        
-        await db.query(
-            `UPDATE job_applications SET status = $1 WHERE id = $2`,
-            [status, id]
-        );
-        
+        await db.query(`UPDATE job_applications SET status = $1 WHERE id = $2`, [status, id]);
         res.json({ success: true, message: 'Status updated' });
     } catch (err) {
-        console.error('Error updating status:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
