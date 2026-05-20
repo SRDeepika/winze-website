@@ -60,23 +60,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif|webp/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
-  
-  if (mimetype && extname) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only images are allowed'));
-  }
-};
-
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: fileFilter
-});
+const upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
 // ========== Authentication Middleware ==========
 const authenticateToken = (req, res, next) => {
@@ -96,9 +80,39 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// ========== SOCIAL LINKS ROUTES (CRUD) ==========
+// ========== HEALTH CHECK ==========
+app.get('/api/health', (req, res) => {
+  res.json({ success: true, message: 'Server is running', timestamp: new Date() });
+});
 
-// GET all social links
+// ========== CLICK TRACKING ==========
+app.post('/api/track', async (req, res) => {
+  try {
+    const { link_title, link_url, page_url, ip_address } = req.body;
+    
+    const result = await db.query(
+      'INSERT INTO clicks (link_title, link_url, page_url, ip_address, clicked_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING id',
+      [link_title, link_url, page_url, ip_address]
+    );
+    
+    res.json({ success: true, message: 'Click tracked', id: result.rows[0].id });
+  } catch (error) {
+    console.error('Error tracking click:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/clicks', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM clicks ORDER BY clicked_at DESC');
+    res.json({ success: true, clicks: result.rows });
+  } catch (error) {
+    console.error('Error fetching clicks:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ========== SOCIAL LINKS CRUD ==========
 app.get('/api/social-links', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM social_links WHERE is_active = 1 ORDER BY display_order ASC');
@@ -109,68 +123,45 @@ app.get('/api/social-links', async (req, res) => {
   }
 });
 
-// GET single social link
-app.get('/api/social-links/:id', authenticateToken, async (req, res) => {
+app.post('/api/admin/social-links', authenticateToken, async (req, res) => {
+  const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
   try {
-    const result = await db.query('SELECT * FROM social_links WHERE id = $1', [req.params.id]);
-    if (result.rows.length === 0) {
-      return res.status(404).json({ success: false, error: 'Link not found' });
-    }
-    res.json({ success: true, link: result.rows[0] });
+    const result = await db.query(
+      'INSERT INTO social_links (platform_name, platform_url, icon_class, color_code, display_order, is_active) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+      [platform_name, platform_url, icon_class, color_code, display_order || 0, is_active !== undefined ? is_active : 1]
+    );
+    res.status(201).json({ success: true, id: result.rows[0].id, message: 'Link added successfully' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// CREATE social link
-app.post('/api/admin/social-links', authenticateToken, async (req, res) => {
-  const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
-  
-  const query = `INSERT INTO social_links (platform_name, platform_url, icon_class, color_code, display_order, is_active) 
-                 VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`;
-  
-  try {
-    const result = await db.query(query, [platform_name, platform_url, icon_class, color_code, display_order || 0, is_active !== undefined ? is_active : 1]);
-    res.status(201).json({ success: true, id: result.rows[0].id, message: 'Link added successfully' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, error: 'Database error' });
-  }
-});
-
-// UPDATE social link
 app.put('/api/admin/social-links/:id', authenticateToken, async (req, res) => {
   const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
-  
-  const query = `UPDATE social_links 
-                 SET platform_name = $1, platform_url = $2, icon_class = $3, 
-                     color_code = $4, display_order = $5, is_active = $6, updated_at = CURRENT_TIMESTAMP
-                 WHERE id = $7`;
-  
   try {
-    await db.query(query, [platform_name, platform_url, icon_class, color_code, display_order, is_active, req.params.id]);
+    await db.query(
+      'UPDATE social_links SET platform_name = $1, platform_url = $2, icon_class = $3, color_code = $4, display_order = $5, is_active = $6, updated_at = CURRENT_TIMESTAMP WHERE id = $7',
+      [platform_name, platform_url, icon_class, color_code, display_order, is_active, req.params.id]
+    );
     res.json({ success: true, message: 'Link updated successfully' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, error: 'Database error' });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// DELETE social link
 app.delete('/api/admin/social-links/:id', authenticateToken, async (req, res) => {
-  const query = 'DELETE FROM social_links WHERE id = $1';
   try {
-    await db.query(query, [req.params.id]);
+    await db.query('DELETE FROM social_links WHERE id = $1', [req.params.id]);
     res.json({ success: true, message: 'Link deleted successfully' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, error: 'Database error' });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// ========== BLOG CRUD ROUTES ==========
-
-// GET all published blogs (public)
+// ========== BLOG CRUD ==========
 app.get('/api/blogs', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM blogs WHERE status = $1 ORDER BY created_at DESC', ['published']);
@@ -181,7 +172,6 @@ app.get('/api/blogs', async (req, res) => {
   }
 });
 
-// GET blog by slug (public)
 app.get('/api/blogs/:slug', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM blogs WHERE slug = $1 AND status = $2', [req.params.slug, 'published']);
@@ -196,7 +186,6 @@ app.get('/api/blogs/:slug', async (req, res) => {
   }
 });
 
-// GET all blogs for admin
 app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM blogs ORDER BY created_at DESC');
@@ -207,7 +196,6 @@ app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
   }
 });
 
-// CREATE blog
 app.post('/api/admin/blogs', authenticateToken, upload.single('image'), async (req, res) => {
   try {
     const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
@@ -228,7 +216,6 @@ app.post('/api/admin/blogs', authenticateToken, upload.single('image'), async (r
   }
 });
 
-// UPDATE blog
 app.put('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -260,7 +247,6 @@ app.put('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// DELETE blog
 app.delete('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
   try {
     await db.query('DELETE FROM blogs WHERE id = $1', [req.params.id]);
@@ -271,9 +257,7 @@ app.delete('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// ========== JOB CRUD ROUTES ==========
-
-// GET all active jobs (public)
+// ========== JOB CRUD ==========
 app.get('/api/jobs', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM jobs WHERE status = $1 ORDER BY created_at DESC', ['active']);
@@ -284,7 +268,6 @@ app.get('/api/jobs', async (req, res) => {
   }
 });
 
-// GET single job (public)
 app.get('/api/jobs/:id', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM jobs WHERE id = $1', [req.params.id]);
@@ -298,7 +281,6 @@ app.get('/api/jobs/:id', async (req, res) => {
   }
 });
 
-// GET all jobs for admin
 app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM jobs ORDER BY created_at DESC');
@@ -309,7 +291,6 @@ app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
   }
 });
 
-// CREATE job
 app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
     const { title, department, location, type, experience, salary, description, requirements, benefits, status } = req.body;
@@ -328,18 +309,25 @@ app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
   }
 });
 
-// UPDATE job
 app.put('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
+    const { title, department, location, type, experience, salary, description, requirements, benefits, status } = req.body;
+    
     const updates = [];
     const values = [];
     let paramCount = 1;
     
-    Object.keys(req.body).forEach(key => {
-      updates.push(`${key} = $${paramCount++}`);
-      values.push(req.body[key]);
-    });
+    if (title !== undefined) { updates.push(`title = $${paramCount++}`); values.push(title); }
+    if (department !== undefined) { updates.push(`department = $${paramCount++}`); values.push(department); }
+    if (location !== undefined) { updates.push(`location = $${paramCount++}`); values.push(location); }
+    if (type !== undefined) { updates.push(`type = $${paramCount++}`); values.push(type); }
+    if (experience !== undefined) { updates.push(`experience = $${paramCount++}`); values.push(experience); }
+    if (salary !== undefined) { updates.push(`salary = $${paramCount++}`); values.push(salary); }
+    if (description !== undefined) { updates.push(`description = $${paramCount++}`); values.push(description); }
+    if (requirements !== undefined) { updates.push(`requirements = $${paramCount++}`); values.push(requirements); }
+    if (benefits !== undefined) { updates.push(`benefits = $${paramCount++}`); values.push(benefits); }
+    if (status !== undefined) { updates.push(`status = $${paramCount++}`); values.push(status); }
     
     updates.push(`updated_at = NOW()`);
     values.push(id);
@@ -354,7 +342,6 @@ app.put('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// DELETE job
 app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
   try {
     await db.query('DELETE FROM jobs WHERE id = $1', [req.params.id]);
@@ -365,9 +352,7 @@ app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// ========== JOB APPLICATION CRUD ROUTES ==========
-
-// Apply for job (public)
+// ========== APPLICATIONS ==========
 app.post('/api/jobs/:id/apply', upload.single('resume'), async (req, res) => {
   try {
     const { name, email, phone, experience, current_company, cover_letter } = req.body;
@@ -375,8 +360,8 @@ app.post('/api/jobs/:id/apply', upload.single('resume'), async (req, res) => {
     
     const result = await db.query(
       `INSERT INTO applications (job_id, name, email, phone, experience, current_company, cover_letter, resume_url, status, created_at) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'pending', NOW()) RETURNING id`,
-      [req.params.id, name, email, phone, experience, current_company, cover_letter, resume_url]
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW()) RETURNING id`,
+      [req.params.id, name, email, phone, experience, current_company, cover_letter, resume_url, 'pending']
     );
     
     res.json({ success: true, message: 'Application submitted successfully', id: result.rows[0].id });
@@ -386,7 +371,6 @@ app.post('/api/jobs/:id/apply', upload.single('resume'), async (req, res) => {
   }
 });
 
-// GET all applications (admin)
 app.get('/api/admin/applications', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`
@@ -402,7 +386,6 @@ app.get('/api/admin/applications', authenticateToken, async (req, res) => {
   }
 });
 
-// UPDATE application status (admin)
 app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res) => {
   try {
     const { status } = req.body;
@@ -414,9 +397,7 @@ app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res
   }
 });
 
-// ========== QUOTE CRUD ROUTES ==========
-
-// Submit quote (public)
+// ========== QUOTES ==========
 app.post('/api/quotes', async (req, res) => {
   try {
     const { name, email, phone, service, message } = req.body;
@@ -433,96 +414,12 @@ app.post('/api/quotes', async (req, res) => {
   }
 });
 
-// GET all quotes (admin)
 app.get('/api/admin/quotes', authenticateToken, async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM quotes ORDER BY created_at DESC');
     res.json({ success: true, quotes: result.rows });
   } catch (error) {
     console.error('Error fetching quotes:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// DELETE quote (admin)
-app.delete('/api/admin/quotes/:id', authenticateToken, async (req, res) => {
-  try {
-    await db.query('DELETE FROM quotes WHERE id = $1', [req.params.id]);
-    res.json({ success: true, message: 'Quote deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting quote:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// ========== ADMIN CRUD ROUTES ==========
-
-// Admin login
-app.post('/api/admin/login', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    
-    // Check in admin_users table first
-    const userResult = await db.query('SELECT * FROM admin_users WHERE username = $1', [username]);
-    
-    if (userResult.rows.length > 0) {
-      const user = userResult.rows[0];
-      const validPassword = await bcrypt.compare(password, user.password);
-      if (validPassword) {
-        const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '24h' });
-        return res.json({ success: true, token, username: user.username, role: user.role, message: 'Login successful' });
-      }
-    }
-    
-    // Default admin account
-    if (username === 'admin' && password === 'Winzebglr') {
-      const token = jwt.sign({ username, role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
-      return res.json({ success: true, token, username, role: 'admin', message: 'Login successful' });
-    }
-    
-    res.status(401).json({ success: false, error: 'Invalid credentials' });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// GET all admin users (super admin)
-app.get('/api/admin/users', authenticateToken, async (req, res) => {
-  try {
-    const result = await db.query('SELECT id, username, role, created_at FROM admin_users ORDER BY created_at DESC');
-    res.json({ success: true, users: result.rows });
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// CREATE admin user (super admin)
-app.post('/api/admin/users', authenticateToken, async (req, res) => {
-  try {
-    const { username, password, role } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    
-    const result = await db.query(
-      'INSERT INTO admin_users (username, password, role, created_at) VALUES ($1, $2, $3, NOW()) RETURNING id',
-      [username, hashedPassword, role || 'admin']
-    );
-    
-    res.json({ success: true, id: result.rows[0].id, message: 'User created successfully' });
-  } catch (error) {
-    console.error('Error creating user:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// DELETE admin user (super admin)
-app.delete('/api/admin/users/:id', authenticateToken, async (req, res) => {
-  try {
-    await db.query('DELETE FROM admin_users WHERE id = $1', [req.params.id]);
-    res.json({ success: true, message: 'User deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting user:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -554,36 +451,28 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
   }
 });
 
-// ========== CLICK TRACKING ==========
-app.post('/api/track', async (req, res) => {
+// ========== ADMIN LOGIN (No admin_users table needed) ==========
+app.post('/api/admin/login', async (req, res) => {
   try {
-    const { link_title, link_url, page_url, ip_address } = req.body;
+    const { username, password } = req.body;
     
-    const result = await db.query(
-      'INSERT INTO clicks (link_title, link_url, page_url, ip_address, clicked_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING id',
-      [link_title, link_url, page_url, ip_address]
-    );
+    // Simple hardcoded admin login for now
+    if (username === 'admin' && password === 'Winzebglr') {
+      const token = jwt.sign({ username, role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+      return res.json({ 
+        success: true, 
+        token, 
+        username, 
+        role: 'admin',
+        message: 'Login successful' 
+      });
+    }
     
-    res.json({ success: true, message: 'Click tracked', id: result.rows[0].id });
+    res.status(401).json({ success: false, error: 'Invalid credentials' });
   } catch (error) {
-    console.error('Error tracking click:', error);
+    console.error('Login error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
-});
-
-app.get('/api/clicks', async (req, res) => {
-  try {
-    const result = await db.query('SELECT * FROM clicks ORDER BY clicked_at DESC');
-    res.json({ success: true, clicks: result.rows });
-  } catch (error) {
-    console.error('Error fetching clicks:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// ========== HEALTH CHECK ==========
-app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'Server is running', timestamp: new Date() });
 });
 
 // ========== SERVE UPLOADED FILES ==========
@@ -610,16 +499,5 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`📍 API available at http://localhost:${PORT}/api`);
   console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
   console.log(`📍 Social links: http://localhost:${PORT}/api/social-links`);
-  console.log(`📍 Blogs: http://localhost:${PORT}/api/blogs`);
-  console.log(`📍 Jobs: http://localhost:${PORT}/api/jobs`);
-});
-
-process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received: closing HTTP server');
-  process.exit(0);
-});
-
-process.on('SIGINT', () => {
-  console.log('SIGINT signal received: closing HTTP server');
-  process.exit(0);
+  console.log(`📍 Clicks: http://localhost:${PORT}/api/clicks`);
 });
