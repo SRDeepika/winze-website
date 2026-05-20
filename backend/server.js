@@ -142,37 +142,57 @@ app.delete('/api/admin/jobs/:id', async (req, res) => {
     }
 });
 
-// ========== JOB APPLICATION ==========
+// ========== JOB APPLICATION WITH DEBUGGING ==========
 app.post('/api/jobs/:id/apply', upload.single('resume'), async (req, res) => {
     try {
+        console.log('=== JOB APPLICATION DEBUG ===');
+        console.log('1. Job ID:', req.params.id);
+        console.log('2. Body:', req.body);
+        console.log('3. File:', req.file);
+        
         const jobId = req.params.id;
         const { name, email, phone, experience, current_company, current_ctc, notice_period, cover_letter } = req.body;
         const resume_url = req.file ? `/uploads/${req.file.filename}` : '';
         
-        const result = await db.query(
-            `INSERT INTO job_applications (
+        console.log('4. Parsed data:', { jobId, name, email, phone, experience, current_company, current_ctc, notice_period });
+        
+        // Check if required fields exist
+        if (!name || !email) {
+            console.log('ERROR: Missing name or email');
+            return res.status(400).json({ success: false, error: 'Name and email are required' });
+        }
+        
+        const query = `
+            INSERT INTO job_applications (
                 job_id, name, email, phone, experience, current_company, 
                 current_ctc, notice_period, cover_letter, resume_url, status
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending') RETURNING id`,
-            [
-                jobId, name, email, phone || '', experience || '', 
-                current_company || '', current_ctc || '', notice_period || '', 
-                cover_letter || '', resume_url
-            ]
-        );
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending') RETURNING id
+        `;
         
+        const values = [
+            jobId, 
+            name, 
+            email, 
+            phone || '', 
+            experience || '', 
+            current_company || '', 
+            current_ctc || '', 
+            notice_period || '', 
+            cover_letter || '', 
+            resume_url
+        ];
+        
+        console.log('5. Query:', query);
+        console.log('6. Values:', values);
+        
+        const result = await db.query(query, values);
+        
+        console.log('7. Success! ID:', result.rows[0].id);
         res.json({ success: true, message: 'Application submitted successfully', id: result.rows[0].id });
     } catch (err) {
-        console.error('Error:', err.message);
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-app.get('/api/admin/applications', async (req, res) => {
-    try {
-        const result = await db.query(`SELECT * FROM job_applications ORDER BY applied_at DESC`);
-        res.json({ success: true, applications: result.rows });
-    } catch (err) {
+        console.error('=== ERROR ===');
+        console.error('Message:', err.message);
+        console.error('Stack:', err.stack);
         res.status(500).json({ success: false, error: err.message });
     }
 });
