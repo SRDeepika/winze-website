@@ -912,8 +912,8 @@ const WinzePage = () => {
         { name: "Partners", ref: partnersRef },
         { name: "Clients", ref: clientsRef },
         { name: "Work With Winze", ref: workwithRef },
-        { name: "Careers", ref: null, path: "/careers" },  // ← ADD THIS
-        { name: "Blogs", ref: null, path: "/blogs" }  // ← ADD THIS
+        { name: "Careers", ref: null, path: "/careers" },
+        { name: "Blogs", ref: null, path: "/blogs" }
     ];
 
     const deliveryItems = [
@@ -1635,7 +1635,8 @@ const WinzePage = () => {
         e.preventDefault(); 
         e.stopPropagation(); 
         if (item.path) {
-            handleTrackClick('Careers Page Visit', 'navigation');  // ← ADD THIS
+            // Dynamic tracking for any page link (Careers, Blogs, etc.)
+            handleTrackClick(`${item.name} Page Visit`, 'navigation');
             window.location.href = item.path;
         } else {
             scrollToSection(item.ref, item.name);
@@ -1889,7 +1890,7 @@ const WinzePage = () => {
     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '45px', marginBottom: '45px' }}>
             <div><div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}><img src="/winze-logo.jpg" alt="Logo" style={{ width: '45px', height: '45px', objectFit: 'contain', background: 'white', padding: '6px', borderRadius: '10px' }} /><span style={{ fontWeight: '800', fontSize: '1.2rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span></div><p style={{ color: '#aaa', lineHeight: '1.6' }}>Driving Innovation through Customer-Centric Technology Solutions.</p></div>
-            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Quick Links</h4>{navItems.map((item) => (<p key={item.name}><button onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (item.path)  {handleTrackClick('Careers Page Visit', 'footer'); window.location.href = item.path; } else { scrollToSection(item.ref, item.name); } }} style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '12px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s' }} onMouseEnter={(e) => e.target.style.color = '#FFD700'} onMouseLeave={(e) => e.target.style.color = '#aaa'}>{item.name}</button></p>))}</div>
+            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Quick Links</h4>{navItems.map((item) => (<p key={item.name}><button onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (item.path) { handleTrackClick(`${item.name} Page Visit`, 'footer'); window.location.href = item.path; } else { scrollToSection(item.ref, item.name); } }} style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '12px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s' }} onMouseEnter={(e) => e.target.style.color = '#FFD700'} onMouseLeave={(e) => e.target.style.color = '#aaa'}>{item.name}</button></p>))}</div>
             <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Contact Info</h4><p style={{ color: '#aaa', marginBottom: '12px' }}>📧 sales@winzetech.com</p><p style={{ color: '#aaa', marginBottom: '12px' }}>📞 +91 95500 10417</p><p style={{ color: '#aaa', marginBottom: '12px' }}>🌐 www.winzetech.com</p></div>
         </div>
         <div style={{ textAlign: 'center', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#666' }}><p>© 2025 Winze Technologies Pvt Ltd. All rights reserved.</p></div>
