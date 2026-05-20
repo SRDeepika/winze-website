@@ -85,6 +85,36 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'Server is running', timestamp: new Date() });
 });
 
+// ========== ADMIN AUTH (using your admins table) ==========
+app.post('/api/admin/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    
+    // Check in admins table
+    const result = await db.query('SELECT * FROM admins WHERE username = $1', [username]);
+    
+    if (result.rows.length > 0) {
+      const admin = result.rows[0];
+      const validPassword = await bcrypt.compare(password, admin.password);
+      if (validPassword) {
+        const token = jwt.sign({ id: admin.id, username: admin.username, role: admin.role || 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+        return res.json({ success: true, token, username: admin.username, role: admin.role || 'admin', message: 'Login successful' });
+      }
+    }
+    
+    // Default admin fallback
+    if (username === 'admin' && password === 'Winzebglr') {
+      const token = jwt.sign({ username, role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+      return res.json({ success: true, token, username, role: 'admin', message: 'Login successful' });
+    }
+    
+    res.status(401).json({ success: false, error: 'Invalid credentials' });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // ========== CLICK TRACKING ==========
 app.post('/api/track', async (req, res) => {
   try {
@@ -119,6 +149,15 @@ app.get('/api/social-links', async (req, res) => {
     res.json({ success: true, links: result.rows });
   } catch (err) {
     console.error('Error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/admin/social-links', authenticateToken, async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM social_links ORDER BY display_order ASC');
+    res.json({ success: true, links: result.rows });
+  } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
@@ -352,7 +391,7 @@ app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// ========== APPLICATIONS ==========
+// ========== APPLICATIONS CRUD ==========
 app.post('/api/jobs/:id/apply', upload.single('resume'), async (req, res) => {
   try {
     const { name, email, phone, experience, current_company, cover_letter } = req.body;
@@ -397,7 +436,7 @@ app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res
   }
 });
 
-// ========== QUOTES ==========
+// ========== QUOTES CRUD ==========
 app.post('/api/quotes', async (req, res) => {
   try {
     const { name, email, phone, service, message } = req.body;
@@ -420,6 +459,16 @@ app.get('/api/admin/quotes', authenticateToken, async (req, res) => {
     res.json({ success: true, quotes: result.rows });
   } catch (error) {
     console.error('Error fetching quotes:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.delete('/api/admin/quotes/:id', authenticateToken, async (req, res) => {
+  try {
+    await db.query('DELETE FROM quotes WHERE id = $1', [req.params.id]);
+    res.json({ success: true, message: 'Quote deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting quote:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -451,30 +500,6 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
   }
 });
 
-// ========== ADMIN LOGIN (No admin_users table needed) ==========
-app.post('/api/admin/login', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    
-    // Simple hardcoded admin login for now
-    if (username === 'admin' && password === 'Winzebglr') {
-      const token = jwt.sign({ username, role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
-      return res.json({ 
-        success: true, 
-        token, 
-        username, 
-        role: 'admin',
-        message: 'Login successful' 
-      });
-    }
-    
-    res.status(401).json({ success: false, error: 'Invalid credentials' });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
 // ========== SERVE UPLOADED FILES ==========
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -500,4 +525,6 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
   console.log(`📍 Social links: http://localhost:${PORT}/api/social-links`);
   console.log(`📍 Clicks: http://localhost:${PORT}/api/clicks`);
+  console.log(`📍 Blogs: http://localhost:${PORT}/api/blogs`);
+  console.log(`📍 Jobs: http://localhost:${PORT}/api/jobs`);
 });
