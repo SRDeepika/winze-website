@@ -713,12 +713,12 @@ const ProfileSettings = ({ username, onLogout }) => {
             
             {/* Change Username Section */}
             <div style={{ marginBottom: '30px', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
-                <h3 style={{ marginBottom: '15px', color: '#333' }}>📝 Change Username</h3>
+                <h3>📝 Change Username</h3>
                 <form onSubmit={handleUpdateUsername}>
                     <div style={{ position: 'relative', marginBottom: '15px' }}>
                         <input 
                             type={showUsernamePassword ? "text" : "password"} 
-                            placeholder="Enter your current password to verify" 
+                            placeholder="Current Password" 
                             value={usernamePassword} 
                             onChange={e => setUsernamePassword(e.target.value)} 
                             style={styles.input} 
@@ -730,24 +730,24 @@ const ProfileSettings = ({ username, onLogout }) => {
                     </div>
                     <input 
                         type="text" 
-                        placeholder="New username" 
+                        placeholder="New Username" 
                         value={newUsername} 
                         onChange={e => setNewUsername(e.target.value)} 
                         style={styles.input} 
                         required 
                     />
-                    <button type="submit" style={{...styles.saveBtn, width: '100%'}}>Update Username</button>
+                    <button type="submit" style={styles.saveBtn}>Update Username</button>
                 </form>
             </div>
 
             {/* Change Password Section */}
             <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
-                <h3 style={{ marginBottom: '15px', color: '#333' }}>🔒 Change Password</h3>
+                <h3>🔒 Change Password</h3>
                 <form onSubmit={handleUpdatePassword}>
                     <div style={{ position: 'relative', marginBottom: '15px' }}>
                         <input 
                             type={showCurrent ? "text" : "password"} 
-                            placeholder="Current password" 
+                            placeholder="Current Password" 
                             value={currentPassword} 
                             onChange={e => setCurrentPassword(e.target.value)} 
                             style={styles.input} 
@@ -760,7 +760,7 @@ const ProfileSettings = ({ username, onLogout }) => {
                     <div style={{ position: 'relative', marginBottom: '15px' }}>
                         <input 
                             type={showNew ? "text" : "password"} 
-                            placeholder="New password" 
+                            placeholder="New Password" 
                             value={newPassword} 
                             onChange={e => setNewPassword(e.target.value)} 
                             style={styles.input} 
@@ -772,13 +772,13 @@ const ProfileSettings = ({ username, onLogout }) => {
                     </div>
                     <input 
                         type="password" 
-                        placeholder="Confirm new password" 
+                        placeholder="Confirm Password" 
                         value={confirmPassword} 
                         onChange={e => setConfirmPassword(e.target.value)} 
                         style={styles.input} 
                         required 
                     />
-                    <button type="submit" style={{...styles.saveBtn, width: '100%'}}>Update Password</button>
+                    <button type="submit" style={styles.saveBtn}>Update Password</button>
                 </form>
             </div>
         </div>
