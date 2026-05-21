@@ -646,13 +646,14 @@ const UserManager = () => {
 // PROFILE SETTINGS
 // ============================================
 const ProfileSettings = ({ username, onLogout }) => {
-    const [currentPassword, setCurrentPassword] = useState('');
+    const [usernamePassword, setUsernamePassword] = useState('');
     const [newUsername, setNewUsername] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [showUsernamePassword, setShowUsernamePassword] = useState(false);
     const [showCurrent, setShowCurrent] = useState(false);
-    const [showCurrentForUsername, setShowCurrentForUsername] = useState(false);
     const [showNew, setShowNew] = useState(false);
 
     const handleUpdateUsername = async (e) => {
@@ -661,13 +662,12 @@ const ProfileSettings = ({ username, onLogout }) => {
             const token = sessionStorage.getItem('adminToken');
             const response = await axios.post(`${API_BASE_URL}/admin/change-username`, {
                 newUsername: newUsername,
-                password: currentPassword
+                password: usernamePassword
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (response.data.success) {
                 setMessage('Username changed! Please login again.');
-                sessionStorage.setItem('adminUsername', newUsername);
                 setTimeout(() => { sessionStorage.clear(); onLogout(); }, 2000);
             }
         } catch (err) {
@@ -709,15 +709,15 @@ const ProfileSettings = ({ username, onLogout }) => {
                 <form onSubmit={handleUpdateUsername}>
                     <div style={{ position: 'relative' }}>
                         <input 
-                            type={showCurrentForUsername ? "text" : "password"} 
+                            type={showUsernamePassword ? "text" : "password"} 
                             placeholder="Current Password" 
-                            value={currentPassword} 
-                            onChange={e => setCurrentPassword(e.target.value)} 
+                            value={usernamePassword} 
+                            onChange={e => setUsernamePassword(e.target.value)} 
                             style={styles.input} 
                             required 
                         />
-                        <span onClick={() => setShowCurrentForUsername(!showCurrentForUsername)} style={styles.eyeIcon}>
-                            {showCurrentForUsername ? '🙈' : '👁️'}
+                        <span onClick={() => setShowUsernamePassword(!showUsernamePassword)} style={styles.eyeIcon}>
+                            {showUsernamePassword ? '🙈' : '👁️'}
                         </span>
                     </div>
                     <input 
