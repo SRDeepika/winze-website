@@ -57,17 +57,28 @@ app.post('/api/admin/login', async (req, res) => {
   const { username, password } = req.body;
   console.log('Login attempt:', username);
   
-  // Hardcoded login that ALWAYS works
-  if (username === 'admin' && password === 'Winzebglr') {
-    const token = jwt.sign({ id: 1, username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
-    return res.json({ 
-      success: true, 
-      token, 
-      admin: { id: 1, username: 'admin', role: 'admin' }
-    });
+  try {
+    const result = await db.query(`SELECT * FROM admins WHERE username = $1`, [username]);
+    
+    if (result.rows.length > 0) {
+      const admin = result.rows[0];
+      const passwordHash = admin.password_hash || admin.password;
+      const validPassword = await bcrypt.compare(password, passwordHash);
+      if (validPassword) {
+        const token = jwt.sign({ id: admin.id, username: admin.username, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
+        return res.json({ 
+          success: true, 
+          token, 
+          admin: { id: admin.id, username: admin.username, role: admin.role || 'admin' }
+        });
+      }
+    }
+    
+    res.status(401).json({ success: false, error: 'Invalid credentials' });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
-  
-  res.status(401).json({ success: false, error: 'Invalid credentials' });
 });
 
 // ========== CHANGE USERNAME ==========
@@ -75,10 +86,9 @@ app.post('/api/admin/change-username', authenticateToken, async (req, res) => {
   const { newUsername, password } = req.body;
   const adminId = req.user.id;
   
-  console.log('Change username request:', { adminId, newUsername });
+  console.log('Change username request for admin ID:', adminId);
   
   try {
-    // Get admin from database
     const result = await db.query(`SELECT * FROM admins WHERE id = $1`, [adminId]);
     if (result.rows.length === 0) {
       return res.status(404).json({ success: false, error: 'Admin not found' });
@@ -120,7 +130,6 @@ app.post('/api/admin/change-password', authenticateToken, async (req, res) => {
   console.log('Change password request for admin ID:', adminId);
   
   try {
-    // Get admin from database
     const result = await db.query(`SELECT * FROM admins WHERE id = $1`, [adminId]);
     if (result.rows.length === 0) {
       return res.status(404).json({ success: false, error: 'Admin not found' });
@@ -150,15 +159,35 @@ app.post('/api/admin/change-password', authenticateToken, async (req, res) => {
 
 // ========== ADMIN USERS ==========
 app.get('/api/admin/users', authenticateToken, async (req, res) => {
-  res.json({ success: true, users: [{ id: 1, username: 'admin', role: 'admin', created_at: new Date() }] });
+  try {
+    const result = await db.query(`SELECT id, username, role, created_at FROM admins ORDER BY created_at DESC`);
+    res.json({ success: true, users: result.rows });
+  } catch (error) {
+    res.json({ success: true, users: [] });
+  }
 });
 
 app.post('/api/admin/users', authenticateToken, async (req, res) => {
-  res.json({ success: true, message: 'Admin created' });
+  try {
+    const { username, password, role } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await db.query(
+      `INSERT INTO admins (username, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW())`,
+      [username, hashedPassword, role || 'admin']
+    );
+    res.json({ success: true, message: 'Admin created' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 app.delete('/api/admin/users/:id', authenticateToken, async (req, res) => {
-  res.json({ success: true, message: 'Admin deleted' });
+  try {
+    await db.query(`DELETE FROM admins WHERE id = $1`, [req.params.id]);
+    res.json({ success: true, message: 'Admin deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 // ========== SOCIAL LINKS ==========
@@ -167,16 +196,7 @@ app.get('/api/social-links', async (req, res) => {
     const result = await db.query(`SELECT * FROM social_links WHERE is_active = 1 ORDER BY display_order ASC`);
     res.json({ success: true, links: result.rows });
   } catch (error) {
-    // Return default links if table doesn't exist
-    res.json({ 
-      success: true, 
-      links: [
-        { id: 1, platform_name: 'LinkedIn', platform_url: 'https://www.linkedin.com/company/winze-technologies', icon_class: 'faLinkedin', color_code: '#0077b5', display_order: 1, is_active: 1 },
-        { id: 2, platform_name: 'WhatsApp', platform_url: 'https://wa.me/919880010417', icon_class: 'faWhatsapp', color_code: '#25D366', display_order: 2, is_active: 1 },
-        { id: 3, platform_name: 'Facebook', platform_url: 'https://www.facebook.com/winzetechnologies', icon_class: 'faFacebook', color_code: '#1877f2', display_order: 3, is_active: 1 },
-        { id: 4, platform_name: 'Instagram', platform_url: 'https://www.instagram.com/winzetechnologies', icon_class: 'faInstagram', color_code: '#e4405f', display_order: 4, is_active: 1 }
-      ]
-    });
+    res.json({ success: true, links: [] });
   }
 });
 
@@ -185,28 +205,45 @@ app.get('/api/admin/social-links', authenticateToken, async (req, res) => {
     const result = await db.query(`SELECT * FROM social_links ORDER BY display_order ASC`);
     res.json({ success: true, links: result.rows });
   } catch (error) {
-    res.json({ 
-      success: true, 
-      links: [
-        { id: 1, platform_name: 'LinkedIn', platform_url: 'https://www.linkedin.com/company/winze-technologies', icon_class: 'faLinkedin', color_code: '#0077b5', display_order: 1, is_active: 1 },
-        { id: 2, platform_name: 'WhatsApp', platform_url: 'https://wa.me/919880010417', icon_class: 'faWhatsapp', color_code: '#25D366', display_order: 2, is_active: 1 },
-        { id: 3, platform_name: 'Facebook', platform_url: 'https://www.facebook.com/winzetechnologies', icon_class: 'faFacebook', color_code: '#1877f2', display_order: 3, is_active: 1 },
-        { id: 4, platform_name: 'Instagram', platform_url: 'https://www.instagram.com/winzetechnologies', icon_class: 'faInstagram', color_code: '#e4405f', display_order: 4, is_active: 1 }
-      ]
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
 app.post('/api/admin/social-links', authenticateToken, async (req, res) => {
-  res.json({ success: true, message: 'Social link added' });
+  try {
+    const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
+    await db.query(
+      `INSERT INTO social_links (platform_name, platform_url, icon_class, color_code, display_order, is_active, created_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
+      [platform_name, platform_url, icon_class, color_code, display_order || 0, is_active !== undefined ? is_active : 1]
+    );
+    res.json({ success: true, message: 'Social link added' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 app.put('/api/admin/social-links/:id', authenticateToken, async (req, res) => {
-  res.json({ success: true, message: 'Social link updated' });
+  try {
+    const { id } = req.params;
+    const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
+    await db.query(
+      `UPDATE social_links SET platform_name=$1, platform_url=$2, icon_class=$3, color_code=$4, display_order=$5, is_active=$6 WHERE id=$7`,
+      [platform_name, platform_url, icon_class, color_code, display_order, is_active, id]
+    );
+    res.json({ success: true, message: 'Social link updated' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 app.delete('/api/admin/social-links/:id', authenticateToken, async (req, res) => {
-  res.json({ success: true, message: 'Social link deleted' });
+  try {
+    await db.query(`DELETE FROM social_links WHERE id = $1`, [req.params.id]);
+    res.json({ success: true, message: 'Social link deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 // ========== BLOGS ==========
@@ -229,15 +266,46 @@ app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
 });
 
 app.post('/api/admin/blogs', authenticateToken, async (req, res) => {
-  res.json({ success: true, message: 'Blog created' });
+  try {
+    const { title, excerpt, content, category, author, status } = req.body;
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    await db.query(
+      `INSERT INTO blogs (title, slug, excerpt, content, category, author, status, created_at, updated_at, views) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW(), 0)`,
+      [title, slug, excerpt || '', content, category || 'General', author || 'Admin', status || 'draft']
+    );
+    res.json({ success: true, message: 'Blog created' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 app.put('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
-  res.json({ success: true, message: 'Blog updated' });
+  try {
+    const { id } = req.params;
+    const { title, excerpt, content, category, author, status } = req.body;
+    if (title) {
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      await db.query(`UPDATE blogs SET title=$1, slug=$2, updated_at=NOW() WHERE id=$3`, [title, slug, id]);
+    }
+    if (excerpt !== undefined) await db.query(`UPDATE blogs SET excerpt=$1, updated_at=NOW() WHERE id=$2`, [excerpt, id]);
+    if (content) await db.query(`UPDATE blogs SET content=$1, updated_at=NOW() WHERE id=$2`, [content, id]);
+    if (category) await db.query(`UPDATE blogs SET category=$1, updated_at=NOW() WHERE id=$2`, [category, id]);
+    if (author) await db.query(`UPDATE blogs SET author=$1, updated_at=NOW() WHERE id=$2`, [author, id]);
+    if (status) await db.query(`UPDATE blogs SET status=$1, updated_at=NOW() WHERE id=$2`, [status, id]);
+    res.json({ success: true, message: 'Blog updated' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 app.delete('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
-  res.json({ success: true, message: 'Blog deleted' });
+  try {
+    await db.query(`DELETE FROM blogs WHERE id = $1`, [req.params.id]);
+    res.json({ success: true, message: 'Blog deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 // ========== JOBS ==========
@@ -260,21 +328,51 @@ app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
 });
 
 app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
-  res.json({ success: true, message: 'Job created' });
+  try {
+    const { title, department, location, type, description, salary, status } = req.body;
+    await db.query(
+      `INSERT INTO jobs (title, department, location, type, description, salary, status, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())`,
+      [title, department || '', location || '', type || 'Full-time', description || '', salary || '', status || 'active']
+    );
+    res.json({ success: true, message: 'Job created' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 app.put('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
-  res.json({ success: true, message: 'Job updated' });
+  try {
+    const { id } = req.params;
+    const { title, department, location, type, description, salary, status } = req.body;
+    await db.query(
+      `UPDATE jobs SET title=$1, department=$2, location=$3, type=$4, description=$5, salary=$6, status=$7, updated_at=NOW() WHERE id=$8`,
+      [title, department, location, type, description, salary, status, id]
+    );
+    res.json({ success: true, message: 'Job updated' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
-  res.json({ success: true, message: 'Job deleted' });
+  try {
+    await db.query(`DELETE FROM jobs WHERE id = $1`, [req.params.id]);
+    res.json({ success: true, message: 'Job deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 // ========== APPLICATIONS ==========
 app.get('/api/admin/applications', authenticateToken, async (req, res) => {
   try {
-    const result = await db.query(`SELECT a.*, j.title as job_title FROM job_applications a LEFT JOIN jobs j ON a.job_id = j.id ORDER BY a.applied_at DESC`);
+    const result = await db.query(`
+      SELECT a.*, j.title as job_title 
+      FROM job_applications a 
+      LEFT JOIN jobs j ON a.job_id = j.id 
+      ORDER BY a.applied_at DESC
+    `);
     res.json({ success: true, applications: result.rows });
   } catch (error) {
     res.json({ success: true, applications: [] });
@@ -282,12 +380,26 @@ app.get('/api/admin/applications', authenticateToken, async (req, res) => {
 });
 
 app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res) => {
-  res.json({ success: true, message: 'Status updated' });
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    await db.query(`UPDATE job_applications SET status = $1 WHERE id = $2`, [status, id]);
+    res.json({ success: true, message: 'Status updated' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 // ========== QUOTES ==========
 app.post('/api/quotes', async (req, res) => {
-  res.json({ success: true, message: 'Quote submitted successfully' });
+  try {
+    const { name, email, phone, service, message } = req.body;
+    await db.query(`INSERT INTO quotes (name, email, phone, service, message, created_at) VALUES ($1, $2, $3, $4, $5, NOW())`, 
+      [name, email, phone, service, message]);
+    res.json({ success: true, message: 'Quote submitted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 app.get('/api/admin/quotes', authenticateToken, async (req, res) => {
@@ -301,7 +413,14 @@ app.get('/api/admin/quotes', authenticateToken, async (req, res) => {
 
 // ========== CLICKS ==========
 app.post('/api/track', async (req, res) => {
-  res.json({ success: true, message: 'Click tracked' });
+  const { link_url, link_title, ip_address } = req.body;
+  try {
+    await db.query(`INSERT INTO clicks (link_url, link_title, ip_address, clicked_at) VALUES ($1, $2, $3, NOW())`, 
+      [link_url, link_title, ip_address || '0.0.0.0']);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 app.get('/api/clicks', async (req, res) => {
@@ -315,18 +434,30 @@ app.get('/api/clicks', async (req, res) => {
 
 // ========== ADMIN STATS ==========
 app.get('/api/admin/stats', authenticateToken, async (req, res) => {
-  res.json({
-    success: true,
-    stats: {
-      totalJobs: 0,
-      totalApplications: 0,
-      totalQuotes: 0,
-      totalBlogs: 0,
-      publishedBlogs: 0,
-      totalSocialLinks: 4,
-      totalClicks: 0
-    }
-  });
+  try {
+    const jobCount = await db.query(`SELECT COUNT(*) FROM jobs`);
+    const appCount = await db.query(`SELECT COUNT(*) FROM job_applications`);
+    const quoteCount = await db.query(`SELECT COUNT(*) FROM quotes`);
+    const blogCount = await db.query(`SELECT COUNT(*) FROM blogs`);
+    const publishedBlogs = await db.query(`SELECT COUNT(*) FROM blogs WHERE status = 'published'`);
+    const socialCount = await db.query(`SELECT COUNT(*) FROM social_links`);
+    const clickCount = await db.query(`SELECT COUNT(*) FROM clicks`);
+    
+    res.json({
+      success: true,
+      stats: {
+        totalJobs: parseInt(jobCount.rows[0].count) || 0,
+        totalApplications: parseInt(appCount.rows[0].count) || 0,
+        totalQuotes: parseInt(quoteCount.rows[0].count) || 0,
+        totalBlogs: parseInt(blogCount.rows[0].count) || 0,
+        publishedBlogs: parseInt(publishedBlogs.rows[0].count) || 0,
+        totalSocialLinks: parseInt(socialCount.rows[0].count) || 0,
+        totalClicks: parseInt(clickCount.rows[0].count) || 0
+      }
+    });
+  } catch (error) {
+    res.json({ success: true, stats: {} });
+  }
 });
 
 const PORT = process.env.PORT || 5000;
