@@ -1,3 +1,6 @@
+// FIXED: Only 4 social links - Updated on 2026-05-21
+import React, { useState, useEffect } from 'react';
+// ... rest of your existing code
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
