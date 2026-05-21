@@ -20,7 +20,6 @@ const SocialLinks = () => {
             const response = await fetch('https://winze-backend-api.onrender.com/api/social-links');
             const data = await response.json();
             if (data.success && data.links && data.links.length > 0) {
-                // Map the database fields to component props
                 const links = data.links.map(link => {
                     let icon;
                     const name = link.platform_name.toLowerCase();
@@ -39,27 +38,11 @@ const SocialLinks = () => {
                         order: link.display_order
                     };
                 });
-                // Sort by display_order
                 links.sort((a, b) => a.order - b.order);
                 setSocialLinks(links);
-            } else {
-                // Fallback if no data from API
-                setSocialLinks([
-                    { id: 1, name: "LinkedIn", url: "https://www.linkedin.com/company/winze-technologies", icon: faLinkedin, color: "#0077b5", order: 1 },
-                    { id: 2, name: "WhatsApp", url: "https://wa.me/919880010417", icon: faWhatsapp, color: "#25D366", order: 2 },
-                    { id: 3, name: "Facebook", url: "https://www.facebook.com/winzetechnologies", icon: faFacebook, color: "#1877f2", order: 3 },
-                    { id: 4, name: "Instagram", url: "https://www.instagram.com/winzetechnologies", icon: faInstagram, color: "#e4405f", order: 4 }
-                ]);
             }
         } catch (error) {
             console.error('Error fetching social links:', error);
-            // Fallback on error
-            setSocialLinks([
-                { id: 1, name: "LinkedIn", url: "https://www.linkedin.com/company/winze-technologies", icon: faLinkedin, color: "#0077b5", order: 1 },
-                { id: 2, name: "WhatsApp", url: "https://wa.me/919880010417", icon: faWhatsapp, color: "#25D366", order: 2 },
-                { id: 3, name: "Facebook", url: "https://www.facebook.com/winzetechnologies", icon: faFacebook, color: "#1877f2", order: 3 },
-                { id: 4, name: "Instagram", url: "https://www.instagram.com/winzetechnologies", icon: faInstagram, color: "#e4405f", order: 4 }
-            ]);
         }
     };
 
