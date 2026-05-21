@@ -35,6 +35,26 @@ export const adminLogin = async (username, password) => {
 };
 
 // ========== BLOG APIs ==========
+export const getBlogs = async () => {
+  try {
+    const response = await api.get('/blogs');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching blogs:', error);
+    throw error;
+  }
+};
+
+export const getBlogBySlug = async (slug) => {
+  try {
+    const response = await api.get(`/blogs/${slug}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching blog:', error);
+    throw error;
+  }
+};
+
 export const getAdminBlogs = async () => {
   try {
     const response = await api.get('/admin/blogs');
@@ -78,6 +98,26 @@ export const deleteBlog = async (id) => {
 };
 
 // ========== JOB APIs ==========
+export const getJobs = async () => {
+  try {
+    const response = await api.get('/jobs');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching jobs:', error);
+    throw error;
+  }
+};
+
+export const getJobById = async (id) => {
+  try {
+    const response = await api.get(`/jobs/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching job:', error);
+    throw error;
+  }
+};
+
 export const getAdminJobs = async () => {
   try {
     const response = await api.get('/admin/jobs');
@@ -119,6 +159,25 @@ export const deleteJob = async (id) => {
 };
 
 // ========== APPLICATION APIs ==========
+export const applyForJob = async (jobId, applicationData) => {
+  const formData = new FormData();
+  Object.keys(applicationData).forEach(key => {
+    if (applicationData[key] !== undefined && applicationData[key] !== null) {
+      formData.append(key, applicationData[key]);
+    }
+  });
+  
+  try {
+    const response = await api.post(`/jobs/${jobId}/apply`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error applying for job:', error);
+    throw error;
+  }
+};
+
 export const getApplications = async () => {
   try {
     const response = await api.get('/admin/applications');
@@ -140,6 +199,16 @@ export const updateApplicationStatus = async (id, status) => {
 };
 
 // ========== QUOTE APIs ==========
+export const submitQuote = async (quoteData) => {
+  try {
+    const response = await api.post('/quotes', quoteData);
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting quote:', error);
+    throw error;
+  }
+};
+
 export const getQuotes = async () => {
   try {
     const response = await api.get('/admin/quotes');
@@ -203,7 +272,6 @@ export const getSocialLinks = async () => {
   }
 };
 
-// ADD THIS MISSING FUNCTION
 export const getAdminSocialLinks = async () => {
   try {
     const response = await api.get('/admin/social-links');
@@ -214,7 +282,6 @@ export const getAdminSocialLinks = async () => {
   }
 };
 
-// ADD THESE MISSING FUNCTIONS
 export const createSocialLink = async (linkData) => {
   try {
     const response = await api.post('/admin/social-links', linkData);
@@ -245,7 +312,17 @@ export const deleteSocialLink = async (id) => {
   }
 };
 
-// ========== OTHER APIs ==========
+// ========== CLICK APIs ==========
+export const trackClick = async (clickData) => {
+  try {
+    const response = await api.post('/track', clickData);
+    return response.data;
+  } catch (error) {
+    console.error('Error tracking click:', error);
+    throw error;
+  }
+};
+
 export const getAllClicks = async () => {
   try {
     const response = await api.get('/clicks');
@@ -256,12 +333,13 @@ export const getAllClicks = async () => {
   }
 };
 
-export const trackClick = async (clickData) => {
+// ========== HEALTH CHECK ==========
+export const healthCheck = async () => {
   try {
-    const response = await api.post('/track', clickData);
+    const response = await api.get('/health');
     return response.data;
   } catch (error) {
-    console.error('Error tracking click:', error);
+    console.error('Health check failed:', error);
     throw error;
   }
 };
