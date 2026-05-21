@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./config/database');
+const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -10,472 +10,453 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ========== Database Connection ==========
+const db = new Pool({
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'winze_db',
+  port: process.env.DB_PORT || 5432,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+});
+
+// Test database connection
+db.connect((err, client, release) => {
+  if (err) {
+    console.error('Error connecting to PostgreSQL:', err.stack);
+  } else {
+    console.log('✅ PostgreSQL connected successfully');
+    release();
+  }
+});
+
 // ========== JWT Secret ==========
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
 
 // ========== Authentication Middleware ==========
 const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    
-    if (!token) {
-        return res.status(401).json({ success: false, error: 'Access token required' });
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).json({ success: false, error: 'Access token required' });
+  }
+  
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ success: false, error: 'Invalid or expired token' });
     }
-    
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).json({ success: false, error: 'Invalid or expired token' });
-        }
-        req.user = user;
-        next();
-    });
+    req.user = user;
+    next();
+  });
 };
 
 // ========== HEALTH ==========
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'Server is running' });
+  res.json({ status: 'ok', message: 'Server is running' });
 });
 
 // ========== ADMIN LOGIN ==========
 app.post('/api/admin/login', async (req, res) => {
-    const { username, password } = req.body;
+  console.log('Login attempt:', req.body);
+  const { username, password } = req.body;
+  
+  try {
+    // First, try to check if admins table exists and has data
+    const tableCheck = await db.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_name = 'admins'
+      );
+    `);
     
-    try {
-        const result = await db.query(`SELECT * FROM admins WHERE username = $1`, [username]);
-        
-        if (result.rows.length > 0) {
-            const admin = result.rows[0];
-            const validPassword = await bcrypt.compare(password, admin.password);
-            if (validPassword) {
-                const token = jwt.sign({ id: admin.id, username: admin.username, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
-                return res.json({ 
-                    success: true, 
-                    token, 
-                    admin: { id: admin.id, username: admin.username, role: admin.role },
-                    message: 'Login successful' 
-                });
-            }
+    const tableExists = tableCheck.rows[0].exists;
+    console.log('Admins table exists:', tableExists);
+    
+    if (tableExists) {
+      const result = await db.query(`SELECT * FROM admins WHERE username = $1`, [username]);
+      console.log('Query result rows:', result.rows.length);
+      
+      if (result.rows.length > 0) {
+        const admin = result.rows[0];
+        const validPassword = await bcrypt.compare(password, admin.password);
+        if (validPassword) {
+          const token = jwt.sign({ id: admin.id, username: admin.username, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
+          return res.json({ 
+            success: true, 
+            token, 
+            admin: { id: admin.id, username: admin.username, role: admin.role },
+            message: 'Login successful' 
+          });
         }
-        
-        // Default admin fallback
-        if (username === 'admin' && password === 'Winzebglr') {
-            const token = jwt.sign({ username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
-            return res.json({ 
-                success: true, 
-                token, 
-                admin: { username: 'admin', role: 'admin' },
-                message: 'Login successful' 
-            });
-        }
-        
-        res.status(401).json({ success: false, error: 'Invalid credentials' });
-    } catch (err) {
-        console.error('Login error:', err);
-        res.status(500).json({ success: false, error: err.message });
+      }
     }
+    
+    // Default admin fallback (hardcoded for testing)
+    if (username === 'admin' && password === 'Winzebglr') {
+      const token = jwt.sign({ username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+      return res.json({ 
+        success: true, 
+        token, 
+        admin: { username: 'admin', role: 'admin' },
+        message: 'Login successful' 
+      });
+    }
+    
+    res.status(401).json({ success: false, error: 'Invalid credentials' });
+  } catch (err) {
+    console.error('Login error details:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // ========== ADMIN USERS MANAGEMENT ==========
 app.get('/api/admin/users', authenticateToken, async (req, res) => {
-    try {
-        const result = await db.query(`SELECT id, username, role, created_at FROM admins ORDER BY created_at DESC`);
-        res.json({ success: true, users: result.rows });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const result = await db.query(`SELECT id, username, role, created_at FROM admins ORDER BY created_at DESC`);
+    res.json({ success: true, users: result.rows });
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.post('/api/admin/users', authenticateToken, async (req, res) => {
-    try {
-        const { username, password, role } = req.body;
-        
-        const existing = await db.query(`SELECT id FROM admins WHERE username = $1`, [username]);
-        if (existing.rows.length > 0) {
-            return res.status(400).json({ success: false, error: 'Username already exists' });
-        }
-        
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const result = await db.query(
-            `INSERT INTO admins (username, password, role, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW()) RETURNING id, username, role`,
-            [username, hashedPassword, role || 'admin']
-        );
-        
-        res.json({ success: true, user: result.rows[0], message: 'Admin created successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+  try {
+    const { username, password, role } = req.body;
+    
+    const existing = await db.query(`SELECT id FROM admins WHERE username = $1`, [username]);
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ success: false, error: 'Username already exists' });
     }
+    
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await db.query(
+      `INSERT INTO admins (username, password, role, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW()) RETURNING id, username, role`,
+      [username, hashedPassword, role || 'admin']
+    );
+    
+    res.json({ success: true, user: result.rows[0], message: 'Admin created successfully' });
+  } catch (err) {
+    console.error('Error creating user:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.put('/api/admin/users/:id', authenticateToken, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { username, password, role } = req.body;
-        
-        if (username) {
-            await db.query(`UPDATE admins SET username = $1, updated_at = NOW() WHERE id = $2`, [username, id]);
-        }
-        if (password) {
-            const hashedPassword = await bcrypt.hash(password, 10);
-            await db.query(`UPDATE admins SET password = $1, updated_at = NOW() WHERE id = $2`, [hashedPassword, id]);
-        }
-        if (role) {
-            await db.query(`UPDATE admins SET role = $1, updated_at = NOW() WHERE id = $2`, [role, id]);
-        }
-        
-        res.json({ success: true, message: 'Admin updated successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+  try {
+    const { id } = req.params;
+    const { username, password, role } = req.body;
+    
+    if (username) {
+      await db.query(`UPDATE admins SET username = $1, updated_at = NOW() WHERE id = $2`, [username, id]);
     }
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await db.query(`UPDATE admins SET password = $1, updated_at = NOW() WHERE id = $2`, [hashedPassword, id]);
+    }
+    if (role) {
+      await db.query(`UPDATE admins SET role = $1, updated_at = NOW() WHERE id = $2`, [role, id]);
+    }
+    
+    res.json({ success: true, message: 'Admin updated successfully' });
+  } catch (err) {
+    console.error('Error updating user:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.delete('/api/admin/users/:id', authenticateToken, async (req, res) => {
-    try {
-        const { id } = req.params;
-        
-        const countResult = await db.query(`SELECT COUNT(*) FROM admins`);
-        if (parseInt(countResult.rows[0].count) <= 1) {
-            return res.status(400).json({ success: false, error: 'Cannot delete the last admin' });
-        }
-        
-        await db.query(`DELETE FROM admins WHERE id = $1`, [id]);
-        res.json({ success: true, message: 'Admin deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+  try {
+    const { id } = req.params;
+    
+    const countResult = await db.query(`SELECT COUNT(*) FROM admins`);
+    if (parseInt(countResult.rows[0].count) <= 1) {
+      return res.status(400).json({ success: false, error: 'Cannot delete the last admin' });
     }
+    
+    await db.query(`DELETE FROM admins WHERE id = $1`, [id]);
+    res.json({ success: true, message: 'Admin deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting user:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // ========== SOCIAL LINKS ==========
 app.get('/api/social-links', async (req, res) => {
-    try {
-        const result = await db.query(`SELECT * FROM social_links WHERE is_active = 1 ORDER BY display_order ASC`);
-        res.json({ success: true, links: result.rows });
-    } catch (err) {
-        res.json({ success: true, links: [] });
-    }
+  try {
+    const result = await db.query(`SELECT * FROM social_links WHERE is_active = 1 ORDER BY display_order ASC`);
+    res.json({ success: true, links: result.rows });
+  } catch (err) {
+    console.error('Error fetching social links:', err);
+    res.json({ success: true, links: [] });
+  }
 });
 
 app.get('/api/admin/social-links', authenticateToken, async (req, res) => {
-    try {
-        const result = await db.query(`SELECT * FROM social_links ORDER BY display_order ASC`);
-        res.json({ success: true, links: result.rows });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const result = await db.query(`SELECT * FROM social_links ORDER BY display_order ASC`);
+    res.json({ success: true, links: result.rows });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.post('/api/admin/social-links', authenticateToken, async (req, res) => {
-    try {
-        const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
-        
-        const result = await db.query(
-            `INSERT INTO social_links (platform_name, platform_url, icon_class, color_code, display_order, is_active, created_at, updated_at) 
-             VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING id`,
-            [platform_name, platform_url, icon_class, color_code, display_order || 0, is_active !== undefined ? is_active : 1]
-        );
-        
-        res.json({ success: true, id: result.rows[0].id, message: 'Social link added successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
+    
+    const result = await db.query(
+      `INSERT INTO social_links (platform_name, platform_url, icon_class, color_code, display_order, is_active, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING id`,
+      [platform_name, platform_url, icon_class, color_code, display_order || 0, is_active !== undefined ? is_active : 1]
+    );
+    
+    res.json({ success: true, id: result.rows[0].id, message: 'Social link added successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.put('/api/admin/social-links/:id', authenticateToken, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
-        
-        await db.query(
-            `UPDATE social_links 
-             SET platform_name = $1, platform_url = $2, icon_class = $3, color_code = $4, display_order = $5, is_active = $6, updated_at = NOW() 
-             WHERE id = $7`,
-            [platform_name, platform_url, icon_class, color_code, display_order, is_active, id]
-        );
-        
-        res.json({ success: true, message: 'Social link updated successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const { id } = req.params;
+    const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
+    
+    await db.query(
+      `UPDATE social_links 
+       SET platform_name = $1, platform_url = $2, icon_class = $3, color_code = $4, display_order = $5, is_active = $6, updated_at = NOW() 
+       WHERE id = $7`,
+      [platform_name, platform_url, icon_class, color_code, display_order, is_active, id]
+    );
+    
+    res.json({ success: true, message: 'Social link updated successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.delete('/api/admin/social-links/:id', authenticateToken, async (req, res) => {
-    try {
-        await db.query(`DELETE FROM social_links WHERE id = $1`, [req.params.id]);
-        res.json({ success: true, message: 'Social link deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    await db.query(`DELETE FROM social_links WHERE id = $1`, [req.params.id]);
+    res.json({ success: true, message: 'Social link deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // ========== BLOGS ==========
 app.get('/api/blogs', async (req, res) => {
-    try {
-        const result = await db.query(`SELECT * FROM blogs WHERE status = 'published' ORDER BY created_at DESC`);
-        res.json({ success: true, blogs: result.rows });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-app.get('/api/blogs/:slug', async (req, res) => {
-    try {
-        const result = await db.query(`SELECT * FROM blogs WHERE slug = $1 AND status = 'published'`, [req.params.slug]);
-        if (result.rows.length === 0) {
-            return res.status(404).json({ success: false, error: 'Blog not found' });
-        }
-        await db.query(`UPDATE blogs SET views = views + 1 WHERE id = $1`, [result.rows[0].id]);
-        res.json({ success: true, blog: result.rows[0] });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const result = await db.query(`SELECT * FROM blogs WHERE status = 'published' ORDER BY created_at DESC`);
+    res.json({ success: true, blogs: result.rows });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
-    try {
-        const result = await db.query(`SELECT * FROM blogs ORDER BY created_at DESC`);
-        res.json({ success: true, blogs: result.rows });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const result = await db.query(`SELECT * FROM blogs ORDER BY created_at DESC`);
+    res.json({ success: true, blogs: result.rows });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.post('/api/admin/blogs', authenticateToken, async (req, res) => {
-    try {
-        const { title, excerpt, content, category, author, status, image } = req.body;
-        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        const result = await db.query(
-            `INSERT INTO blogs (title, slug, excerpt, content, category, author, status, image, created_at, updated_at, views) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW(), 0) RETURNING id`,
-            [title, slug, excerpt || '', content, category || 'General', author || 'Admin', status || 'draft', image || null]
-        );
-        res.json({ success: true, id: result.rows[0].id, message: 'Blog created successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const { title, excerpt, content, category, author, status, image } = req.body;
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const result = await db.query(
+      `INSERT INTO blogs (title, slug, excerpt, content, category, author, status, image, created_at, updated_at, views) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW(), 0) RETURNING id`,
+      [title, slug, excerpt || '', content, category || 'General', author || 'Admin', status || 'draft', image || null]
+    );
+    res.json({ success: true, id: result.rows[0].id, message: 'Blog created successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.put('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { title, excerpt, content, category, author, status, image } = req.body;
-        const slug = title ? title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : undefined;
-        
-        if (title) await db.query(`UPDATE blogs SET title = $1, slug = $2 WHERE id = $3`, [title, slug, id]);
-        if (excerpt !== undefined) await db.query(`UPDATE blogs SET excerpt = $1 WHERE id = $2`, [excerpt, id]);
-        if (content) await db.query(`UPDATE blogs SET content = $1 WHERE id = $2`, [content, id]);
-        if (category) await db.query(`UPDATE blogs SET category = $1 WHERE id = $2`, [category, id]);
-        if (author) await db.query(`UPDATE blogs SET author = $1 WHERE id = $2`, [author, id]);
-        if (status) await db.query(`UPDATE blogs SET status = $1 WHERE id = $2`, [status, id]);
-        if (image !== undefined) await db.query(`UPDATE blogs SET image = $1 WHERE id = $2`, [image, id]);
-        
-        await db.query(`UPDATE blogs SET updated_at = NOW() WHERE id = $1`, [id]);
-        
-        res.json({ success: true, message: 'Blog updated successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+  try {
+    const { id } = req.params;
+    const { title, excerpt, content, category, author, status, image } = req.body;
+    
+    if (title) {
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      await db.query(`UPDATE blogs SET title = $1, slug = $2 WHERE id = $3`, [title, slug, id]);
     }
+    if (excerpt !== undefined) await db.query(`UPDATE blogs SET excerpt = $1 WHERE id = $2`, [excerpt, id]);
+    if (content) await db.query(`UPDATE blogs SET content = $1 WHERE id = $2`, [content, id]);
+    if (category) await db.query(`UPDATE blogs SET category = $1 WHERE id = $2`, [category, id]);
+    if (author) await db.query(`UPDATE blogs SET author = $1 WHERE id = $2`, [author, id]);
+    if (status) await db.query(`UPDATE blogs SET status = $1 WHERE id = $2`, [status, id]);
+    if (image !== undefined) await db.query(`UPDATE blogs SET image = $1 WHERE id = $2`, [image, id]);
+    
+    await db.query(`UPDATE blogs SET updated_at = NOW() WHERE id = $1`, [id]);
+    res.json({ success: true, message: 'Blog updated successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.delete('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
-    try {
-        await db.query(`DELETE FROM blogs WHERE id = $1`, [req.params.id]);
-        res.json({ success: true, message: 'Blog deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    await db.query(`DELETE FROM blogs WHERE id = $1`, [req.params.id]);
+    res.json({ success: true, message: 'Blog deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // ========== JOBS ==========
 app.get('/api/jobs', async (req, res) => {
-    try {
-        const result = await db.query(`SELECT * FROM jobs WHERE status = 'active' ORDER BY created_at DESC`);
-        res.json({ success: true, jobs: result.rows });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-app.get('/api/jobs/:id', async (req, res) => {
-    try {
-        const result = await db.query(`SELECT * FROM jobs WHERE id = $1`, [req.params.id]);
-        if (result.rows.length === 0) {
-            return res.status(404).json({ success: false, error: 'Job not found' });
-        }
-        res.json({ success: true, job: result.rows[0] });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const result = await db.query(`SELECT * FROM jobs WHERE status = 'active' ORDER BY created_at DESC`);
+    res.json({ success: true, jobs: result.rows });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
-    try {
-        const result = await db.query(`SELECT * FROM jobs ORDER BY created_at DESC`);
-        res.json({ success: true, jobs: result.rows });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const result = await db.query(`SELECT * FROM jobs ORDER BY created_at DESC`);
+    res.json({ success: true, jobs: result.rows });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
-    try {
-        const { title, department, location, type, description, salary, status } = req.body;
-        const result = await db.query(
-            `INSERT INTO jobs (title, department, location, type, description, salary, status, created_at, updated_at) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW()) RETURNING id`,
-            [title, department || '', location || '', type || 'Full-time', description || '', salary || '', status || 'active']
-        );
-        res.json({ success: true, id: result.rows[0].id, message: 'Job created successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const { title, department, location, type, description, salary, status } = req.body;
+    const result = await db.query(
+      `INSERT INTO jobs (title, department, location, type, description, salary, status, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW()) RETURNING id`,
+      [title, department || '', location || '', type || 'Full-time', description || '', salary || '', status || 'active']
+    );
+    res.json({ success: true, id: result.rows[0].id, message: 'Job created successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.put('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { title, department, location, type, description, salary, status } = req.body;
-        
-        await db.query(
-            `UPDATE jobs SET title=$1, department=$2, location=$3, type=$4, description=$5, salary=$6, status=$7, updated_at=NOW() WHERE id=$8`,
-            [title, department, location, type, description, salary, status, id]
-        );
-        
-        res.json({ success: true, message: 'Job updated successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const { id } = req.params;
+    const { title, department, location, type, description, salary, status } = req.body;
+    
+    await db.query(
+      `UPDATE jobs SET title=$1, department=$2, location=$3, type=$4, description=$5, salary=$6, status=$7, updated_at=NOW() WHERE id=$8`,
+      [title, department, location, type, description, salary, status, id]
+    );
+    res.json({ success: true, message: 'Job updated successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
-    try {
-        await db.query(`DELETE FROM jobs WHERE id = $1`, [req.params.id]);
-        res.json({ success: true, message: 'Job deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    await db.query(`DELETE FROM jobs WHERE id = $1`, [req.params.id]);
+    res.json({ success: true, message: 'Job deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
-// ========== JOB APPLICATIONS ==========
-app.post('/api/jobs/:id/apply', async (req, res) => {
-    try {
-        const jobId = req.params.id;
-        const { name, email, phone, experience, current_company, cover_letter } = req.body;
-        
-        const result = await db.query(
-            `INSERT INTO job_applications (job_id, name, email, phone, experience, current_company, cover_letter, status, applied_at) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending', NOW()) RETURNING id`,
-            [jobId, name, email, phone || '', experience || '', current_company || '', cover_letter || '']
-        );
-        
-        res.json({ success: true, message: 'Application submitted', id: result.rows[0].id });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
+// ========== APPLICATIONS ==========
 app.get('/api/admin/applications', authenticateToken, async (req, res) => {
-    try {
-        const result = await db.query(`
-            SELECT a.*, j.title as job_title 
-            FROM job_applications a 
-            LEFT JOIN jobs j ON a.job_id = j.id 
-            ORDER BY a.applied_at DESC
-        `);
-        res.json({ success: true, applications: result.rows });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const result = await db.query(`
+      SELECT a.*, j.title as job_title 
+      FROM job_applications a 
+      LEFT JOIN jobs j ON a.job_id = j.id 
+      ORDER BY a.applied_at DESC
+    `);
+    res.json({ success: true, applications: result.rows });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { status } = req.body;
-        
-        await db.query(`UPDATE job_applications SET status = $1 WHERE id = $2`, [status, id]);
-        res.json({ success: true, message: 'Status updated' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    await db.query(`UPDATE job_applications SET status = $1 WHERE id = $2`, [status, id]);
+    res.json({ success: true, message: 'Status updated' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // ========== QUOTES ==========
-app.post('/api/quotes', async (req, res) => {
-    try {
-        const { name, email, phone, service, message } = req.body;
-        await db.query(`INSERT INTO quotes (name, email, phone, service, message, created_at) VALUES ($1, $2, $3, $4, $5, NOW())`, 
-            [name, email, phone, service, message]);
-        res.json({ success: true, message: 'Quote submitted successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
 app.get('/api/admin/quotes', authenticateToken, async (req, res) => {
-    try {
-        const result = await db.query(`SELECT * FROM quotes ORDER BY created_at DESC`);
-        res.json({ success: true, quotes: result.rows });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-app.delete('/api/admin/quotes/:id', authenticateToken, async (req, res) => {
-    try {
-        await db.query(`DELETE FROM quotes WHERE id = $1`, [req.params.id]);
-        res.json({ success: true, message: 'Quote deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const result = await db.query(`SELECT * FROM quotes ORDER BY created_at DESC`);
+    res.json({ success: true, quotes: result.rows });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // ========== CLICKS ==========
 app.post('/api/track', async (req, res) => {
-    const { link_url, link_title, ip_address } = req.body;
-    try {
-        await db.query(`INSERT INTO clicks (link_url, link_title, ip_address, clicked_at) VALUES ($1, $2, $3, NOW())`, 
-            [link_url, link_title, ip_address || '0.0.0.0']);
-        res.json({ success: true, message: 'Click tracked' });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  const { link_url, link_title, ip_address } = req.body;
+  try {
+    await db.query(`INSERT INTO clicks (link_url, link_title, ip_address, clicked_at) VALUES ($1, $2, $3, NOW())`, 
+      [link_url, link_title, ip_address || '0.0.0.0']);
+    res.json({ success: true, message: 'Click tracked' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.get('/api/clicks', async (req, res) => {
-    try {
-        const result = await db.query(`SELECT * FROM clicks ORDER BY clicked_at DESC`);
-        res.json({ success: true, clicks: result.rows });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const result = await db.query(`SELECT * FROM clicks ORDER BY clicked_at DESC`);
+    res.json({ success: true, clicks: result.rows });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // ========== ADMIN STATS ==========
 app.get('/api/admin/stats', authenticateToken, async (req, res) => {
-    try {
-        const jobCount = await db.query(`SELECT COUNT(*) FROM jobs`);
-        const appCount = await db.query(`SELECT COUNT(*) FROM job_applications`);
-        const quoteCount = await db.query(`SELECT COUNT(*) FROM quotes`);
-        const blogCount = await db.query(`SELECT COUNT(*) FROM blogs`);
-        const socialCount = await db.query(`SELECT COUNT(*) FROM social_links`);
-        const adminCount = await db.query(`SELECT COUNT(*) FROM admins`);
-        const clickCount = await db.query(`SELECT COUNT(*) FROM clicks`);
-        
-        res.json({
-            success: true,
-            stats: {
-                totalJobs: parseInt(jobCount.rows[0].count),
-                totalApplications: parseInt(appCount.rows[0].count),
-                totalQuotes: parseInt(quoteCount.rows[0].count),
-                totalBlogs: parseInt(blogCount.rows[0].count),
-                totalSocialLinks: parseInt(socialCount.rows[0].count),
-                totalAdmins: parseInt(adminCount.rows[0].count),
-                totalClicks: parseInt(clickCount.rows[0].count)
-            }
-        });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+  try {
+    const jobCount = await db.query(`SELECT COUNT(*) FROM jobs`);
+    const appCount = await db.query(`SELECT COUNT(*) FROM job_applications`);
+    const quoteCount = await db.query(`SELECT COUNT(*) FROM quotes`);
+    const blogCount = await db.query(`SELECT COUNT(*) FROM blogs`);
+    const socialCount = await db.query(`SELECT COUNT(*) FROM social_links`);
+    const adminCount = await db.query(`SELECT COUNT(*) FROM admins`);
+    const clickCount = await db.query(`SELECT COUNT(*) FROM clicks`);
+    
+    res.json({
+      success: true,
+      stats: {
+        totalJobs: parseInt(jobCount.rows[0].count) || 0,
+        totalApplications: parseInt(appCount.rows[0].count) || 0,
+        totalQuotes: parseInt(quoteCount.rows[0].count) || 0,
+        totalBlogs: parseInt(blogCount.rows[0].count) || 0,
+        totalSocialLinks: parseInt(socialCount.rows[0].count) || 0,
+        totalAdmins: parseInt(adminCount.rows[0].count) || 0,
+        totalClicks: parseInt(clickCount.rows[0].count) || 0
+      }
+    });
+  } catch (err) {
+    console.error('Error fetching stats:', err);
+    res.json({ success: true, stats: {} });
+  }
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
+});
