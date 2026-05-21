@@ -642,7 +642,9 @@ const UserManager = () => {
         </div>
     );
 };
-
+// ============================================
+// PROFILE SETTINGS
+// ============================================
 const ProfileSettings = ({ username, onLogout }) => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newUsername, setNewUsername] = useState('');
@@ -650,6 +652,7 @@ const ProfileSettings = ({ username, onLogout }) => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
     const [showCurrent, setShowCurrent] = useState(false);
+    const [showCurrentForUsername, setShowCurrentForUsername] = useState(false);
     const [showNew, setShowNew] = useState(false);
 
     const handleUpdateUsername = async (e) => {
@@ -706,15 +709,15 @@ const ProfileSettings = ({ username, onLogout }) => {
                 <form onSubmit={handleUpdateUsername}>
                     <div style={{ position: 'relative' }}>
                         <input 
-                            type={showCurrent ? "text" : "password"} 
+                            type={showCurrentForUsername ? "text" : "password"} 
                             placeholder="Current Password" 
                             value={currentPassword} 
                             onChange={e => setCurrentPassword(e.target.value)} 
                             style={styles.input} 
                             required 
                         />
-                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>
-                            {showCurrent ? '🙈' : '👁️'}
+                        <span onClick={() => setShowCurrentForUsername(!showCurrentForUsername)} style={styles.eyeIcon}>
+                            {showCurrentForUsername ? '🙈' : '👁️'}
                         </span>
                     </div>
                     <input 
