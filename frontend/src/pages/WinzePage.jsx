@@ -12,7 +12,8 @@ import {
     faInfinity, faCrown, faGem, faBolt, faUsers,
     faBriefcase, faTrophy, faGlobe, faLightbulb, faProjectDiagram,
     faChevronLeft, faChevronRight, faTimes, faArrowRight, faCheckCircle,
-    faCamera, faNetworkWired, faBroadcastTower, faBell, faPhoneAlt, faPhoneVolume
+    faCamera, faNetworkWired, faBroadcastTower, faBell, faPhoneAlt, faPhoneVolume,
+    faCar, faParking  // ADD THESE
 } from '@fortawesome/free-solid-svg-icons';
 import { 
     faLinkedin, 
@@ -47,7 +48,8 @@ const solutionImages = {
     cyberSecurity: "/images/cyber-security.jpg",
     cctv: "/images/cctv-services.jpg",
     cabling: "/images/cabling-services.jpg",
-    emergency: "https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?q=80&w=2070&auto=format"
+    emergency: "https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?q=80&w=2070&auto=format",
+    boomBarrier: "/images/boom-barrier.jpg" 
 };
 
 // Industry Images for Cards
@@ -206,7 +208,16 @@ const getSolutionExtraPoints = (title) => {
             "Click-to-call integration with automatic number logging",
             "Crisis communication templates with one-click voice activation",
             "Real-time incident tracking with automated call records"
-        ]
+        ],
+
+        "Boom Barrier System": [
+            "Automatic vehicle number plate recognition (ANPR) for seamless entry",
+            "Remote monitoring & control via mobile app or web dashboard",
+            "Integration with RFID, biometrics & access control systems",
+            "High-speed boom operation (2-3 seconds for vehicle pass)",
+            "Heavy-duty boom arm (2-6 meters length) for various entry widths",
+            "Vehicle counting & traffic flow analytics with real-time reports"
+        ],
     };
     return pointsMap[title] || [
         "Enterprise-grade reliability & performance",
@@ -489,6 +500,29 @@ const solutionDetailedContent = {
             "Educational campus safety voice notifications",
             "Industrial plant emergency voice communication",
             "Public venue security & crowd control with voice response"
+        ]
+    },
+
+    "Boom Barrier System": {
+        overview: "Our Boom Barrier System provides automated vehicle access control with high-speed operation, ANPR integration, and real-time monitoring. Perfect for residential communities, corporate parks, parking lots, and industrial facilities.",
+        benefits: getSolutionExtraPoints("Boom Barrier System"),
+        features: [
+            "Automatic number plate recognition (ANPR) for vehicle identification",
+            "Remote control via mobile app & web dashboard",
+            "Integration with RFID cards & biometric systems",
+            "Real-time vehicle counting & traffic analytics",
+            "Manual operation mode for power backup",
+            "LED indicators for entry/exit status",
+            "Anti-tailgating & vehicle following detection"
+        ],
+        useCases: [
+            "Residential gated communities & apartments",
+            "Corporate office parking management",
+            "Shopping mall & retail parking lots",
+            "Airport & transport hub access control",
+            "Industrial facility & warehouse entry",
+            "Hotel & resort vehicle access",
+            "Government & defense installations"
         ]
     }
 };
@@ -894,7 +928,13 @@ const WinzePage = () => {
         { title: "Cyber Security", desc: "Advanced threat protection and security compliance solutions.", icon: faLock, img: solutionImages.cyberSecurity },
         { title: "Unified Communications", desc: "Seamless integration of voice, video, and messaging for enterprise collaboration.", icon: faChartLine, img: solutionImages.unified },
         { title: "Contact Center", desc: "AI-powered customer service solutions for enhanced agent productivity.", icon: faHeadset, img: solutionImages.contact },
-        { title: "Emergency Notification", desc: "Automated voice-based mass alerts and crisis communication. Calls route directly to emergency response center with automatic number tracking.", icon: faPhoneVolume, img: solutionImages.emergency }
+        { title: "Emergency Notification", desc: "Automated voice-based mass alerts and crisis communication. Calls route directly to emergency response center with automatic number tracking.", icon: faPhoneVolume, img: solutionImages.emergency },
+        { 
+        title: "Boom Barrier System", 
+        desc: "High-speed automatic vehicle access control with ANPR, RFID integration, and real-time monitoring for secure entry management.", 
+        icon: faCar, 
+        img: solutionImages.boomBarrier 
+    },
     ];
 
     // Industries
