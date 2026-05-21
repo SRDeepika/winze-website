@@ -29,7 +29,7 @@ const generateCaptcha = () => {
 };
 
 // ============================================
-// LOGIN COMPONENT - FIXED VERSION
+// LOGIN COMPONENT
 // ============================================
 const AdminLogin = ({ onLogin }) => {
     const [username, setUsername] = useState('');
@@ -57,7 +57,6 @@ const AdminLogin = ({ onLogin }) => {
             return;
         }
 
-        // Call the actual API
         try {
             const response = await adminLogin(username, password);
             if (response.success) {
@@ -107,9 +106,9 @@ const AdminLogin = ({ onLogin }) => {
 };
 
 // ============================================
-// BLOG MANAGER - FIXED
+// BLOG MANAGER
 // ============================================
-const BlogManager = ({ token }) => {
+const BlogManager = () => {
     const [blogs, setBlogs] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [editingBlog, setEditingBlog] = useState(null);
@@ -123,7 +122,7 @@ const BlogManager = ({ token }) => {
 
     const loadBlogs = async () => {
         try {
-            const res = await getAdminBlogs(token);
+            const res = await getAdminBlogs();
             if (res.success) setBlogs(res.blogs);
         } catch (error) {
             console.error('Error loading blogs:', error);
@@ -137,7 +136,6 @@ const BlogManager = ({ token }) => {
         
         try {
             if (editingBlog) {
-                // For update - send as JSON (not FormData)
                 const updateData = {
                     title: formData.title,
                     excerpt: formData.excerpt,
@@ -148,12 +146,9 @@ const BlogManager = ({ token }) => {
                     read_time: parseInt(formData.read_time),
                     status: formData.status
                 };
-                
-                console.log('Updating blog:', updateData);
-                await updateBlog(editingBlog.id, updateData, token);
+                await updateBlog(editingBlog.id, updateData);
                 alert('Blog updated successfully!');
             } else {
-                // For create - use FormData
                 const createData = new FormData();
                 createData.append('title', formData.title);
                 createData.append('excerpt', formData.excerpt || '');
@@ -163,20 +158,15 @@ const BlogManager = ({ token }) => {
                 createData.append('author_role', formData.author_role || 'Author');
                 createData.append('read_time', formData.read_time || 5);
                 createData.append('status', formData.status);
-                
                 if (formData.image) {
                     createData.append('image', formData.image);
                 }
-                
-                console.log('Creating blog with FormData');
-                await createBlog(createData, token);
+                await createBlog(createData);
                 alert('Blog created successfully!');
             }
-            
             await loadBlogs();
             setShowForm(false);
             setEditingBlog(null);
-            // Reset form
             setFormData({
                 title: '', excerpt: '', content: '', category: '', 
                 author: '', author_role: '', read_time: 5, status: 'draft', image: null
@@ -192,7 +182,7 @@ const BlogManager = ({ token }) => {
     const handleDelete = async (id) => {
         if (window.confirm('Delete this blog permanently?')) {
             try {
-                await deleteBlog(id, token);
+                await deleteBlog(id);
                 await loadBlogs();
                 alert('Blog deleted successfully!');
             } catch (error) {
@@ -265,89 +255,23 @@ const BlogManager = ({ token }) => {
                     <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
                         <h3>{editingBlog ? 'Edit Blog' : 'Create New Blog'}</h3>
                         <form onSubmit={handleSubmit}>
-                            <input 
-                                type="text" 
-                                placeholder="Title *" 
-                                value={formData.title} 
-                                onChange={e => setFormData({...formData, title: e.target.value})} 
-                                style={styles.input} 
-                                required 
-                            />
-                            
-                            <input 
-                                type="text" 
-                                placeholder="Category" 
-                                value={formData.category} 
-                                onChange={e => setFormData({...formData, category: e.target.value})} 
-                                style={styles.input} 
-                            />
-                            
-                            <input 
-                                type="text" 
-                                placeholder="Author" 
-                                value={formData.author} 
-                                onChange={e => setFormData({...formData, author: e.target.value})} 
-                                style={styles.input} 
-                            />
-                            
-                            <input 
-                                type="text" 
-                                placeholder="Author Role (e.g., Senior Developer)" 
-                                value={formData.author_role} 
-                                onChange={e => setFormData({...formData, author_role: e.target.value})} 
-                                style={styles.input} 
-                            />
-                            
-                            <input 
-                                type="number" 
-                                placeholder="Read Time (minutes)" 
-                                value={formData.read_time} 
-                                onChange={e => setFormData({...formData, read_time: e.target.value})} 
-                                style={styles.input} 
-                            />
-                            
-                            <textarea 
-                                placeholder="Excerpt (short summary)" 
-                                rows="3" 
-                                value={formData.excerpt} 
-                                onChange={e => setFormData({...formData, excerpt: e.target.value})} 
-                                style={styles.textarea} 
-                            />
-                            
-                            <textarea 
-                                placeholder="Content (full blog body) *" 
-                                rows="10" 
-                                value={formData.content} 
-                                onChange={e => setFormData({...formData, content: e.target.value})} 
-                                style={styles.textarea} 
-                                required 
-                            />
-                            
-                            {!editingBlog && (
-                                <input 
-                                    type="file" 
-                                    accept="image/*" 
-                                    onChange={e => setFormData({...formData, image: e.target.files[0]})} 
-                                    style={styles.input} 
-                                />
-                            )}
-                            
-                            <select 
-                                value={formData.status} 
-                                onChange={e => setFormData({...formData, status: e.target.value})} 
-                                style={styles.input}
-                            >
+                            <input type="text" placeholder="Title *" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={styles.input} required />
+                            <input type="text" placeholder="Category" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={styles.input} />
+                            <input type="text" placeholder="Author" value={formData.author} onChange={e => setFormData({...formData, author: e.target.value})} style={styles.input} />
+                            <input type="text" placeholder="Author Role" value={formData.author_role} onChange={e => setFormData({...formData, author_role: e.target.value})} style={styles.input} />
+                            <input type="number" placeholder="Read Time (minutes)" value={formData.read_time} onChange={e => setFormData({...formData, read_time: e.target.value})} style={styles.input} />
+                            <textarea placeholder="Excerpt" rows="3" value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} style={styles.textarea} />
+                            <textarea placeholder="Content *" rows="10" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} style={styles.textarea} required />
+                            {!editingBlog && <input type="file" accept="image/*" onChange={e => setFormData({...formData, image: e.target.files[0]})} style={styles.input} />}
+                            <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={styles.input}>
                                 <option value="draft">Draft</option>
                                 <option value="published">Published</option>
                             </select>
-                            
                             <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                                 <button type="submit" disabled={loading} style={{...styles.saveBtn, opacity: loading ? 0.7 : 1}}>
                                     {loading ? 'Saving...' : (editingBlog ? 'Update Blog' : 'Create Blog')}
                                 </button>
-                                <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>
-                                    Cancel
-                                </button>
+                                <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -356,12 +280,11 @@ const BlogManager = ({ token }) => {
         </div>
     );
 };
-    
 
 // ============================================
 // JOB MANAGER
 // ============================================
-const JobManager = ({ token }) => {
+const JobManager = () => {
     const [jobs, setJobs] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [editingJob, setEditingJob] = useState(null);
@@ -375,52 +298,45 @@ const JobManager = ({ token }) => {
     useEffect(() => { loadJobs(); }, []);
 
     const loadJobs = async () => {
-        const res = await getAdminJobs(token);
+        const res = await getAdminJobs();
         if (res.success) setJobs(res.jobs);
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    if (captchaInput !== captchaValue) {
-        setError('Invalid CAPTCHA. Please try again.');
-        refreshCaptcha();
-        setLoading(false);
-        return;
-    }
-
-    // Call the actual API instead of hardcoding
-    try {
-        const response = await adminLogin(username, password);
-        if (response.success) {
-            sessionStorage.clear();
-            sessionStorage.setItem('adminToken', response.token);
-            sessionStorage.setItem('adminUsername', response.admin?.username || username);
-            sessionStorage.setItem('adminRole', response.admin?.role || 'admin');
-            onLogin(response.admin?.username || username, response.admin?.role || 'admin');
-        } else {
-            setError('Invalid credentials');
-            refreshCaptcha();
+        e.preventDefault();
+        setLoading(true);
+        
+        try {
+            if (editingJob) {
+                await updateJob(editingJob.id, formData);
+                alert('Job updated successfully!');
+            } else {
+                await createJob(formData);
+                alert('Job created successfully!');
+            }
+            await loadJobs();
+            setShowForm(false);
+            setEditingJob(null);
+            setFormData({
+                title: '', department: '', location: '', type: 'Full-time', 
+                experience: '', salary: '', description: '', requirements: '', 
+                benefits: '', status: 'active', deadline: ''
+            });
+        } catch (error) {
+            console.error('Error saving job:', error);
+            alert('Error saving job: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setLoading(false);
         }
-    } catch (err) {
-        console.error('Login error:', err);
-        setError(err.response?.data?.error || 'Login failed. Please try again.');
-        refreshCaptcha();
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
     const handleDelete = async (id) => {
         if (window.confirm('Delete this job?')) {
-            await deleteJob(id, token);
+            await deleteJob(id);
             await loadJobs();
         }
     };
 
-    // Form input styles for visibility
     const formInputStyle = {
         width: '100%',
         padding: '12px',
@@ -463,14 +379,21 @@ const JobManager = ({ token }) => {
             <div style={styles.cardHeader}><h2>💼 Job Management</h2><button onClick={() => setShowForm(true)} style={styles.addButton}>+ Post Job</button></div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
-                    <thead><tr><th style={styles.th}>Title</th><th style={styles.th}>Department</th><th style={styles.th}>Location</th><th style={styles.th}>Type</th><th style={styles.th}>Status</th><th style={styles.th}>Actions</th></tr></thead>
+                    <thead>
+                        <tr><th style={styles.th}>Title</th><th style={styles.th}>Department</th><th style={styles.th}>Location</th><th style={styles.th}>Type</th><th style={styles.th}>Status</th><th style={styles.th}>Actions</th></tr>
+                    </thead>
                     <tbody>
                         {jobs.map(job => (
                             <tr key={job.id}>
-                                <td style={styles.td}>{job.title}</td><td style={styles.td}>{job.department}</td>
-                                <td style={styles.td}>{job.location}</td><td style={styles.td}>{job.type}</td>
+                                <td style={styles.td}>{job.title}</td>
+                                <td style={styles.td}>{job.department}</td>
+                                <td style={styles.td}>{job.location}</td>
+                                <td style={styles.td}>{job.type}</td>
                                 <td style={styles.td}><span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>{job.status}</span></td>
-                                <td style={styles.td}><button onClick={() => { setEditingJob(job); setFormData(job); setShowForm(true); }} style={styles.editBtn}>Edit</button><button onClick={() => handleDelete(job.id)} style={styles.deleteBtn}>Delete</button></td>
+                                <td style={styles.td}>
+                                    <button onClick={() => { setEditingJob(job); setFormData(job); setShowForm(true); }} style={styles.editBtn}>Edit</button>
+                                    <button onClick={() => handleDelete(job.id)} style={styles.deleteBtn}>Delete</button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -479,14 +402,11 @@ const JobManager = ({ token }) => {
             {showForm && (
                 <div style={styles.modal} onClick={() => setShowForm(false)}>
                     <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
-                        <h3 style={{ marginBottom: '20px', color: '#333' }}>{editingJob ? 'Edit Job' : 'Post New Job'}</h3>
+                        <h3>{editingJob ? 'Edit Job' : 'Post New Job'}</h3>
                         <form onSubmit={handleSubmit}>
                             <input type="text" placeholder="Job Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={formInputStyle} required />
-                            
-                            <input type="text" placeholder="Department (e.g., IT, Sales, Marketing)" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} style={formInputStyle} required />
-                            
-                            <input type="text" placeholder="Location (e.g., Bangalore, Remote, Hybrid)" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} style={formInputStyle} required />
-                            
+                            <input type="text" placeholder="Department" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} style={formInputStyle} required />
+                            <input type="text" placeholder="Location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} style={formInputStyle} required />
                             <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={formSelectStyle}>
                                 <option value="Full-time">Full-time</option>
                                 <option value="Part-time">Part-time</option>
@@ -494,22 +414,15 @@ const JobManager = ({ token }) => {
                                 <option value="Hybrid">Hybrid</option>
                                 <option value="Contract">Contract</option>
                             </select>
-                            
-                            <input type="text" placeholder="Experience Required (e.g., 2-4 years)" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} style={formInputStyle} />
-                            
-                            <input type="text" placeholder="Salary Range (e.g., ₹5-8 LPA)" value={formData.salary} onChange={e => setFormData({...formData, salary: e.target.value})} style={formInputStyle} />
-                            
-                            <textarea placeholder="Job Description (full details about the role)" rows="5" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={formTextareaStyle} required />
-                            
-                            <textarea placeholder="Requirements (one per line)&#10;Example:&#10;- Bachelor's degree in Computer Science&#10;- 3+ years of React experience&#10;- Strong communication skills" rows="4" value={formData.requirements} onChange={e => setFormData({...formData, requirements: e.target.value})} style={formTextareaStyle} />
-                            
-                            <textarea placeholder="Benefits (one per line)&#10;Example:&#10;- Health insurance&#10;- Flexible working hours&#10;- Learning budget" rows="3" value={formData.benefits} onChange={e => setFormData({...formData, benefits: e.target.value})} style={formTextareaStyle} />
-                            
+                            <input type="text" placeholder="Experience Required" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} style={formInputStyle} />
+                            <input type="text" placeholder="Salary Range" value={formData.salary} onChange={e => setFormData({...formData, salary: e.target.value})} style={formInputStyle} />
+                            <textarea placeholder="Job Description" rows="5" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={formTextareaStyle} required />
+                            <textarea placeholder="Requirements" rows="4" value={formData.requirements} onChange={e => setFormData({...formData, requirements: e.target.value})} style={formTextareaStyle} />
+                            <textarea placeholder="Benefits" rows="3" value={formData.benefits} onChange={e => setFormData({...formData, benefits: e.target.value})} style={formTextareaStyle} />
                             <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={formSelectStyle}>
-                                <option value="active">Active (Visible to applicants)</option>
-                                <option value="closed">Closed (Not visible)</option>
+                                <option value="active">Active</option>
+                                <option value="closed">Closed</option>
                             </select>
-                            
                             <div style={{ display: 'flex', gap: '15px', marginTop: '20px' }}>
                                 <button type="submit" disabled={loading} style={{ ...styles.saveBtn, opacity: loading ? 0.7 : 1 }}>
                                     {loading ? 'Saving...' : (editingJob ? 'Update Job' : 'Post Job')}
@@ -523,22 +436,23 @@ const JobManager = ({ token }) => {
         </div>
     );
 };
+
 // ============================================
 // APPLICATIONS MANAGER
 // ============================================
-const ApplicationsManager = ({ token }) => {
+const ApplicationsManager = () => {
     const [applications, setApplications] = useState([]);
     const [selectedApp, setSelectedApp] = useState(null);
 
     useEffect(() => { loadApplications(); }, []);
 
     const loadApplications = async () => {
-        const res = await getApplications(token);
+        const res = await getApplications();
         if (res.success) setApplications(res.applications);
     };
 
     const updateStatus = async (id, status) => {
-        await updateApplicationStatus(id, status, token);
+        await updateApplicationStatus(id, status);
         await loadApplications();
     };
 
@@ -547,16 +461,22 @@ const ApplicationsManager = ({ token }) => {
             <div style={styles.cardHeader}><h2>📋 Job Applications</h2><button onClick={loadApplications} style={styles.refreshBtn}>Refresh</button></div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
-                    <thead><tr><th style={styles.th}>Name</th><th style={styles.th}>Job</th><th style={styles.th}>Email</th><th style={styles.th}>Experience</th><th style={styles.th}>Status</th><th style={styles.th}>Action</th></tr></thead>
+                    <thead>
+                        <tr><th style={styles.th}>Name</th><th style={styles.th}>Job</th><th style={styles.th}>Email</th><th style={styles.th}>Experience</th><th style={styles.th}>Status</th><th style={styles.th}>Action</th></tr>
+                    </thead>
                     <tbody>
                         {applications.map(app => (
                             <tr key={app.id}>
-                                <td style={styles.td}>{app.name}</td><td style={styles.td}>{app.job_title}</td>
-                                <td style={styles.td}>{app.email}</td><td style={styles.td}>{app.experience || 'N/A'} yrs</td>
+                                <td style={styles.td}>{app.name}</td>
+                                <td style={styles.td}>{app.job_title}</td>
+                                <td style={styles.td}>{app.email}</td>
+                                <td style={styles.td}>{app.experience || 'N/A'} yrs</td>
                                 <td style={styles.td}>
                                     <select value={app.status} onChange={e => updateStatus(app.id, e.target.value)} style={styles.select}>
-                                        <option value="pending">Pending</option><option value="reviewed">Reviewed</option>
-                                        <option value="shortlisted">Shortlisted</option><option value="rejected">Rejected</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="reviewed">Reviewed</option>
+                                        <option value="shortlisted">Shortlisted</option>
+                                        <option value="rejected">Rejected</option>
                                     </select>
                                 </td>
                                 <td style={styles.td}><button onClick={() => setSelectedApp(app)} style={styles.viewBtn}>View</button></td>
@@ -587,13 +507,13 @@ const ApplicationsManager = ({ token }) => {
 // ============================================
 // QUOTES MANAGER
 // ============================================
-const QuotesManager = ({ token }) => {
+const QuotesManager = () => {
     const [quotes, setQuotes] = useState([]);
 
     useEffect(() => { loadQuotes(); }, []);
 
     const loadQuotes = async () => {
-        const res = await getQuotes(token);
+        const res = await getQuotes();
         if (res.success) setQuotes(res.quotes);
     };
 
@@ -606,32 +526,24 @@ const QuotesManager = ({ token }) => {
                         <tr>
                             <th style={styles.th}>Name</th>
                             <th style={styles.th}>Email</th>
-                            <th style={styles.th}>Phone</th>     {/* ← ADD THIS COLUMN */}
+                            <th style={styles.th}>Phone</th>
                             <th style={styles.th}>Service</th>
                             <th style={styles.th}>Date</th>
                             <th style={styles.th}>Message</th>
-                            <th style={styles.th}>Actions</th>    {/* ← ADD ACTIONS COLUMN */}
+                            <th style={styles.th}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {quotes.map(quote => (
                             <tr key={quote.id}>
                                 <td style={styles.td}>{quote.name}</td>
-                                <td style={styles.td}>
-                                    <a href={`mailto:${quote.email}`} style={{ color: '#667eea', textDecoration: 'none' }}>
-                                        {quote.email}
-                                    </a>
-                                </td>
+                                <td style={styles.td}><a href={`mailto:${quote.email}`} style={{ color: '#667eea', textDecoration: 'none' }}>{quote.email}</a></td>
                                 <td style={styles.td}>
                                     <div>
                                         <strong>{quote.phone || 'N/A'}</strong>
                                         <div style={{ marginTop: '5px' }}>
-                                            <a href={`tel:${quote.phone}`} style={{ color: '#4facfe', textDecoration: 'none', marginRight: '10px', fontSize: '12px' }}>
-                                                📞 Call
-                                            </a>
-                                            <a href={`https://wa.me/${quote.phone}`} target="_blank" rel="noopener noreferrer" style={{ color: '#25D366', textDecoration: 'none', fontSize: '12px' }}>
-                                                💬 WhatsApp
-                                            </a>
+                                            <a href={`tel:${quote.phone}`} style={{ color: '#4facfe', textDecoration: 'none', marginRight: '10px', fontSize: '12px' }}>📞 Call</a>
+                                            <a href={`https://wa.me/${quote.phone}`} target="_blank" rel="noopener noreferrer" style={{ color: '#25D366', textDecoration: 'none', fontSize: '12px' }}>💬 WhatsApp</a>
                                         </div>
                                     </div>
                                 </td>
@@ -640,24 +552,12 @@ const QuotesManager = ({ token }) => {
                                 <td style={styles.td}>
                                     <details>
                                         <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
-                                        <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px' }}>
-                                            {quote.message || 'No message provided'}
-                                        </div>
+                                        <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px' }}>{quote.message || 'No message provided'}</div>
                                     </details>
                                 </td>
                                 <td style={styles.td}>
-                                    <button 
-                                        onClick={() => window.open(`tel:${quote.phone}`)} 
-                                        style={{ ...styles.editBtn, marginRight: '5px', fontSize: '12px' }}
-                                    >
-                                        📞 Call
-                                    </button>
-                                    <button 
-                                        onClick={() => window.open(`mailto:${quote.email}`)} 
-                                        style={{ ...styles.viewBtn, fontSize: '12px' }}
-                                    >
-                                        ✉️ Email
-                                    </button>
+                                    <button onClick={() => window.open(`tel:${quote.phone}`)} style={{ ...styles.editBtn, marginRight: '5px', fontSize: '12px' }}>📞 Call</button>
+                                    <button onClick={() => window.open(`mailto:${quote.email}`)} style={{ ...styles.viewBtn, fontSize: '12px' }}>✉️ Email</button>
                                 </td>
                             </tr>
                         ))}
@@ -667,7 +567,11 @@ const QuotesManager = ({ token }) => {
         </div>
     );
 };
-const UserManager = ({ token }) => {
+
+// ============================================
+// USER MANAGER
+// ============================================
+const UserManager = () => {
     const [users, setUsers] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [newUser, setNewUser] = useState({ username: '', password: '', role: 'admin' });
@@ -675,13 +579,13 @@ const UserManager = ({ token }) => {
     useEffect(() => { loadUsers(); }, []);
 
     const loadUsers = async () => {
-        const res = await getUsers(token);
+        const res = await getUsers();
         if (res.success) setUsers(res.users);
     };
 
     const handleCreateUser = async (e) => {
         e.preventDefault();
-        await createUser(newUser, token);
+        await createUser(newUser);
         await loadUsers();
         setShowForm(false);
         setNewUser({ username: '', password: '', role: 'admin' });
@@ -689,7 +593,7 @@ const UserManager = ({ token }) => {
 
     const handleDeleteUser = async (id) => {
         if (window.confirm('Delete this user permanently?')) {
-            await deleteUser(id, token);
+            await deleteUser(id);
             await loadUsers();
         }
     };
@@ -703,34 +607,17 @@ const UserManager = ({ token }) => {
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
                     <thead>
-                        <tr>
-                            <th style={styles.th}>Username</th>
-                            <th style={styles.th}>Role</th>
-                            <th style={styles.th}>Created</th>
-                            <th style={styles.th}>Actions</th>
-                        </tr>
+                        <tr><th style={styles.th}>Username</th><th style={styles.th}>Role</th><th style={styles.th}>Created</th><th style={styles.th}>Actions</th></tr>
                     </thead>
                     <tbody>
                         {users.map((user) => (
                             <tr key={user.id}>
                                 <td style={styles.td}>{user.username}</td>
-                                <td style={styles.td}>
-                                    <span style={{...styles.statusBadge, background: user.role === 'admin' ? '#d4edda' : '#ffeaa7'}}>
-                                        {user.role}
-                                    </span>
-                                </td>
+                                <td style={styles.td}><span style={{...styles.statusBadge, background: user.role === 'admin' ? '#d4edda' : '#ffeaa7'}}>{user.role}</span></td>
                                 <td style={styles.td}>{new Date(user.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
-                                    {/* Allow deleting any user except the current logged-in admin */}
-                                    {user.username !== 'admin' && (
-                                        <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>
-                                    )}
-                                    {user.username === 'admin' && (
-                                        <span style={{ color: '#888', fontSize: '12px' }}>Primary Admin</span>
-                                    )}
-                                    {user.username === 'superadmin' && user.username !== 'admin' && (
-                                        <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>
-                                    )}
+                                    {user.username !== 'admin' && <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>}
+                                    {user.username === 'admin' && <span style={{ color: '#888', fontSize: '12px' }}>Primary Admin</span>}
                                 </td>
                             </tr>
                         ))}
@@ -755,32 +642,17 @@ const UserManager = ({ token }) => {
         </div>
     );
 };
+
 // ============================================
 // PROFILE SETTINGS
 // ============================================
 const ProfileSettings = ({ username, onLogout }) => {
     const [currentPassword, setCurrentPassword] = useState('');
-    const [newUsername, setNewUsername] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
-
-    const handleUpdateUsername = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await axios.post(`${API_BASE_URL}/admin/change-username`, {
-                username, newUsername, password: currentPassword
-            }, getAuthConfig());
-            if (res.data.success) {
-                setMessage('Username changed! Please login again.');
-                setTimeout(() => { sessionStorage.clear(); onLogout(); }, 2000);
-            }
-        } catch (err) {
-            setMessage(err.response?.data?.error || 'Failed');
-        }
-    };
 
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
@@ -790,7 +662,7 @@ const ProfileSettings = ({ username, onLogout }) => {
         }
         try {
             const res = await axios.post(`${API_BASE_URL}/admin/change-password`, {
-                username, oldPassword: currentPassword, newPassword
+                oldPassword: currentPassword, newPassword
             }, getAuthConfig());
             if (res.data.success) {
                 setMessage('Password changed! Please login again.');
@@ -805,17 +677,6 @@ const ProfileSettings = ({ username, onLogout }) => {
         <div style={styles.dashboardCard}>
             <h2>👤 Profile Settings</h2>
             {message && <div style={styles.successMessage}>{message}</div>}
-            <div style={{ marginBottom: '30px', padding: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
-                <h3>Change Username</h3>
-                <form onSubmit={handleUpdateUsername}>
-                    <div style={{ position: 'relative' }}>
-                        <input type={showCurrent ? "text" : "password"} placeholder="Current Password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} style={styles.input} required />
-                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>{showCurrent ? '🙈' : '👁️'}</span>
-                    </div>
-                    <input type="text" placeholder="New Username" value={newUsername} onChange={e => setNewUsername(e.target.value)} style={styles.input} required />
-                    <button type="submit" style={styles.saveBtn}>Update Username</button>
-                </form>
-            </div>
             <div style={{ padding: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
                 <h3>Change Password</h3>
                 <form onSubmit={handleUpdatePassword}>
@@ -900,14 +761,12 @@ const AdminPage = () => {
     const [allClicks, setAllClicks] = useState([]);
     const [groupedClicks, setGroupedClicks] = useState({});
     const [expanded, setExpanded] = useState({});
-    const [token, setToken] = useState('');
 
     useEffect(() => {
         const storedToken = sessionStorage.getItem('adminToken');
         const username = sessionStorage.getItem('adminUsername');
         const role = sessionStorage.getItem('adminRole');
         if (storedToken && username) {
-            setToken(storedToken);
             setAdminUsername(username);
             setAdminRole(role);
             setIsLoggedIn(true);
@@ -918,7 +777,6 @@ const AdminPage = () => {
     const handleLogin = (username, role) => {
         setAdminUsername(username);
         setAdminRole(role);
-        setToken(sessionStorage.getItem('adminToken'));
         setIsLoggedIn(true);
     };
 
@@ -935,7 +793,7 @@ const AdminPage = () => {
     }, [isLoggedIn]);
 
     const loadStats = async () => {
-        const res = await getAdminStats(token);
+        const res = await getAdminStats();
         if (res.success) setStats(res.stats);
     };
 
@@ -964,7 +822,6 @@ const AdminPage = () => {
         setExpanded(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
-    const isSuperAdmin = adminRole === 'super_admin';
     const totalClicks = allClicks.length;
     const uniqueLinks = Object.keys(groupedClicks).length;
     const last24Hours = allClicks.filter(click => {
@@ -1033,12 +890,12 @@ const AdminPage = () => {
                     />
                 )}
 
-                {activeTab === 'blogs' && <BlogManager token={token} />}
-                {activeTab === 'jobs' && <JobManager token={token} />}
-                {activeTab === 'applications' && <ApplicationsManager token={token} />}
-                {activeTab === 'quotes' && <QuotesManager token={token} />}
-                {activeTab === 'socialLinks' && <AdminSocialLinks token={token} />}
-                {activeTab === 'users' && <UserManager token={token} />}
+                {activeTab === 'blogs' && <BlogManager />}
+                {activeTab === 'jobs' && <JobManager />}
+                {activeTab === 'applications' && <ApplicationsManager />}
+                {activeTab === 'quotes' && <QuotesManager />}
+                {activeTab === 'socialLinks' && <AdminSocialLinks />}
+                {activeTab === 'users' && <UserManager />}
                 {activeTab === 'profile' && <ProfileSettings username={adminUsername} onLogout={handleLogout} />}
             </div>
         </div>
@@ -1058,7 +915,7 @@ const styles = {
     title: { color: 'white', marginBottom: '10px', fontSize: '28px' },
     subtitle: { color: 'rgba(255,255,255,0.7)', marginBottom: '30px', fontSize: '14px' },
     input: { width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd', background: 'white', color: '#333', fontSize: '14px', boxSizing: 'border-box' },
-textarea: { width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd', background: 'white', color: '#333', fontSize: '14px', resize: 'vertical', boxSizing: 'border-box' },
+    textarea: { width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd', background: 'white', color: '#333', fontSize: '14px', resize: 'vertical', boxSizing: 'border-box' },
     select: { padding: '8px', borderRadius: '6px', border: '1px solid #ddd', background: 'white', width: '100%', marginBottom: '10px' },
     button: { width: '100%', padding: '14px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', marginTop: '10px' },
     error: { color: '#ff6b6b', marginBottom: '15px', padding: '10px', background: 'rgba(255,107,107,0.1)', borderRadius: '8px', fontSize: '14px', textAlign: 'center' },
