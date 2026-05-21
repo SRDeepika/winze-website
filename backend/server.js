@@ -62,33 +62,21 @@ app.post('/api/admin/login', async (req, res) => {
   const { username, password } = req.body;
   
   try {
-    // First, try to check if admins table exists and has data
-    const tableCheck = await db.query(`
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables 
-        WHERE table_name = 'admins'
-      );
-    `);
+    // Check in admins table
+    const result = await db.query(`SELECT * FROM admins WHERE username = $1`, [username]);
     
-    const tableExists = tableCheck.rows[0].exists;
-    console.log('Admins table exists:', tableExists);
-    
-    if (tableExists) {
-      const result = await db.query(`SELECT * FROM admins WHERE username = $1`, [username]);
-      console.log('Query result rows:', result.rows.length);
-      
-      if (result.rows.length > 0) {
-        const admin = result.rows[0];
-        const validPassword = await bcrypt.compare(password, admin.password);
-        if (validPassword) {
-          const token = jwt.sign({ id: admin.id, username: admin.username, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
-          return res.json({ 
-            success: true, 
-            token, 
-            admin: { id: admin.id, username: admin.username, role: admin.role },
-            message: 'Login successful' 
-          });
-        }
+    if (result.rows.length > 0) {
+      const admin = result.rows[0];
+      // Use password_hash instead of password
+      const validPassword = await bcrypt.compare(password, admin.password_hash);
+      if (validPassword) {
+        const token = jwt.sign({ id: admin.id, username: admin.username, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
+        return res.json({ 
+          success: true, 
+          token, 
+          admin: { id: admin.id, username: admin.username, role: admin.role },
+          message: 'Login successful' 
+        });
       }
     }
     
@@ -131,10 +119,10 @@ app.post('/api/admin/users', authenticateToken, async (req, res) => {
     }
     
     const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await db.query(
-      `INSERT INTO admins (username, password, role, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW()) RETURNING id, username, role`,
-      [username, hashedPassword, role || 'admin']
-    );
+await db.query(
+  `INSERT INTO admins (username, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW())`,
+  [username, hashedPassword, role || 'admin']
+);
     
     res.json({ success: true, user: result.rows[0], message: 'Admin created successfully' });
   } catch (err) {
@@ -152,9 +140,9 @@ app.put('/api/admin/users/:id', authenticateToken, async (req, res) => {
       await db.query(`UPDATE admins SET username = $1, updated_at = NOW() WHERE id = $2`, [username, id]);
     }
     if (password) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      await db.query(`UPDATE admins SET password = $1, updated_at = NOW() WHERE id = $2`, [hashedPassword, id]);
-    }
+  const hashedPassword = await bcrypt.hash(password, 10);
+  await db.query(`UPDATE admins SET password_hash = $1, updated_at = NOW() WHERE id = $2`, [hashedPassword, id]);
+}
     if (role) {
       await db.query(`UPDATE admins SET role = $1, updated_at = NOW() WHERE id = $2`, [role, id]);
     }
