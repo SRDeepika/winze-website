@@ -29,7 +29,7 @@ const generateCaptcha = () => {
 };
 
 // ============================================
-// LOGIN COMPONENT
+// LOGIN COMPONENT - FIXED VERSION
 // ============================================
 const AdminLogin = ({ onLogin }) => {
     const [username, setUsername] = useState('');
@@ -57,17 +57,26 @@ const AdminLogin = ({ onLogin }) => {
             return;
         }
 
-        if (username === 'admin' && password === 'Winzebglr') {
-            sessionStorage.clear();
-            sessionStorage.setItem('adminToken', 'admin-session-token');
-            sessionStorage.setItem('adminUsername', 'admin');
-            sessionStorage.setItem('adminRole', 'admin');
-            onLogin('admin', 'admin');
-        } else {
-            setError('Invalid credentials');
+        // Call the actual API
+        try {
+            const response = await adminLogin(username, password);
+            if (response.success) {
+                sessionStorage.clear();
+                sessionStorage.setItem('adminToken', response.token);
+                sessionStorage.setItem('adminUsername', response.admin?.username || username);
+                sessionStorage.setItem('adminRole', response.admin?.role || 'admin');
+                onLogin(response.admin?.username || username, response.admin?.role || 'admin');
+            } else {
+                setError('Invalid credentials');
+                refreshCaptcha();
+            }
+        } catch (err) {
+            console.error('Login error:', err);
+            setError(err.response?.data?.error || 'Login failed. Please try again.');
             refreshCaptcha();
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     return (
@@ -98,7 +107,7 @@ const AdminLogin = ({ onLogin }) => {
 };
 
 // ============================================
-// BLOG MANAGER
+// BLOG MANAGER - FIXED
 // ============================================
 const BlogManager = ({ token }) => {
     const [blogs, setBlogs] = useState([]);
@@ -113,77 +122,232 @@ const BlogManager = ({ token }) => {
     useEffect(() => { loadBlogs(); }, []);
 
     const loadBlogs = async () => {
-        const res = await getAdminBlogs(token);
-        if (res.success) setBlogs(res.blogs);
+        try {
+            const res = await getAdminBlogs(token);
+            if (res.success) setBlogs(res.blogs);
+        } catch (error) {
+            console.error('Error loading blogs:', error);
+            alert('Error loading blogs: ' + (error.response?.data?.error || error.message));
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (editingBlog) {
-            await updateBlog(editingBlog.id, formData, token);
-        } else {
-            await createBlog(formData, token);
+        
+        try {
+            if (editingBlog) {
+                // For update - send as JSON (not FormData)
+                const updateData = {
+                    title: formData.title,
+                    excerpt: formData.excerpt,
+                    content: formData.content,
+                    category: formData.category,
+                    author: formData.author,
+                    author_role: formData.author_role,
+                    read_time: parseInt(formData.read_time),
+                    status: formData.status
+                };
+                
+                console.log('Updating blog:', updateData);
+                await updateBlog(editingBlog.id, updateData, token);
+                alert('Blog updated successfully!');
+            } else {
+                // For create - use FormData
+                const createData = new FormData();
+                createData.append('title', formData.title);
+                createData.append('excerpt', formData.excerpt || '');
+                createData.append('content', formData.content);
+                createData.append('category', formData.category || 'General');
+                createData.append('author', formData.author || 'Admin');
+                createData.append('author_role', formData.author_role || 'Author');
+                createData.append('read_time', formData.read_time || 5);
+                createData.append('status', formData.status);
+                
+                if (formData.image) {
+                    createData.append('image', formData.image);
+                }
+                
+                console.log('Creating blog with FormData');
+                await createBlog(createData, token);
+                alert('Blog created successfully!');
+            }
+            
+            await loadBlogs();
+            setShowForm(false);
+            setEditingBlog(null);
+            // Reset form
+            setFormData({
+                title: '', excerpt: '', content: '', category: '', 
+                author: '', author_role: '', read_time: 5, status: 'draft', image: null
+            });
+        } catch (error) {
+            console.error('Error saving blog:', error);
+            alert('Error saving blog: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setLoading(false);
         }
-        await loadBlogs();
-        setShowForm(false);
-        setEditingBlog(null);
-        setFormData({ title: '', excerpt: '', content: '', category: '', author: '', author_role: '', read_time: 5, status: 'draft', image: null });
-        setLoading(false);
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm('Delete this blog?')) {
-            await deleteBlog(id, token);
-            await loadBlogs();
+        if (window.confirm('Delete this blog permanently?')) {
+            try {
+                await deleteBlog(id, token);
+                await loadBlogs();
+                alert('Blog deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting blog:', error);
+                alert('Error deleting blog: ' + (error.response?.data?.error || error.message));
+            }
         }
     };
 
     const handleEdit = (blog) => {
         setEditingBlog(blog);
         setFormData({
-            title: blog.title, excerpt: blog.excerpt, content: blog.content,
-            category: blog.category, author: blog.author, author_role: blog.author_role,
-            read_time: blog.read_time, status: blog.status, image: null
+            title: blog.title || '',
+            excerpt: blog.excerpt || '',
+            content: blog.content || '',
+            category: blog.category || '',
+            author: blog.author || '',
+            author_role: blog.author_role || '',
+            read_time: blog.read_time || 5,
+            status: blog.status || 'draft',
+            image: null
         });
         setShowForm(true);
     };
 
     return (
         <div style={styles.dashboardCard}>
-            <div style={styles.cardHeader}><h2>📝 Blog Management</h2><button onClick={() => setShowForm(true)} style={styles.addButton}>+ New Blog</button></div>
+            <div style={styles.cardHeader}>
+                <h2>📝 Blog Management</h2>
+                <button onClick={() => setShowForm(true)} style={styles.addButton}>+ New Blog</button>
+            </div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
-                    <thead><tr><th style={styles.th}>Title</th><th style={styles.th}>Category</th><th style={styles.th}>Status</th><th style={styles.th}>Views</th><th style={styles.th}>Created</th><th style={styles.th}>Actions</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th style={styles.th}>Title</th>
+                            <th style={styles.th}>Category</th>
+                            <th style={styles.th}>Author</th>
+                            <th style={styles.th}>Status</th>
+                            <th style={styles.th}>Views</th>
+                            <th style={styles.th}>Created</th>
+                            <th style={styles.th}>Actions</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         {blogs.map(blog => (
                             <tr key={blog.id}>
-                                <td style={styles.td}>{blog.title}</td><td style={styles.td}>{blog.category}</td>
-                                <td style={styles.td}><span style={{...styles.statusBadge, background: blog.status === 'published' ? '#d4edda' : '#ffeaa7'}}>{blog.status}</span></td>
+                                <td style={styles.td}>{blog.title}</td>
+                                <td style={styles.td}>{blog.category}</td>
+                                <td style={styles.td}>{blog.author}</td>
+                                <td style={styles.td}>
+                                    <span style={{...styles.statusBadge, background: blog.status === 'published' ? '#d4edda' : '#ffeaa7'}}>
+                                        {blog.status}
+                                    </span>
+                                </td>
                                 <td style={styles.td}>{blog.views || 0}</td>
                                 <td style={styles.td}>{new Date(blog.created_at).toLocaleDateString()}</td>
-                                <td style={styles.td}><button onClick={() => handleEdit(blog)} style={styles.editBtn}>Edit</button><button onClick={() => handleDelete(blog.id)} style={styles.deleteBtn}>Delete</button></td>
+                                <td style={styles.td}>
+                                    <button onClick={() => handleEdit(blog)} style={styles.editBtn}>Edit</button>
+                                    <button onClick={() => handleDelete(blog.id)} style={styles.deleteBtn}>Delete</button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+            
             {showForm && (
                 <div style={styles.modal} onClick={() => setShowForm(false)}>
                     <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
-                        <h3>{editingBlog ? 'Edit Blog' : 'Create Blog'}</h3>
+                        <h3>{editingBlog ? 'Edit Blog' : 'Create New Blog'}</h3>
                         <form onSubmit={handleSubmit}>
-                            <input type="text" placeholder="Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={styles.input} required />
-                            <input type="text" placeholder="Category" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={styles.input} required />
-                            <textarea placeholder="Excerpt" rows="2" value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} style={styles.textarea} required />
-                            <textarea placeholder="Content" rows="6" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} style={styles.textarea} required />
-                            <input type="file" accept="image/*" onChange={e => setFormData({...formData, image: e.target.files[0]})} style={styles.input} />
-                            <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={styles.input}>
-                                <option value="draft">Draft</option><option value="published">Published</option>
+                            <input 
+                                type="text" 
+                                placeholder="Title *" 
+                                value={formData.title} 
+                                onChange={e => setFormData({...formData, title: e.target.value})} 
+                                style={styles.input} 
+                                required 
+                            />
+                            
+                            <input 
+                                type="text" 
+                                placeholder="Category" 
+                                value={formData.category} 
+                                onChange={e => setFormData({...formData, category: e.target.value})} 
+                                style={styles.input} 
+                            />
+                            
+                            <input 
+                                type="text" 
+                                placeholder="Author" 
+                                value={formData.author} 
+                                onChange={e => setFormData({...formData, author: e.target.value})} 
+                                style={styles.input} 
+                            />
+                            
+                            <input 
+                                type="text" 
+                                placeholder="Author Role (e.g., Senior Developer)" 
+                                value={formData.author_role} 
+                                onChange={e => setFormData({...formData, author_role: e.target.value})} 
+                                style={styles.input} 
+                            />
+                            
+                            <input 
+                                type="number" 
+                                placeholder="Read Time (minutes)" 
+                                value={formData.read_time} 
+                                onChange={e => setFormData({...formData, read_time: e.target.value})} 
+                                style={styles.input} 
+                            />
+                            
+                            <textarea 
+                                placeholder="Excerpt (short summary)" 
+                                rows="3" 
+                                value={formData.excerpt} 
+                                onChange={e => setFormData({...formData, excerpt: e.target.value})} 
+                                style={styles.textarea} 
+                            />
+                            
+                            <textarea 
+                                placeholder="Content (full blog body) *" 
+                                rows="10" 
+                                value={formData.content} 
+                                onChange={e => setFormData({...formData, content: e.target.value})} 
+                                style={styles.textarea} 
+                                required 
+                            />
+                            
+                            {!editingBlog && (
+                                <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    onChange={e => setFormData({...formData, image: e.target.files[0]})} 
+                                    style={styles.input} 
+                                />
+                            )}
+                            
+                            <select 
+                                value={formData.status} 
+                                onChange={e => setFormData({...formData, status: e.target.value})} 
+                                style={styles.input}
+                            >
+                                <option value="draft">Draft</option>
+                                <option value="published">Published</option>
                             </select>
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <button type="submit" style={styles.saveBtn}>{editingBlog ? 'Update' : 'Create'}</button>
-                                <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>Cancel</button>
+                            
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                                <button type="submit" disabled={loading} style={{...styles.saveBtn, opacity: loading ? 0.7 : 1}}>
+                                    {loading ? 'Saving...' : (editingBlog ? 'Update Blog' : 'Create Blog')}
+                                </button>
+                                <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>
+                                    Cancel
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -192,6 +356,7 @@ const BlogManager = ({ token }) => {
         </div>
     );
 };
+    
 
 // ============================================
 // JOB MANAGER
@@ -215,18 +380,38 @@ const JobManager = ({ token }) => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        if (editingJob) {
-            await updateJob(editingJob.id, formData, token);
-        } else {
-            await createJob(formData, token);
-        }
-        await loadJobs();
-        setShowForm(false);
-        setEditingJob(null);
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    if (captchaInput !== captchaValue) {
+        setError('Invalid CAPTCHA. Please try again.');
+        refreshCaptcha();
         setLoading(false);
-    };
+        return;
+    }
+
+    // Call the actual API instead of hardcoding
+    try {
+        const response = await adminLogin(username, password);
+        if (response.success) {
+            sessionStorage.clear();
+            sessionStorage.setItem('adminToken', response.token);
+            sessionStorage.setItem('adminUsername', response.admin?.username || username);
+            sessionStorage.setItem('adminRole', response.admin?.role || 'admin');
+            onLogin(response.admin?.username || username, response.admin?.role || 'admin');
+        } else {
+            setError('Invalid credentials');
+            refreshCaptcha();
+        }
+    } catch (err) {
+        console.error('Login error:', err);
+        setError(err.response?.data?.error || 'Login failed. Please try again.');
+        refreshCaptcha();
+    } finally {
+        setLoading(false);
+    }
+};
 
     const handleDelete = async (id) => {
         if (window.confirm('Delete this job?')) {

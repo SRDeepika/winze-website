@@ -9,6 +9,20 @@ const api = axios.create({
   },
 });
 
+// Add token to requests automatically
+api.interceptors.request.use(
+  (config) => {
+    const token = sessionStorage.getItem('adminToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // ========== EXISTING FUNCTIONS ==========
 export const trackClick = async (clickData) => {
   try {
@@ -74,9 +88,7 @@ export const getBlogBySlug = async (slug) => {
 
 export const getAdminBlogs = async (token) => {
   try {
-    const response = await api.get('/admin/blogs', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.get('/admin/blogs');
     return response.data;
   } catch (error) {
     console.error('Error fetching admin blogs:', error);
@@ -106,7 +118,6 @@ export const createBlog = async (blogData, token) => {
     const response = await api.post('/admin/blogs', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${token}`
       }
     });
     return response.data;
@@ -116,16 +127,9 @@ export const createBlog = async (blogData, token) => {
   }
 };
 
-// FIXED: Update blog using JSON
 export const updateBlog = async (id, blogData, token) => {
   try {
-    console.log('Updating blog with data:', blogData);
-    const response = await api.put(`/admin/blogs/${id}`, blogData, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const response = await api.put(`/admin/blogs/${id}`, blogData);
     return response.data;
   } catch (error) {
     console.error('Error updating blog:', error);
@@ -135,9 +139,7 @@ export const updateBlog = async (id, blogData, token) => {
 
 export const deleteBlog = async (id, token) => {
   try {
-    const response = await api.delete(`/admin/blogs/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.delete(`/admin/blogs/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting blog:', error);
@@ -187,9 +189,7 @@ export const applyForJob = async (jobId, applicationData) => {
 
 export const getAdminJobs = async (token) => {
   try {
-    const response = await api.get('/admin/jobs', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.get('/admin/jobs');
     return response.data;
   } catch (error) {
     console.error('Error fetching admin jobs:', error);
@@ -199,9 +199,7 @@ export const getAdminJobs = async (token) => {
 
 export const createJob = async (jobData, token) => {
   try {
-    const response = await api.post('/admin/jobs', jobData, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.post('/admin/jobs', jobData);
     return response.data;
   } catch (error) {
     console.error('Error creating job:', error);
@@ -211,9 +209,7 @@ export const createJob = async (jobData, token) => {
 
 export const updateJob = async (id, jobData, token) => {
   try {
-    const response = await api.put(`/admin/jobs/${id}`, jobData, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.put(`/admin/jobs/${id}`, jobData);
     return response.data;
   } catch (error) {
     console.error('Error updating job:', error);
@@ -223,9 +219,7 @@ export const updateJob = async (id, jobData, token) => {
 
 export const deleteJob = async (id, token) => {
   try {
-    const response = await api.delete(`/admin/jobs/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.delete(`/admin/jobs/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting job:', error);
@@ -235,9 +229,7 @@ export const deleteJob = async (id, token) => {
 
 export const getApplications = async (token) => {
   try {
-    const response = await api.get('/admin/applications', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.get('/admin/applications');
     return response.data;
   } catch (error) {
     console.error('Error fetching applications:', error);
@@ -247,9 +239,7 @@ export const getApplications = async (token) => {
 
 export const updateApplicationStatus = async (id, status, token) => {
   try {
-    const response = await api.put(`/admin/applications/${id}/status`, { status }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.put(`/admin/applications/${id}/status`, { status });
     return response.data;
   } catch (error) {
     console.error('Error updating application:', error);
@@ -270,9 +260,7 @@ export const submitQuote = async (quoteData) => {
 
 export const getQuotes = async (token) => {
   try {
-    const response = await api.get('/admin/quotes', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.get('/admin/quotes');
     return response.data;
   } catch (error) {
     console.error('Error fetching quotes:', error);
@@ -283,9 +271,7 @@ export const getQuotes = async (token) => {
 // ========== ADMIN STATS ==========
 export const getAdminStats = async (token) => {
   try {
-    const response = await api.get('/admin/stats', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.get('/admin/stats');
     return response.data;
   } catch (error) {
     console.error('Error fetching stats:', error);
@@ -304,14 +290,42 @@ export const getSocialLinks = async () => {
   }
 };
 
-export const updateSocialLinks = async (linksData, token) => {
+export const getAdminSocialLinks = async (token) => {
   try {
-    const response = await api.put('/admin/social-links', linksData, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.get('/admin/social-links');
     return response.data;
   } catch (error) {
-    console.error('Error updating social links:', error);
+    console.error('Error fetching admin social links:', error);
+    throw error;
+  }
+};
+
+export const createSocialLink = async (linkData, token) => {
+  try {
+    const response = await api.post('/admin/social-links', linkData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating social link:', error);
+    throw error;
+  }
+};
+
+export const updateSocialLink = async (id, linkData, token) => {
+  try {
+    const response = await api.put(`/admin/social-links/${id}`, linkData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating social link:', error);
+    throw error;
+  }
+};
+
+export const deleteSocialLink = async (id, token) => {
+  try {
+    const response = await api.delete(`/admin/social-links/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting social link:', error);
     throw error;
   }
 };
@@ -319,9 +333,7 @@ export const updateSocialLinks = async (linksData, token) => {
 // ========== USER MANAGEMENT ==========
 export const getUsers = async (token) => {
   try {
-    const response = await api.get('/admin/users', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.get('/admin/users');
     return response.data;
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -331,9 +343,7 @@ export const getUsers = async (token) => {
 
 export const createUser = async (userData, token) => {
   try {
-    const response = await api.post('/admin/users', userData, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.post('/admin/users', userData);
     return response.data;
   } catch (error) {
     console.error('Error creating user:', error);
@@ -341,11 +351,19 @@ export const createUser = async (userData, token) => {
   }
 };
 
+export const updateUser = async (id, userData, token) => {
+  try {
+    const response = await api.put(`/admin/users/${id}`, userData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user:', error);
+    throw error;
+  }
+};
+
 export const deleteUser = async (id, token) => {
   try {
-    const response = await api.delete(`/admin/users/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.delete(`/admin/users/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting user:', error);
