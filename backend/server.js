@@ -51,42 +51,30 @@ const authenticateToken = (req, res, next) => {
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
 });
+
 // ========== ADMIN LOGIN ==========
 app.post('/api/admin/login', async (req, res) => {
   const { username, password } = req.body;
   console.log('Login attempt:', username);
   
   try {
-    // Check database for admin
     const result = await db.query(`SELECT * FROM admins WHERE username = $1`, [username]);
     
     if (result.rows.length > 0) {
       const admin = result.rows[0];
-      // Try both password_hash and password columns
-      const passwordHash = admin.password_hash || admin.password;
+      const passwordHash = admin.password_hash;
       
       if (passwordHash) {
         const validPassword = await bcrypt.compare(password, passwordHash);
         if (validPassword) {
-          // Use the actual admin ID from database (4)
           const token = jwt.sign({ id: admin.id, username: admin.username, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
           return res.json({ 
             success: true, 
             token, 
-            admin: { id: admin.id, username: admin.username, role: admin.role || 'admin' }
+            admin: { id: admin.id, username: admin.username, role: admin.role }
           });
         }
       }
-    }
-    
-    // Fallback for testing (for now)
-    if (username === 'admin' && password === 'Winzebglr') {
-      const token = jwt.sign({ id: 4, username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
-      return res.json({ 
-        success: true, 
-        token, 
-        admin: { id: 4, username: 'admin', role: 'admin' }
-      });
     }
     
     res.status(401).json({ success: false, error: 'Invalid credentials' });
@@ -95,9 +83,11 @@ app.post('/api/admin/login', async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
 // ========== CHANGE USERNAME ==========
 app.post('/api/admin/change-username', authenticateToken, async (req, res) => {
-  console.log('Change username request received');
+  console.log('=== CHANGE USERNAME REQUEST ===');
+  console.log('Request body:', req.body);
   console.log('User from token:', req.user);
   
   try {
@@ -115,14 +105,11 @@ app.post('/api/admin/change-username', authenticateToken, async (req, res) => {
     }
     
     const admin = result.rows[0];
-    const passwordHash = admin.password_hash || admin.password;
     
     // Verify password
-    if (passwordHash) {
-      const validPassword = await bcrypt.compare(password, passwordHash);
-      if (!validPassword) {
-        return res.status(401).json({ success: false, error: 'Password is incorrect' });
-      }
+    const validPassword = await bcrypt.compare(password, admin.password_hash);
+    if (!validPassword) {
+      return res.status(401).json({ success: false, error: 'Current password is incorrect' });
     }
     
     // Check if username already exists
@@ -132,10 +119,12 @@ app.post('/api/admin/change-username', authenticateToken, async (req, res) => {
     }
     
     // Update username
-    await db.query(`UPDATE admins SET username = $1 WHERE id = $2`, [newUsername, adminId]);
+    await db.query(`UPDATE admins SET username = $1, updated_at = NOW() WHERE id = $2`, [newUsername, adminId]);
     
     // Generate new token with new username
     const token = jwt.sign({ id: admin.id, username: newUsername, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
+    
+    console.log('Username changed successfully to:', newUsername);
     
     res.json({ success: true, message: 'Username changed successfully', token });
   } catch (error) {
@@ -146,7 +135,8 @@ app.post('/api/admin/change-username', authenticateToken, async (req, res) => {
 
 // ========== CHANGE PASSWORD ==========
 app.post('/api/admin/change-password', authenticateToken, async (req, res) => {
-  console.log('Change password request received');
+  console.log('=== CHANGE PASSWORD REQUEST ===');
+  console.log('Request body:', req.body);
   console.log('User from token:', req.user);
   
   try {
@@ -164,17 +154,9 @@ app.post('/api/admin/change-password', authenticateToken, async (req, res) => {
     }
     
     const admin = result.rows[0];
-    const passwordHash = admin.password_hash || admin.password;
-    
-    // For testing, if password_hash is null, just update
-    if (!passwordHash) {
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-      await db.query(`UPDATE admins SET password_hash = $1 WHERE id = $2`, [hashedPassword, adminId]);
-      return res.json({ success: true, message: 'Password set successfully' });
-    }
     
     // Verify old password
-    const validPassword = await bcrypt.compare(oldPassword, passwordHash);
+    const validPassword = await bcrypt.compare(oldPassword, admin.password_hash);
     if (!validPassword) {
       return res.status(401).json({ success: false, error: 'Current password is incorrect' });
     }
@@ -183,7 +165,9 @@ app.post('/api/admin/change-password', authenticateToken, async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     
     // Update password
-    await db.query(`UPDATE admins SET password_hash = $1 WHERE id = $2`, [hashedPassword, adminId]);
+    await db.query(`UPDATE admins SET password_hash = $1, updated_at = NOW() WHERE id = $2`, [hashedPassword, adminId]);
+    
+    console.log('Password changed successfully for admin ID:', adminId);
     
     res.json({ success: true, message: 'Password changed successfully' });
   } catch (error) {
@@ -191,10 +175,11 @@ app.post('/api/admin/change-password', authenticateToken, async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
 // ========== ADMIN USERS (CRUD) ==========
 app.get('/api/admin/users', authenticateToken, async (req, res) => {
   try {
-    const result = await db.query(`SELECT id, username, role, created_at FROM admins ORDER BY created_at DESC`);
+    const result = await db.query(`SELECT id, username, role, created_at, updated_at FROM admins ORDER BY created_at DESC`);
     res.json({ success: true, users: result.rows });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -278,12 +263,12 @@ app.get('/api/admin/social-links', authenticateToken, async (req, res) => {
 app.post('/api/admin/social-links', authenticateToken, async (req, res) => {
   try {
     const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
-    await db.query(
+    const result = await db.query(
       `INSERT INTO social_links (platform_name, platform_url, icon_class, color_code, display_order, is_active, created_at) 
-       VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
+       VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING id`,
       [platform_name, platform_url, icon_class, color_code, display_order || 0, is_active !== undefined ? is_active : 1]
     );
-    res.json({ success: true, message: 'Social link added', id: result.rows[0]?.id });
+    res.json({ success: true, id: result.rows[0].id, message: 'Social link added' });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -430,7 +415,7 @@ app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// ========== APPLICATIONS (CRUD) ==========
+// ========== APPLICATIONS ==========
 app.get('/api/admin/applications', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`
@@ -456,7 +441,7 @@ app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res
   }
 });
 
-// ========== QUOTES (CRUD) ==========
+// ========== QUOTES ==========
 app.post('/api/quotes', async (req, res) => {
   try {
     const { name, email, phone, service, message } = req.body;
