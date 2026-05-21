@@ -929,12 +929,7 @@ const WinzePage = () => {
         { title: "Unified Communications", desc: "Seamless integration of voice, video, and messaging for enterprise collaboration.", icon: faChartLine, img: solutionImages.unified },
         { title: "Contact Center", desc: "AI-powered customer service solutions for enhanced agent productivity.", icon: faHeadset, img: solutionImages.contact },
         { title: "Emergency Notification", desc: "Automated voice-based mass alerts and crisis communication. Calls route directly to emergency response center with automatic number tracking.", icon: faPhoneVolume, img: solutionImages.emergency },
-        { 
-        title: "Boom Barrier System", 
-        desc: "High-speed automatic vehicle access control with ANPR, RFID integration, and real-time monitoring for secure entry management.", 
-        icon: faCar, 
-        img: solutionImages.boomBarrier 
-    },
+        { title: "Boom Barrier System", desc: "High-speed automatic vehicle access control with ANPR, RFID integration, and real-time monitoring for secure entry management.", icon: faCar, img: solutionImages.boomBarrier },
     ];
 
     // Industries
@@ -973,54 +968,59 @@ const WinzePage = () => {
     ];
 
     // Card color gradients
-    const getCardGradient = (index, type) => {
-        const gradients = {
-            delivery: [
-                'linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb4d)',
-                'linear-gradient(135deg, #0f2027, #203a43, #2c5364)',
-                'linear-gradient(135deg, #23074d, #cc5333)',
-                'linear-gradient(135deg, #1f1c2c, #928dab)',
-                'linear-gradient(135deg, #000000, #434343)',
-                'linear-gradient(135deg, #134e5e, #71b280)'
-            ],
-            solution: [
-                'linear-gradient(135deg, #2b1b4e, #4a2c7a, #7b4c9e)',
-                'linear-gradient(135deg, #1a3c2c, #2d6a4f, #40916c)',
-                'linear-gradient(135deg, #4a0e4e, #8a2387, #e94057)',
-                'linear-gradient(135deg, #0f2027, #203a43, #2c5364)',
-                'linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b)',
-                'linear-gradient(135deg, #004e92, #000428)',
-                'linear-gradient(135deg, #2b1b4e, #4a2c7a, #7b4c9e)',
-                'linear-gradient(135deg, #1a3c2c, #2d6a4f, #40916c)',
-                'linear-gradient(135deg, #4a0e4e, #8a2387, #e94057)',
-                'linear-gradient(135deg, #0f2027, #203a43, #2c5364)',
-                'linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b)',
-                'linear-gradient(135deg, #004e92, #000428)',
-                'linear-gradient(135deg, #2b1b4e, #4a2c7a, #7b4c9e)',
-                'linear-gradient(135deg, #1a3c2c, #2d6a4f, #40916c)',
-                'linear-gradient(135deg, #4a0e4e, #8a2387, #e94057)'
-            ],
-            industry: [
-                'linear-gradient(135deg, #0f3443, #34e89e)',
-                'linear-gradient(135deg, #f12711, #f5af19)',
-                'linear-gradient(135deg, #4b6cb7, #182848)',
-                'linear-gradient(135deg, #ff6a00, #ee0979)'
-            ],
-            work: [
-                'linear-gradient(135deg, #360033, #0b8793)',
-                'linear-gradient(135deg, #2193b0, #6dd5ed)',
-                'linear-gradient(135deg, #7f00ff, #e100ff)',
-                'linear-gradient(135deg, #1f4037, #99f2c8)'
-            ]
-        };
-        
-        if (type === 'delivery') return gradients.delivery[index % gradients.delivery.length];
-        if (type === 'solution') return gradients.solution[index % gradients.solution.length];
-        if (type === 'industry') return gradients.industry[index % gradients.industry.length];
-        if (type === 'work') return gradients.work[index % gradients.work.length];
-        return 'linear-gradient(135deg, #667eea, #764ba2)';
+const getCardGradient = (index, type) => {
+    const gradients = {
+        delivery: [
+            'linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb4d)',
+            'linear-gradient(135deg, #0f2027, #203a43, #2c5364)',
+            'linear-gradient(135deg, #23074d, #cc5333)',
+            'linear-gradient(135deg, #1f1c2c, #928dab)',
+            'linear-gradient(135deg, #000000, #434343)',
+            'linear-gradient(135deg, #134e5e, #71b280)'
+        ],
+        solution: [
+            'linear-gradient(135deg, #2b1b4e, #4a2c7a, #7b4c9e)',
+            'linear-gradient(135deg, #1a3c2c, #2d6a4f, #40916c)',
+            'linear-gradient(135deg, #4a0e4e, #8a2387, #e94057)',
+            'linear-gradient(135deg, #0f2027, #203a43, #2c5364)',
+            'linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b)',
+            'linear-gradient(135deg, #004e92, #000428)',
+            'linear-gradient(135deg, #2b1b4e, #4a2c7a, #7b4c9e)',
+            'linear-gradient(135deg, #1a3c2c, #2d6a4f, #40916c)',
+            'linear-gradient(135deg, #4a0e4e, #8a2387, #e94057)',
+            'linear-gradient(135deg, #0f2027, #203a43, #2c5364)',
+            'linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b)',
+            'linear-gradient(135deg, #004e92, #000428)',
+            'linear-gradient(135deg, #2b1b4e, #4a2c7a, #7b4c9e)',
+            'linear-gradient(135deg, #1a3c2c, #2d6a4f, #40916c)',
+            'linear-gradient(135deg, #4a0e4e, #8a2387, #e94057)'
+        ],
+        industry: [
+            'linear-gradient(135deg, #0f3443, #34e89e)',
+            'linear-gradient(135deg, #f12711, #f5af19)',
+            'linear-gradient(135deg, #4b6cb7, #182848)',
+            'linear-gradient(135deg, #ff6a00, #ee0979)'
+        ],
+        work: [
+            'linear-gradient(135deg, #360033, #0b8793)',
+            'linear-gradient(135deg, #2193b0, #6dd5ed)',
+            'linear-gradient(135deg, #7f00ff, #e100ff)',
+            'linear-gradient(135deg, #1f4037, #99f2c8)'
+        ]
     };
-
+    
+    if (type === 'delivery') return gradients.delivery[index % gradients.delivery.length];
+    if (type === 'solution') {
+        // Special color for Boom Barrier System (index 15 - the 16th solution)
+        if (index === 15) {
+            return 'linear-gradient(135deg, #1a472a, #2d6a4f, #40916c, #52b788)';
+        }
+        return gradients.solution[index % gradients.solution.length];
+    }
+    if (type === 'industry') return gradients.industry[index % gradients.industry.length];
+    if (type === 'work') return gradients.work[index % gradients.work.length];
+    return 'linear-gradient(135deg, #667eea, #764ba2)';
+};
     // Landing Page Modal Component
     const LandingPage = ({ item, onClose, onRequestQuote }) => {
         if (!item) return null;
@@ -1645,67 +1645,76 @@ const WinzePage = () => {
             <div style={{ fontFamily: "'Poppins', 'Montserrat', sans-serif", overflowX: 'hidden', position: 'relative', background: '#0a0a1a' }}>
                 
                 <SocialLinks />
-                
                 {/* Navigation Bar */}
-                <nav style={{
-                    position: 'sticky',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    background: scrolled ? 'rgba(10,10,26,0.98)' : 'rgba(10,10,26,0.95)',
-                    backdropFilter: 'blur(20px)',
-                    padding: '12px 5%',
-                    zIndex: 1000,
-                    transition: 'all 0.3s',
-                    boxShadow: scrolled ? '0 2px 30px rgba(0,0,0,0.3)' : 'none',
-                    borderBottom: '1px solid rgba(255,215,0,0.1)'
-                }}>
-                    <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
-                        <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
-                            <img src="/winze-logo.jpg" alt="Winze Technologies Logo" className="logo-image" onError={(e) => {
-                                e.target.style.display = 'none';
-                                e.target.parentElement.innerHTML = '<div style="width:48px;height:48px;background:#FFD700;border-radius:12px;display:flex;align-items:center;justify-content:center;"><span style="color:#1a1a2e;font-size:24px;font-weight:bold">W</span></div><span style="font-weight:800;font-size:1.4rem;background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Winze Technologies</span>';
-                            }} />
-                            <span style={{ fontWeight: '800', fontSize: '1.4rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: "'Playfair Display', serif", letterSpacing: '-0.5px' }}>Winze Technologies</span>
-                        </div>
-                        
-                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
-                            {navItems.map((item) => (
-    <button key={item.name} onClick={(e) => { 
-        e.preventDefault(); 
-        e.stopPropagation(); 
-        if (item.path) {
-            // Dynamic tracking for any page link (Careers, Blogs, etc.)
-            handleTrackClick(`${item.name} Page Visit`, 'navigation');
-            window.location.href = item.path;
-        } else {
-            scrollToSection(item.ref, item.name);
-        }
-    }} style={{ background: 'transparent', color: '#ddd', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none' }}
-        onMouseEnter={(e) => {
-            e.target.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
-            e.target.style.color = '#1a1a2e';
-            e.target.style.transform = 'translateY(-2px)';
-        }}
-        onMouseLeave={(e) => {
-            e.target.style.background = 'transparent';
-            e.target.style.color = '#ddd';
-            e.target.style.transform = 'translateY(0)';
-        }}
-    >
-        {item.name}
-    </button>
-))}
-                            <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Get Quote Button', 'cta'); }} style={{
-                                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#1a1a2e', border: 'none', padding: '8px 24px', borderRadius: '30px', cursor: 'pointer', fontWeight: '700', transition: 'all 0.3s', fontFamily: "'Poppins', sans-serif", boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
-                            }}
-                            onMouseEnter={(e) => { e.target.style.transform = 'scale(1.05)'; e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)'; }}
-                            onMouseLeave={(e) => { e.target.style.transform = 'scale(1)'; e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)'; }}>
-                                ✨ Get a Quote
-                            </button>
-                        </div>
-                    </div>
-                </nav>
+<nav style={{
+    position: 'sticky',
+    top: 0,
+    left: 0,
+    right: 0,
+    background: scrolled ? 'rgba(10,10,26,0.98)' : 'rgba(10,10,26,0.95)',
+    backdropFilter: 'blur(20px)',
+    padding: '12px 5%',
+    zIndex: 1000,
+    transition: 'all 0.3s',
+    boxShadow: scrolled ? '0 2px 30px rgba(0,0,0,0.3)' : 'none',
+    borderBottom: '1px solid rgba(255,215,0,0.1)'
+}}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
+        {/* Logo - LEFT SIDE */}
+        <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
+            <img src="/winze-logo.jpg" alt="Winze Technologies Logo" className="logo-image" onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.parentElement.innerHTML = '<div style="width:48px;height:48px;background:#FFD700;border-radius:12px;display:flex;align-items:center;justify-content:center;"><span style="color:#1a1a2e;font-size:24px;font-weight:bold">W</span></div><span style="font-weight:800;font-size:1.4rem;background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Winze Technologies</span>';
+            }} />
+            <span style={{ fontWeight: '800', fontSize: '1.4rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: "'Playfair Display', serif", letterSpacing: '-0.5px' }}>Winze Technologies</span>
+        </div>
+        
+        {/* Navigation Items - RIGHT SIDE */}
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+            {navItems.map((item) => (
+                <button key={item.name} onClick={(e) => { 
+                    e.preventDefault(); 
+                    e.stopPropagation(); 
+                    if (item.path) {
+                        handleTrackClick(`${item.name} Page Visit`, 'navigation');
+                        window.location.href = item.path;
+                    } else {
+                        scrollToSection(item.ref, item.name);
+                    }
+                }} style={{ background: 'transparent', color: '#ddd', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none' }}
+                    onMouseEnter={(e) => {
+                        e.target.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
+                        e.target.style.color = '#1a1a2e';
+                        e.target.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                        e.target.style.background = 'transparent';
+                        e.target.style.color = '#ddd';
+                        e.target.style.transform = 'translateY(0)';
+                    }}
+                >
+                    {item.name}
+                </button>
+            ))}
+            <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Get Quote Button', 'cta'); }} style={{
+                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                color: '#1a1a2e',
+                border: 'none',
+                padding: '8px 24px',
+                borderRadius: '30px',
+                cursor: 'pointer',
+                fontWeight: '700',
+                transition: 'all 0.3s',
+                fontFamily: "'Poppins', sans-serif",
+                boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
+            }}
+            onMouseEnter={(e) => { e.target.style.transform = 'scale(1.05)'; e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)'; }}
+            onMouseLeave={(e) => { e.target.style.transform = 'scale(1)'; e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)'; }}>
+                ✨ Get a Quote
+            </button>
+        </div>
+    </div>
+</nav>
 
                 {/* Hero Section */}
                 <section ref={homeRef} id="home" style={{ minHeight: '90vh', position: 'relative', display: 'flex', alignItems: 'center', padding: '80px 5%', overflow: 'hidden' }}>
