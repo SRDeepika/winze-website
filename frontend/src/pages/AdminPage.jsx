@@ -658,6 +658,7 @@ const ProfileSettings = ({ username, onLogout }) => {
 
     const handleUpdateUsername = async (e) => {
         e.preventDefault();
+        setMessage('');
         try {
             const token = sessionStorage.getItem('adminToken');
             const response = await axios.post(`${API_BASE_URL}/admin/change-username`, {
@@ -667,18 +668,22 @@ const ProfileSettings = ({ username, onLogout }) => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (response.data.success) {
-                setMessage('Username changed! Please login again.');
-                setTimeout(() => { sessionStorage.clear(); onLogout(); }, 2000);
+                setMessage('✓ Username changed successfully! Please login again.');
+                setTimeout(() => { 
+                    sessionStorage.clear(); 
+                    onLogout(); 
+                }, 2000);
             }
         } catch (err) {
-            setMessage(err.response?.data?.error || 'Failed to change username');
+            setMessage('✗ ' + (err.response?.data?.error || 'Failed to change username'));
         }
     };
 
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
+        setMessage('');
         if (newPassword !== confirmPassword) {
-            setMessage('Passwords do not match');
+            setMessage('✗ Passwords do not match');
             return;
         }
         try {
@@ -690,27 +695,30 @@ const ProfileSettings = ({ username, onLogout }) => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (response.data.success) {
-                setMessage('Password changed! Please login again.');
-                setTimeout(() => { sessionStorage.clear(); onLogout(); }, 2000);
+                setMessage('✓ Password changed successfully! Please login again.');
+                setTimeout(() => { 
+                    sessionStorage.clear(); 
+                    onLogout(); 
+                }, 2000);
             }
         } catch (err) {
-            setMessage(err.response?.data?.error || 'Failed to change password');
+            setMessage('✗ ' + (err.response?.data?.error || 'Failed to change password'));
         }
     };
 
     return (
         <div style={styles.dashboardCard}>
             <h2>👤 Profile Settings</h2>
-            {message && <div style={styles.successMessage}>{message}</div>}
+            {message && <div style={{...styles.successMessage, background: message.startsWith('✓') ? '#d4edda' : '#f8d7da', color: message.startsWith('✓') ? '#155724' : '#721c24'}}>{message}</div>}
             
             {/* Change Username Section */}
-            <div style={{ marginBottom: '30px', padding: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
-                <h3>Change Username</h3>
+            <div style={{ marginBottom: '30px', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
+                <h3 style={{ marginBottom: '15px', color: '#333' }}>📝 Change Username</h3>
                 <form onSubmit={handleUpdateUsername}>
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative', marginBottom: '15px' }}>
                         <input 
                             type={showUsernamePassword ? "text" : "password"} 
-                            placeholder="Current Password" 
+                            placeholder="Enter your current password to verify" 
                             value={usernamePassword} 
                             onChange={e => setUsernamePassword(e.target.value)} 
                             style={styles.input} 
@@ -722,24 +730,24 @@ const ProfileSettings = ({ username, onLogout }) => {
                     </div>
                     <input 
                         type="text" 
-                        placeholder="New Username" 
+                        placeholder="New username" 
                         value={newUsername} 
                         onChange={e => setNewUsername(e.target.value)} 
                         style={styles.input} 
                         required 
                     />
-                    <button type="submit" style={styles.saveBtn}>Update Username</button>
+                    <button type="submit" style={{...styles.saveBtn, width: '100%'}}>Update Username</button>
                 </form>
             </div>
 
             {/* Change Password Section */}
-            <div style={{ padding: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
-                <h3>Change Password</h3>
+            <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
+                <h3 style={{ marginBottom: '15px', color: '#333' }}>🔒 Change Password</h3>
                 <form onSubmit={handleUpdatePassword}>
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative', marginBottom: '15px' }}>
                         <input 
                             type={showCurrent ? "text" : "password"} 
-                            placeholder="Current Password" 
+                            placeholder="Current password" 
                             value={currentPassword} 
                             onChange={e => setCurrentPassword(e.target.value)} 
                             style={styles.input} 
@@ -749,10 +757,10 @@ const ProfileSettings = ({ username, onLogout }) => {
                             {showCurrent ? '🙈' : '👁️'}
                         </span>
                     </div>
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative', marginBottom: '15px' }}>
                         <input 
                             type={showNew ? "text" : "password"} 
-                            placeholder="New Password" 
+                            placeholder="New password" 
                             value={newPassword} 
                             onChange={e => setNewPassword(e.target.value)} 
                             style={styles.input} 
@@ -764,19 +772,18 @@ const ProfileSettings = ({ username, onLogout }) => {
                     </div>
                     <input 
                         type="password" 
-                        placeholder="Confirm Password" 
+                        placeholder="Confirm new password" 
                         value={confirmPassword} 
                         onChange={e => setConfirmPassword(e.target.value)} 
                         style={styles.input} 
                         required 
                     />
-                    <button type="submit" style={styles.saveBtn}>Update Password</button>
+                    <button type="submit" style={{...styles.saveBtn, width: '100%'}}>Update Password</button>
                 </form>
             </div>
         </div>
     );
 };
-
 // ============================================
 // CLICK ANALYTICS COMPONENT
 // ============================================
