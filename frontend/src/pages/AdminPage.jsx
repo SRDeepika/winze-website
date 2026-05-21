@@ -643,16 +643,34 @@ const UserManager = () => {
     );
 };
 
-// ============================================
-// PROFILE SETTINGS
-// ============================================
 const ProfileSettings = ({ username, onLogout }) => {
     const [currentPassword, setCurrentPassword] = useState('');
+    const [newUsername, setNewUsername] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
+
+    const handleUpdateUsername = async (e) => {
+        e.preventDefault();
+        try {
+            const token = sessionStorage.getItem('adminToken');
+            const response = await axios.post(`${API_BASE_URL}/admin/change-username`, {
+                newUsername: newUsername,
+                password: currentPassword
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.data.success) {
+                setMessage('Username changed! Please login again.');
+                sessionStorage.setItem('adminUsername', newUsername);
+                setTimeout(() => { sessionStorage.clear(); onLogout(); }, 2000);
+            }
+        } catch (err) {
+            setMessage(err.response?.data?.error || 'Failed to change username');
+        }
+    };
 
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
@@ -661,15 +679,19 @@ const ProfileSettings = ({ username, onLogout }) => {
             return;
         }
         try {
-            const res = await axios.post(`${API_BASE_URL}/admin/change-password`, {
-                oldPassword: currentPassword, newPassword
-            }, getAuthConfig());
-            if (res.data.success) {
+            const token = sessionStorage.getItem('adminToken');
+            const response = await axios.post(`${API_BASE_URL}/admin/change-password`, {
+                oldPassword: currentPassword,
+                newPassword: newPassword
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.data.success) {
                 setMessage('Password changed! Please login again.');
                 setTimeout(() => { sessionStorage.clear(); onLogout(); }, 2000);
             }
         } catch (err) {
-            setMessage(err.response?.data?.error || 'Failed');
+            setMessage(err.response?.data?.error || 'Failed to change password');
         }
     };
 
@@ -677,18 +699,74 @@ const ProfileSettings = ({ username, onLogout }) => {
         <div style={styles.dashboardCard}>
             <h2>👤 Profile Settings</h2>
             {message && <div style={styles.successMessage}>{message}</div>}
+            
+            {/* Change Username Section */}
+            <div style={{ marginBottom: '30px', padding: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
+                <h3>Change Username</h3>
+                <form onSubmit={handleUpdateUsername}>
+                    <div style={{ position: 'relative' }}>
+                        <input 
+                            type={showCurrent ? "text" : "password"} 
+                            placeholder="Current Password" 
+                            value={currentPassword} 
+                            onChange={e => setCurrentPassword(e.target.value)} 
+                            style={styles.input} 
+                            required 
+                        />
+                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>
+                            {showCurrent ? '🙈' : '👁️'}
+                        </span>
+                    </div>
+                    <input 
+                        type="text" 
+                        placeholder="New Username" 
+                        value={newUsername} 
+                        onChange={e => setNewUsername(e.target.value)} 
+                        style={styles.input} 
+                        required 
+                    />
+                    <button type="submit" style={styles.saveBtn}>Update Username</button>
+                </form>
+            </div>
+
+            {/* Change Password Section */}
             <div style={{ padding: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
                 <h3>Change Password</h3>
                 <form onSubmit={handleUpdatePassword}>
                     <div style={{ position: 'relative' }}>
-                        <input type={showCurrent ? "text" : "password"} placeholder="Current Password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} style={styles.input} required />
-                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>{showCurrent ? '🙈' : '👁️'}</span>
+                        <input 
+                            type={showCurrent ? "text" : "password"} 
+                            placeholder="Current Password" 
+                            value={currentPassword} 
+                            onChange={e => setCurrentPassword(e.target.value)} 
+                            style={styles.input} 
+                            required 
+                        />
+                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>
+                            {showCurrent ? '🙈' : '👁️'}
+                        </span>
                     </div>
                     <div style={{ position: 'relative' }}>
-                        <input type={showNew ? "text" : "password"} placeholder="New Password" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={styles.input} required />
-                        <span onClick={() => setShowNew(!showNew)} style={styles.eyeIcon}>{showNew ? '🙈' : '👁️'}</span>
+                        <input 
+                            type={showNew ? "text" : "password"} 
+                            placeholder="New Password" 
+                            value={newPassword} 
+                            onChange={e => setNewPassword(e.target.value)} 
+                            style={styles.input} 
+                            required 
+                        />
+                        <span onClick={() => setShowNew(!showNew)} style={styles.eyeIcon}>
+                            {showNew ? '🙈' : '👁️'}
+                        </span>
                     </div>
-                    <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} style={styles.input} required />
+                    <input 
+                        type="password" 
+                        placeholder="Confirm Password" 
+                        value={confirmPassword} 
+                        onChange={e => setConfirmPassword(e.target.value)} 
+                        style={styles.input} 
+                        required 
+                    />
                     <button type="submit" style={styles.saveBtn}>Update Password</button>
                 </form>
             </div>
