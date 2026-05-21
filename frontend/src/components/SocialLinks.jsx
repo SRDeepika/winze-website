@@ -81,6 +81,10 @@ const SocialLinks = () => {
         }, 100);
     };
 
+    if (socialLinks.length === 0) {
+        return null;
+    }
+
     return (
         <div style={{
             position: 'fixed',
