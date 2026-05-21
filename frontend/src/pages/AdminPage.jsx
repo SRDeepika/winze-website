@@ -655,44 +655,51 @@ const ProfileSettings = ({ username, onLogout }) => {
     const [showUsernamePassword, setShowUsernamePassword] = useState(false);
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
-
-    const handleUpdateUsername = async (e) => {
-        e.preventDefault();
-        setMessage('');
-        try {
-            const response = await changeUsername(newUsername, usernamePassword);
-            if (response.success) {
-                setMessage('✓ Username changed successfully! Please login again.');
-                setTimeout(() => { 
-                    sessionStorage.clear(); 
-                    onLogout(); 
-                }, 2000);
+const handleUpdateUsername = async (e) => {
+    e.preventDefault();
+    setMessage('');
+    try {
+        const response = await changeUsername(newUsername, usernamePassword);
+        if (response.success) {
+            setMessage('✓ Username changed successfully! Please login again.');
+            // Store new token
+            if (response.token) {
+                sessionStorage.setItem('adminToken', response.token);
             }
-        } catch (err) {
-            setMessage('✗ ' + (err.response?.data?.error || 'Failed to change username'));
+            setTimeout(() => { 
+                sessionStorage.clear(); 
+                onLogout(); 
+            }, 2000);
         }
-    };
+    } catch (err) {
+        setMessage('✗ ' + (err.response?.data?.error || 'Failed to change username'));
+    }
+};
 
-    const handleUpdatePassword = async (e) => {
-        e.preventDefault();
-        setMessage('');
-        if (newPassword !== confirmPassword) {
-            setMessage('✗ Passwords do not match');
-            return;
-        }
-        try {
-            const response = await changePassword(currentPassword, newPassword);
-            if (response.success) {
-                setMessage('✓ Password changed successfully! Please login again.');
-                setTimeout(() => { 
-                    sessionStorage.clear(); 
-                    onLogout(); 
-                }, 2000);
+const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    setMessage('');
+    if (newPassword !== confirmPassword) {
+        setMessage('✗ Passwords do not match');
+        return;
+    }
+    try {
+        const response = await changePassword(currentPassword, newPassword);
+        if (response.success) {
+            setMessage('✓ Password changed successfully! Please login again.');
+            // Store new token
+            if (response.token) {
+                sessionStorage.setItem('adminToken', response.token);
             }
-        } catch (err) {
-            setMessage('✗ ' + (err.response?.data?.error || 'Failed to change password'));
+            setTimeout(() => { 
+                sessionStorage.clear(); 
+                onLogout(); 
+            }, 2000);
         }
-    };
+    } catch (err) {
+        setMessage('✗ ' + (err.response?.data?.error || 'Failed to change password'));
+    }
+};
 
     return (
         <div style={styles.dashboardCard}>

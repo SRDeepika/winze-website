@@ -367,7 +367,10 @@ export const healthCheck = async () => {
 // ========== PROFILE APIs ==========
 export const changeUsername = async (newUsername, password) => {
   try {
-    const response = await api.post('/admin/change-username', { newUsername, password });
+    const response = await api.post('/admin/change-username', { 
+      newUsername: newUsername, 
+      password: password 
+    });
     return response.data;
   } catch (error) {
     console.error('Error changing username:', error);
@@ -377,7 +380,10 @@ export const changeUsername = async (newUsername, password) => {
 
 export const changePassword = async (oldPassword, newPassword) => {
   try {
-    const response = await api.post('/admin/change-password', { oldPassword, newPassword });
+    const response = await api.post('/admin/change-password', { 
+      oldPassword: oldPassword, 
+      newPassword: newPassword 
+    });
     return response.data;
   } catch (error) {
     console.error('Error changing password:', error);
