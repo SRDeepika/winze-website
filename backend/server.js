@@ -10,18 +10,30 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ========== Database Connection ==========
-const db = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'winze_db',
-  port: process.env.DB_PORT || 5432,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+// ========== Database Connection using DATABASE_URL ==========
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || 'postgresql://winze_database_user:HJFpUxpm5zGz7XlExothlDzhg2OGLgXL@dpg-d7tg6irrjlhs73as09bg-a/winze_database',
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
+// Test database connection
+pool.connect((err, client, release) => {
+  if (err) {
+    console.error('Error connecting to database:', err.stack);
+  } else {
+    console.log('✅ PostgreSQL connected successfully');
+    release();
+  }
+});
+
+const db = {
+  query: (text, params) => pool.query(text, params)
+};
+
 // ========== JWT Secret ==========
-const JWT_SECRET = 'your-secret-key-2024';
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-2024';
 
 // ========== Authentication Middleware ==========
 const authenticateToken = (req, res, next) => {
@@ -41,26 +53,76 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// ========== HEALTH CHECK ==========
+// ========== HEALTH ==========
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'Server is running' });
+  res.json({ status: 'ok', message: 'Server is running' });
 });
 
 // ========== ADMIN LOGIN ==========
-app.post('/api/admin/login', (req, res) => {
+app.post('/api/admin/login', async (req, res) => {
   const { username, password } = req.body;
   console.log('Login attempt:', username);
   
-  if (username === 'admin' && password === 'Winzebglr') {
-    const token = jwt.sign({ username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
-    return res.json({ 
-      success: true, 
-      token, 
-      admin: { username: 'admin', role: 'admin' }
-    });
+  try {
+    const result = await db.query(`SELECT * FROM admins WHERE username = $1`, [username]);
+    
+    if (result.rows.length > 0) {
+      const admin = result.rows[0];
+      const passwordHash = admin.password_hash || admin.password;
+      const validPassword = await bcrypt.compare(password, passwordHash);
+      if (validPassword) {
+        const token = jwt.sign({ id: admin.id, username: admin.username, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
+        return res.json({ 
+          success: true, 
+          token, 
+          admin: { id: admin.id, username: admin.username, role: admin.role || 'admin' }
+        });
+      }
+    }
+    
+    // Fallback for testing
+    if (username === 'admin' && password === 'Winzebglr') {
+      const token = jwt.sign({ username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+      return res.json({ success: true, token, admin: { username: 'admin', role: 'admin' } });
+    }
+    
+    res.status(401).json({ success: false, error: 'Invalid credentials' });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
+});
+
+// ========== CHANGE PASSWORD ==========
+app.post('/api/admin/change-password', authenticateToken, async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  const adminId = req.user.id;
   
-  res.status(401).json({ success: false, error: 'Invalid credentials' });
+  try {
+    const result = await db.query(`SELECT * FROM admins WHERE id = $1`, [adminId]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Admin not found' });
+    }
+    
+    const admin = result.rows[0];
+    const passwordHash = admin.password_hash || admin.password;
+    const validPassword = await bcrypt.compare(oldPassword, passwordHash);
+    
+    if (!validPassword) {
+      return res.status(401).json({ success: false, error: 'Current password is incorrect' });
+    }
+    
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await db.query(
+      `UPDATE admins SET password_hash = $1, updated_at = NOW() WHERE id = $2`,
+      [hashedPassword, adminId]
+    );
+    
+    res.json({ success: true, message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 // ========== ADMIN USERS ==========
@@ -185,7 +247,6 @@ app.post('/api/admin/blogs', authenticateToken, async (req, res) => {
     );
     res.json({ success: true, message: 'Blog created' });
   } catch (error) {
-    console.error('Error creating blog:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -205,7 +266,6 @@ app.put('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
     if (status) await db.query(`UPDATE blogs SET status=$1, updated_at=NOW() WHERE id=$2`, [status, id]);
     res.json({ success: true, message: 'Blog updated' });
   } catch (error) {
-    console.error('Error updating blog:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -215,7 +275,6 @@ app.delete('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
     await db.query(`DELETE FROM blogs WHERE id = $1`, [req.params.id]);
     res.json({ success: true, message: 'Blog deleted' });
   } catch (error) {
-    console.error('Error deleting blog:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -251,7 +310,6 @@ app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
     );
     res.json({ success: true, message: 'Job created' });
   } catch (error) {
-    console.error('Error creating job:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -266,7 +324,6 @@ app.put('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
     );
     res.json({ success: true, message: 'Job updated' });
   } catch (error) {
-    console.error('Error updating job:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -276,7 +333,6 @@ app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
     await db.query(`DELETE FROM jobs WHERE id = $1`, [req.params.id]);
     res.json({ success: true, message: 'Job deleted' });
   } catch (error) {
-    console.error('Error deleting job:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -304,12 +360,22 @@ app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res
     await db.query(`UPDATE job_applications SET status = $1 WHERE id = $2`, [status, id]);
     res.json({ success: true, message: 'Status updated' });
   } catch (error) {
-    console.error('Error updating status:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
 // ========== QUOTES ==========
+app.post('/api/quotes', async (req, res) => {
+  try {
+    const { name, email, phone, service, message } = req.body;
+    await db.query(`INSERT INTO quotes (name, email, phone, service, message, created_at) VALUES ($1, $2, $3, $4, $5, NOW())`, 
+      [name, email, phone, service, message]);
+    res.json({ success: true, message: 'Quote submitted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 app.get('/api/admin/quotes', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM quotes ORDER BY created_at DESC`);
@@ -326,7 +392,7 @@ app.post('/api/track', async (req, res) => {
   try {
     await db.query(`INSERT INTO clicks (link_url, link_title, ip_address, clicked_at) VALUES ($1, $2, $3, NOW())`, 
       [link_url, link_title, ip_address || '0.0.0.0']);
-    res.json({ success: true });
+    res.json({ success: true, message: 'Click tracked' });
   } catch (error) {
     console.error('Error tracking click:', error);
     res.status(500).json({ success: false, error: error.message });
@@ -351,6 +417,7 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
     const quoteCount = await db.query(`SELECT COUNT(*) FROM quotes`);
     const blogCount = await db.query(`SELECT COUNT(*) FROM blogs`);
     const socialCount = await db.query(`SELECT COUNT(*) FROM social_links`);
+    const adminCount = await db.query(`SELECT COUNT(*) FROM admins`);
     const clickCount = await db.query(`SELECT COUNT(*) FROM clicks`);
     
     res.json({
@@ -361,6 +428,7 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
         totalQuotes: parseInt(quoteCount.rows[0].count) || 0,
         totalBlogs: parseInt(blogCount.rows[0].count) || 0,
         totalSocialLinks: parseInt(socialCount.rows[0].count) || 0,
+        totalAdmins: parseInt(adminCount.rows[0].count) || 0,
         totalClicks: parseInt(clickCount.rows[0].count) || 0
       }
     });
@@ -370,13 +438,8 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
   }
 });
 
-// ========== CHANGE PASSWORD ==========
-app.post('/api/admin/change-password', authenticateToken, async (req, res) => {
-  res.json({ success: true, message: 'Password changed successfully' });
-});
-
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Server running on port ${PORT}`);
-  console.log(`📍 Login: POST http://localhost:${PORT}/api/admin/login`);
+  console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
 });
