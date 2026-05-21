@@ -6,7 +6,8 @@ import {
   getAdminJobs, createJob, updateJob, deleteJob,
   getApplications, updateApplicationStatus,
   getQuotes, getAdminStats,
-  getUsers, createUser, deleteUser, adminLogin
+  getUsers, createUser, deleteUser, adminLogin,
+  changeUsername, changePassword   // Add these
 } from '../services/api';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://winze-backend-api.onrender.com/api';
@@ -657,45 +658,45 @@ const ProfileSettings = ({ username, onLogout }) => {
     const [showNew, setShowNew] = useState(false);
 
     const handleUpdateUsername = async (e) => {
-        e.preventDefault();
-        setMessage('');
-        try {
-            const response = await changeUsername(newUsername, usernamePassword);
-            if (response.success) {
-                setMessage('✓ Username changed successfully! Please login again.');
-                if (response.token) {
-                    sessionStorage.setItem('adminToken', response.token);
-                }
-                setTimeout(() => { 
-                    sessionStorage.clear(); 
-                    onLogout(); 
-                }, 2000);
+    e.preventDefault();
+    setMessage('');
+    try {
+        const response = await changeUsername(newUsername, usernamePassword);
+        if (response.success) {
+            setMessage('✓ Username changed successfully! Please login again.');
+            if (response.token) {
+                sessionStorage.setItem('adminToken', response.token);
             }
-        } catch (err) {
-            setMessage('✗ ' + (err.response?.data?.error || 'Failed to change username'));
+            setTimeout(() => { 
+                sessionStorage.clear(); 
+                onLogout(); 
+            }, 2000);
         }
-    };
+    } catch (err) {
+        setMessage('✗ ' + (err.response?.data?.error || 'Failed to change username'));
+    }
+};
 
-    const handleUpdatePassword = async (e) => {
-        e.preventDefault();
-        setMessage('');
-        if (newPassword !== confirmPassword) {
-            setMessage('✗ Passwords do not match');
-            return;
+const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    setMessage('');
+    if (newPassword !== confirmPassword) {
+        setMessage('✗ Passwords do not match');
+        return;
+    }
+    try {
+        const response = await changePassword(currentPassword, newPassword);
+        if (response.success) {
+            setMessage('✓ Password changed successfully! Please login again.');
+            setTimeout(() => { 
+                sessionStorage.clear(); 
+                onLogout(); 
+            }, 2000);
         }
-        try {
-            const response = await changePassword(currentPassword, newPassword);
-            if (response.success) {
-                setMessage('✓ Password changed successfully! Please login again.');
-                setTimeout(() => { 
-                    sessionStorage.clear(); 
-                    onLogout(); 
-                }, 2000);
-            }
-        } catch (err) {
-            setMessage('✗ ' + (err.response?.data?.error || 'Failed to change password'));
-        }
-    };
+    } catch (err) {
+        setMessage('✗ ' + (err.response?.data?.error || 'Failed to change password'));
+    }
+};
 
     return (
         <div style={styles.dashboardCard}>
