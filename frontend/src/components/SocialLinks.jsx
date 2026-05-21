@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faLinkedin, 
@@ -7,44 +7,40 @@ import {
     faInstagram
 } from '@fortawesome/free-brands-svg-icons';
 
-// Hardcoded social links
-const socialLinks = [
-    { id: 1, platform_name: "LinkedIn", platform_url: "https://www.linkedin.com/company/winze-technologies", icon: faLinkedin, color: "#0077b5" },
-    { id: 2, platform_name: "WhatsApp", platform_url: "https://wa.me/919880010417", icon: faWhatsapp, color: "#25D366" },
-    { id: 3, platform_name: "Facebook", platform_url: "https://www.facebook.com/winzetechnologies", icon: faFacebook, color: "#1877f2" },
-    { id: 4, platform_name: "Instagram", platform_url: "https://www.instagram.com/winzetechnologies", icon: faInstagram, color: "#e4405f" }
-];
+// Icon mapping
+const iconMap = {
+    'faLinkedin': faLinkedin,
+    'faWhatsapp': faWhatsapp,
+    'faFacebook': faFacebook,
+    'faInstagram': faInstagram,
+    'linkedin': faLinkedin,
+    'whatsapp': faWhatsapp,
+    'facebook': faFacebook,
+    'instagram': faInstagram
+};
 
-// Function to get user's IP address
 const getIpAddress = async () => {
     try {
         const response = await fetch('https://api.ipify.org?format=json');
         const data = await response.json();
         return data.ip;
     } catch (err) {
-        console.log('Could not get IP, using default');
         return '0.0.0.0';
     }
 };
 
-// Function to track click on backend
 const trackSocialClick = async (link) => {
     try {
         const ip = await getIpAddress();
-        const response = await fetch('https://winze-backend-api.onrender.com/api/track', {
+        await fetch('https://winze-backend-api.onrender.com/api/track', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 link_url: link.platform_url,
                 link_title: `Social: ${link.platform_name}`,
                 ip_address: ip
             })
         });
-        const data = await response.json();
-        console.log('Social click tracked:', data);
-        return data;
     } catch (error) {
         console.error('Tracking failed:', error);
     }
@@ -52,14 +48,50 @@ const trackSocialClick = async (link) => {
 
 const SocialLinks = () => {
     const [hoveredId, setHoveredId] = useState(null);
+    const [socialLinks, setSocialLinks] = useState([
+        { id: 1, platform_name: "LinkedIn", platform_url: "https://www.linkedin.com/company/winze-technologies", icon: faLinkedin, color: "#0077b5", display_order: 1 },
+        { id: 2, platform_name: "WhatsApp", platform_url: "https://wa.me/919880010417", icon: faWhatsapp, color: "#25D366", display_order: 2 },
+        { id: 3, platform_name: "Facebook", platform_url: "https://www.facebook.com/winzetechnologies", icon: faFacebook, color: "#1877f2", display_order: 3 },
+        { id: 4, platform_name: "Instagram", platform_url: "https://www.instagram.com/winzetechnologies", icon: faInstagram, color: "#e4405f", display_order: 4 }
+    ]);
+
+    // Fetch social links from API
+    useEffect(() => {
+        const fetchSocialLinks = async () => {
+            try {
+                const response = await fetch('https://winze-backend-api.onrender.com/api/social-links');
+                const data = await response.json();
+                if (data.success && data.links && data.links.length > 0) {
+                    const formattedLinks = data.links.map(link => {
+                        let icon = null;
+                        const platformLower = link.platform_name.toLowerCase();
+                        if (platformLower === 'linkedin') icon = faLinkedin;
+                        else if (platformLower === 'whatsapp') icon = faWhatsapp;
+                        else if (platformLower === 'facebook') icon = faFacebook;
+                        else if (platformLower === 'instagram') icon = faInstagram;
+                        
+                        return {
+                            id: link.id,
+                            platform_name: link.platform_name,
+                            platform_url: link.platform_url,
+                            icon: icon || faLinkedin,
+                            color: link.color_code || '#0077b5',
+                            display_order: link.display_order
+                        };
+                    });
+                    setSocialLinks(formattedLinks.sort((a, b) => a.display_order - b.display_order));
+                }
+            } catch (error) {
+                console.error('Error fetching social links:', error);
+            }
+        };
+        
+        fetchSocialLinks();
+    }, []);
 
     const handleClick = async (e, link) => {
         e.preventDefault();
-        
-        // Track the click on backend
         await trackSocialClick(link);
-        
-        // Small delay to ensure tracking completes, then open link
         setTimeout(() => {
             window.open(link.platform_url, '_blank');
         }, 100);
