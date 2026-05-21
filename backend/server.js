@@ -20,8 +20,18 @@ const db = new Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
+// Test connection
+db.connect((err, client, release) => {
+  if (err) {
+    console.error('Database connection error:', err.stack);
+  } else {
+    console.log('✅ PostgreSQL connected');
+    release();
+  }
+});
+
 // ========== JWT Secret ==========
-const JWT_SECRET = 'your-secret-key-change-this';
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-2024';
 
 // ========== Authentication Middleware ==========
 const authenticateToken = (req, res, next) => {
@@ -41,36 +51,66 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// ========== HEALTH ==========
+// ========== HEALTH CHECK ==========
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Server is running' });
+  res.json({ success: true, message: 'Server is running' });
 });
 
-// ========== ADMIN LOGIN - SIMPLE VERSION ==========
-app.post('/api/admin/login', (req, res) => {
+// ========== ADMIN LOGIN ==========
+app.post('/api/admin/login', async (req, res) => {
   const { username, password } = req.body;
   console.log('Login attempt:', username);
   
-  // Simple hardcoded authentication (like it was working before)
-  if (username === 'admin' && password === 'Winzebglr') {
-    const token = jwt.sign({ username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
-    return res.json({ 
-      success: true, 
-      token, 
-      admin: { username: 'admin', role: 'admin' },
-      message: 'Login successful' 
-    });
+  try {
+    // Check database for admin
+    const result = await db.query(`SELECT * FROM admins WHERE username = $1`, [username]);
+    
+    if (result.rows.length > 0) {
+      const admin = result.rows[0];
+      // Check password using password_hash column
+      const validPassword = await bcrypt.compare(password, admin.password_hash);
+      if (validPassword) {
+        const token = jwt.sign({ id: admin.id, username: admin.username, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
+        return res.json({ 
+          success: true, 
+          token, 
+          admin: { id: admin.id, username: admin.username, role: admin.role }
+        });
+      }
+    }
+    
+    // Fallback hardcoded admin (works even without database)
+    if (username === 'admin' && password === 'Winzebglr') {
+      const token = jwt.sign({ username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+      return res.json({ 
+        success: true, 
+        token, 
+        admin: { username: 'admin', role: 'admin' }
+      });
+    }
+    
+    res.status(401).json({ success: false, error: 'Invalid credentials' });
+  } catch (error) {
+    console.error('Login error:', error);
+    // Fallback for database errors
+    if (username === 'admin' && password === 'Winzebglr') {
+      const token = jwt.sign({ username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+      return res.json({ 
+        success: true, 
+        token, 
+        admin: { username: 'admin', role: 'admin' }
+      });
+    }
+    res.status(500).json({ success: false, error: error.message });
   }
-  
-  res.status(401).json({ success: false, error: 'Invalid credentials' });
 });
 
-// ========== ADMIN USERS MANAGEMENT ==========
+// ========== ADMIN USERS ==========
 app.get('/api/admin/users', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`SELECT id, username, role, created_at FROM admins ORDER BY created_at DESC`);
     res.json({ success: true, users: result.rows });
-  } catch (err) {
+  } catch (error) {
     res.json({ success: true, users: [] });
   }
 });
@@ -83,18 +123,18 @@ app.post('/api/admin/users', authenticateToken, async (req, res) => {
       `INSERT INTO admins (username, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW())`,
       [username, hashedPassword, role || 'admin']
     );
-    res.json({ success: true, message: 'Admin created successfully' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.json({ success: true, message: 'Admin created' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
 app.delete('/api/admin/users/:id', authenticateToken, async (req, res) => {
   try {
     await db.query(`DELETE FROM admins WHERE id = $1`, [req.params.id]);
-    res.json({ success: true, message: 'Admin deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.json({ success: true, message: 'Admin deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -103,7 +143,7 @@ app.get('/api/social-links', async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM social_links WHERE is_active = 1 ORDER BY display_order ASC`);
     res.json({ success: true, links: result.rows });
-  } catch (err) {
+  } catch (error) {
     res.json({ success: true, links: [] });
   }
 });
@@ -112,8 +152,8 @@ app.get('/api/admin/social-links', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM social_links ORDER BY display_order ASC`);
     res.json({ success: true, links: result.rows });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -125,9 +165,9 @@ app.post('/api/admin/social-links', authenticateToken, async (req, res) => {
        VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())`,
       [platform_name, platform_url, icon_class, color_code, display_order || 0, is_active !== undefined ? is_active : 1]
     );
-    res.json({ success: true, message: 'Social link added successfully' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.json({ success: true, message: 'Social link added' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -136,23 +176,21 @@ app.put('/api/admin/social-links/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
     await db.query(
-      `UPDATE social_links 
-       SET platform_name = $1, platform_url = $2, icon_class = $3, color_code = $4, display_order = $5, is_active = $6, updated_at = NOW() 
-       WHERE id = $7`,
+      `UPDATE social_links SET platform_name=$1, platform_url=$2, icon_class=$3, color_code=$4, display_order=$5, is_active=$6, updated_at=NOW() WHERE id=$7`,
       [platform_name, platform_url, icon_class, color_code, display_order, is_active, id]
     );
-    res.json({ success: true, message: 'Social link updated successfully' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.json({ success: true, message: 'Social link updated' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
 app.delete('/api/admin/social-links/:id', authenticateToken, async (req, res) => {
   try {
     await db.query(`DELETE FROM social_links WHERE id = $1`, [req.params.id]);
-    res.json({ success: true, message: 'Social link deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.json({ success: true, message: 'Social link deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -161,8 +199,8 @@ app.get('/api/blogs', async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM blogs WHERE status = 'published' ORDER BY created_at DESC`);
     res.json({ success: true, blogs: result.rows });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -170,8 +208,8 @@ app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM blogs ORDER BY created_at DESC`);
     res.json({ success: true, blogs: result.rows });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -184,9 +222,9 @@ app.post('/api/admin/blogs', authenticateToken, async (req, res) => {
        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW(), 0)`,
       [title, slug, excerpt || '', content, category || 'General', author || 'Admin', status || 'draft']
     );
-    res.json({ success: true, message: 'Blog created successfully' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.json({ success: true, message: 'Blog created' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -194,28 +232,28 @@ app.put('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { title, excerpt, content, category, author, status } = req.body;
-    const slug = title ? title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : undefined;
-    
-    if (title) await db.query(`UPDATE blogs SET title = $1, slug = $2 WHERE id = $3`, [title, slug, id]);
-    if (excerpt !== undefined) await db.query(`UPDATE blogs SET excerpt = $1 WHERE id = $2`, [excerpt, id]);
-    if (content) await db.query(`UPDATE blogs SET content = $1 WHERE id = $2`, [content, id]);
-    if (category) await db.query(`UPDATE blogs SET category = $1 WHERE id = $2`, [category, id]);
-    if (author) await db.query(`UPDATE blogs SET author = $1 WHERE id = $2`, [author, id]);
-    if (status) await db.query(`UPDATE blogs SET status = $1 WHERE id = $2`, [status, id]);
-    
-    await db.query(`UPDATE blogs SET updated_at = NOW() WHERE id = $1`, [id]);
-    res.json({ success: true, message: 'Blog updated successfully' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    if (title) {
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      await db.query(`UPDATE blogs SET title=$1, slug=$2 WHERE id=$3`, [title, slug, id]);
+    }
+    if (excerpt !== undefined) await db.query(`UPDATE blogs SET excerpt=$1 WHERE id=$2`, [excerpt, id]);
+    if (content) await db.query(`UPDATE blogs SET content=$1 WHERE id=$2`, [content, id]);
+    if (category) await db.query(`UPDATE blogs SET category=$1 WHERE id=$2`, [category, id]);
+    if (author) await db.query(`UPDATE blogs SET author=$1 WHERE id=$2`, [author, id]);
+    if (status) await db.query(`UPDATE blogs SET status=$1 WHERE id=$2`, [status, id]);
+    await db.query(`UPDATE blogs SET updated_at=NOW() WHERE id=$1`, [id]);
+    res.json({ success: true, message: 'Blog updated' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
 app.delete('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
   try {
     await db.query(`DELETE FROM blogs WHERE id = $1`, [req.params.id]);
-    res.json({ success: true, message: 'Blog deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.json({ success: true, message: 'Blog deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -224,8 +262,8 @@ app.get('/api/jobs', async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM jobs WHERE status = 'active' ORDER BY created_at DESC`);
     res.json({ success: true, jobs: result.rows });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -233,8 +271,8 @@ app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM jobs ORDER BY created_at DESC`);
     res.json({ success: true, jobs: result.rows });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -246,9 +284,9 @@ app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())`,
       [title, department || '', location || '', type || 'Full-time', description || '', salary || '', status || 'active']
     );
-    res.json({ success: true, message: 'Job created successfully' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.json({ success: true, message: 'Job created' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -260,18 +298,18 @@ app.put('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
       `UPDATE jobs SET title=$1, department=$2, location=$3, type=$4, description=$5, salary=$6, status=$7, updated_at=NOW() WHERE id=$8`,
       [title, department, location, type, description, salary, status, id]
     );
-    res.json({ success: true, message: 'Job updated successfully' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.json({ success: true, message: 'Job updated' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
 app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
   try {
     await db.query(`DELETE FROM jobs WHERE id = $1`, [req.params.id]);
-    res.json({ success: true, message: 'Job deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.json({ success: true, message: 'Job deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -285,8 +323,8 @@ app.get('/api/admin/applications', authenticateToken, async (req, res) => {
       ORDER BY a.applied_at DESC
     `);
     res.json({ success: true, applications: result.rows });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -296,8 +334,8 @@ app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res
     const { status } = req.body;
     await db.query(`UPDATE job_applications SET status = $1 WHERE id = $2`, [status, id]);
     res.json({ success: true, message: 'Status updated' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -306,8 +344,8 @@ app.get('/api/admin/quotes', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM quotes ORDER BY created_at DESC`);
     res.json({ success: true, quotes: result.rows });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -317,9 +355,9 @@ app.post('/api/track', async (req, res) => {
   try {
     await db.query(`INSERT INTO clicks (link_url, link_title, ip_address, clicked_at) VALUES ($1, $2, $3, NOW())`, 
       [link_url, link_title, ip_address || '0.0.0.0']);
-    res.json({ success: true, message: 'Click tracked' });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -327,8 +365,8 @@ app.get('/api/clicks', async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM clicks ORDER BY clicked_at DESC`);
     res.json({ success: true, clicks: result.rows });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -350,17 +388,17 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
         totalQuotes: parseInt(quoteCount.rows[0].count) || 0,
         totalBlogs: parseInt(blogCount.rows[0].count) || 0,
         totalSocialLinks: parseInt(socialCount.rows[0].count) || 0,
-        totalAdmins: 1,
         totalClicks: parseInt(clickCount.rows[0].count) || 0
       }
     });
-  } catch (err) {
+  } catch (error) {
     res.json({ success: true, stats: {} });
   }
 });
 
+// ========== START SERVER ==========
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Server running on port ${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`📍 Login: http://localhost:${PORT}/api/admin/login`);
 });
