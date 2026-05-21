@@ -9,8 +9,7 @@ const api = axios.create({
   },
 });
 
-
-/// ========== ADD THIS TOKEN INTERCEPTOR ==========
+// Token interceptor
 api.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem('adminToken');
@@ -24,37 +23,6 @@ api.interceptors.request.use(
   }
 );
 
-// ========== EXISTING FUNCTIONS ==========
-export const trackClick = async (clickData) => {
-  try {
-    const response = await api.post('/track', clickData);
-    return response.data;
-  } catch (error) {
-    console.error('Error tracking click:', error);
-    throw error;
-  }
-};
-
-export const getAllClicks = async () => {
-  try {
-    const response = await api.get('/clicks');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching clicks:', error);
-    throw error;
-  }
-};
-
-export const healthCheck = async () => {
-  try {
-    const response = await api.get('/health');
-    return response.data;
-  } catch (error) {
-    console.error('Health check failed:', error);
-    throw error;
-  }
-};
-
 // ========== AUTH APIs ==========
 export const adminLogin = async (username, password) => {
   try {
@@ -67,27 +35,7 @@ export const adminLogin = async (username, password) => {
 };
 
 // ========== BLOG APIs ==========
-export const getBlogs = async () => {
-  try {
-    const response = await api.get('/blogs');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching blogs:', error);
-    throw error;
-  }
-};
-
-export const getBlogBySlug = async (slug) => {
-  try {
-    const response = await api.get(`/blogs/${slug}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching blog:', error);
-    throw error;
-  }
-};
-
-export const getAdminBlogs = async (token) => {
+export const getAdminBlogs = async () => {
   try {
     const response = await api.get('/admin/blogs');
     return response.data;
@@ -97,29 +45,10 @@ export const getAdminBlogs = async (token) => {
   }
 };
 
-export const createBlog = async (blogData, token) => {
-  let formData;
-  
-  if (blogData instanceof FormData) {
-    formData = blogData;
-  } else {
-    formData = new FormData();
-    Object.keys(blogData).forEach(key => {
-      if (blogData[key] !== undefined && blogData[key] !== null) {
-        if (typeof blogData[key] === 'object' && !(blogData[key] instanceof File)) {
-          formData.append(key, JSON.stringify(blogData[key]));
-        } else {
-          formData.append(key, blogData[key]);
-        }
-      }
-    });
-  }
-  
+export const createBlog = async (blogData) => {
   try {
-    const response = await api.post('/admin/blogs', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      }
+    const response = await api.post('/admin/blogs', blogData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
   } catch (error) {
@@ -128,7 +57,7 @@ export const createBlog = async (blogData, token) => {
   }
 };
 
-export const updateBlog = async (id, blogData, token) => {
+export const updateBlog = async (id, blogData) => {
   try {
     const response = await api.put(`/admin/blogs/${id}`, blogData);
     return response.data;
@@ -138,7 +67,7 @@ export const updateBlog = async (id, blogData, token) => {
   }
 };
 
-export const deleteBlog = async (id, token) => {
+export const deleteBlog = async (id) => {
   try {
     const response = await api.delete(`/admin/blogs/${id}`);
     return response.data;
@@ -149,46 +78,7 @@ export const deleteBlog = async (id, token) => {
 };
 
 // ========== JOB APIs ==========
-export const getJobs = async () => {
-  try {
-    const response = await api.get('/jobs');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching jobs:', error);
-    throw error;
-  }
-};
-
-export const getJobById = async (id) => {
-  try {
-    const response = await api.get(`/jobs/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching job:', error);
-    throw error;
-  }
-};
-
-export const applyForJob = async (jobId, applicationData) => {
-  const formData = new FormData();
-  Object.keys(applicationData).forEach(key => {
-    if (applicationData[key] !== undefined && applicationData[key] !== null) {
-      formData.append(key, applicationData[key]);
-    }
-  });
-  
-  try {
-    const response = await api.post(`/jobs/${jobId}/apply`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error applying for job:', error);
-    throw error;
-  }
-};
-
-export const getAdminJobs = async (token) => {
+export const getAdminJobs = async () => {
   try {
     const response = await api.get('/admin/jobs');
     return response.data;
@@ -198,7 +88,7 @@ export const getAdminJobs = async (token) => {
   }
 };
 
-export const createJob = async (jobData, token) => {
+export const createJob = async (jobData) => {
   try {
     const response = await api.post('/admin/jobs', jobData);
     return response.data;
@@ -208,7 +98,7 @@ export const createJob = async (jobData, token) => {
   }
 };
 
-export const updateJob = async (id, jobData, token) => {
+export const updateJob = async (id, jobData) => {
   try {
     const response = await api.put(`/admin/jobs/${id}`, jobData);
     return response.data;
@@ -218,7 +108,7 @@ export const updateJob = async (id, jobData, token) => {
   }
 };
 
-export const deleteJob = async (id, token) => {
+export const deleteJob = async (id) => {
   try {
     const response = await api.delete(`/admin/jobs/${id}`);
     return response.data;
@@ -228,7 +118,8 @@ export const deleteJob = async (id, token) => {
   }
 };
 
-export const getApplications = async (token) => {
+// ========== APPLICATION APIs ==========
+export const getApplications = async () => {
   try {
     const response = await api.get('/admin/applications');
     return response.data;
@@ -238,7 +129,7 @@ export const getApplications = async (token) => {
   }
 };
 
-export const updateApplicationStatus = async (id, status, token) => {
+export const updateApplicationStatus = async (id, status) => {
   try {
     const response = await api.put(`/admin/applications/${id}/status`, { status });
     return response.data;
@@ -249,17 +140,7 @@ export const updateApplicationStatus = async (id, status, token) => {
 };
 
 // ========== QUOTE APIs ==========
-export const submitQuote = async (quoteData) => {
-  try {
-    const response = await api.post('/quotes', quoteData);
-    return response.data;
-  } catch (error) {
-    console.error('Error submitting quote:', error);
-    throw error;
-  }
-};
-
-export const getQuotes = async (token) => {
+export const getQuotes = async () => {
   try {
     const response = await api.get('/admin/quotes');
     return response.data;
@@ -270,12 +151,43 @@ export const getQuotes = async (token) => {
 };
 
 // ========== ADMIN STATS ==========
-export const getAdminStats = async (token) => {
+export const getAdminStats = async () => {
   try {
     const response = await api.get('/admin/stats');
     return response.data;
   } catch (error) {
     console.error('Error fetching stats:', error);
+    throw error;
+  }
+};
+
+// ========== USER APIs ==========
+export const getUsers = async () => {
+  try {
+    const response = await api.get('/admin/users');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw error;
+  }
+};
+
+export const createUser = async (userData) => {
+  try {
+    const response = await api.post('/admin/users', userData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw error;
+  }
+};
+
+export const deleteUser = async (id) => {
+  try {
+    const response = await api.delete(`/admin/users/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting user:', error);
     throw error;
   }
 };
@@ -291,7 +203,8 @@ export const getSocialLinks = async () => {
   }
 };
 
-export const getAdminSocialLinks = async (token) => {
+// ADD THIS MISSING FUNCTION
+export const getAdminSocialLinks = async () => {
   try {
     const response = await api.get('/admin/social-links');
     return response.data;
@@ -301,7 +214,8 @@ export const getAdminSocialLinks = async (token) => {
   }
 };
 
-export const createSocialLink = async (linkData, token) => {
+// ADD THESE MISSING FUNCTIONS
+export const createSocialLink = async (linkData) => {
   try {
     const response = await api.post('/admin/social-links', linkData);
     return response.data;
@@ -311,7 +225,7 @@ export const createSocialLink = async (linkData, token) => {
   }
 };
 
-export const updateSocialLink = async (id, linkData, token) => {
+export const updateSocialLink = async (id, linkData) => {
   try {
     const response = await api.put(`/admin/social-links/${id}`, linkData);
     return response.data;
@@ -321,7 +235,7 @@ export const updateSocialLink = async (id, linkData, token) => {
   }
 };
 
-export const deleteSocialLink = async (id, token) => {
+export const deleteSocialLink = async (id) => {
   try {
     const response = await api.delete(`/admin/social-links/${id}`);
     return response.data;
@@ -331,43 +245,23 @@ export const deleteSocialLink = async (id, token) => {
   }
 };
 
-// ========== USER MANAGEMENT ==========
-export const getUsers = async (token) => {
+// ========== OTHER APIs ==========
+export const getAllClicks = async () => {
   try {
-    const response = await api.get('/admin/users');
+    const response = await api.get('/clicks');
     return response.data;
   } catch (error) {
-    console.error('Error fetching users:', error);
+    console.error('Error fetching clicks:', error);
     throw error;
   }
 };
 
-export const createUser = async (userData, token) => {
+export const trackClick = async (clickData) => {
   try {
-    const response = await api.post('/admin/users', userData);
+    const response = await api.post('/track', clickData);
     return response.data;
   } catch (error) {
-    console.error('Error creating user:', error);
-    throw error;
-  }
-};
-
-export const updateUser = async (id, userData, token) => {
-  try {
-    const response = await api.put(`/admin/users/${id}`, userData);
-    return response.data;
-  } catch (error) {
-    console.error('Error updating user:', error);
-    throw error;
-  }
-};
-
-export const deleteUser = async (id, token) => {
-  try {
-    const response = await api.delete(`/admin/users/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error deleting user:', error);
+    console.error('Error tracking click:', error);
     throw error;
   }
 };
