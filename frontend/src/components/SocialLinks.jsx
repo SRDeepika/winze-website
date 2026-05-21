@@ -19,7 +19,7 @@ const SocialLinks = () => {
         try {
             const response = await fetch('https://winze-backend-api.onrender.com/api/social-links');
             const data = await response.json();
-            if (data.success && data.links && data.links.length > 0) {
+            if (data.success && data.links) {
                 const links = data.links.map(link => {
                     let icon;
                     const name = link.platform_name.toLowerCase();
@@ -34,7 +34,7 @@ const SocialLinks = () => {
                         name: link.platform_name,
                         url: link.platform_url,
                         icon: icon,
-                        color: link.color_code || '#0077b5',
+                        color: link.color_code,
                         order: link.display_order
                     };
                 });
@@ -76,9 +76,7 @@ const SocialLinks = () => {
     const handleClick = async (e, link) => {
         e.preventDefault();
         await trackSocialClick(link);
-        setTimeout(() => {
-            window.open(link.url, '_blank');
-        }, 100);
+        window.open(link.url, '_blank');
     };
 
     if (socialLinks.length === 0) {
