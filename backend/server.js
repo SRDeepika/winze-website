@@ -10,15 +10,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ========== Database Connection using DATABASE_URL ==========
+// ========== Database Connection ==========
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://winze_database_user:HJFpUxpm5zGz7XlExothlDzhg2OGLgXL@dpg-d7tg6irrjlhs73as09bg-a/winze_database',
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: { rejectUnauthorized: false }
 });
 
-// Test database connection
 pool.connect((err, client, release) => {
   if (err) {
     console.error('Error connecting to database:', err.stack);
@@ -28,11 +25,8 @@ pool.connect((err, client, release) => {
   }
 });
 
-const db = {
-  query: (text, params) => pool.query(text, params)
-};
+const db = { query: (text, params) => pool.query(text, params) };
 
-// ========== JWT Secret ==========
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-2024';
 
 // ========== Authentication Middleware ==========
@@ -80,15 +74,44 @@ app.post('/api/admin/login', async (req, res) => {
       }
     }
     
-    // Fallback for testing
-    if (username === 'admin' && password === 'Winzebglr') {
-      const token = jwt.sign({ username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
-      return res.json({ success: true, token, admin: { username: 'admin', role: 'admin' } });
-    }
-    
     res.status(401).json({ success: false, error: 'Invalid credentials' });
   } catch (error) {
     console.error('Login error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ========== CHANGE USERNAME ==========
+app.post('/api/admin/change-username', authenticateToken, async (req, res) => {
+  const { newUsername, password } = req.body;
+  const adminId = req.user.id;
+  
+  try {
+    const result = await db.query(`SELECT * FROM admins WHERE id = $1`, [adminId]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Admin not found' });
+    }
+    
+    const admin = result.rows[0];
+    const passwordHash = admin.password_hash || admin.password;
+    const validPassword = await bcrypt.compare(password, passwordHash);
+    
+    if (!validPassword) {
+      return res.status(401).json({ success: false, error: 'Password is incorrect' });
+    }
+    
+    const existing = await db.query(`SELECT id FROM admins WHERE username = $1 AND id != $2`, [newUsername, adminId]);
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ success: false, error: 'Username already exists' });
+    }
+    
+    await db.query(`UPDATE admins SET username = $1, updated_at = NOW() WHERE id = $2`, [newUsername, adminId]);
+    
+    const token = jwt.sign({ id: admin.id, username: newUsername, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
+    
+    res.json({ success: true, message: 'Username changed successfully', token });
+  } catch (error) {
+    console.error('Change username error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -113,77 +136,61 @@ app.post('/api/admin/change-password', authenticateToken, async (req, res) => {
     }
     
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await db.query(
-      `UPDATE admins SET password_hash = $1, updated_at = NOW() WHERE id = $2`,
-      [hashedPassword, adminId]
-    );
+    await db.query(`UPDATE admins SET password_hash = $1, updated_at = NOW() WHERE id = $2`, [hashedPassword, adminId]);
     
-    res.json({ success: true, message: 'Password changed successfully' });
+    const token = jwt.sign({ id: admin.id, username: admin.username, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
+    
+    res.json({ success: true, message: 'Password changed successfully', token });
   } catch (error) {
     console.error('Change password error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// ========== CHANGE USERNAME ==========
-app.post('/api/admin/change-username', authenticateToken, async (req, res) => {
-  const { newUsername, password } = req.body;
-  const adminId = req.user.id;
-  
-  try {
-    const result = await db.query(`SELECT * FROM admins WHERE id = $1`, [adminId]);
-    if (result.rows.length === 0) {
-      return res.status(404).json({ success: false, error: 'Admin not found' });
-    }
-    
-    const admin = result.rows[0];
-    const passwordHash = admin.password_hash || admin.password;
-    const validPassword = await bcrypt.compare(password, passwordHash);
-    
-    if (!validPassword) {
-      return res.status(401).json({ success: false, error: 'Password is incorrect' });
-    }
-    
-    // Check if username already exists
-    const existing = await db.query(`SELECT id FROM admins WHERE username = $1 AND id != $2`, [newUsername, adminId]);
-    if (existing.rows.length > 0) {
-      return res.status(400).json({ success: false, error: 'Username already exists' });
-    }
-    
-    await db.query(
-      `UPDATE admins SET username = $1, updated_at = NOW() WHERE id = $2`,
-      [newUsername, adminId]
-    );
-    
-    // Generate new token with new username
-    const token = jwt.sign({ id: admin.id, username: newUsername, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
-    
-    res.json({ success: true, message: 'Username changed successfully', token });
-  } catch (error) {
-    console.error('Change username error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// ========== ADMIN USERS ==========
+// ========== ADMIN USERS (CRUD) ==========
 app.get('/api/admin/users', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`SELECT id, username, role, created_at FROM admins ORDER BY created_at DESC`);
     res.json({ success: true, users: result.rows });
   } catch (error) {
-    res.json({ success: true, users: [] });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
 app.post('/api/admin/users', authenticateToken, async (req, res) => {
   try {
     const { username, password, role } = req.body;
+    
+    const existing = await db.query(`SELECT id FROM admins WHERE username = $1`, [username]);
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ success: false, error: 'Username already exists' });
+    }
+    
     const hashedPassword = await bcrypt.hash(password, 10);
-    await db.query(
-      `INSERT INTO admins (username, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW())`,
+    const result = await db.query(
+      `INSERT INTO admins (username, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW()) RETURNING id, username, role`,
       [username, hashedPassword, role || 'admin']
     );
-    res.json({ success: true, message: 'Admin created' });
+    
+    res.json({ success: true, user: result.rows[0], message: 'Admin created successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.put('/api/admin/users/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { username, role } = req.body;
+    
+    if (username) {
+      await db.query(`UPDATE admins SET username = $1, updated_at = NOW() WHERE id = $2`, [username, id]);
+    }
+    if (role) {
+      await db.query(`UPDATE admins SET role = $1, updated_at = NOW() WHERE id = $2`, [role, id]);
+    }
+    
+    res.json({ success: true, message: 'Admin updated successfully' });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -191,20 +198,26 @@ app.post('/api/admin/users', authenticateToken, async (req, res) => {
 
 app.delete('/api/admin/users/:id', authenticateToken, async (req, res) => {
   try {
-    await db.query(`DELETE FROM admins WHERE id = $1`, [req.params.id]);
-    res.json({ success: true, message: 'Admin deleted' });
+    const { id } = req.params;
+    
+    const countResult = await db.query(`SELECT COUNT(*) FROM admins`);
+    if (parseInt(countResult.rows[0].count) <= 1) {
+      return res.status(400).json({ success: false, error: 'Cannot delete the last admin' });
+    }
+    
+    await db.query(`DELETE FROM admins WHERE id = $1`, [id]);
+    res.json({ success: true, message: 'Admin deleted successfully' });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// ========== SOCIAL LINKS ==========
+// ========== SOCIAL LINKS (CRUD) ==========
 app.get('/api/social-links', async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM social_links WHERE is_active = 1 ORDER BY display_order ASC`);
     res.json({ success: true, links: result.rows });
   } catch (error) {
-    console.error('Error fetching social links:', error);
     res.json({ success: true, links: [] });
   }
 });
@@ -226,7 +239,7 @@ app.post('/api/admin/social-links', authenticateToken, async (req, res) => {
        VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
       [platform_name, platform_url, icon_class, color_code, display_order || 0, is_active !== undefined ? is_active : 1]
     );
-    res.json({ success: true, message: 'Social link added' });
+    res.json({ success: true, message: 'Social link added', id: result.rows[0]?.id });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -255,13 +268,12 @@ app.delete('/api/admin/social-links/:id', authenticateToken, async (req, res) =>
   }
 });
 
-// ========== BLOGS ==========
+// ========== BLOGS (CRUD) ==========
 app.get('/api/blogs', async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM blogs WHERE status = 'published' ORDER BY created_at DESC`);
     res.json({ success: true, blogs: result.rows });
   } catch (error) {
-    console.error('Error fetching blogs:', error);
     res.json({ success: true, blogs: [] });
   }
 });
@@ -271,7 +283,6 @@ app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
     const result = await db.query(`SELECT * FROM blogs ORDER BY created_at DESC`);
     res.json({ success: true, blogs: result.rows });
   } catch (error) {
-    console.error('Error fetching admin blogs:', error);
     res.json({ success: true, blogs: [] });
   }
 });
@@ -280,12 +291,12 @@ app.post('/api/admin/blogs', authenticateToken, async (req, res) => {
   try {
     const { title, excerpt, content, category, author, status } = req.body;
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    await db.query(
+    const result = await db.query(
       `INSERT INTO blogs (title, slug, excerpt, content, category, author, status, created_at, updated_at, views) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW(), 0)`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW(), 0) RETURNING id`,
       [title, slug, excerpt || '', content, category || 'General', author || 'Admin', status || 'draft']
     );
-    res.json({ success: true, message: 'Blog created' });
+    res.json({ success: true, id: result.rows[0].id, message: 'Blog created' });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -319,13 +330,12 @@ app.delete('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// ========== JOBS ==========
+// ========== JOBS (CRUD) ==========
 app.get('/api/jobs', async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM jobs WHERE status = 'active' ORDER BY created_at DESC`);
     res.json({ success: true, jobs: result.rows });
   } catch (error) {
-    console.error('Error fetching jobs:', error);
     res.json({ success: true, jobs: [] });
   }
 });
@@ -335,7 +345,6 @@ app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
     const result = await db.query(`SELECT * FROM jobs ORDER BY created_at DESC`);
     res.json({ success: true, jobs: result.rows });
   } catch (error) {
-    console.error('Error fetching admin jobs:', error);
     res.json({ success: true, jobs: [] });
   }
 });
@@ -343,12 +352,12 @@ app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
 app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
     const { title, department, location, type, description, salary, status } = req.body;
-    await db.query(
+    const result = await db.query(
       `INSERT INTO jobs (title, department, location, type, description, salary, status, created_at, updated_at) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW()) RETURNING id`,
       [title, department || '', location || '', type || 'Full-time', description || '', salary || '', status || 'active']
     );
-    res.json({ success: true, message: 'Job created' });
+    res.json({ success: true, id: result.rows[0].id, message: 'Job created' });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -377,7 +386,7 @@ app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// ========== APPLICATIONS ==========
+// ========== APPLICATIONS (CRUD) ==========
 app.get('/api/admin/applications', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`
@@ -388,7 +397,6 @@ app.get('/api/admin/applications', authenticateToken, async (req, res) => {
     `);
     res.json({ success: true, applications: result.rows });
   } catch (error) {
-    console.error('Error fetching applications:', error);
     res.json({ success: true, applications: [] });
   }
 });
@@ -404,7 +412,7 @@ app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res
   }
 });
 
-// ========== QUOTES ==========
+// ========== QUOTES (CRUD) ==========
 app.post('/api/quotes', async (req, res) => {
   try {
     const { name, email, phone, service, message } = req.body;
@@ -421,8 +429,16 @@ app.get('/api/admin/quotes', authenticateToken, async (req, res) => {
     const result = await db.query(`SELECT * FROM quotes ORDER BY created_at DESC`);
     res.json({ success: true, quotes: result.rows });
   } catch (error) {
-    console.error('Error fetching quotes:', error);
     res.json({ success: true, quotes: [] });
+  }
+});
+
+app.delete('/api/admin/quotes/:id', authenticateToken, async (req, res) => {
+  try {
+    await db.query(`DELETE FROM quotes WHERE id = $1`, [req.params.id]);
+    res.json({ success: true, message: 'Quote deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -432,9 +448,8 @@ app.post('/api/track', async (req, res) => {
   try {
     await db.query(`INSERT INTO clicks (link_url, link_title, ip_address, clicked_at) VALUES ($1, $2, $3, NOW())`, 
       [link_url, link_title, ip_address || '0.0.0.0']);
-    res.json({ success: true, message: 'Click tracked' });
+    res.json({ success: true });
   } catch (error) {
-    console.error('Error tracking click:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -444,7 +459,6 @@ app.get('/api/clicks', async (req, res) => {
     const result = await db.query(`SELECT * FROM clicks ORDER BY clicked_at DESC`);
     res.json({ success: true, clicks: result.rows });
   } catch (error) {
-    console.error('Error fetching clicks:', error);
     res.json({ success: true, clicks: [] });
   }
 });
@@ -475,7 +489,6 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error fetching stats:', error);
     res.json({ success: true, stats: {} });
   }
 });
@@ -483,5 +496,4 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Server running on port ${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
 });
