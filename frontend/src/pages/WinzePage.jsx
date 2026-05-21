@@ -750,6 +750,8 @@ const WinzePage = () => {
     
     const [landingModalOpen, setLandingModalOpen] = useState(false);
     const [landingData, setLandingData] = useState(null);
+    const [fullPageView, setFullPageView] = useState(false);
+    const [fullPageData, setFullPageData] = useState(null);
     
     const statsRef = useRef(null);
     const homeRef = useRef(null);
@@ -829,34 +831,37 @@ const WinzePage = () => {
     };
 
     const openLandingPage = (item, type = 'solution') => {
-        let detailedContent = null;
-        
-        if (type === 'solution') {
-            detailedContent = solutionDetailedContent[item.title];
-        } else if (type === 'delivery') {
-            detailedContent = deliveryDetailedContent[item.title];
-        } else if (type === 'work') {
-            detailedContent = workDetailedContent[item.title];
-        } else if (type === 'industry') {
-            detailedContent = {
-                overview: item.detailedDesc || `Comprehensive ${item.name} solutions tailored for your business needs.`,
-                benefits: getIndustryExtraPoints(item.name)
-            };
-        }
-        
-        setLandingData({
-            ...item,
-            type: type,
-            detailedContent: detailedContent
-        });
-        setLandingModalOpen(true);
-        // REMOVED: handleTrackClick(item.title || item.name, 'landing_page_view');
-    };
+    let detailedContent = null;
+    
+    if (type === 'solution') {
+        detailedContent = solutionDetailedContent[item.title];
+    } else if (type === 'delivery') {
+        detailedContent = deliveryDetailedContent[item.title];
+    } else if (type === 'work') {
+        detailedContent = workDetailedContent[item.title];
+    } else if (type === 'industry') {
+        detailedContent = {
+            overview: item.detailedDesc || `Comprehensive ${item.name} solutions tailored for your business needs.`,
+            benefits: getIndustryExtraPoints(item.name)
+        };
+    }
+    
+    setFullPageData({
+        ...item,
+        type: type,
+        detailedContent: detailedContent
+    });
+    setFullPageView(true);
+};
 
     const closeLandingPage = () => {
         setLandingModalOpen(false);
         setLandingData(null);
     };
+    const closeFullPageView = () => {
+    setFullPageView(false);
+    setFullPageData(null);
+};
 
     const openQuoteModalForItem = (itemName) => {
         setFormData(prev => ({ ...prev, service: itemName }));
@@ -1336,6 +1341,199 @@ const getCardGradient = (index, type) => {
             </div>
         );
     };
+    // Full Page Landing Component
+const FullPageLanding = ({ item, onClose, onRequestQuote }) => {
+    if (!item) return null;
+    
+    const content = item.detailedContent;
+    const [showInnerQuoteForm, setShowInnerQuoteForm] = useState(false);
+    const [innerFormData, setInnerFormData] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        message: ''
+    });
+
+    const handleInnerInputChange = (e) => {
+        const { name, value } = e.target;
+        setInnerFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleInnerSubmit = async (e) => {
+        e.preventDefault();
+        const quoteData = {
+            name: innerFormData.name,
+            email: innerFormData.email,
+            phone: innerFormData.phone,
+            message: innerFormData.message,
+            service: item.title || item.name,
+            source: 'Landing Page Quote Form',
+            status: 'pending'
+        };
+        
+        try {
+            const response = await submitQuote(quoteData);
+            console.log('Quote saved from landing page:', response);
+            alert(`Thank you! We'll contact you about ${item.title} within 24 hours.`);
+            setShowInnerQuoteForm(false);
+            setInnerFormData({ name: '', email: '', phone: '', message: '' });
+        } catch (error) {
+            console.error('Quote submission failed:', error);
+            alert('There was an error. Please try again later.');
+        }
+    };
+    
+    return (
+        <div style={{
+            minHeight: '100vh',
+            background: 'linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%)',
+            position: 'relative',
+            overflowX: 'hidden'
+        }}>
+            {/* Back Button */}
+            <div style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(10,10,26,0.95)', backdropFilter: 'blur(20px)', padding: '20px 5%', borderBottom: '1px solid rgba(255,215,0,0.2)' }}>
+                <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <button onClick={onClose} style={{
+                        background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                        border: 'none',
+                        padding: '12px 30px',
+                        borderRadius: '40px',
+                        cursor: 'pointer',
+                        fontWeight: '700',
+                        fontSize: '16px',
+                        color: '#1a1a2e',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px'
+                    }}>
+                        ← Back to Solutions
+                    </button>
+                    <button onClick={onClose} style={{
+                        background: 'rgba(255,255,255,0.1)',
+                        border: 'none',
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        cursor: 'pointer',
+                        color: 'white',
+                        fontSize: '20px'
+                    }}>✕</button>
+                </div>
+            </div>
+
+            {/* Main Content - Full Page */}
+            <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '60px 5%' }}>
+                {item.img && (
+                    <img 
+                        src={item.img} 
+                        alt={item.title || item.name}
+                        style={{ 
+                            width: '100%', 
+                            height: '400px', 
+                            objectFit: 'cover', 
+                            borderRadius: '24px',
+                            marginBottom: '40px',
+                            boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
+                        }}
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://placehold.co/1200x400/FFD700/1a1a2e?text=' + encodeURIComponent(item.title || item.name);
+                        }}
+                    />
+                )}
+                
+                <div style={{ textAlign: 'center', marginBottom: '50px' }}>
+                    <FontAwesomeIcon icon={item.icon} style={{ fontSize: '80px', color: '#FFD700', marginBottom: '20px' }} />
+                    <h1 style={{ color: 'white', marginBottom: '20px', fontSize: '48px', fontWeight: '800' }}>{item.title || item.name}</h1>
+                    <p style={{ color: '#ccc', fontSize: '20px', maxWidth: '800px', margin: '0 auto', lineHeight: '1.6' }}>
+                        {content?.overview || "Enterprise-grade solution designed to transform your business operations."}
+                    </p>
+                </div>
+                
+                {content && content.benefits && (
+                    <div style={{ marginBottom: '50px' }}>
+                        <h2 style={{ color: '#FFD700', marginBottom: '30px', fontSize: '32px', borderLeft: '4px solid #FFD700', paddingLeft: '20px' }}>Key Benefits</h2>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '20px' }}>
+                            {content.benefits.map((benefit, idx) => (
+                                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '20px', background: 'rgba(255,255,255,0.05)', borderRadius: '16px' }}>
+                                    <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#FFD700', fontSize: '24px', flexShrink: 0 }} />
+                                    <span style={{ color: '#eee', fontSize: '16px' }}>{benefit}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                
+                {content && content.features && (
+                    <div style={{ marginBottom: '50px' }}>
+                        <h2 style={{ color: '#FFD700', marginBottom: '30px', fontSize: '32px', borderLeft: '4px solid #FFD700', paddingLeft: '20px' }}>Key Features</h2>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '20px' }}>
+                            {content.features.map((feature, idx) => (
+                                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px' }}>
+                                    <FontAwesomeIcon icon={faStar} style={{ color: '#FFD700', fontSize: '20px', flexShrink: 0 }} />
+                                    <span style={{ color: '#ddd', fontSize: '15px' }}>{feature}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                
+                {content && content.useCases && (
+                    <div style={{ marginBottom: '50px' }}>
+                        <h2 style={{ color: '#FFD700', marginBottom: '30px', fontSize: '32px', borderLeft: '4px solid #FFD700', paddingLeft: '20px' }}>Use Cases</h2>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
+                            {content.useCases.map((useCase, idx) => (
+                                <span key={idx} style={{ background: 'linear-gradient(135deg, #FFD700, #FFA500)', color: '#1a1a2e', padding: '10px 25px', borderRadius: '40px', fontSize: '15px', fontWeight: '600' }}>
+                                    {useCase}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                
+                {!showInnerQuoteForm ? (
+                    <div style={{ textAlign: 'center', marginTop: '60px', padding: '50px', background: 'rgba(255,215,0,0.1)', borderRadius: '24px', border: '1px solid rgba(255,215,0,0.3)' }}>
+                        <h2 style={{ color: '#FFD700', marginBottom: '20px', fontSize: '28px' }}>Ready to get started with {item.title}?</h2>
+                        <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '30px', fontSize: '18px' }}>Get a personalized quote tailored to your specific requirements.</p>
+                        <button 
+                            onClick={() => setShowInnerQuoteForm(true)}
+                            style={{
+                                padding: '16px 50px',
+                                background: '#FFD700',
+                                color: '#1a1a2e',
+                                border: 'none',
+                                borderRadius: '50px',
+                                cursor: 'pointer',
+                                fontSize: '18px',
+                                fontWeight: '700'
+                            }}
+                            onMouseEnter={(e) => { e.target.style.transform = 'scale(1.05)'; e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.4)'; }}
+                            onMouseLeave={(e) => { e.target.style.transform = 'scale(1)'; e.target.style.boxShadow = 'none'; }}
+                        >
+                            Request a Quote for {item.title} →
+                        </button>
+                    </div>
+                ) : (
+                    <div style={{ marginTop: '60px', padding: '40px', background: 'rgba(255,255,255,0.05)', borderRadius: '24px' }}>
+                        <h2 style={{ color: '#FFD700', marginBottom: '30px', textAlign: 'center', fontSize: '28px' }}>
+                            Request a Quote for <span>{item.title}</span>
+                        </h2>
+                        <form onSubmit={handleInnerSubmit} style={{ maxWidth: '600px', margin: '0 auto' }}>
+                            <input type="text" name="name" placeholder="Full Name" required value={innerFormData.name} onChange={handleInnerInputChange} style={{ width: '100%', padding: '14px', marginBottom: '15px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.3)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '16px', boxSizing: 'border-box' }} />
+                            <input type="email" name="email" placeholder="Email Address" required value={innerFormData.email} onChange={handleInnerInputChange} style={{ width: '100%', padding: '14px', marginBottom: '15px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.3)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '16px', boxSizing: 'border-box' }} />
+                            <input type="tel" name="phone" placeholder="Phone Number" required value={innerFormData.phone} onChange={handleInnerInputChange} style={{ width: '100%', padding: '14px', marginBottom: '15px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.3)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '16px', boxSizing: 'border-box' }} />
+                            <textarea name="message" placeholder="Tell us about your specific requirements..." rows="5" value={innerFormData.message} onChange={handleInnerInputChange} style={{ width: '100%', padding: '14px', marginBottom: '20px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.3)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '16px', boxSizing: 'border-box', resize: 'vertical' }} />
+                            <div style={{ display: 'flex', gap: '15px' }}>
+                                <button type="button" onClick={() => setShowInnerQuoteForm(false)} style={{ flex: 1, padding: '14px', background: 'rgba(255,255,255,0.2)', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer', fontSize: '16px', fontWeight: '600' }}>Cancel</button>
+                                <button type="submit" style={{ flex: 1, padding: '14px', background: '#FFD700', color: '#1a1a2e', border: 'none', borderRadius: '12px', cursor: 'pointer', fontSize: '16px', fontWeight: '700' }}>Submit Request →</button>
+                            </div>
+                        </form>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
 
     const BackgroundImage = ({ imageSrc }) => (
         <div style={{
@@ -1931,9 +2129,14 @@ const getCardGradient = (index, type) => {
                     <button type="submit" style={{ width: '100%', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#1a1a2e', padding: '14px', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.3s' }} onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}>Submit Request →</button>
                 </form></div></div>)}
 
-                {/* Landing Page Modal */}
-                {landingModalOpen && (<LandingPage item={landingData} onClose={closeLandingPage} onRequestQuote={openQuoteModalForItem} />)}
-
+                {/* Full Page Landing View */}
+{fullPageView && (
+    <FullPageLanding 
+        item={fullPageData} 
+        onClose={closeFullPageView} 
+        onRequestQuote={openQuoteModalForItem} 
+    />
+)}
                 {/* Footer */}
 <footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,215,0,0.1)' }}>
     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
