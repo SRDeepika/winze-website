@@ -219,6 +219,16 @@ export const getQuotes = async () => {
   }
 };
 
+export const deleteQuote = async (id) => {
+  try {
+    const response = await api.delete(`/admin/quotes/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting quote:', error);
+    throw error;
+  }
+};
+
 // ========== ADMIN STATS ==========
 export const getAdminStats = async () => {
   try {
@@ -230,7 +240,7 @@ export const getAdminStats = async () => {
   }
 };
 
-// ========== USER APIs ==========
+// ========== USER MANAGEMENT APIs ==========
 export const getUsers = async () => {
   try {
     const response = await api.get('/admin/users');
@@ -247,6 +257,16 @@ export const createUser = async (userData) => {
     return response.data;
   } catch (error) {
     console.error('Error creating user:', error);
+    throw error;
+  }
+};
+
+export const updateUser = async (id, userData) => {
+  try {
+    const response = await api.put(`/admin/users/${id}`, userData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user:', error);
     throw error;
   }
 };
@@ -340,6 +360,27 @@ export const healthCheck = async () => {
     return response.data;
   } catch (error) {
     console.error('Health check failed:', error);
+    throw error;
+  }
+};
+
+// ========== PROFILE APIs ==========
+export const changeUsername = async (newUsername, password) => {
+  try {
+    const response = await api.post('/admin/change-username', { newUsername, password });
+    return response.data;
+  } catch (error) {
+    console.error('Error changing username:', error);
+    throw error;
+  }
+};
+
+export const changePassword = async (oldPassword, newPassword) => {
+  try {
+    const response = await api.post('/admin/change-password', { oldPassword, newPassword });
+    return response.data;
+  } catch (error) {
+    console.error('Error changing password:', error);
     throw error;
   }
 };

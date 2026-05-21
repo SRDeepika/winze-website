@@ -660,14 +660,8 @@ const ProfileSettings = ({ username, onLogout }) => {
         e.preventDefault();
         setMessage('');
         try {
-            const token = sessionStorage.getItem('adminToken');
-            const response = await axios.post(`${API_BASE_URL}/admin/change-username`, {
-                newUsername: newUsername,
-                password: usernamePassword
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (response.data.success) {
+            const response = await changeUsername(newUsername, usernamePassword);
+            if (response.success) {
                 setMessage('✓ Username changed successfully! Please login again.');
                 setTimeout(() => { 
                     sessionStorage.clear(); 
@@ -687,14 +681,8 @@ const ProfileSettings = ({ username, onLogout }) => {
             return;
         }
         try {
-            const token = sessionStorage.getItem('adminToken');
-            const response = await axios.post(`${API_BASE_URL}/admin/change-password`, {
-                oldPassword: currentPassword,
-                newPassword: newPassword
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (response.data.success) {
+            const response = await changePassword(currentPassword, newPassword);
+            if (response.success) {
                 setMessage('✓ Password changed successfully! Please login again.');
                 setTimeout(() => { 
                     sessionStorage.clear(); 
