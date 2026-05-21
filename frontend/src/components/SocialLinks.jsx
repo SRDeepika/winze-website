@@ -1,6 +1,3 @@
-// FIXED: Only 4 social links - Updated on 2026-05-21
-import React, { useState, useEffect } from 'react';
-// ... rest of your existing code
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -22,8 +19,12 @@ const SocialLinks = () => {
         try {
             const response = await fetch('https://winze-backend-api.onrender.com/api/social-links');
             const data = await response.json();
-            if (data.success && data.links) {
-                const links = data.links.map(link => {
+            if (data.success && data.links && data.links.length > 0) {
+                // Filter to only keep the 4 specific platforms
+                const allowedPlatforms = ['LinkedIn', 'WhatsApp', 'Facebook', 'Instagram'];
+                const filteredLinks = data.links.filter(link => allowedPlatforms.includes(link.platform_name));
+                
+                const links = filteredLinks.map(link => {
                     let icon;
                     const name = link.platform_name.toLowerCase();
                     if (name === 'linkedin') icon = faLinkedin;
@@ -37,7 +38,7 @@ const SocialLinks = () => {
                         name: link.platform_name,
                         url: link.platform_url,
                         icon: icon,
-                        color: link.color_code,
+                        color: link.color_code || '#0077b5',
                         order: link.display_order
                     };
                 });
