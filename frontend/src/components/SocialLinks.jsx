@@ -7,48 +7,17 @@ import {
     faInstagram
 } from '@fortawesome/free-brands-svg-icons';
 
+// Define the only 4 links we want to show
+const ALLOWED_LINKS = [
+    { name: 'LinkedIn', url: 'https://www.linkedin.com/company/winze-technologies', icon: faLinkedin, color: '#0077b5', order: 1 },
+    { name: 'WhatsApp', url: 'https://wa.me/919880010417', icon: faWhatsapp, color: '#25D366', order: 2 },
+    { name: 'Facebook', url: 'https://www.facebook.com/winzetechnologies', icon: faFacebook, color: '#1877f2', order: 3 },
+    { name: 'Instagram', url: 'https://www.instagram.com/winzetechnologies', icon: faInstagram, color: '#e4405f', order: 4 }
+];
+
 const SocialLinks = () => {
     const [hoveredId, setHoveredId] = useState(null);
-    const [socialLinks, setSocialLinks] = useState([]);
-
-    useEffect(() => {
-        fetchSocialLinks();
-    }, []);
-
-    const fetchSocialLinks = async () => {
-        try {
-            const response = await fetch('https://winze-backend-api.onrender.com/api/social-links');
-            const data = await response.json();
-            if (data.success && data.links && data.links.length > 0) {
-                // Filter to only keep the 4 specific platforms
-                const allowedPlatforms = ['LinkedIn', 'WhatsApp', 'Facebook', 'Instagram'];
-                const filteredLinks = data.links.filter(link => allowedPlatforms.includes(link.platform_name));
-                
-                const links = filteredLinks.map(link => {
-                    let icon;
-                    const name = link.platform_name.toLowerCase();
-                    if (name === 'linkedin') icon = faLinkedin;
-                    else if (name === 'whatsapp') icon = faWhatsapp;
-                    else if (name === 'facebook') icon = faFacebook;
-                    else if (name === 'instagram') icon = faInstagram;
-                    else icon = faLinkedin;
-                    
-                    return {
-                        id: link.id,
-                        name: link.platform_name,
-                        url: link.platform_url,
-                        icon: icon,
-                        color: link.color_code || '#0077b5',
-                        order: link.display_order
-                    };
-                });
-                links.sort((a, b) => a.order - b.order);
-                setSocialLinks(links);
-            }
-        } catch (error) {
-            console.error('Error fetching social links:', error);
-        }
-    };
+    const [socialLinks, setSocialLinks] = useState(ALLOWED_LINKS);
 
     const getIpAddress = async () => {
         try {
@@ -83,10 +52,6 @@ const SocialLinks = () => {
         window.open(link.url, '_blank');
     };
 
-    if (socialLinks.length === 0) {
-        return null;
-    }
-
     return (
         <div style={{
             position: 'fixed',
@@ -98,19 +63,19 @@ const SocialLinks = () => {
             flexDirection: 'column',
             gap: '12px'
         }}>
-            {socialLinks.map((link) => {
-                const isHovered = hoveredId === link.id;
+            {socialLinks.map((link, index) => {
+                const isHovered = hoveredId === index;
 
                 return (
                     <div
-                        key={link.id}
+                        key={index}
                         style={{
                             position: 'relative',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'flex-end'
                         }}
-                        onMouseEnter={() => setHoveredId(link.id)}
+                        onMouseEnter={() => setHoveredId(index)}
                         onMouseLeave={() => setHoveredId(null)}
                     >
                         <span
