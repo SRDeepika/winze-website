@@ -87,7 +87,7 @@ const clientLogos = [
     { name: "Skidata", url: "/images/skidata.png" }
 ];
 
-// Extended content for solution cards (5+ extra points)
+// Extended content for solution cards
 const getSolutionExtraPoints = (title) => {
     const pointsMap = {
         "Video Conferencing": [
@@ -228,7 +228,7 @@ const getSolutionExtraPoints = (title) => {
     ];
 };
 
-// Detailed content for solution cards (for landing page)
+// Detailed content for solution cards
 const solutionDetailedContent = {
     "Video Conferencing": {
         overview: "Our Video Conferencing solution provides enterprise-grade virtual meeting capabilities with crystal-clear HD video, advanced security features, and seamless integration with your existing workflow.",
@@ -525,7 +525,7 @@ const solutionDetailedContent = {
     }
 };
 
-// Extended content for delivery items (5+ extra points)
+// Extended content for delivery items
 const getDeliveryExtraPoints = (title) => {
     const pointsMap = {
         "End-to-End Solutions": [
@@ -587,7 +587,6 @@ const getDeliveryExtraPoints = (title) => {
     ];
 };
 
-// Detailed content for delivery items
 const deliveryDetailedContent = {
     "End-to-End Solutions": {
         overview: "We provide complete lifecycle management from initial planning and strategy to deployment, training, and ongoing support.",
@@ -615,7 +614,7 @@ const deliveryDetailedContent = {
     }
 };
 
-// Extended content for work with winze (5+ extra points)
+// Extended content for work with winze
 const getWorkExtraPoints = (title) => {
     const pointsMap = {
         "Strategic Partnership": [
@@ -680,7 +679,7 @@ const workDetailedContent = {
     }
 };
 
-// Extended content for industries (5+ extra points)
+// Extended content for industries
 const getIndustryExtraPoints = (name) => {
     const pointsMap = {
         "Healthcare": [
@@ -730,7 +729,6 @@ const WinzePage = () => {
     const [scrolled, setScrolled] = useState(false);
     const [showQuoteModal, setShowQuoteModal] = useState(false);
     const [showLogoModal, setShowLogoModal] = useState(false);
-    const [hoveredCard, setHoveredCard] = useState(null);
     const [counters, setCounters] = useState({
         years: 0,
         expertise: 0,
@@ -827,7 +825,8 @@ const WinzePage = () => {
     };
 
     const openLandingPage = (item, type = 'solution') => {
-        console.log('Opening landing page for:', item.title);
+        console.log('Opening landing page for:', item.title || item.name, 'Type:', type);
+        
         let detailedContent = null;
         
         if (type === 'solution') {
@@ -1073,7 +1072,7 @@ const WinzePage = () => {
                             fontSize: '16px',
                             color: '#1a1a2e'
                         }}>
-                            ← Back to Solutions
+                            ← Back to {item.type === 'solution' ? 'Solutions' : item.type === 'delivery' ? 'What We Deliver' : item.type === 'work' ? 'Work With Winze' : 'Industries'}
                         </button>
                         <button onClick={onClose} style={{
                             background: 'rgba(255,255,255,0.1)',
@@ -1160,7 +1159,7 @@ const WinzePage = () => {
                     
                     {!showInnerQuoteForm ? (
                         <div style={{ textAlign: 'center', marginTop: '60px', padding: '50px', background: 'rgba(255,215,0,0.1)', borderRadius: '24px', border: '1px solid rgba(255,215,0,0.3)' }}>
-                            <h2 style={{ color: '#FFD700', marginBottom: '20px', fontSize: '28px' }}>Ready to get started with {item.title}?</h2>
+                            <h2 style={{ color: '#FFD700', marginBottom: '20px', fontSize: '28px' }}>Ready to get started with {item.title || item.name}?</h2>
                             <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '30px', fontSize: '18px' }}>Get a personalized quote tailored to your specific requirements.</p>
                             <button 
                                 onClick={() => setShowInnerQuoteForm(true)}
@@ -1175,7 +1174,7 @@ const WinzePage = () => {
                                     fontWeight: '700'
                                 }}
                             >
-                                Request a Quote for {item.title} →
+                                Request a Quote for {item.title || item.name} →
                             </button>
                         </div>
                     ) : (
@@ -1273,91 +1272,6 @@ const WinzePage = () => {
     return (
         <HelmetProvider>
             <>
-            <style>{`
-                @keyframes pulse {
-                    0% { transform: scale(1); opacity: 1; }
-                    50% { transform: scale(1.02); opacity: 0.95; }
-                    100% { transform: scale(1); opacity: 1; }
-                }
-                @keyframes marqueeScroll {
-                    0% { transform: translateX(0); }
-                    100% { transform: translateX(-50%); }
-                }
-                @keyframes premiumGlow {
-                    0% { box-shadow: 0 0 10px rgba(255,215,0,0.3), 0 0 20px rgba(255,215,0,0.2); filter: brightness(1); transform: translateY(0px); }
-                    30% { box-shadow: 0 0 40px rgba(255,215,0,0.5), 0 0 60px rgba(255,215,0,0.4); filter: brightness(1.05); transform: translateY(-5px); }
-                    60% { box-shadow: 0 0 60px rgba(255,215,0,0.7), 0 0 80px rgba(255,215,0,0.6); filter: brightness(1.08); transform: translateY(-8px); }
-                    100% { box-shadow: 0 0 10px rgba(255,215,0,0.3), 0 0 20px rgba(255,215,0,0.2); filter: brightness(1); transform: translateY(0px); }
-                }
-                @keyframes floatDelivery { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
-                .delivery-card-animate { animation: floatDelivery 3.5s ease-in-out infinite; }
-                @keyframes floatSolutions { 0%, 100% { transform: translateX(0px); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
-                .solution-card-animate { animation: floatSolutions 4s ease-in-out infinite; }
-                @keyframes floatIndustries { 0%, 100% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(1deg) scale(1.02); } }
-                .industry-card-animate { animation: floatIndustries 3.8s ease-in-out infinite; }
-                @keyframes floatWork { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
-                .work-card-animate { animation: floatWork 3.2s ease-in-out infinite; }
-                @keyframes glowPulse { 0% { border-color: rgba(255,215,0,0.15); } 50% { border-color: rgba(255,215,0,0.5); } 100% { border-color: rgba(255,215,0,0.15); } }
-                .marquee-container { width: 100%; overflow: hidden; position: relative; }
-                .marquee-content { display: flex; gap: 20px; padding: 20px 10px; width: fit-content; animation: marqueeScroll 25s linear infinite; }
-                .marquee-container:hover .marquee-content { animation-play-state: paused; }
-                .modern-card {
-                    background: linear-gradient(145deg, #1a1a2e, #16213e);
-                    border-radius: 24px;
-                    transition: all 0.3s ease;
-                    cursor: pointer;
-                    overflow: hidden;
-                    backdrop-filter: blur(2px);
-                    height: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    border: 1px solid rgba(255,215,0,0.2);
-                    animation: glowPulse 3s ease-in-out infinite;
-                }
-                .modern-card:hover {
-                    transform: translateY(-15px) scale(1.02);
-                    border-color: rgba(255,215,0,0.8);
-                    box-shadow: 0 30px 50px rgba(0,0,0,0.4);
-                }
-                .card-inner { padding: 28px 24px 32px; flex: 1; display: flex; flex-direction: column; }
-                .card-image { width: 100%; height: 200px; object-fit: cover; transition: transform 0.5s ease; }
-                .modern-card:hover .card-image { transform: scale(1.05); }
-                .btn-learn {
-                    background: rgba(255,215,0,0.2);
-                    backdrop-filter: blur(4px);
-                    border: 1px solid rgba(255,215,0,0.5);
-                    padding: 10px 24px;
-                    border-radius: 40px;
-                    font-weight: 600;
-                    font-size: 0.85rem;
-                    transition: 0.3s;
-                    cursor: pointer;
-                    width: fit-content;
-                    margin-top: 20px;
-                    color: #FFD700;
-                }
-                .btn-learn:hover {
-                    background: #FFD700;
-                    color: #1a1a2e;
-                    border-color: #FFD700;
-                    transform: scale(1.05);
-                }
-                .stat-card {
-                    padding: 30px 20px;
-                    border-radius: 15px;
-                    text-align: center;
-                    transition: all 0.3s ease;
-                    animation: fadeInUp 0.6s ease-out;
-                }
-                .stat-card:hover { transform: translateY(-8px); }
-                @keyframes fadeInUp {
-                    from { opacity: 0; transform: translateY(30px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .logo-clean { display: flex; align-items: center; gap: 12px; cursor: pointer; background: transparent; }
-                .logo-image { width: 48px; height: 48px; border-radius: 12px; object-fit: contain; background: white; padding: 6px; }
-            `}</style>
-            
             <SEO 
                 title="Winze Technologies | Enterprise Communication, Security & AI"
                 description="Winze Technologies delivers unified communications, AI security, SaaS products, and IT infrastructure with 16+ years of enterprise expertise."
@@ -1402,18 +1316,7 @@ const WinzePage = () => {
                                     } else {
                                         scrollToSection(item.ref, item.name);
                                     }
-                                }} style={{ background: 'transparent', color: '#ddd', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none' }}
-                                    onMouseEnter={(e) => {
-                                        e.target.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
-                                        e.target.style.color = '#1a1a2e';
-                                        e.target.style.transform = 'translateY(-2px)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.target.style.background = 'transparent';
-                                        e.target.style.color = '#ddd';
-                                        e.target.style.transform = 'translateY(0)';
-                                    }}
-                                >
+                                }} style={{ background: 'transparent', color: '#ddd', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none' }}>
                                     {item.name}
                                 </button>
                             ))}
@@ -1590,37 +1493,36 @@ const WinzePage = () => {
                 </section>
 
                 {/* Work With Winze Section */}
-                <section ref={workwithRef} id="workwith" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
-                    <DarkBackgroundImage imageSrc={bgImages.workwith} />
-                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Why Work With Winze?</h2>
-                        <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.1rem' }}>Partner with us for a transformative technology experience</p>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '35px' }}>
-                            {workWithWinze.map((item, idx) => {
-                                const extraPoints = getWorkExtraPoints(item.title);
-                                return (
-                                    <div key={idx} className="modern-card work-card-animate" style={{ background: getCardGradient(idx, 'work') }}>
-                                        <div className="card-inner">
-                                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '55px', marginBottom: '20px', color: '#FFD700' }} />
-                                            <h3 style={{ marginBottom: '15px', color: 'white', fontSize: '1.4rem', fontWeight: '700' }}>{item.title}</h3>
-                                            <p style={{ color: 'rgba(255,255,255,0.85)', lineHeight: '1.5', marginBottom: '15px' }}>{item.desc}</p>
-                                            <div className="extra-points">
-                                                {extraPoints.slice(0,5).map((point, pid) => (
-                                                    <div key={pid} className="point-item">
-                                                        <FontAwesomeIcon icon={faGem} style={{ color: '#FFD700', fontSize: '12px' }} />
-                                                        <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '12px' }}>{point}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <button className="btn-learn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleTrackClick(item.title, 'workwith'); openLandingPage(item, 'work'); }}>Learn More →</button>
-                                        </div>
+<section ref={workwithRef} id="workwith" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+    <DarkBackgroundImage imageSrc={bgImages.workwith} />
+    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
+        <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Why Work With Winze?</h2>
+        <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.1rem' }}>Partner with us for a transformative technology experience</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '35px' }}>
+            {workWithWinze.map((item, idx) => {
+                const extraPoints = getWorkExtraPoints(item.title);
+                return (
+                    <div key={idx} className="modern-card work-card-animate" style={{ background: getCardGradient(idx, 'work') }}>
+                        <div className="card-inner">
+                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '55px', marginBottom: '20px', color: '#FFD700' }} />
+                            <h3 style={{ marginBottom: '15px', color: 'white', fontSize: '1.4rem', fontWeight: '700' }}>{item.title}</h3>
+                            <p style={{ color: 'rgba(255,255,255,0.85)', lineHeight: '1.5', marginBottom: '15px' }}>{item.desc}</p>
+                            <div className="extra-points">
+                                {extraPoints.slice(0,5).map((point, pid) => (
+                                    <div key={pid} className="point-item">
+                                        <FontAwesomeIcon icon={faGem} style={{ color: '#FFD700', fontSize: '12px' }} />
+                                        <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '12px' }}>{point}</span>
                                     </div>
-                                );
-                            })}
+                                ))}
+                            </div>
+                            <button className="btn-learn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleTrackClick(item.title, 'workwith'); openLandingPage(item, 'work'); }}>Learn More →</button>
                         </div>
                     </div>
-                </section>
-
+                );
+            })}
+        </div>
+    </div>
+</section>
                 {/* Stats Section */}
                 <section ref={statsRef} style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.stats} />
