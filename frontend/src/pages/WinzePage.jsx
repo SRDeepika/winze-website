@@ -1645,7 +1645,7 @@ const getCardGradient = (index, type) => {
             <div style={{ fontFamily: "'Poppins', 'Montserrat', sans-serif", overflowX: 'hidden', position: 'relative', background: '#0a0a1a' }}>
                 
                 <SocialLinks />
-                {/* Navigation Bar */}
+              {/* Navigation Bar */}
 <nav style={{
     position: 'sticky',
     top: 0,
@@ -1660,17 +1660,17 @@ const getCardGradient = (index, type) => {
     borderBottom: '1px solid rgba(255,215,0,0.1)'
 }}>
     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
-        {/* Logo - LEFT SIDE */}
-        <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
-            <img src="/winze-logo.jpg" alt="Winze Technologies Logo" className="logo-image" onError={(e) => {
+        {/* Logo Section */}
+        <div className="logo-clean" onClick={() => setShowLogoModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+            <img src="/winze-logo.jpg" alt="Winze Technologies Logo" style={{ width: '48px', height: '48px', borderRadius: '12px', objectFit: 'contain', background: 'white', padding: '6px' }} onError={(e) => {
                 e.target.style.display = 'none';
                 e.target.parentElement.innerHTML = '<div style="width:48px;height:48px;background:#FFD700;border-radius:12px;display:flex;align-items:center;justify-content:center;"><span style="color:#1a1a2e;font-size:24px;font-weight:bold">W</span></div><span style="font-weight:800;font-size:1.4rem;background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Winze Technologies</span>';
             }} />
             <span style={{ fontWeight: '800', fontSize: '1.4rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: "'Playfair Display', serif", letterSpacing: '-0.5px' }}>Winze Technologies</span>
         </div>
         
-        {/* Navigation Items - RIGHT SIDE */}
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+        {/* Navigation Links Section */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
             {navItems.map((item) => (
                 <button key={item.name} onClick={(e) => { 
                     e.preventDefault(); 
