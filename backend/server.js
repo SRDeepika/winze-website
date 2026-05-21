@@ -73,24 +73,78 @@ app.post('/api/admin/login', async (req, res) => {
 // ========== CHANGE USERNAME ==========
 app.post('/api/admin/change-username', authenticateToken, async (req, res) => {
   const { newUsername, password } = req.body;
+  const adminId = req.user.id;
   
-  // Simple check - always allow for demo
-  if (password === 'Winzebglr') {
-    res.json({ success: true, message: 'Username changed successfully', token: req.headers.authorization?.split(' ')[1] });
-  } else {
-    res.status(401).json({ success: false, error: 'Password is incorrect' });
+  console.log('Change username request:', { adminId, newUsername });
+  
+  try {
+    // Get admin from database
+    const result = await db.query(`SELECT * FROM admins WHERE id = $1`, [adminId]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Admin not found' });
+    }
+    
+    const admin = result.rows[0];
+    const passwordHash = admin.password_hash || admin.password;
+    
+    // Verify password
+    const validPassword = await bcrypt.compare(password, passwordHash);
+    if (!validPassword) {
+      return res.status(401).json({ success: false, error: 'Current password is incorrect' });
+    }
+    
+    // Check if new username already exists
+    const existing = await db.query(`SELECT id FROM admins WHERE username = $1 AND id != $2`, [newUsername, adminId]);
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ success: false, error: 'Username already exists' });
+    }
+    
+    // Update username
+    await db.query(`UPDATE admins SET username = $1, updated_at = NOW() WHERE id = $2`, [newUsername, adminId]);
+    
+    // Generate new token with new username
+    const token = jwt.sign({ id: admin.id, username: newUsername, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
+    
+    res.json({ success: true, message: 'Username changed successfully', token });
+  } catch (error) {
+    console.error('Change username error:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
 // ========== CHANGE PASSWORD ==========
 app.post('/api/admin/change-password', authenticateToken, async (req, res) => {
   const { oldPassword, newPassword } = req.body;
+  const adminId = req.user.id;
   
-  // Simple check - always allow for demo
-  if (oldPassword === 'Winzebglr') {
+  console.log('Change password request for admin ID:', adminId);
+  
+  try {
+    // Get admin from database
+    const result = await db.query(`SELECT * FROM admins WHERE id = $1`, [adminId]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Admin not found' });
+    }
+    
+    const admin = result.rows[0];
+    const passwordHash = admin.password_hash || admin.password;
+    
+    // Verify old password
+    const validPassword = await bcrypt.compare(oldPassword, passwordHash);
+    if (!validPassword) {
+      return res.status(401).json({ success: false, error: 'Current password is incorrect' });
+    }
+    
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    // Update password
+    await db.query(`UPDATE admins SET password_hash = $1, updated_at = NOW() WHERE id = $2`, [hashedPassword, adminId]);
+    
     res.json({ success: true, message: 'Password changed successfully' });
-  } else {
-    res.status(401).json({ success: false, error: 'Current password is incorrect' });
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
