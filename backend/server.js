@@ -58,17 +58,21 @@ app.get('/api/health', (req, res) => {
 
 // ========== ADMIN LOGIN ==========
 app.post('/api/admin/login', async (req, res) => {
-  console.log('Login attempt:', req.body);
   const { username, password } = req.body;
+  console.log('Login attempt for username:', username);
   
   try {
-    // Check in admins table
+    // Query using password_hash column
     const result = await db.query(`SELECT * FROM admins WHERE username = $1`, [username]);
+    console.log('Query result rows:', result.rows.length);
     
     if (result.rows.length > 0) {
       const admin = result.rows[0];
-      // Use password_hash instead of password
+      console.log('Admin found, verifying password...');
+      // Use password_hash column
       const validPassword = await bcrypt.compare(password, admin.password_hash);
+      console.log('Password valid:', validPassword);
+      
       if (validPassword) {
         const token = jwt.sign({ id: admin.id, username: admin.username, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
         return res.json({ 
@@ -80,8 +84,9 @@ app.post('/api/admin/login', async (req, res) => {
       }
     }
     
-    // Default admin fallback (hardcoded for testing)
+    // Default admin fallback for testing
     if (username === 'admin' && password === 'Winzebglr') {
+      console.log('Using fallback admin login');
       const token = jwt.sign({ username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
       return res.json({ 
         success: true, 
@@ -91,6 +96,7 @@ app.post('/api/admin/login', async (req, res) => {
       });
     }
     
+    console.log('Invalid credentials');
     res.status(401).json({ success: false, error: 'Invalid credentials' });
   } catch (err) {
     console.error('Login error details:', err);
@@ -119,10 +125,10 @@ app.post('/api/admin/users', authenticateToken, async (req, res) => {
     }
     
     const hashedPassword = await bcrypt.hash(password, 10);
-await db.query(
-  `INSERT INTO admins (username, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW())`,
-  [username, hashedPassword, role || 'admin']
-);
+    const result = await db.query(
+      `INSERT INTO admins (username, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW()) RETURNING id, username, role`,
+      [username, hashedPassword, role || 'admin']
+    );
     
     res.json({ success: true, user: result.rows[0], message: 'Admin created successfully' });
   } catch (err) {
@@ -140,9 +146,9 @@ app.put('/api/admin/users/:id', authenticateToken, async (req, res) => {
       await db.query(`UPDATE admins SET username = $1, updated_at = NOW() WHERE id = $2`, [username, id]);
     }
     if (password) {
-  const hashedPassword = await bcrypt.hash(password, 10);
-  await db.query(`UPDATE admins SET password_hash = $1, updated_at = NOW() WHERE id = $2`, [hashedPassword, id]);
-}
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await db.query(`UPDATE admins SET password_hash = $1, updated_at = NOW() WHERE id = $2`, [hashedPassword, id]);
+    }
     if (role) {
       await db.query(`UPDATE admins SET role = $1, updated_at = NOW() WHERE id = $2`, [role, id]);
     }
