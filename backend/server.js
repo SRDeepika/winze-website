@@ -51,13 +51,13 @@ const authenticateToken = (req, res, next) => {
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
 });
-
 // ========== ADMIN LOGIN ==========
 app.post('/api/admin/login', async (req, res) => {
   const { username, password } = req.body;
   console.log('Login attempt:', username);
   
   try {
+    // Check database first
     const result = await db.query(`SELECT * FROM admins WHERE username = $1`, [username]);
     
     if (result.rows.length > 0) {
@@ -72,6 +72,16 @@ app.post('/api/admin/login', async (req, res) => {
           admin: { id: admin.id, username: admin.username, role: admin.role || 'admin' }
         });
       }
+    }
+    
+    // FALLBACK: Hardcoded admin for testing (remove this after database is set up)
+    if (username === 'admin' && password === 'Winzebglr') {
+      const token = jwt.sign({ username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+      return res.json({ 
+        success: true, 
+        token, 
+        admin: { username: 'admin', role: 'admin' }
+      });
     }
     
     res.status(401).json({ success: false, error: 'Invalid credentials' });
