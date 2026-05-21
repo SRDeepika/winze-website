@@ -9,7 +9,8 @@ const api = axios.create({
   },
 });
 
-// Add token to requests automatically
+
+/// ========== ADD THIS TOKEN INTERCEPTOR ==========
 api.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem('adminToken');
