@@ -125,6 +125,46 @@ app.post('/api/admin/change-password', authenticateToken, async (req, res) => {
   }
 });
 
+// ========== CHANGE USERNAME ==========
+app.post('/api/admin/change-username', authenticateToken, async (req, res) => {
+  const { newUsername, password } = req.body;
+  const adminId = req.user.id;
+  
+  try {
+    const result = await db.query(`SELECT * FROM admins WHERE id = $1`, [adminId]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Admin not found' });
+    }
+    
+    const admin = result.rows[0];
+    const passwordHash = admin.password_hash || admin.password;
+    const validPassword = await bcrypt.compare(password, passwordHash);
+    
+    if (!validPassword) {
+      return res.status(401).json({ success: false, error: 'Password is incorrect' });
+    }
+    
+    // Check if username already exists
+    const existing = await db.query(`SELECT id FROM admins WHERE username = $1 AND id != $2`, [newUsername, adminId]);
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ success: false, error: 'Username already exists' });
+    }
+    
+    await db.query(
+      `UPDATE admins SET username = $1, updated_at = NOW() WHERE id = $2`,
+      [newUsername, adminId]
+    );
+    
+    // Generate new token with new username
+    const token = jwt.sign({ id: admin.id, username: newUsername, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
+    
+    res.json({ success: true, message: 'Username changed successfully', token });
+  } catch (error) {
+    console.error('Change username error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // ========== ADMIN USERS ==========
 app.get('/api/admin/users', authenticateToken, async (req, res) => {
   try {
@@ -182,8 +222,8 @@ app.post('/api/admin/social-links', authenticateToken, async (req, res) => {
   try {
     const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
     await db.query(
-      `INSERT INTO social_links (platform_name, platform_url, icon_class, color_code, display_order, is_active, created_at, updated_at) 
-       VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())`,
+      `INSERT INTO social_links (platform_name, platform_url, icon_class, color_code, display_order, is_active, created_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
       [platform_name, platform_url, icon_class, color_code, display_order || 0, is_active !== undefined ? is_active : 1]
     );
     res.json({ success: true, message: 'Social link added' });
@@ -197,7 +237,7 @@ app.put('/api/admin/social-links/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     const { platform_name, platform_url, icon_class, color_code, display_order, is_active } = req.body;
     await db.query(
-      `UPDATE social_links SET platform_name=$1, platform_url=$2, icon_class=$3, color_code=$4, display_order=$5, is_active=$6, updated_at=NOW() WHERE id=$7`,
+      `UPDATE social_links SET platform_name=$1, platform_url=$2, icon_class=$3, color_code=$4, display_order=$5, is_active=$6 WHERE id=$7`,
       [platform_name, platform_url, icon_class, color_code, display_order, is_active, id]
     );
     res.json({ success: true, message: 'Social link updated' });
@@ -416,6 +456,7 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
     const appCount = await db.query(`SELECT COUNT(*) FROM job_applications`);
     const quoteCount = await db.query(`SELECT COUNT(*) FROM quotes`);
     const blogCount = await db.query(`SELECT COUNT(*) FROM blogs`);
+    const publishedBlogs = await db.query(`SELECT COUNT(*) FROM blogs WHERE status = 'published'`);
     const socialCount = await db.query(`SELECT COUNT(*) FROM social_links`);
     const adminCount = await db.query(`SELECT COUNT(*) FROM admins`);
     const clickCount = await db.query(`SELECT COUNT(*) FROM clicks`);
@@ -427,6 +468,7 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
         totalApplications: parseInt(appCount.rows[0].count) || 0,
         totalQuotes: parseInt(quoteCount.rows[0].count) || 0,
         totalBlogs: parseInt(blogCount.rows[0].count) || 0,
+        publishedBlogs: parseInt(publishedBlogs.rows[0].count) || 0,
         totalSocialLinks: parseInt(socialCount.rows[0].count) || 0,
         totalAdmins: parseInt(adminCount.rows[0].count) || 0,
         totalClicks: parseInt(clickCount.rows[0].count) || 0
