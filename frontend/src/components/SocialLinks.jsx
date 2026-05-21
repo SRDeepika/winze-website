@@ -7,93 +7,94 @@ import {
     faInstagram
 } from '@fortawesome/free-brands-svg-icons';
 
-// Icon mapping
-const iconMap = {
-    'faLinkedin': faLinkedin,
-    'faWhatsapp': faWhatsapp,
-    'faFacebook': faFacebook,
-    'faInstagram': faInstagram,
-    'linkedin': faLinkedin,
-    'whatsapp': faWhatsapp,
-    'facebook': faFacebook,
-    'instagram': faInstagram
-};
-
-const getIpAddress = async () => {
-    try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        const data = await response.json();
-        return data.ip;
-    } catch (err) {
-        return '0.0.0.0';
-    }
-};
-
-const trackSocialClick = async (link) => {
-    try {
-        const ip = await getIpAddress();
-        await fetch('https://winze-backend-api.onrender.com/api/track', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                link_url: link.platform_url,
-                link_title: `Social: ${link.platform_name}`,
-                ip_address: ip
-            })
-        });
-    } catch (error) {
-        console.error('Tracking failed:', error);
-    }
-};
-
 const SocialLinks = () => {
     const [hoveredId, setHoveredId] = useState(null);
-    const [socialLinks, setSocialLinks] = useState([
-        { id: 1, platform_name: "LinkedIn", platform_url: "https://www.linkedin.com/company/winze-technologies", icon: faLinkedin, color: "#0077b5", display_order: 1 },
-        { id: 2, platform_name: "WhatsApp", platform_url: "https://wa.me/919880010417", icon: faWhatsapp, color: "#25D366", display_order: 2 },
-        { id: 3, platform_name: "Facebook", platform_url: "https://www.facebook.com/winzetechnologies", icon: faFacebook, color: "#1877f2", display_order: 3 },
-        { id: 4, platform_name: "Instagram", platform_url: "https://www.instagram.com/winzetechnologies", icon: faInstagram, color: "#e4405f", display_order: 4 }
-    ]);
+    const [socialLinks, setSocialLinks] = useState([]);
 
-    // Fetch social links from API
     useEffect(() => {
-        const fetchSocialLinks = async () => {
-            try {
-                const response = await fetch('https://winze-backend-api.onrender.com/api/social-links');
-                const data = await response.json();
-                if (data.success && data.links && data.links.length > 0) {
-                    const formattedLinks = data.links.map(link => {
-                        let icon = null;
-                        const platformLower = link.platform_name.toLowerCase();
-                        if (platformLower === 'linkedin') icon = faLinkedin;
-                        else if (platformLower === 'whatsapp') icon = faWhatsapp;
-                        else if (platformLower === 'facebook') icon = faFacebook;
-                        else if (platformLower === 'instagram') icon = faInstagram;
-                        
-                        return {
-                            id: link.id,
-                            platform_name: link.platform_name,
-                            platform_url: link.platform_url,
-                            icon: icon || faLinkedin,
-                            color: link.color_code || '#0077b5',
-                            display_order: link.display_order
-                        };
-                    });
-                    setSocialLinks(formattedLinks.sort((a, b) => a.display_order - b.display_order));
-                }
-            } catch (error) {
-                console.error('Error fetching social links:', error);
-            }
-        };
-        
         fetchSocialLinks();
     }, []);
+
+    const fetchSocialLinks = async () => {
+        try {
+            const response = await fetch('https://winze-backend-api.onrender.com/api/social-links');
+            const data = await response.json();
+            if (data.success && data.links && data.links.length > 0) {
+                // Map the database fields to component props
+                const links = data.links.map(link => {
+                    let icon;
+                    const name = link.platform_name.toLowerCase();
+                    if (name === 'linkedin') icon = faLinkedin;
+                    else if (name === 'whatsapp') icon = faWhatsapp;
+                    else if (name === 'facebook') icon = faFacebook;
+                    else if (name === 'instagram') icon = faInstagram;
+                    else icon = faLinkedin;
+                    
+                    return {
+                        id: link.id,
+                        name: link.platform_name,
+                        url: link.platform_url,
+                        icon: icon,
+                        color: link.color_code || '#0077b5',
+                        order: link.display_order
+                    };
+                });
+                // Sort by display_order
+                links.sort((a, b) => a.order - b.order);
+                setSocialLinks(links);
+            } else {
+                // Fallback if no data from API
+                setSocialLinks([
+                    { id: 1, name: "LinkedIn", url: "https://www.linkedin.com/company/winze-technologies", icon: faLinkedin, color: "#0077b5", order: 1 },
+                    { id: 2, name: "WhatsApp", url: "https://wa.me/919880010417", icon: faWhatsapp, color: "#25D366", order: 2 },
+                    { id: 3, name: "Facebook", url: "https://www.facebook.com/winzetechnologies", icon: faFacebook, color: "#1877f2", order: 3 },
+                    { id: 4, name: "Instagram", url: "https://www.instagram.com/winzetechnologies", icon: faInstagram, color: "#e4405f", order: 4 }
+                ]);
+            }
+        } catch (error) {
+            console.error('Error fetching social links:', error);
+            // Fallback on error
+            setSocialLinks([
+                { id: 1, name: "LinkedIn", url: "https://www.linkedin.com/company/winze-technologies", icon: faLinkedin, color: "#0077b5", order: 1 },
+                { id: 2, name: "WhatsApp", url: "https://wa.me/919880010417", icon: faWhatsapp, color: "#25D366", order: 2 },
+                { id: 3, name: "Facebook", url: "https://www.facebook.com/winzetechnologies", icon: faFacebook, color: "#1877f2", order: 3 },
+                { id: 4, name: "Instagram", url: "https://www.instagram.com/winzetechnologies", icon: faInstagram, color: "#e4405f", order: 4 }
+            ]);
+        }
+    };
+
+    const getIpAddress = async () => {
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip;
+        } catch (err) {
+            return '0.0.0.0';
+        }
+    };
+
+    const trackSocialClick = async (link) => {
+        try {
+            const ip = await getIpAddress();
+            await fetch('https://winze-backend-api.onrender.com/api/track', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    link_url: link.url,
+                    link_title: `Social: ${link.name}`,
+                    ip_address: ip
+                })
+            });
+        } catch (error) {
+            console.error('Tracking failed:', error);
+        }
+    };
 
     const handleClick = async (e, link) => {
         e.preventDefault();
         await trackSocialClick(link);
         setTimeout(() => {
-            window.open(link.platform_url, '_blank');
+            window.open(link.url, '_blank');
         }, 100);
     };
 
@@ -141,11 +142,11 @@ const SocialLinks = () => {
                                 boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
                             }}
                         >
-                            {link.platform_name}
+                            {link.name}
                         </span>
                         
                         <a
-                            href={link.platform_url}
+                            href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => handleClick(e, link)}
