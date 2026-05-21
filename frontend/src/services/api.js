@@ -368,8 +368,8 @@ export const healthCheck = async () => {
 export const changeUsername = async (newUsername, password) => {
   try {
     const response = await api.post('/admin/change-username', { 
-      newUsername: newUsername, 
-      password: password 
+      newUsername, 
+      password 
     });
     return response.data;
   } catch (error) {
@@ -381,8 +381,8 @@ export const changeUsername = async (newUsername, password) => {
 export const changePassword = async (oldPassword, newPassword) => {
   try {
     const response = await api.post('/admin/change-password', { 
-      oldPassword: oldPassword, 
-      newPassword: newPassword 
+      oldPassword, 
+      newPassword 
     });
     return response.data;
   } catch (error) {

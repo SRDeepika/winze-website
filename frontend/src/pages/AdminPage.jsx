@@ -655,51 +655,47 @@ const ProfileSettings = ({ username, onLogout }) => {
     const [showUsernamePassword, setShowUsernamePassword] = useState(false);
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
-const handleUpdateUsername = async (e) => {
-    e.preventDefault();
-    setMessage('');
-    try {
-        const response = await changeUsername(newUsername, usernamePassword);
-        if (response.success) {
-            setMessage('✓ Username changed successfully! Please login again.');
-            // Store new token
-            if (response.token) {
-                sessionStorage.setItem('adminToken', response.token);
-            }
-            setTimeout(() => { 
-                sessionStorage.clear(); 
-                onLogout(); 
-            }, 2000);
-        }
-    } catch (err) {
-        setMessage('✗ ' + (err.response?.data?.error || 'Failed to change username'));
-    }
-};
 
-const handleUpdatePassword = async (e) => {
-    e.preventDefault();
-    setMessage('');
-    if (newPassword !== confirmPassword) {
-        setMessage('✗ Passwords do not match');
-        return;
-    }
-    try {
-        const response = await changePassword(currentPassword, newPassword);
-        if (response.success) {
-            setMessage('✓ Password changed successfully! Please login again.');
-            // Store new token
-            if (response.token) {
-                sessionStorage.setItem('adminToken', response.token);
+    const handleUpdateUsername = async (e) => {
+        e.preventDefault();
+        setMessage('');
+        try {
+            const response = await changeUsername(newUsername, usernamePassword);
+            if (response.success) {
+                setMessage('✓ Username changed successfully! Please login again.');
+                if (response.token) {
+                    sessionStorage.setItem('adminToken', response.token);
+                }
+                setTimeout(() => { 
+                    sessionStorage.clear(); 
+                    onLogout(); 
+                }, 2000);
             }
-            setTimeout(() => { 
-                sessionStorage.clear(); 
-                onLogout(); 
-            }, 2000);
+        } catch (err) {
+            setMessage('✗ ' + (err.response?.data?.error || 'Failed to change username'));
         }
-    } catch (err) {
-        setMessage('✗ ' + (err.response?.data?.error || 'Failed to change password'));
-    }
-};
+    };
+
+    const handleUpdatePassword = async (e) => {
+        e.preventDefault();
+        setMessage('');
+        if (newPassword !== confirmPassword) {
+            setMessage('✗ Passwords do not match');
+            return;
+        }
+        try {
+            const response = await changePassword(currentPassword, newPassword);
+            if (response.success) {
+                setMessage('✓ Password changed successfully! Please login again.');
+                setTimeout(() => { 
+                    sessionStorage.clear(); 
+                    onLogout(); 
+                }, 2000);
+            }
+        } catch (err) {
+            setMessage('✗ ' + (err.response?.data?.error || 'Failed to change password'));
+        }
+    };
 
     return (
         <div style={styles.dashboardCard}>
@@ -710,7 +706,7 @@ const handleUpdatePassword = async (e) => {
             <div style={{ marginBottom: '30px', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
                 <h3>📝 Change Username</h3>
                 <form onSubmit={handleUpdateUsername}>
-                    <div style={{ position: 'relative', marginBottom: '15px' }}>
+                    <div style={{ position: 'relative' }}>
                         <input 
                             type={showUsernamePassword ? "text" : "password"} 
                             placeholder="Current Password" 
@@ -739,7 +735,7 @@ const handleUpdatePassword = async (e) => {
             <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
                 <h3>🔒 Change Password</h3>
                 <form onSubmit={handleUpdatePassword}>
-                    <div style={{ position: 'relative', marginBottom: '15px' }}>
+                    <div style={{ position: 'relative' }}>
                         <input 
                             type={showCurrent ? "text" : "password"} 
                             placeholder="Current Password" 
@@ -752,7 +748,7 @@ const handleUpdatePassword = async (e) => {
                             {showCurrent ? '🙈' : '👁️'}
                         </span>
                     </div>
-                    <div style={{ position: 'relative', marginBottom: '15px' }}>
+                    <div style={{ position: 'relative' }}>
                         <input 
                             type={showNew ? "text" : "password"} 
                             placeholder="New Password" 
