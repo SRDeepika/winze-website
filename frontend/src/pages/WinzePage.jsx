@@ -964,6 +964,10 @@ const WinzePage = () => {
 
     // Card color gradients
     const getCardGradient = (index, type) => {
+        // SPECIAL COLOR FOR BOOM BARRIER CARD (index 15 in solutions array)
+        if (type === 'solution' && index === 15) {
+            return 'linear-gradient(135deg, #f12711, #f5af19)'; // Premium Orange
+        }
         const gradients = {
             delivery: [
                 'linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb4d)',
