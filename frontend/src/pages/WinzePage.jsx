@@ -13,7 +13,7 @@ import {
     faBriefcase, faTrophy, faGlobe, faLightbulb, faProjectDiagram,
     faChevronLeft, faChevronRight, faTimes, faArrowRight, faCheckCircle,
     faCamera, faNetworkWired, faBroadcastTower, faBell, faPhoneAlt, faPhoneVolume,
-    faCar, faParking  // ADD THESE
+    faCar, faParking
 } from '@fortawesome/free-solid-svg-icons';
 import { 
     faLinkedin, 
@@ -209,7 +209,6 @@ const getSolutionExtraPoints = (title) => {
             "Crisis communication templates with one-click voice activation",
             "Real-time incident tracking with automated call records"
         ],
-
         "Boom Barrier System": [
             "Automatic vehicle number plate recognition (ANPR) for seamless entry",
             "Remote monitoring & control via mobile app or web dashboard",
@@ -502,7 +501,6 @@ const solutionDetailedContent = {
             "Public venue security & crowd control with voice response"
         ]
     },
-
     "Boom Barrier System": {
         overview: "Our Boom Barrier System provides automated vehicle access control with high-speed operation, ANPR integration, and real-time monitoring. Perfect for residential communities, corporate parks, parking lots, and industrial facilities.",
         benefits: getSolutionExtraPoints("Boom Barrier System"),
@@ -850,7 +848,6 @@ const WinzePage = () => {
             detailedContent: detailedContent
         });
         setLandingModalOpen(true);
-        // REMOVED: handleTrackClick(item.title || item.name, 'landing_page_view');
     };
 
     const closeLandingPage = () => {
@@ -875,7 +872,6 @@ const WinzePage = () => {
     const handleSubmitQuote = async (e) => {
         e.preventDefault();
         
-        // Prepare quote data for database - NO TRACKING HERE
         const quoteData = {
             name: formData.name,
             email: formData.email,
@@ -887,7 +883,6 @@ const WinzePage = () => {
         };
         
         try {
-            // This saves to quotes table in database - NO tracking call
             const response = await submitQuote(quoteData);
             console.log('Quote saved to database:', response);
             alert(`Thank you ${formData.name}! We'll contact you within 24 hours about ${formData.service}.`);
@@ -900,19 +895,19 @@ const WinzePage = () => {
     };
 
     const scrollToSection = (ref, sectionName, path) => {
-    handleTrackClick(`Navigation - ${sectionName}`, 'nav');
-    
-    // If it's a page link (Careers)
-    if (path) {
-        window.location.href = path;
-        return;
-    }
-    
-    if (ref && ref.current) {
-        ref.current.scrollIntoView({ behavior: 'smooth' });
-    }
-};
-    // Solutions - Emergency Notification with voice-only focus
+        handleTrackClick(`Navigation - ${sectionName}`, 'nav');
+        
+        if (path) {
+            window.location.href = path;
+            return;
+        }
+        
+        if (ref && ref.current) {
+            ref.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    // Solutions
     const solutions = [
         { title: "Video Conferencing", desc: "High-definition virtual meetings with advanced security features.", icon: faVideo, img: solutionImages.video },
         { title: "Smart Eye AI", desc: "Advanced video analytics for proactive security monitoring.", icon: faRobot, img: solutionImages.ai },
@@ -1016,7 +1011,7 @@ const WinzePage = () => {
         return 'linear-gradient(135deg, #667eea, #764ba2)';
     };
 
-    // Landing Page Modal Component
+    // Updated Landing Page Modal Component - Full page view
     const LandingPage = ({ item, onClose, onRequestQuote }) => {
         if (!item) return null;
         
@@ -1036,7 +1031,6 @@ const WinzePage = () => {
 
         const handleInnerSubmit = async (e) => {
             e.preventDefault();
-            // This is quote submission from landing page - goes to quotes database, NO tracking
             const quoteData = {
                 name: innerFormData.name,
                 email: innerFormData.email,
@@ -1050,7 +1044,7 @@ const WinzePage = () => {
             try {
                 const response = await submitQuote(quoteData);
                 console.log('Quote saved from landing page:', response);
-                alert(`Thank you! We'll contact you about ${item.title} within 24 hours.`);
+                alert(`Thank you! We'll contact you about ${item.title || item.name} within 24 hours.`);
                 setShowInnerQuoteForm(false);
                 setInnerFormData({ name: '', email: '', phone: '', message: '' });
             } catch (error) {
@@ -1071,105 +1065,219 @@ const WinzePage = () => {
                 background: 'rgba(0,0,0,0.96)',
                 zIndex: 10000,
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                flexDirection: 'column',
                 cursor: 'pointer',
                 overflow: 'auto',
-                padding: '20px'
+                padding: 0
             }} onClick={onClose}>
                 <div style={{
                     background: royalGradient,
-                    borderRadius: '28px',
-                    maxWidth: '1000px',
                     width: '100%',
+                    minHeight: '100vh',
                     cursor: 'default',
-                    maxHeight: '90vh',
-                    overflow: 'auto',
                     position: 'relative',
-                    boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
-                    border: '1px solid rgba(255,215,0,0.3)'
+                    boxShadow: 'none',
+                    border: 'none',
+                    display: 'flex',
+                    flexDirection: 'column'
                 }} onClick={(e) => e.stopPropagation()}>
-                    <button onClick={onClose} style={{
+                    {/* Sticky Close Button */}
+                    <div style={{
                         position: 'sticky',
-                        top: '20px',
-                        right: '20px',
-                        float: 'right',
-                        background: '#FFD700',
-                        border: 'none',
-                        fontSize: '20px',
-                        cursor: 'pointer',
-                        color: '#1a1a2e',
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '50%',
-                        marginTop: '20px',
-                        marginRight: '20px',
-                        zIndex: 10,
-                        fontWeight: 'bold'
-                    }}>×</button>
+                        top: 20,
+                        right: 20,
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        zIndex: 100,
+                        padding: '20px 40px 0 0'
+                    }}>
+                        <button onClick={onClose} style={{
+                            background: '#FFD700',
+                            border: 'none',
+                            fontSize: '24px',
+                            cursor: 'pointer',
+                            color: '#1a1a2e',
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '50%',
+                            fontWeight: 'bold',
+                            transition: 'all 0.3s ease',
+                            boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.target.style.transform = 'scale(1.05)';
+                            e.target.style.background = '#fff';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.target.style.transform = 'scale(1)';
+                            e.target.style.background = '#FFD700';
+                        }}>
+                            ×
+                        </button>
+                    </div>
                     
-                    <div style={{ padding: '40px', paddingTop: '20px' }}>
-                        {item.img && (
+                    {/* Hero Image Section */}
+                    {item.img && (
+                        <div style={{
+                            width: '100%',
+                            height: '50vh',
+                            minHeight: '350px',
+                            position: 'relative',
+                            overflow: 'hidden'
+                        }}>
                             <img 
                                 src={item.img} 
                                 alt={item.title || item.name}
                                 style={{ 
-                                    width: '100%', 
-                                    height: '280px', 
-                                    objectFit: 'cover', 
-                                    borderRadius: '20px',
-                                    marginBottom: '30px',
-                                    boxShadow: '0 15px 35px rgba(0,0,0,0.3)'
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover',
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0
                                 }}
                                 onError={(e) => {
                                     e.target.onerror = null;
-                                    e.target.src = 'https://placehold.co/1200x400/FFD700/1a1a2e?text=' + encodeURIComponent(item.title || item.name);
+                                    e.target.src = 'https://placehold.co/1920x600/FFD700/1a1a2e?text=' + encodeURIComponent(item.title || item.name);
                                 }}
                             />
-                        )}
-                        
-                        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '60px', color: '#FFD700', marginBottom: '20px' }} />
-                            <h1 style={{ color: 'white', marginBottom: '15px', fontSize: '36px', fontWeight: '800' }}>{item.title || item.name}</h1>
-                            <p style={{ color: '#ccc', fontSize: '18px', maxWidth: '800px', margin: '0 auto' }}>
+                            <div style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                background: 'linear-gradient(to top, #1a1a2e 0%, transparent 100%)',
+                                padding: '60px 40px 30px'
+                            }} />
+                        </div>
+                    )}
+                    
+                    {/* Content Container */}
+                    <div style={{ 
+                        maxWidth: '1200px', 
+                        margin: '0 auto', 
+                        padding: showInnerQuoteForm ? '20px 40px 60px' : '0 40px 80px',
+                        width: '100%'
+                    }}>
+                        {/* Title Section */}
+                        <div style={{ textAlign: 'center', marginBottom: '50px' }}>
+                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '70px', color: '#FFD700', marginBottom: '20px' }} />
+                            <h1 style={{ color: 'white', marginBottom: '20px', fontSize: '48px', fontWeight: '800', fontFamily: "'Playfair Display', serif" }}>
+                                {item.title || item.name}
+                            </h1>
+                            <div style={{ 
+                                width: '80px', 
+                                height: '4px', 
+                                background: '#FFD700', 
+                                margin: '0 auto 25px',
+                                borderRadius: '2px'
+                            }} />
+                            <p style={{ color: '#ddd', fontSize: '18px', maxWidth: '800px', margin: '0 auto', lineHeight: '1.6' }}>
                                 {content?.overview || "Enterprise-grade solution designed to transform your business operations."}
                             </p>
                         </div>
                         
+                        {/* Benefits Section */}
                         {content && content.benefits && (
-                            <div style={{ marginBottom: '30px' }}>
-                                <h3 style={{ color: '#FFD700', marginBottom: '20px', fontSize: '24px', borderLeft: '4px solid #FFD700', paddingLeft: '15px' }}>Key Benefits</h3>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '15px' }}>
+                            <div style={{ marginBottom: '50px' }}>
+                                <h2 style={{ 
+                                    color: '#FFD700', 
+                                    marginBottom: '30px', 
+                                    fontSize: '32px',
+                                    fontWeight: '700',
+                                    borderLeft: '4px solid #FFD700',
+                                    paddingLeft: '20px'
+                                }}>
+                                    Key Benefits
+                                </h2>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '20px' }}>
                                     {content.benefits.map((benefit, idx) => (
-                                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: 'rgba(255,255,255,0.1)', borderRadius: '15px', backdropFilter: 'blur(5px)' }}>
-                                            <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#FFD700', fontSize: '18px' }} />
-                                            <span style={{ color: '#eee' }}>{benefit}</span>
+                                        <div key={idx} style={{ 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            gap: '15px', 
+                                            padding: '18px', 
+                                            background: 'rgba(255,255,255,0.08)', 
+                                            borderRadius: '16px',
+                                            transition: 'transform 0.3s ease'
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.transform = 'translateX(5px)'}
+                                        onMouseLeave={(e) => e.currentTarget.style.transform = 'translateX(0)'}
+                                        >
+                                            <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#FFD700', fontSize: '22px', minWidth: '24px' }} />
+                                            <span style={{ color: '#eee', fontSize: '15px', lineHeight: '1.5' }}>{benefit}</span>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                         )}
                         
+                        {/* Features Section - 3 column layout */}
                         {content && content.features && (
-                            <div style={{ marginBottom: '30px' }}>
-                                <h3 style={{ color: '#FFD700', marginBottom: '20px', fontSize: '24px', borderLeft: '4px solid #FFD700', paddingLeft: '15px' }}>Key Features</h3>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '15px' }}>
+                            <div style={{ marginBottom: '50px' }}>
+                                <h2 style={{ 
+                                    color: '#FFD700', 
+                                    marginBottom: '30px', 
+                                    fontSize: '32px',
+                                    fontWeight: '700',
+                                    borderLeft: '4px solid #FFD700',
+                                    paddingLeft: '20px'
+                                }}>
+                                    Key Features
+                                </h2>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
                                     {content.features.map((feature, idx) => (
-                                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: 'rgba(255,255,255,0.08)', borderRadius: '15px' }}>
-                                            <FontAwesomeIcon icon={faStar} style={{ color: '#FFD700', fontSize: '18px' }} />
-                                            <span style={{ color: '#ddd' }}>{feature}</span>
+                                        <div key={idx} style={{ 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            gap: '15px', 
+                                            padding: '18px', 
+                                            background: 'rgba(255,255,255,0.05)', 
+                                            borderRadius: '16px',
+                                            border: '1px solid rgba(255,215,0,0.15)',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.background = 'rgba(255,215,0,0.1)';
+                                            e.currentTarget.style.borderColor = 'rgba(255,215,0,0.4)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                                            e.currentTarget.style.borderColor = 'rgba(255,215,0,0.15)';
+                                        }}
+                                        >
+                                            <FontAwesomeIcon icon={faStar} style={{ color: '#FFD700', fontSize: '20px', minWidth: '22px' }} />
+                                            <span style={{ color: '#ddd', fontSize: '15px' }}>{feature}</span>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                         )}
                         
+                        {/* Use Cases Section */}
                         {content && content.useCases && (
-                            <div style={{ marginBottom: '30px' }}>
-                                <h3 style={{ color: '#FFD700', marginBottom: '20px', fontSize: '24px', borderLeft: '4px solid #FFD700', paddingLeft: '15px' }}>Use Cases</h3>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                            <div style={{ marginBottom: '60px' }}>
+                                <h2 style={{ 
+                                    color: '#FFD700', 
+                                    marginBottom: '30px', 
+                                    fontSize: '32px',
+                                    fontWeight: '700',
+                                    borderLeft: '4px solid #FFD700',
+                                    paddingLeft: '20px'
+                                }}>
+                                    Use Cases
+                                </h2>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
                                     {content.useCases.map((useCase, idx) => (
-                                        <span key={idx} style={{ background: 'linear-gradient(135deg, #FFD700, #FFA500)', color: '#1a1a2e', padding: '8px 20px', borderRadius: '30px', fontSize: '14px', fontWeight: '600' }}>
+                                        <span key={idx} style={{ 
+                                            background: 'linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,165,0,0.15))',
+                                            color: '#FFD700',
+                                            padding: '10px 24px',
+                                            borderRadius: '40px',
+                                            fontSize: '15px',
+                                            fontWeight: '500',
+                                            border: '1px solid rgba(255,215,0,0.3)'
+                                        }}>
                                             {useCase}
                                         </span>
                                     ))}
@@ -1177,39 +1285,61 @@ const WinzePage = () => {
                             </div>
                         )}
                         
+                        {/* CTA Form Section */}
                         {!showInnerQuoteForm ? (
-                            <div style={{ textAlign: 'center', marginTop: '40px', padding: '35px', background: 'rgba(255,215,0,0.15)', borderRadius: '20px', border: '1px solid rgba(255,215,0,0.3)' }}>
-                                <h3 style={{ color: '#FFD700', marginBottom: '15px', fontSize: '22px' }}>Ready to get started with {item.title}?</h3>
-                                <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '25px' }}>Get a personalized quote tailored to your specific requirements.</p>
+                            <div style={{ 
+                                textAlign: 'center', 
+                                marginTop: '40px', 
+                                padding: '50px 40px', 
+                                background: 'linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,165,0,0.05))',
+                                borderRadius: '24px',
+                                border: '1px solid rgba(255,215,0,0.2)'
+                            }}>
+                                <h3 style={{ color: '#FFD700', marginBottom: '15px', fontSize: '28px', fontWeight: '700' }}>
+                                    Ready to get started with {item.title || item.name}?
+                                </h3>
+                                <p style={{ color: 'rgba(255,255,255,0.85)', marginBottom: '30px', fontSize: '16px', maxWidth: '600px', margin: '0 auto 30px' }}>
+                                    Get a personalized quote tailored to your specific requirements.
+                                </p>
                                 <button 
                                     onClick={() => setShowInnerQuoteForm(true)}
                                     style={{
-                                        padding: '14px 45px',
+                                        padding: '16px 50px',
                                         background: '#FFD700',
                                         color: '#1a1a2e',
                                         border: 'none',
                                         borderRadius: '50px',
                                         cursor: 'pointer',
-                                        fontSize: '16px',
+                                        fontSize: '18px',
                                         fontWeight: '700',
-                                        transition: 'all 0.3s'
+                                        transition: 'all 0.3s ease',
+                                        boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
                                     }}
                                     onMouseEnter={(e) => {
                                         e.target.style.transform = 'scale(1.05)';
-                                        e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.4)';
+                                        e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)';
                                     }}
                                     onMouseLeave={(e) => {
                                         e.target.style.transform = 'scale(1)';
-                                        e.target.style.boxShadow = 'none';
+                                        e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)';
                                     }}
                                 >
-                                    Request a Quote for {item.title} →
+                                    Request a Quote for {item.title || item.name} →
                                 </button>
                             </div>
                         ) : (
-                            <div style={{ marginTop: '40px', padding: '30px', background: 'rgba(255,255,255,0.1)', borderRadius: '20px', backdropFilter: 'blur(10px)' }}>
-                                <h3 style={{ color: '#FFD700', marginBottom: '20px', textAlign: 'center' }}>
-                                    Request a Quote for <span style={{ color: '#FFD700' }}>{item.title}</span>
+                            <div style={{ 
+                                marginTop: '40px', 
+                                padding: '45px', 
+                                background: 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(0,0,0,0.3))',
+                                borderRadius: '28px',
+                                backdropFilter: 'blur(10px)',
+                                border: '1px solid rgba(255,215,0,0.3)',
+                                maxWidth: '700px',
+                                margin: '40px auto 0'
+                            }}>
+                                <h3 style={{ color: '#FFD700', marginBottom: '25px', textAlign: 'center', fontSize: '28px', fontWeight: '700' }}>
+                                    Request a Quote for <span style={{ color: '#FFD700' }}>{item.title || item.name}</span>
                                 </h3>
                                 <form onSubmit={handleInnerSubmit}>
                                     <input 
@@ -1221,13 +1351,13 @@ const WinzePage = () => {
                                         onChange={handleInnerInputChange}
                                         style={{ 
                                             width: '100%', 
-                                            padding: '14px', 
-                                            marginBottom: '15px', 
-                                            borderRadius: '12px', 
+                                            padding: '16px', 
+                                            marginBottom: '18px', 
+                                            borderRadius: '14px', 
                                             border: '1px solid rgba(255,215,0,0.3)',
                                             background: 'rgba(255,255,255,0.1)',
                                             color: 'white',
-                                            fontSize: '15px',
+                                            fontSize: '16px',
                                             boxSizing: 'border-box'
                                         }} 
                                     />
@@ -1240,13 +1370,13 @@ const WinzePage = () => {
                                         onChange={handleInnerInputChange}
                                         style={{ 
                                             width: '100%', 
-                                            padding: '14px', 
-                                            marginBottom: '15px', 
-                                            borderRadius: '12px', 
+                                            padding: '16px', 
+                                            marginBottom: '18px', 
+                                            borderRadius: '14px', 
                                             border: '1px solid rgba(255,215,0,0.3)',
                                             background: 'rgba(255,255,255,0.1)',
                                             color: 'white',
-                                            fontSize: '15px',
+                                            fontSize: '16px',
                                             boxSizing: 'border-box'
                                         }} 
                                     />
@@ -1259,13 +1389,13 @@ const WinzePage = () => {
                                         onChange={handleInnerInputChange}
                                         style={{ 
                                             width: '100%', 
-                                            padding: '14px', 
-                                            marginBottom: '15px', 
-                                            borderRadius: '12px', 
+                                            padding: '16px', 
+                                            marginBottom: '18px', 
+                                            borderRadius: '14px', 
                                             border: '1px solid rgba(255,215,0,0.3)',
                                             background: 'rgba(255,255,255,0.1)',
                                             color: 'white',
-                                            fontSize: '15px',
+                                            fontSize: '16px',
                                             boxSizing: 'border-box'
                                         }} 
                                     />
@@ -1277,32 +1407,35 @@ const WinzePage = () => {
                                         onChange={handleInnerInputChange}
                                         style={{ 
                                             width: '100%', 
-                                            padding: '14px', 
-                                            marginBottom: '20px', 
-                                            borderRadius: '12px', 
+                                            padding: '16px', 
+                                            marginBottom: '25px', 
+                                            borderRadius: '14px', 
                                             border: '1px solid rgba(255,215,0,0.3)',
                                             background: 'rgba(255,255,255,0.1)',
                                             color: 'white',
-                                            fontSize: '15px',
+                                            fontSize: '16px',
                                             boxSizing: 'border-box',
                                             resize: 'vertical'
                                         }} 
-                                    ></textarea>
-                                    <div style={{ display: 'flex', gap: '15px' }}>
+                                    />
+                                    <div style={{ display: 'flex', gap: '20px' }}>
                                         <button 
                                             type="button"
                                             onClick={() => setShowInnerQuoteForm(false)}
                                             style={{
                                                 flex: 1,
                                                 padding: '14px',
-                                                background: 'rgba(255,255,255,0.2)',
+                                                background: 'rgba(255,255,255,0.15)',
                                                 color: 'white',
-                                                border: 'none',
-                                                borderRadius: '12px',
+                                                border: '1px solid rgba(255,255,255,0.3)',
+                                                borderRadius: '14px',
                                                 cursor: 'pointer',
                                                 fontSize: '16px',
-                                                fontWeight: '600'
+                                                fontWeight: '600',
+                                                transition: 'all 0.3s'
                                             }}
+                                            onMouseEnter={(e) => e.target.style.background = 'rgba(255,255,255,0.25)'}
+                                            onMouseLeave={(e) => e.target.style.background = 'rgba(255,255,255,0.15)'}
                                         >
                                             Cancel
                                         </button>
@@ -1314,10 +1447,19 @@ const WinzePage = () => {
                                                 background: '#FFD700',
                                                 color: '#1a1a2e',
                                                 border: 'none',
-                                                borderRadius: '12px',
+                                                borderRadius: '14px',
                                                 cursor: 'pointer',
                                                 fontSize: '16px',
-                                                fontWeight: '700'
+                                                fontWeight: '700',
+                                                transition: 'all 0.3s'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.transform = 'scale(1.02)';
+                                                e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.4)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.transform = 'scale(1)';
+                                                e.target.style.boxShadow = 'none';
                                             }}
                                         >
                                             Submit Request →
@@ -1425,8 +1567,6 @@ const WinzePage = () => {
                 }
                 
                 /* Different floating animations for each section */
-                
-                /* Delivery Section - Bounce Up & Down */
                 @keyframes floatDelivery {
                     0%, 100% { transform: translateY(0px); }
                     50% { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
@@ -1443,7 +1583,6 @@ const WinzePage = () => {
                     animation-delay: 0.2s;
                 }
                 
-                /* Solutions Section - Slide Left/Right */
                 @keyframes floatSolutions {
                     0%, 100% { transform: translateX(0px); }
                     25% { transform: translateX(-6px); }
@@ -1461,7 +1600,6 @@ const WinzePage = () => {
                     animation-delay: 0.6s;
                 }
                 
-                /* Industries Section - Rotate & Scale subtle */
                 @keyframes floatIndustries {
                     0%, 100% { transform: rotate(0deg) scale(1); }
                     50% { transform: rotate(1deg) scale(1.02); box-shadow: 0 25px 45px rgba(0,0,0,0.35); }
@@ -1474,7 +1612,6 @@ const WinzePage = () => {
                     animation-delay: 0.4s;
                 }
                 
-                /* Work Section - Pulse Glow Effect */
                 @keyframes floatWork {
                     0%, 100% { box-shadow: 0 10px 30px rgba(255,215,0,0.1), 0 0 10px rgba(255,215,0,0.2); transform: translateY(0px); }
                     50% { box-shadow: 0 20px 50px rgba(255,215,0,0.3), 0 0 25px rgba(255,215,0,0.4); transform: translateY(-8px); }
@@ -1491,7 +1628,6 @@ const WinzePage = () => {
                     animation-delay: 0.6s;
                 }
                 
-                /* Card glow pulse animation for all cards */
                 @keyframes glowPulse {
                     0% { border-color: rgba(255,215,0,0.15); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
                     50% { border-color: rgba(255,215,0,0.5); box-shadow: 0 15px 35px rgba(255,215,0,0.2); }
@@ -1504,7 +1640,6 @@ const WinzePage = () => {
                 section { position: relative; z-index: 1; }
                 .section-content { position: relative; z-index: 2; }
                 
-                /* Modern Card Styles with Continuous Animations */
                 .modern-card {
                     background: linear-gradient(145deg, #1a1a2e, #16213e);
                     border-radius: 24px;
@@ -1593,7 +1728,6 @@ const WinzePage = () => {
                 .client-logo-img, .partner-logo-img { width: 80px; height: 80px; margin: 0 auto 12px; display: flex; align-items: center; justifyContent: center; }
                 .client-logo-img img, .partner-logo-img img { width: 100%; height: 100%; object-fit: contain; }
                 
-                /* Stats Cards Style with vibrant gradients */
                 .stat-card {
                     padding: 30px 20px;
                     border-radius: 15px;
@@ -1610,7 +1744,6 @@ const WinzePage = () => {
                     to { opacity: 1; transform: translateY(0); }
                 }
                 
-                /* Logo styling */
                 .logo-clean {
                     display: flex;
                     align-items: center;
@@ -1625,6 +1758,22 @@ const WinzePage = () => {
                     object-fit: contain;
                     background: white;
                     padding: 6px;
+                }
+                
+                /* Scrollbar styling for landing page */
+                .landing-scroll {
+                    scrollbar-width: thin;
+                    scrollbar-color: #FFD700 #1a1a2e;
+                }
+                .landing-scroll::-webkit-scrollbar {
+                    width: 8px;
+                }
+                .landing-scroll::-webkit-scrollbar-track {
+                    background: #1a1a2e;
+                }
+                .landing-scroll::-webkit-scrollbar-thumb {
+                    background: #FFD700;
+                    border-radius: 4px;
                 }
             `}</style>
             
@@ -1666,31 +1815,30 @@ const WinzePage = () => {
                         
                         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
                             {navItems.map((item) => (
-    <button key={item.name} onClick={(e) => { 
-        e.preventDefault(); 
-        e.stopPropagation(); 
-        if (item.path) {
-            // Dynamic tracking for any page link (Careers, Blogs, etc.)
-            handleTrackClick(`${item.name} Page Visit`, 'navigation');
-            window.location.href = item.path;
-        } else {
-            scrollToSection(item.ref, item.name);
-        }
-    }} style={{ background: 'transparent', color: '#ddd', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none' }}
-        onMouseEnter={(e) => {
-            e.target.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
-            e.target.style.color = '#1a1a2e';
-            e.target.style.transform = 'translateY(-2px)';
-        }}
-        onMouseLeave={(e) => {
-            e.target.style.background = 'transparent';
-            e.target.style.color = '#ddd';
-            e.target.style.transform = 'translateY(0)';
-        }}
-    >
-        {item.name}
-    </button>
-))}
+                                <button key={item.name} onClick={(e) => { 
+                                    e.preventDefault(); 
+                                    e.stopPropagation(); 
+                                    if (item.path) {
+                                        handleTrackClick(`${item.name} Page Visit`, 'navigation');
+                                        window.location.href = item.path;
+                                    } else {
+                                        scrollToSection(item.ref, item.name);
+                                    }
+                                }} style={{ background: 'transparent', color: '#ddd', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none' }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
+                                        e.target.style.color = '#1a1a2e';
+                                        e.target.style.transform = 'translateY(-2px)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.background = 'transparent';
+                                        e.target.style.color = '#ddd';
+                                        e.target.style.transform = 'translateY(0)';
+                                    }}
+                                >
+                                    {item.name}
+                                </button>
+                            ))}
                             <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Get Quote Button', 'cta'); }} style={{
                                 background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#1a1a2e', border: 'none', padding: '8px 24px', borderRadius: '30px', cursor: 'pointer', fontWeight: '700', transition: 'all 0.3s', fontFamily: "'Poppins', sans-serif", boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
                             }}
@@ -1768,7 +1916,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Solutions Portfolio Section - WITH stopPropagation on buttons */}
+                {/* Solutions Portfolio Section */}
                 <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.solutions} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -1803,7 +1951,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Industries Section - WITH stopPropagation on buttons */}
+                {/* Industries Section */}
                 <section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.industries} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -1855,7 +2003,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Work With Winze Section - WITH stopPropagation on buttons */}
+                {/* Work With Winze Section */}
                 <section ref={workwithRef} id="workwith" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.workwith} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
@@ -1906,7 +2054,7 @@ const WinzePage = () => {
                 {/* Logo Modal */}
                 {showLogoModal && (<div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(20px)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} onClick={() => setShowLogoModal(false)}><div style={{ maxWidth: '90vw', maxHeight: '90vh', position: 'relative' }} onClick={(e) => e.stopPropagation()}><button onClick={() => setShowLogoModal(false)} style={{ position: 'absolute', top: '-50px', right: '-50px', background: '#FFD700', border: 'none', fontSize: '30px', cursor: 'pointer', color: '#1a1a2e', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', fontWeight: 'bold' }}>×</button><div style={{ background: 'white', borderRadius: '20px', padding: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 25px 50px rgba(0,0,0,0.5)' }}><img src="/winze-logo.jpg" alt="Winze Technologies Logo" style={{ maxWidth: '70vw', maxHeight: '70vh', objectFit: 'contain' }} /></div></div></div>)}
 
-                {/* Quote Modal - NO TRACKING, only saves to database */}
+                {/* Quote Modal */}
                 {showQuoteModal && (<div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(10px)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowQuoteModal(false)}><div style={{ background: 'linear-gradient(145deg, #1a1a2e, #16213e)', borderRadius: '28px', padding: '45px', maxWidth: '550px', width: '100%', position: 'relative', border: '1px solid rgba(255,215,0,0.3)', maxHeight: '85vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}><button onClick={() => setShowQuoteModal(false)} style={{ position: 'absolute', top: '20px', right: '25px', background: '#FFD700', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#1a1a2e', width: '35px', height: '35px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>×</button><h2 style={{ color: '#FFD700', marginBottom: '25px', textAlign: 'center' }}>✨ Request a Quote</h2><p style={{ color: '#ccc', textAlign: 'center', marginBottom: '30px', fontSize: '14px' }}>Fill out the form and our team will contact you within 24 hours</p>
                 <form onSubmit={handleSubmitQuote}>
                     <input type="text" name="name" placeholder="Full Name" required onChange={handleInputChange} style={{ width: '100%', padding: '14px', marginBottom: '15px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.3)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px', boxSizing: 'border-box' }} />
@@ -1921,16 +2069,16 @@ const WinzePage = () => {
                 {landingModalOpen && (<LandingPage item={landingData} onClose={closeLandingPage} onRequestQuote={openQuoteModalForItem} />)}
 
                 {/* Footer */}
-<footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,215,0,0.1)' }}>
-    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '45px', marginBottom: '45px' }}>
-            <div><div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}><img src="/winze-logo.jpg" alt="Logo" style={{ width: '45px', height: '45px', objectFit: 'contain', background: 'white', padding: '6px', borderRadius: '10px' }} /><span style={{ fontWeight: '800', fontSize: '1.2rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span></div><p style={{ color: '#aaa', lineHeight: '1.6' }}>Driving Innovation through Customer-Centric Technology Solutions.</p></div>
-            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Quick Links</h4>{navItems.map((item) => (<p key={item.name}><button onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (item.path) { handleTrackClick(`${item.name} Page Visit`, 'footer'); window.location.href = item.path; } else { scrollToSection(item.ref, item.name); } }} style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '12px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s' }} onMouseEnter={(e) => e.target.style.color = '#FFD700'} onMouseLeave={(e) => e.target.style.color = '#aaa'}>{item.name}</button></p>))}</div>
-            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Contact Info</h4><p style={{ color: '#aaa', marginBottom: '12px' }}>📧 sales@winzetech.com</p><p style={{ color: '#aaa', marginBottom: '12px' }}>📞 +91 95500 10417</p><p style={{ color: '#aaa', marginBottom: '12px' }}>🌐 www.winzetech.com</p></div>
-        </div>
-        <div style={{ textAlign: 'center', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#666' }}><p>© 2025 Winze Technologies Pvt Ltd. All rights reserved.</p></div>
-    </div>
-</footer>
+                <footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,215,0,0.1)' }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '45px', marginBottom: '45px' }}>
+                            <div><div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}><img src="/winze-logo.jpg" alt="Logo" style={{ width: '45px', height: '45px', objectFit: 'contain', background: 'white', padding: '6px', borderRadius: '10px' }} /><span style={{ fontWeight: '800', fontSize: '1.2rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span></div><p style={{ color: '#aaa', lineHeight: '1.6' }}>Driving Innovation through Customer-Centric Technology Solutions.</p></div>
+                            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Quick Links</h4>{navItems.map((item) => (<p key={item.name}><button onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (item.path) { handleTrackClick(`${item.name} Page Visit`, 'footer'); window.location.href = item.path; } else { scrollToSection(item.ref, item.name); } }} style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '12px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s' }} onMouseEnter={(e) => e.target.style.color = '#FFD700'} onMouseLeave={(e) => e.target.style.color = '#aaa'}>{item.name}</button></p>))}</div>
+                            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Contact Info</h4><p style={{ color: '#aaa', marginBottom: '12px' }}>📧 sales@winzetech.com</p><p style={{ color: '#aaa', marginBottom: '12px' }}>📞 +91 95500 10417</p><p style={{ color: '#aaa', marginBottom: '12px' }}>🌐 www.winzetech.com</p></div>
+                        </div>
+                        <div style={{ textAlign: 'center', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#666' }}><p>© 2025 Winze Technologies Pvt Ltd. All rights reserved.</p></div>
+                    </div>
+                </footer>
             </div>
             </>
         </HelmetProvider>
