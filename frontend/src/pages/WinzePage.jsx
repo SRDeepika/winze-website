@@ -1799,13 +1799,13 @@ const WinzePage = () => {
     top: 0,
     left: 0,
     right: 0,
-    background: '#302b63',
+    background: '#1A2A4F',
     backdropFilter: 'blur(20px)',
     padding: '12px 5%',
     zIndex: 1000,
     transition: 'all 0.3s',
-    boxShadow: 'none',
-    borderBottom: 'none'
+    boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+    borderBottom: '2px solid linear-gradient(135deg, #FFD700, #FFA500)'
 }}>
     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
         <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
