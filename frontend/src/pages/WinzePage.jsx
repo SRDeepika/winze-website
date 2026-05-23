@@ -1799,13 +1799,13 @@ const WinzePage = () => {
     top: 0,
     left: 0,
     right: 0,
-    background: '#0f172a',
+    background: '#1e3a8a',
     backdropFilter: 'blur(20px)',
     padding: '12px 5%',
     zIndex: 1000,
     transition: 'all 0.3s',
-    boxShadow: 'none',
-    borderBottom: '1px solid rgba(255,215,0,0.15)'
+    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+    borderBottom: '1px solid rgba(255,215,0,0.2)'
 }}>
     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
         <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
@@ -1827,15 +1827,15 @@ const WinzePage = () => {
                     } else {
                         scrollToSection(item.ref, item.name);
                     }
-                }} style={{ background: 'transparent', color: '#ddd', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none' }}
+                }} style={{ background: 'transparent', color: '#fff', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none' }}
                     onMouseEnter={(e) => {
-                        e.target.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
+                        e.target.style.background = '#FFD700';
                         e.target.style.color = '#1a1a2e';
                         e.target.style.transform = 'translateY(-2px)';
                     }}
                     onMouseLeave={(e) => {
                         e.target.style.background = 'transparent';
-                        e.target.style.color = '#ddd';
+                        e.target.style.color = '#fff';
                         e.target.style.transform = 'translateY(0)';
                     }}
                 >
@@ -1843,7 +1843,7 @@ const WinzePage = () => {
                 </button>
             ))}
             <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Get Quote Button', 'cta'); }} style={{
-                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#1a1a2e', border: 'none', padding: '8px 24px', borderRadius: '30px', cursor: 'pointer', fontWeight: '700', transition: 'all 0.3s', fontFamily: "'Poppins', sans-serif", boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
+                background: '#FFD700', color: '#1a1a2e', border: 'none', padding: '8px 24px', borderRadius: '30px', cursor: 'pointer', fontWeight: '700', transition: 'all 0.3s', fontFamily: "'Poppins', sans-serif", boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
             }}
             onMouseEnter={(e) => { e.target.style.transform = 'scale(1.05)'; e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)'; }}
             onMouseLeave={(e) => { e.target.style.transform = 'scale(1)'; e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)'; }}>
