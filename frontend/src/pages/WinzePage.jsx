@@ -1804,8 +1804,8 @@ const WinzePage = () => {
     padding: '12px 5%',
     zIndex: 1000,
     transition: 'all 0.3s',
-    boxShadow: scrolled ? '0 2px 30px rgba(0,0,0,0.3)' : 'none',
-    borderBottom: '1px solid rgba(255,215,0,0.1)'
+    boxShadow: 'none',
+    borderBottom: 'none'
 }}>
     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
         <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
