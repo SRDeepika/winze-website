@@ -1819,30 +1819,32 @@ const WinzePage = () => {
                         
                         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
                             {navItems.map((item) => (
-                                <button key={item.name} onClick={(e) => { 
-                                    e.preventDefault(); 
-                                    e.stopPropagation(); 
-                                    if (item.path) {
-                                        handleTrackClick(`${item.name} Page Visit`, 'navigation');
-                                        window.location.href = item.path;
-                                    } else {
-                                        scrollToSection(item.ref, item.name);
-                                    }
-                                }} style={{ background: 'transparent', color: '#ddd', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none' }}
-                                    onMouseEnter={(e) => {
-                                        e.target.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
-                                        e.target.style.color = '#1a1a2e';
-                                        e.target.style.transform = 'translateY(-2px)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.target.style.background = 'transparent';
-                                        e.target.style.color = '#ddd';
-                                        e.target.style.transform = 'translateY(0)';
-                                    }}
-                                >
-                                    {item.name}
-                                </button>
-                            ))}
+    <button key={item.name} onClick={(e) => { 
+        e.preventDefault(); 
+        e.stopPropagation(); 
+        if (item.path) {
+            handleTrackClick(`${item.name} Page Visit`, 'navigation');
+            window.location.href = item.path;
+        } else {
+            scrollToSection(item.ref, item.name);
+        }
+    }} style={{ background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', color: 'white', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none', boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}
+        onMouseEnter={(e) => {
+            e.target.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
+            e.target.style.color = '#1a1a2e';
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = '0 4px 12px rgba(255,215,0,0.3)';
+        }}
+        onMouseLeave={(e) => {
+            e.target.style.background = 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)';
+            e.target.style.color = 'white';
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+        }}
+    >
+        {item.name}
+    </button>
+))}
                             <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Get Quote Button', 'cta'); }} style={{
                                 background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#1a1a2e', border: 'none', padding: '8px 24px', borderRadius: '30px', cursor: 'pointer', fontWeight: '700', transition: 'all 0.3s', fontFamily: "'Poppins', sans-serif", boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
                             }}
