@@ -1799,7 +1799,7 @@ const WinzePage = () => {
     top: 0,
     left: 0,
     right: 0,
-    background: '#0a0a1a',
+    background: '#0d1117',
     backdropFilter: 'blur(20px)',
     padding: '12px 5%',
     zIndex: 1000,
