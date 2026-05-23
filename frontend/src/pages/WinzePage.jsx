@@ -1793,13 +1793,13 @@ const WinzePage = () => {
             <div style={{ fontFamily: "'Poppins', 'Montserrat', sans-serif", overflowX: 'hidden', position: 'relative', background: '#0a0a1a' }}>
                 
                 <SocialLinks />
-                {/* Navigation Bar */}
+          {/* Navigation Bar */}
 <nav style={{
     position: 'sticky',
     top: 0,
     left: 0,
     right: 0,
-    background: scrolled ? 'rgba(10,10,26,0.98)' : 'rgba(10,10,26,0.95)',
+    background: scrolled ? 'linear-gradient(135deg, rgba(15,12,41,0.95) 0%, rgba(48,43,99,0.95) 50%, rgba(36,36,62,0.95) 100%)' : 'linear-gradient(135deg, rgba(15,12,41,0.9) 0%, rgba(48,43,99,0.9) 50%, rgba(36,36,62,0.9) 100%)',
     backdropFilter: 'blur(20px)',
     padding: '12px 5%',
     zIndex: 1000,
