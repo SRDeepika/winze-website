@@ -1799,7 +1799,7 @@ const WinzePage = () => {
     top: 0,
     left: 0,
     right: 0,
-    background: scrolled ? 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)' : 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)',
+    background: '#0a0a1a',
     backdropFilter: 'blur(20px)',
     padding: '12px 5%',
     zIndex: 1000,
