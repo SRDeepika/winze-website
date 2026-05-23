@@ -7,7 +7,7 @@ import {
   getApplications, updateApplicationStatus,
   getQuotes, getAdminStats,
   getUsers, createUser, deleteUser, adminLogin,
-  changeUsername, changePassword   // Add these
+  changeUsername, changePassword
 } from '../services/api';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://winze-backend-api.onrender.com/api';
@@ -439,34 +439,96 @@ const JobManager = () => {
 };
 
 // ============================================
-// APPLICATIONS MANAGER
+// APPLICATIONS MANAGER (WORKING REFRESH BUTTON)
 // ============================================
 const ApplicationsManager = () => {
     const [applications, setApplications] = useState([]);
     const [selectedApp, setSelectedApp] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    useEffect(() => { loadApplications(); }, []);
+    useEffect(() => { 
+        loadApplications(); 
+    }, []);
 
     const loadApplications = async () => {
-        const res = await getApplications();
-        if (res.success) setApplications(res.applications);
+        console.log('🔄 Refresh button clicked - Loading applications...');
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await getApplications();
+            console.log('Applications API response:', res);
+            if (res.success) {
+                setApplications(res.applications);
+                console.log(`✅ Successfully loaded ${res.applications.length} applications`);
+                if (res.applications.length === 0) {
+                    console.log('No applications found in database');
+                }
+            } else {
+                setError('Failed to load applications');
+                console.error('API returned success=false');
+            }
+        } catch (err) {
+            console.error('Error loading applications:', err);
+            setError(err.message || 'Error loading applications');
+            alert('Error loading applications. Check console for details.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const updateStatus = async (id, status) => {
-        await updateApplicationStatus(id, status);
-        await loadApplications();
+        console.log(`Updating application ${id} to status: ${status}`);
+        try {
+            await updateApplicationStatus(id, status);
+            await loadApplications();
+            console.log('Status updated successfully');
+        } catch (err) {
+            console.error('Error updating status:', err);
+            alert('Failed to update status');
+        }
     };
 
     return (
         <div style={styles.dashboardCard}>
-            <div style={styles.cardHeader}><h2>📋 Job Applications</h2><button onClick={loadApplications} style={styles.refreshBtn}>Refresh</button></div>
+            <div style={styles.cardHeader}>
+                <h2>📋 Job Applications</h2>
+                <button 
+                    onClick={() => {
+                        console.log('🟢 Refresh button CLICKED!');
+                        loadApplications();
+                    }} 
+                    style={styles.refreshBtn}
+                    disabled={loading}
+                >
+                    {loading ? '🔄 Loading...' : '🔄 Refresh'}
+                </button>
+            </div>
+            {error && (
+                <div style={{ background: '#f8d7da', color: '#721c24', padding: '10px', borderRadius: '8px', marginBottom: '15px' }}>
+                    Error: {error}
+                </div>
+            )}
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
                     <thead>
-                        <tr><th style={styles.th}>Name</th><th style={styles.th}>Job</th><th style={styles.th}>Email</th><th style={styles.th}>Experience</th><th style={styles.th}>Status</th><th style={styles.th}>Action</th></tr>
+                        <tr>
+                            <th style={styles.th}>Name</th>
+                            <th style={styles.th}>Job</th>
+                            <th style={styles.th}>Email</th>
+                            <th style={styles.th}>Experience</th>
+                            <th style={styles.th}>Status</th>
+                            <th style={styles.th}>Action</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        {applications.map(app => (
+                        {loading && (
+                            <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading applications...</td></tr>
+                        )}
+                        {!loading && applications.length === 0 && (
+                            <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>📭 No applications found. Submit a job application to see it here.</td></tr>
+                        )}
+                        {!loading && applications.map(app => (
                             <tr key={app.id}>
                                 <td style={styles.td}>{app.name}</td>
                                 <td style={styles.td}>{app.job_title}</td>
@@ -474,13 +536,15 @@ const ApplicationsManager = () => {
                                 <td style={styles.td}>{app.experience || 'N/A'} yrs</td>
                                 <td style={styles.td}>
                                     <select value={app.status} onChange={e => updateStatus(app.id, e.target.value)} style={styles.select}>
-                                        <option value="pending">Pending</option>
-                                        <option value="reviewed">Reviewed</option>
-                                        <option value="shortlisted">Shortlisted</option>
-                                        <option value="rejected">Rejected</option>
+                                        <option value="pending">⏳ Pending</option>
+                                        <option value="reviewed">👀 Reviewed</option>
+                                        <option value="shortlisted">⭐ Shortlisted</option>
+                                        <option value="rejected">❌ Rejected</option>
                                     </select>
                                 </td>
-                                <td style={styles.td}><button onClick={() => setSelectedApp(app)} style={styles.viewBtn}>View</button></td>
+                                <td style={styles.td}>
+                                    <button onClick={() => setSelectedApp(app)} style={styles.viewBtn}>View Details</button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -489,14 +553,22 @@ const ApplicationsManager = () => {
             {selectedApp && (
                 <div style={styles.modal} onClick={() => setSelectedApp(null)}>
                     <div style={styles.modalContent}>
-                        <h3>Application Details</h3>
+                        <h3>📄 Application Details</h3>
                         <p><strong>Name:</strong> {selectedApp.name}</p>
                         <p><strong>Email:</strong> {selectedApp.email}</p>
                         <p><strong>Phone:</strong> {selectedApp.phone}</p>
                         <p><strong>Experience:</strong> {selectedApp.experience} years</p>
-                        <p><strong>Company:</strong> {selectedApp.current_company}</p>
+                        <p><strong>Current Company:</strong> {selectedApp.current_company || 'N/A'}</p>
+                        <p><strong>Applied for:</strong> {selectedApp.job_title}</p>
+                        <p><strong>Status:</strong> {selectedApp.status}</p>
+                        <p><strong>Submitted:</strong> {new Date(selectedApp.created_at).toLocaleString()}</p>
                         <p><strong>Cover Letter:</strong></p>
-                        <div style={{ background: '#f5f5f5', padding: '10px', borderRadius: '5px' }}>{selectedApp.cover_letter}</div>
+                        <div style={{ background: '#f5f5f5', padding: '10px', borderRadius: '5px', maxHeight: '200px', overflow: 'auto' }}>
+                            {selectedApp.cover_letter || 'No cover letter provided'}
+                        </div>
+                        {selectedApp.resume_url && (
+                            <p><a href={selectedApp.resume_url} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea' }}>📄 Download Resume</a></p>
+                        )}
                         <button onClick={() => setSelectedApp(null)} style={styles.closeModalBtn}>Close</button>
                     </div>
                 </div>
@@ -506,21 +578,63 @@ const ApplicationsManager = () => {
 };
 
 // ============================================
-// QUOTES MANAGER
+// QUOTES MANAGER (WORKING REFRESH BUTTON)
 // ============================================
 const QuotesManager = () => {
     const [quotes, setQuotes] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    useEffect(() => { loadQuotes(); }, []);
+    useEffect(() => { 
+        loadQuotes(); 
+    }, []);
 
     const loadQuotes = async () => {
-        const res = await getQuotes();
-        if (res.success) setQuotes(res.quotes);
+        console.log('🔄 Refresh button clicked - Loading quotes...');
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await getQuotes();
+            console.log('Quotes API response:', res);
+            if (res.success) {
+                setQuotes(res.quotes);
+                console.log(`✅ Successfully loaded ${res.quotes.length} quotes`);
+                if (res.quotes.length === 0) {
+                    console.log('No quotes found in database');
+                }
+            } else {
+                setError('Failed to load quotes');
+                console.error('API returned success=false');
+            }
+        } catch (err) {
+            console.error('Error loading quotes:', err);
+            setError(err.message || 'Error loading quotes');
+            alert('Error loading quotes. Check console for details.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <div style={styles.dashboardCard}>
-            <div style={styles.cardHeader}><h2>📧 Quote Requests</h2><button onClick={loadQuotes} style={styles.refreshBtn}>Refresh</button></div>
+            <div style={styles.cardHeader}>
+                <h2>📧 Quote Requests</h2>
+                <button 
+                    onClick={() => {
+                        console.log('🟢 Refresh button CLICKED for Quotes!');
+                        loadQuotes();
+                    }} 
+                    style={styles.refreshBtn}
+                    disabled={loading}
+                >
+                    {loading ? '🔄 Loading...' : '🔄 Refresh'}
+                </button>
+            </div>
+            {error && (
+                <div style={{ background: '#f8d7da', color: '#721c24', padding: '10px', borderRadius: '8px', marginBottom: '15px' }}>
+                    Error: {error}
+                </div>
+            )}
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
                     <thead>
@@ -535,10 +649,18 @@ const QuotesManager = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {quotes.map(quote => (
+                        {loading && (
+                            <tr><td colSpan="7" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading quotes...</td></tr>
+                        )}
+                        {!loading && quotes.length === 0 && (
+                            <tr><td colSpan="7" style={{ textAlign: 'center', padding: '40px' }}>📭 No quote requests found. Submit a quote to see it here.</td></tr>
+                        )}
+                        {!loading && quotes.map(quote => (
                             <tr key={quote.id}>
                                 <td style={styles.td}>{quote.name}</td>
-                                <td style={styles.td}><a href={`mailto:${quote.email}`} style={{ color: '#667eea', textDecoration: 'none' }}>{quote.email}</a></td>
+                                <td style={styles.td}>
+                                    <a href={`mailto:${quote.email}`} style={{ color: '#667eea', textDecoration: 'none' }}>{quote.email}</a>
+                                </td>
                                 <td style={styles.td}>
                                     <div>
                                         <strong>{quote.phone || 'N/A'}</strong>
@@ -552,8 +674,10 @@ const QuotesManager = () => {
                                 <td style={styles.td}>{new Date(quote.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
                                     <details>
-                                        <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
-                                        <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px' }}>{quote.message || 'No message provided'}</div>
+                                        <summary style={{ cursor: 'pointer', color: '#667eea' }}>View Message</summary>
+                                        <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px', maxWidth: '250px', wordBreak: 'break-word' }}>
+                                            {quote.message || 'No message provided'}
+                                        </div>
                                     </details>
                                 </td>
                                 <td style={styles.td}>
@@ -643,6 +767,7 @@ const UserManager = () => {
         </div>
     );
 };
+
 // ============================================
 // PROFILE SETTINGS
 // ============================================
@@ -658,52 +783,51 @@ const ProfileSettings = ({ username, onLogout }) => {
     const [showNew, setShowNew] = useState(false);
 
     const handleUpdateUsername = async (e) => {
-    e.preventDefault();
-    setMessage('');
-    try {
-        const response = await changeUsername(newUsername, usernamePassword);
-        if (response.success) {
-            setMessage('✓ Username changed successfully! Please login again.');
-            if (response.token) {
-                sessionStorage.setItem('adminToken', response.token);
+        e.preventDefault();
+        setMessage('');
+        try {
+            const response = await changeUsername(newUsername, usernamePassword);
+            if (response.success) {
+                setMessage('✓ Username changed successfully! Please login again.');
+                if (response.token) {
+                    sessionStorage.setItem('adminToken', response.token);
+                }
+                setTimeout(() => { 
+                    sessionStorage.clear(); 
+                    onLogout(); 
+                }, 2000);
             }
-            setTimeout(() => { 
-                sessionStorage.clear(); 
-                onLogout(); 
-            }, 2000);
+        } catch (err) {
+            setMessage('✗ ' + (err.response?.data?.error || 'Failed to change username'));
         }
-    } catch (err) {
-        setMessage('✗ ' + (err.response?.data?.error || 'Failed to change username'));
-    }
-};
+    };
 
-const handleUpdatePassword = async (e) => {
-    e.preventDefault();
-    setMessage('');
-    if (newPassword !== confirmPassword) {
-        setMessage('✗ Passwords do not match');
-        return;
-    }
-    try {
-        const response = await changePassword(currentPassword, newPassword);
-        if (response.success) {
-            setMessage('✓ Password changed successfully! Please login again.');
-            setTimeout(() => { 
-                sessionStorage.clear(); 
-                onLogout(); 
-            }, 2000);
+    const handleUpdatePassword = async (e) => {
+        e.preventDefault();
+        setMessage('');
+        if (newPassword !== confirmPassword) {
+            setMessage('✗ Passwords do not match');
+            return;
         }
-    } catch (err) {
-        setMessage('✗ ' + (err.response?.data?.error || 'Failed to change password'));
-    }
-};
+        try {
+            const response = await changePassword(currentPassword, newPassword);
+            if (response.success) {
+                setMessage('✓ Password changed successfully! Please login again.');
+                setTimeout(() => { 
+                    sessionStorage.clear(); 
+                    onLogout(); 
+                }, 2000);
+            }
+        } catch (err) {
+            setMessage('✗ ' + (err.response?.data?.error || 'Failed to change password'));
+        }
+    };
 
     return (
         <div style={styles.dashboardCard}>
             <h2>👤 Profile Settings</h2>
             {message && <div style={{...styles.successMessage, background: message.startsWith('✓') ? '#d4edda' : '#f8d7da', color: message.startsWith('✓') ? '#155724' : '#721c24'}}>{message}</div>}
             
-            {/* Change Username Section */}
             <div style={{ marginBottom: '30px', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
                 <h3>📝 Change Username</h3>
                 <form onSubmit={handleUpdateUsername}>
@@ -732,7 +856,6 @@ const handleUpdatePassword = async (e) => {
                 </form>
             </div>
 
-            {/* Change Password Section */}
             <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
                 <h3>🔒 Change Password</h3>
                 <form onSubmit={handleUpdatePassword}>
@@ -776,6 +899,7 @@ const handleUpdatePassword = async (e) => {
         </div>
     );
 };
+
 // ============================================
 // CLICK ANALYTICS COMPONENT
 // ============================================
@@ -941,9 +1065,23 @@ const AdminPage = () => {
             </div>
 
             <div style={styles.mainContent}>
+                <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    marginBottom: '25px',
+                    background: 'white',
+                    padding: '15px 25px',
+                    borderRadius: '12px',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
+                }}>
+                    <h1 style={{ margin: 0, fontSize: '24px', color: '#333' }}>
+                        {tabs.find(t => t.id === activeTab)?.label || 'Dashboard'}
+                    </h1>
+                </div>
+
                 {activeTab === 'dashboard' && (
                     <div>
-                        <h1>Dashboard</h1>
                         <div style={styles.statsGrid}>
                             <div style={styles.statCard}><div>📝</div><h3>{stats.totalBlogs || 0}</h3><p>Total Blogs</p></div>
                             <div style={styles.statCard}><div>✅</div><h3>{stats.publishedBlogs || 0}</h3><p>Published Blogs</p></div>
@@ -1012,7 +1150,7 @@ const styles = {
     statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '20px', marginBottom: '30px' },
     statCard: { background: 'white', padding: '20px', borderRadius: '12px', textAlign: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' },
     addButton: { padding: '10px 20px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
-    refreshBtn: { padding: '10px 20px', background: '#48c774', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
+    refreshBtn: { padding: '10px 20px', background: '#48c774', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.3s ease' },
     editBtn: { padding: '6px 12px', background: '#4facfe', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', marginRight: '5px' },
     deleteBtn: { padding: '6px 12px', background: '#ff6b6b', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' },
     viewBtn: { padding: '6px 12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' },
@@ -1027,4 +1165,4 @@ const styles = {
     modalContent: { background: 'white', borderRadius: '15px', padding: '30px', maxWidth: '700px', width: '100%', maxHeight: '85vh', overflow: 'auto' },
 };
 
-export default AdminPage;"// Updated" 
+export default AdminPage;
