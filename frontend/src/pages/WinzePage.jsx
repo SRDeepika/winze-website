@@ -1800,7 +1800,7 @@ const WinzePage = () => {
                     top: 0,
                     left: 0,
                     right: 0,
-                    background: scrolled ? 'rgba(10,10,26,0.98)' : 'rgba(10,10,26,0.95)',
+                    background: scrolled ? 'rgba(15, 52, 96, 0.95)' : 'rgba(15, 52, 96, 0.9)',
                     backdropFilter: 'blur(20px)',
                     padding: '12px 5%',
                     zIndex: 1000,
