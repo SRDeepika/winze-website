@@ -1863,14 +1863,13 @@ const WinzePage = () => {
                         <FontAwesomeIcon icon={faArrowUp} style={{ fontSize: '24px', color: '#1a1a2e' }} />
                     </button>
                 )}
-                
-                {/* Navigation Bar - Solid Color */}
+                {/* Navigation Bar - Solid Dark Teal */}
 <nav style={{
     position: 'sticky',
     top: 0,
     left: 0,
     right: 0,
-    background: '#1a1a2e',
+    background: '#1A3A3A',
     padding: '12px 5%',
     zIndex: 1000,
     transition: 'all 0.3s',
