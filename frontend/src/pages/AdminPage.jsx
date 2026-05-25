@@ -194,21 +194,20 @@ const BlogManager = () => {
     };
 
     const handleEdit = (blog) => {
-        setEditingBlog(blog);
-        setFormData({
-            title: blog.title || '',
-            excerpt: blog.excerpt || '',
-            content: blog.content || '',
-            category: blog.category || '',
-            author: blog.author || '',
-            author_role: blog.author_role || '',
-            read_time: blog.read_time || 5,
-            status: blog.status || 'draft',
-            image: null
-        });
-        setShowForm(true);
-    };
-
+    setEditingBlog(blog);
+    setFormData({
+        title: blog.title || '',
+        excerpt: blog.excerpt || '',
+        content: blog.content || '',
+        category: blog.category || '',
+        author: blog.author || '',
+        author_role: blog.author_role || '',
+        read_time: blog.read_time ? parseInt(blog.read_time) : 5,  // Convert to number properly
+        status: blog.status || 'draft',
+        image: null
+    });
+    setShowForm(true);
+};
     return (
         <div style={styles.dashboardCard}>
             <div style={styles.cardHeader}>
@@ -304,33 +303,53 @@ const JobManager = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        
-        try {
-            if (editingJob) {
-                await updateJob(editingJob.id, formData);
-                alert('Job updated successfully!');
-            } else {
-                await createJob(formData);
-                alert('Job created successfully!');
+    e.preventDefault();
+    setLoading(true);
+    
+    try {
+        if (editingBlog) {
+            const updateData = {
+                title: formData.title,
+                excerpt: formData.excerpt,
+                content: formData.content,
+                category: formData.category,
+                author: formData.author,
+                author_role: formData.author_role,
+                read_time: parseInt(formData.read_time) || 5,  // Ensure it's a number
+                status: formData.status
+            };
+            await updateBlog(editingBlog.id, updateData);
+            alert('Blog updated successfully!');
+        } else {
+            const createData = new FormData();
+            createData.append('title', formData.title);
+            createData.append('excerpt', formData.excerpt || '');
+            createData.append('content', formData.content);
+            createData.append('category', formData.category || 'General');
+            createData.append('author', formData.author || 'Admin');
+            createData.append('author_role', formData.author_role || 'Author');
+            createData.append('read_time', parseInt(formData.read_time) || 5);  // Ensure it's a number
+            createData.append('status', formData.status);
+            if (formData.image) {
+                createData.append('image', formData.image);
             }
-            await loadJobs();
-            setShowForm(false);
-            setEditingJob(null);
-            setFormData({
-                title: '', department: '', location: '', type: 'Full-time', 
-                experience: '', salary: '', description: '', requirements: '', 
-                benefits: '', status: 'active', deadline: ''
-            });
-        } catch (error) {
-            console.error('Error saving job:', error);
-            alert('Error saving job: ' + (error.response?.data?.error || error.message));
-        } finally {
-            setLoading(false);
+            await createBlog(createData);
+            alert('Blog created successfully!');
         }
-    };
-
+        await loadBlogs();
+        setShowForm(false);
+        setEditingBlog(null);
+        setFormData({
+            title: '', excerpt: '', content: '', category: '', 
+            author: '', author_role: '', read_time: 5, status: 'draft', image: null
+        });
+    } catch (error) {
+        console.error('Error saving blog:', error);
+        alert('Error saving blog: ' + (error.response?.data?.error || error.message));
+    } finally {
+        setLoading(false);
+    }
+};
     const handleDelete = async (id) => {
         if (window.confirm('Delete this job?')) {
             await deleteJob(id);
