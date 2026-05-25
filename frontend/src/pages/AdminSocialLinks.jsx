@@ -112,18 +112,21 @@ const AdminSocialLinks = () => {
                     <table style={styles.table}>
                         <thead>
                             <tr>
+                                <th style={styles.th}>ID</th>
                                 <th style={styles.th}>Platform</th>
                                 <th style={styles.th}>URL</th>
                                 <th style={styles.th}>Icon Class</th>
                                 <th style={styles.th}>Color</th>
                                 <th style={styles.th}>Order</th>
                                 <th style={styles.th}>Status</th>
+                                <th style={styles.th}>Created At</th>
                                 <th style={styles.th}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {links.map((link) => (
                                 <tr key={link.id}>
+                                    <td style={styles.td}>{link.id}</td>
                                     <td style={styles.td}>{link.platform_name}</td>
                                     <td style={styles.td}>
                                         <a href={link.platform_url} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea' }}>
@@ -141,6 +144,7 @@ const AdminSocialLinks = () => {
                                             {link.is_active === 1 ? 'Active' : 'Inactive'}
                                         </span>
                                     </td>
+                                    <td style={styles.td}>{link.created_at ? new Date(link.created_at).toLocaleString() : 'N/A'}</td>
                                     <td style={styles.td}>
                                         <button onClick={() => handleEdit(link)} style={styles.editBtn}>Edit</button>
                                         <button onClick={() => handleDelete(link.id)} style={styles.deleteBtn}>Delete</button>
