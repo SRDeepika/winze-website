@@ -251,12 +251,12 @@ app.get('/api/blogs', async (req, res) => {
 app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT b.*, a.username as created_by_name 
+      SELECT b.id, b.title, b.slug, b.excerpt, b.content, b.category, 
+             b.image, b.author, b.author_role, b.read_time, b.views, 
+             b.status, b.created_at, b.updated_at
       FROM blogs b 
-      LEFT JOIN admins a ON b.created_by = a.id 
       ORDER BY b.created_at DESC
     `);
-    console.log('Blogs fetched count:', result.rows.length);
     res.json({ success: true, blogs: result.rows });
   } catch (error) {
     console.error('Error fetching blogs:', error);
@@ -329,9 +329,10 @@ app.get('/api/jobs', async (req, res) => {
 app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT j.*, a.username as posted_by_name 
+      SELECT j.id, j.title, j.department, j.location, j.type, 
+             j.experience, j.salary, j.description, j.requirements, 
+             j.benefits, j.status, j.deadline, j.created_at, j.updated_at
       FROM jobs j 
-      LEFT JOIN admins a ON j.posted_by = a.id 
       ORDER BY j.created_at DESC
     `);
     res.json({ success: true, jobs: result.rows });
@@ -344,12 +345,11 @@ app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
 app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
     const { title, department, location, type, experience, salary, description, requirements, benefits, status, deadline } = req.body;
-    const posted_by = req.user.id;
     
     await db.query(
-      `INSERT INTO jobs (title, department, location, type, experience, salary, description, requirements, benefits, status, deadline, posted_by, created_at, updated_at) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW(), NOW())`,
-      [title, department || '', location || '', type || 'Full-time', experience || '', salary || '', description || '', requirements || '', benefits || '', status || 'active', deadline || null, posted_by]
+      `INSERT INTO jobs (title, department, location, type, experience, salary, description, requirements, benefits, status, deadline, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())`,
+      [title, department || '', location || '', type || 'Full-time', experience || '', salary || '', description || '', requirements || '', benefits || '', status || 'active', deadline || null]
     );
     res.json({ success: true, message: 'Job created' });
   } catch (error) {
@@ -427,7 +427,7 @@ app.post('/api/quotes', async (req, res) => {
 
 app.get('/api/admin/quotes', authenticateToken, async (req, res) => {
   try {
-    const result = await db.query(`SELECT * FROM quotes ORDER BY created_at DESC`);
+    const result = await db.query(`SELECT id, name, email, phone, service, message, status, created_at FROM quotes ORDER BY created_at DESC`);
     res.json({ success: true, quotes: result.rows });
   } catch (error) {
     res.json({ success: true, quotes: [] });
