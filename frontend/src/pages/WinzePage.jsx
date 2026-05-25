@@ -2089,14 +2089,14 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Clients Section */}
-                <section id="clients" ref={clientsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)' }}>
-                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Valued Clients</h2>
-                        <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.1rem' }}>Trusted by industry leaders across India</p>
-                        <div className="marquee-container"><div className="marquee-content">{[...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (<div key={idx} className="client-logo-item" onClick={() => handleTrackClick(client.name, 'client')} style={{ background: 'white' }}><div className="client-logo-img"><img src={client.url} alt={client.name} style={{ filter: 'none' }} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/FFD700/1a1a2e?text=${client.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.9rem', margin: 0, fontWeight: '600' }}>{client.name}</h3></div>))}</div></div>
-                    </div>
-                </section>
+                {/* Clients Section - Changed to Dark Teal to match nav bar */}
+<section id="clients" ref={clientsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: '#1A3A3A' }}>
+    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
+        <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Valued Clients</h2>
+        <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.1rem' }}>Trusted by industry leaders across India</p>
+        <div className="marquee-container"><div className="marquee-content">{[...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (<div key={idx} className="client-logo-item" onClick={() => handleTrackClick(client.name, 'client')} style={{ background: 'white' }}><div className="client-logo-img"><img src={client.url} alt={client.name} style={{ filter: 'none' }} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/FFD700/1a1a2e?text=${client.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.9rem', margin: 0, fontWeight: '600' }}>{client.name}</h3></div>))}</div></div>
+    </div>
+</section>
 
                 {/* Work With Winze Section */}
                 <section id="workwith" ref={workwithRef} style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
