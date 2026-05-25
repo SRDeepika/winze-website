@@ -310,7 +310,7 @@ const JobManager = () => {
     const [formData, setFormData] = useState({
         id: null, title: '', department: '', location: '', type: 'Full-time',
         experience: '', salary: '', description: '', requirements: '',
-        benefits: '', status: 'active', deadline: ''
+        benefits: '', status: 'active'
     });
 
     useEffect(() => { loadJobs(); }, []);
@@ -338,7 +338,7 @@ const JobManager = () => {
             setFormData({
                 id: null, title: '', department: '', location: '', type: 'Full-time',
                 experience: '', salary: '', description: '', requirements: '',
-                benefits: '', status: 'active', deadline: ''
+                benefits: '', status: 'active'
             });
         } catch (error) {
             console.error('Error saving job:', error);
@@ -388,7 +388,6 @@ const JobManager = () => {
                             <th style={styles.th}>Requirements</th>
                             <th style={styles.th}>Benefits</th>
                             <th style={styles.th}>Status</th>
-                            <th style={styles.th}>Deadline</th>
                             <th style={styles.th}>Created At</th>
                             <th style={styles.th}>Actions</th>
                         </tr>
@@ -424,7 +423,6 @@ const JobManager = () => {
                                         {job.status || 'active'}
                                     </span>
                                 </td>
-                                <td style={styles.td}>{job.deadline ? new Date(job.deadline).toLocaleDateString() : 'N/A'}</td>
                                 <td style={styles.td}>{new Date(job.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
                                     <button onClick={() => { setEditingJob(job); setFormData({...job}); setShowForm(true); }} style={styles.editBtn}>Edit</button>
@@ -455,7 +453,6 @@ const JobManager = () => {
                             <textarea placeholder="Job Description *" rows="5" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={formTextareaStyle} required />
                             <textarea placeholder="Requirements" rows="4" value={formData.requirements} onChange={e => setFormData({...formData, requirements: e.target.value})} style={formTextareaStyle} />
                             <textarea placeholder="Benefits" rows="3" value={formData.benefits} onChange={e => setFormData({...formData, benefits: e.target.value})} style={formTextareaStyle} />
-                            <input type="date" placeholder="Deadline" value={formData.deadline} onChange={e => setFormData({...formData, deadline: e.target.value})} style={formInputStyle} />
                             <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={formSelectStyle}>
                                 <option value="active">Active</option>
                                 <option value="closed">Closed</option>
