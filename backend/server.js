@@ -57,8 +57,6 @@ app.post('/api/admin/login', async (req, res) => {
   const { username, password } = req.body;
   console.log('Login attempt:', username);
   
-  
-  // Then try database
   try {
     const result = await db.query(`SELECT * FROM admins WHERE username = $1`, [username]);
     
@@ -99,22 +97,18 @@ app.post('/api/admin/change-username', authenticateToken, async (req, res) => {
     const admin = result.rows[0];
     const passwordHash = admin.password_hash || admin.password;
     
-    // Verify password
     const validPassword = await bcrypt.compare(password, passwordHash);
     if (!validPassword) {
       return res.status(401).json({ success: false, error: 'Current password is incorrect' });
     }
     
-    // Check if new username already exists
     const existing = await db.query(`SELECT id FROM admins WHERE username = $1 AND id != $2`, [newUsername, adminId]);
     if (existing.rows.length > 0) {
       return res.status(400).json({ success: false, error: 'Username already exists' });
     }
     
-    // Update username
     await db.query(`UPDATE admins SET username = $1, updated_at = NOW() WHERE id = $2`, [newUsername, adminId]);
     
-    // Generate new token with new username
     const token = jwt.sign({ id: admin.id, username: newUsername, role: admin.role }, JWT_SECRET, { expiresIn: '24h' });
     
     res.json({ success: true, message: 'Username changed successfully', token });
@@ -140,16 +134,12 @@ app.post('/api/admin/change-password', authenticateToken, async (req, res) => {
     const admin = result.rows[0];
     const passwordHash = admin.password_hash || admin.password;
     
-    // Verify old password
     const validPassword = await bcrypt.compare(oldPassword, passwordHash);
     if (!validPassword) {
       return res.status(401).json({ success: false, error: 'Current password is incorrect' });
     }
     
-    // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    
-    // Update password
     await db.query(`UPDATE admins SET password_hash = $1, updated_at = NOW() WHERE id = $2`, [hashedPassword, adminId]);
     
     res.json({ success: true, message: 'Password changed successfully' });
@@ -162,7 +152,7 @@ app.post('/api/admin/change-password', authenticateToken, async (req, res) => {
 // ========== ADMIN USERS ==========
 app.get('/api/admin/users', authenticateToken, async (req, res) => {
   try {
-    const result = await db.query(`SELECT id, username, role, created_at FROM admins ORDER BY created_at DESC`);
+    const result = await db.query(`SELECT id, username, role, created_at, updated_at FROM admins ORDER BY created_at DESC`);
     res.json({ success: true, users: result.rows });
   } catch (error) {
     res.json({ success: true, users: [] });
@@ -260,10 +250,16 @@ app.get('/api/blogs', async (req, res) => {
 
 app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
   try {
-    const result = await db.query(`SELECT * FROM blogs ORDER BY created_at DESC`);
-    console.log('Blogs fetched, first read_time:', result.rows[0]?.read_time);
+    const result = await db.query(`
+      SELECT b.*, a.username as created_by_name 
+      FROM blogs b 
+      LEFT JOIN admins a ON b.created_by = a.id 
+      ORDER BY b.created_at DESC
+    `);
+    console.log('Blogs fetched count:', result.rows.length);
     res.json({ success: true, blogs: result.rows });
   } catch (error) {
+    console.error('Error fetching blogs:', error);
     res.json({ success: true, blogs: [] });
   }
 });
@@ -272,10 +268,12 @@ app.post('/api/admin/blogs', authenticateToken, async (req, res) => {
   try {
     const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const created_by = req.user.id;
+    
     await db.query(
-      `INSERT INTO blogs (title, slug, excerpt, content, category, author, author_role, read_time, status, created_at, updated_at, views) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW(), 0)`,
-      [title, slug, excerpt || '', content, category || 'General', author || 'Admin', author_role || 'Author', read_time || 5, status || 'draft']
+      `INSERT INTO blogs (title, slug, excerpt, content, category, author, author_role, read_time, status, created_by, created_at, updated_at, views) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW(), 0)`,
+      [title, slug, excerpt || '', content, category || 'General', author || 'Admin', author_role || 'Author', read_time || 5, status || 'draft', created_by]
     );
     res.json({ success: true, message: 'Blog created' });
   } catch (error) {
@@ -289,21 +287,20 @@ app.put('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
     
-    console.log('Updating blog ID:', id, 'read_time:', read_time);
-    
     if (title) {
       const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       await db.query(`UPDATE blogs SET title=$1, slug=$2, updated_at=NOW() WHERE id=$3`, [title, slug, id]);
     }
     if (excerpt !== undefined) await db.query(`UPDATE blogs SET excerpt=$1, updated_at=NOW() WHERE id=$2`, [excerpt, id]);
-    if (content) await db.query(`UPDATE blogs SET content=$1, updated_at=NOW() WHERE id=$2`, [content, id]);
-    if (category) await db.query(`UPDATE blogs SET category=$1, updated_at=NOW() WHERE id=$2`, [category, id]);
-    if (author) await db.query(`UPDATE blogs SET author=$1, updated_at=NOW() WHERE id=$2`, [author, id]);
+    if (content !== undefined) await db.query(`UPDATE blogs SET content=$1, updated_at=NOW() WHERE id=$2`, [content, id]);
+    if (category !== undefined) await db.query(`UPDATE blogs SET category=$1, updated_at=NOW() WHERE id=$2`, [category, id]);
+    if (author !== undefined) await db.query(`UPDATE blogs SET author=$1, updated_at=NOW() WHERE id=$2`, [author, id]);
     if (author_role !== undefined) await db.query(`UPDATE blogs SET author_role=$1, updated_at=NOW() WHERE id=$2`, [author_role, id]);
     if (read_time !== undefined) await db.query(`UPDATE blogs SET read_time=$1, updated_at=NOW() WHERE id=$2`, [read_time, id]);
-    if (status) await db.query(`UPDATE blogs SET status=$1, updated_at=NOW() WHERE id=$2`, [status, id]);
+    if (status !== undefined) await db.query(`UPDATE blogs SET status=$1, updated_at=NOW() WHERE id=$2`, [status, id]);
     
-    res.json({ success: true, message: 'Blog updated' });
+    const updated = await db.query(`SELECT * FROM blogs WHERE id = $1`, [id]);
+    res.json({ success: true, message: 'Blog updated successfully', blog: updated.rows[0] });
   } catch (error) {
     console.error('Update blog error:', error);
     res.status(500).json({ success: false, error: error.message });
@@ -331,23 +328,32 @@ app.get('/api/jobs', async (req, res) => {
 
 app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
-    const result = await db.query(`SELECT * FROM jobs ORDER BY created_at DESC`);
+    const result = await db.query(`
+      SELECT j.*, a.username as posted_by_name 
+      FROM jobs j 
+      LEFT JOIN admins a ON j.posted_by = a.id 
+      ORDER BY j.created_at DESC
+    `);
     res.json({ success: true, jobs: result.rows });
   } catch (error) {
+    console.error('Error fetching jobs:', error);
     res.json({ success: true, jobs: [] });
   }
 });
 
 app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
-    const { title, department, location, type, description, salary, status } = req.body;
+    const { title, department, location, type, experience, salary, description, requirements, benefits, status, deadline } = req.body;
+    const posted_by = req.user.id;
+    
     await db.query(
-      `INSERT INTO jobs (title, department, location, type, description, salary, status, created_at, updated_at) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())`,
-      [title, department || '', location || '', type || 'Full-time', description || '', salary || '', status || 'active']
+      `INSERT INTO jobs (title, department, location, type, experience, salary, description, requirements, benefits, status, deadline, posted_by, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW(), NOW())`,
+      [title, department || '', location || '', type || 'Full-time', experience || '', salary || '', description || '', requirements || '', benefits || '', status || 'active', deadline || null, posted_by]
     );
     res.json({ success: true, message: 'Job created' });
   } catch (error) {
+    console.error('Create job error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -355,13 +361,19 @@ app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
 app.put('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, department, location, type, description, salary, status } = req.body;
+    const { title, department, location, type, experience, salary, description, requirements, benefits, status, deadline } = req.body;
+    
     await db.query(
-      `UPDATE jobs SET title=$1, department=$2, location=$3, type=$4, description=$5, salary=$6, status=$7, updated_at=NOW() WHERE id=$8`,
-      [title, department, location, type, description, salary, status, id]
+      `UPDATE jobs SET 
+        title=$1, department=$2, location=$3, type=$4, 
+        experience=$5, salary=$6, description=$7, requirements=$8, 
+        benefits=$9, status=$10, deadline=$11, updated_at=NOW() 
+       WHERE id=$12`,
+      [title, department, location, type, experience, salary, description, requirements, benefits, status, deadline, id]
     );
     res.json({ success: true, message: 'Job updated' });
   } catch (error) {
+    console.error('Update job error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -405,7 +417,7 @@ app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res
 app.post('/api/quotes', async (req, res) => {
   try {
     const { name, email, phone, service, message } = req.body;
-    await db.query(`INSERT INTO quotes (name, email, phone, service, message, created_at) VALUES ($1, $2, $3, $4, $5, NOW())`, 
+    await db.query(`INSERT INTO quotes (name, email, phone, service, message, status, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, 'pending', NOW(), NOW())`, 
       [name, email, phone, service, message]);
     res.json({ success: true, message: 'Quote submitted successfully' });
   } catch (error) {
@@ -419,6 +431,29 @@ app.get('/api/admin/quotes', authenticateToken, async (req, res) => {
     res.json({ success: true, quotes: result.rows });
   } catch (error) {
     res.json({ success: true, quotes: [] });
+  }
+});
+
+app.put('/api/admin/quotes/:id/status', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    
+    console.log(`Updating quote ${id} status to: ${status}`);
+    
+    const result = await db.query(
+      `UPDATE quotes SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *`,
+      [status, id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Quote not found' });
+    }
+    
+    res.json({ success: true, message: 'Quote status updated', quote: result.rows[0] });
+  } catch (error) {
+    console.error('Error updating quote status:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
