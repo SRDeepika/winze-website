@@ -13,13 +13,15 @@ import {
     faBriefcase, faTrophy, faGlobe, faLightbulb, faProjectDiagram,
     faChevronLeft, faChevronRight, faTimes, faArrowRight, faCheckCircle,
     faCamera, faNetworkWired, faBroadcastTower, faBell, faPhoneAlt, faPhoneVolume,
-    faCar, faParking
+    faCar, faParking, faArrowUp
 } from '@fortawesome/free-solid-svg-icons';
 import { 
     faLinkedin, 
     faWhatsapp, 
     faFacebook, 
-    faInstagram 
+    faInstagram,
+    faTwitter,
+    faYoutube
 } from '@fortawesome/free-brands-svg-icons';
 
 // ========== BACKGROUND IMAGES ==========
@@ -85,6 +87,16 @@ const clientLogos = [
     { name: "CKPC", url: "/images/ckpc.png" },
     { name: "Kyyba", url: "/images/kyyba.png" },
     { name: "Skidata", url: "/images/skidata.png" }
+];
+
+// Social Links for Footer
+const footerSocialLinks = [
+    { icon: faLinkedin, url: "https://linkedin.com/company/winze-tech", name: "LinkedIn", color: "#0077B5" },
+    { icon: faWhatsapp, url: "https://wa.me/919550010417", name: "WhatsApp", color: "#25D366" },
+    { icon: faFacebook, url: "https://facebook.com/winzetech", name: "Facebook", color: "#1877F2" },
+    { icon: faInstagram, url: "https://instagram.com/winzetech", name: "Instagram", color: "#E4405F" },
+    { icon: faTwitter, url: "https://twitter.com/winzetech", name: "Twitter", color: "#1DA1F2" },
+    { icon: faYoutube, url: "https://youtube.com/@winzetech", name: "YouTube", color: "#FF0000" }
 ];
 
 // Extended content for solution cards (5+ extra points)
@@ -730,6 +742,8 @@ const WinzePage = () => {
     const [scrolled, setScrolled] = useState(false);
     const [showQuoteModal, setShowQuoteModal] = useState(false);
     const [showLogoModal, setShowLogoModal] = useState(false);
+    const [showBackToTop, setShowBackToTop] = useState(false);
+    const [activeNav, setActiveNav] = useState('home');
     const [hoveredCard, setHoveredCard] = useState(null);
     const [counters, setCounters] = useState({
         years: 0,
@@ -758,9 +772,25 @@ const WinzePage = () => {
     const workwithRef = useRef(null);
 
     useEffect(() => {
-        window.addEventListener('scroll', () => {
+        const handleScroll = () => {
             setScrolled(window.scrollY > 50);
-        });
+            setShowBackToTop(window.scrollY > 500);
+            
+            // Update active nav based on scroll position
+            const sections = ['home', 'solutions', 'industries', 'partners', 'clients', 'workwith'];
+            for (const section of sections) {
+                const ref = { current: document.getElementById(section) };
+                if (ref.current) {
+                    const rect = ref.current.getBoundingClientRect();
+                    if (rect.top <= 100 && rect.bottom >= 100) {
+                        setActiveNav(section);
+                        break;
+                    }
+                }
+            }
+        };
+        
+        window.addEventListener('scroll', handleScroll);
         
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -799,7 +829,7 @@ const WinzePage = () => {
         }
         
         return () => {
-            window.removeEventListener('scroll', () => {});
+            window.removeEventListener('scroll', handleScroll);
             observer.disconnect();
         };
     }, []);
@@ -824,6 +854,10 @@ const WinzePage = () => {
         } catch (error) {
             console.error('Tracking failed:', error);
         }
+    };
+
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const openLandingPage = (item, type = 'solution') => {
@@ -896,6 +930,7 @@ const WinzePage = () => {
 
     const scrollToSection = (ref, sectionName, path) => {
         handleTrackClick(`Navigation - ${sectionName}`, 'nav');
+        setActiveNav(sectionName.toLowerCase().replace(/\s/g, ''));
         
         if (path) {
             window.location.href = path;
@@ -936,14 +971,14 @@ const WinzePage = () => {
     ];
 
     const navItems = [
-        { name: "Home", ref: homeRef },
-        { name: "Solutions", ref: solutionsRef },
-        { name: "Industries", ref: industriesRef },
-        { name: "Partners", ref: partnersRef },
-        { name: "Clients", ref: clientsRef },
-        { name: "Work With Winze", ref: workwithRef },
-        { name: "Careers", ref: null, path: "/careers" },
-        { name: "Blogs", ref: null, path: "/blogs" }
+        { name: "Home", ref: homeRef, id: "home" },
+        { name: "Solutions", ref: solutionsRef, id: "solutions" },
+        { name: "Industries", ref: industriesRef, id: "industries" },
+        { name: "Partners", ref: partnersRef, id: "partners" },
+        { name: "Clients", ref: clientsRef, id: "clients" },
+        { name: "Work With Winze", ref: workwithRef, id: "workwith" },
+        { name: "Careers", ref: null, path: "/careers", id: "careers" },
+        { name: "Blogs", ref: null, path: "/blogs", id: "blogs" }
     ];
 
     const deliveryItems = [
@@ -1570,6 +1605,77 @@ const WinzePage = () => {
                     100% { box-shadow: 0 0 10px rgba(255,215,0,0.3), 0 0 20px rgba(255,215,0,0.2); filter: brightness(1); transform: translateY(0px); }
                 }
                 
+                /* Back to Top Button Animation */
+                @keyframes bounce {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-5px); }
+                }
+                
+                .back-to-top {
+                    position: fixed;
+                    bottom: 30px;
+                    right: 30px;
+                    width: 50px;
+                    height: 50px;
+                    background: linear-gradient(135deg, #FFD700, #FFA500);
+                    border: none;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 999;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+                    animation: bounce 2s ease-in-out infinite;
+                }
+                
+                .back-to-top:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 8px 25px rgba(255,215,0,0.5);
+                }
+                
+                /* Card Image Styling */
+                .card-image {
+                    width: 100%;
+                    height: 220px;
+                    object-fit: cover;
+                    transition: transform 0.5s ease;
+                }
+                
+                /* Modern Card Hover Effect */
+                .modern-card {
+                    background: linear-gradient(145deg, #1a1a2e, #16213e);
+                    border-radius: 24px;
+                    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+                    cursor: pointer;
+                    overflow: hidden;
+                    backdrop-filter: blur(2px);
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    border: 1px solid rgba(255,215,0,0.2);
+                    animation: glowPulse 3s ease-in-out infinite;
+                }
+                .modern-card:hover {
+                    transform: translateY(-15px) scale(1.02);
+                    border-color: rgba(255,215,0,0.8);
+                    box-shadow: 0 30px 50px rgba(0,0,0,0.4), 0 0 20px rgba(255,215,0,0.2);
+                }
+                
+                /* Social Link Hover Effects */
+                .footer-social-icon {
+                    transition: all 0.3s ease;
+                }
+                .footer-social-icon:hover {
+                    transform: translateY(-5px) scale(1.1);
+                }
+                
+                /* Smooth Scroll Behavior */
+                html {
+                    scroll-behavior: smooth;
+                }
+                
                 /* Different floating animations for each section */
                 @keyframes floatDelivery {
                     0%, 100% { transform: translateY(0px); }
@@ -1644,25 +1750,6 @@ const WinzePage = () => {
                 section { position: relative; z-index: 1; }
                 .section-content { position: relative; z-index: 2; }
                 
-                .modern-card {
-                    background: linear-gradient(145deg, #1a1a2e, #16213e);
-                    border-radius: 24px;
-                    transition: all 0.3s ease;
-                    cursor: pointer;
-                    overflow: hidden;
-                    backdrop-filter: blur(2px);
-                    height: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    border: 1px solid rgba(255,215,0,0.2);
-                    animation: glowPulse 3s ease-in-out infinite;
-                }
-                .modern-card:hover {
-                    transform: translateY(-15px) scale(1.02);
-                    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-                    border-color: rgba(255,215,0,0.8);
-                    box-shadow: 0 30px 50px rgba(0,0,0,0.4);
-                }
                 .card-inner {
                     padding: 28px 24px 32px;
                     flex: 1;
@@ -1681,15 +1768,6 @@ const WinzePage = () => {
                     margin-bottom: 10px;
                     font-size: 0.85rem;
                     font-weight: 500;
-                }
-                .card-image {
-                    width: 100%;
-                    height: 200px;
-                    object-fit: cover;
-                    transition: transform 0.5s ease;
-                }
-                .modern-card:hover .card-image {
-                    transform: scale(1.05);
                 }
                 .btn-learn {
                     background: rgba(255,215,0,0.2);
@@ -1764,6 +1842,12 @@ const WinzePage = () => {
                     padding: 6px;
                 }
                 
+                /* Active Nav Link Styling */
+                .nav-active {
+                    border-bottom: 2px solid #FFD700;
+                    transform: translateY(-2px);
+                }
+                
                 /* Scrollbar styling for landing page */
                 .landing-scroll {
                     scrollbar-width: thin;
@@ -1790,22 +1874,30 @@ const WinzePage = () => {
                 type="website"
             />
             
-            <div style={{ fontFamily: "'Poppins', 'Montserrat', sans-serif", overflowX: 'hidden', position: 'relative', background: '#0a0a1a' }}>
+            <div style={{ fontFamily: "'Poppins', 'Montserrat', sans-serif", overflowX: 'hidden', position: 'relative', background: '#0D2B2B' }}>
                 
                 <SocialLinks />
-         {/* Navigation Bar */}
+                
+                {/* Back to Top Button */}
+                {showBackToTop && (
+                    <button onClick={scrollToTop} className="back-to-top" aria-label="Back to top">
+                        <FontAwesomeIcon icon={faArrowUp} style={{ fontSize: '24px', color: '#1a1a2e' }} />
+                    </button>
+                )}
+                
+                {/* Navigation Bar */}
 <nav style={{
     position: 'sticky',
     top: 0,
     left: 0,
     right: 0,
-    background: '#1A4A4A',
+    background: '#0D2B2B',
     backdropFilter: 'blur(20px)',
     padding: '12px 5%',
     zIndex: 1000,
     transition: 'all 0.3s',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
-    borderBottom: '1px solid rgba(255,215,0,0.3)'
+    boxShadow: scrolled ? '0 4px 20px rgba(0,0,0,0.3)' : 'none',
+    borderBottom: '1px solid rgba(255,215,0,0.2)'
 }}>
     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
         <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
@@ -1818,24 +1910,44 @@ const WinzePage = () => {
         
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
             {navItems.map((item) => (
-                <button key={item.name} onClick={(e) => { 
-                    e.preventDefault(); 
-                    e.stopPropagation(); 
-                    if (item.path) {
-                        handleTrackClick(`${item.name} Page Visit`, 'navigation');
-                        window.location.href = item.path;
-                    } else {
-                        scrollToSection(item.ref, item.name);
-                    }
-                }} style={{ background: 'transparent', color: '#fff', fontWeight: '600', padding: '8px 18px', borderRadius: '30px', transition: 'all 0.3s', cursor: 'pointer', fontSize: '14px', fontFamily: "'Poppins', sans-serif", border: 'none' }}
+                <button 
+                    key={item.name} 
+                    onClick={(e) => { 
+                        e.preventDefault(); 
+                        e.stopPropagation(); 
+                        if (item.path) {
+                            handleTrackClick(`${item.name} Page Visit`, 'navigation');
+                            window.location.href = item.path;
+                        } else {
+                            scrollToSection(item.ref, item.name);
+                        }
+                    }} 
+                    style={{ 
+                        background: 'transparent', 
+                        color: activeNav === item.id ? '#FFD700' : '#fff', 
+                        fontWeight: '600', 
+                        padding: '8px 18px', 
+                        borderRadius: '30px', 
+                        transition: 'all 0.3s', 
+                        cursor: 'pointer', 
+                        fontSize: '14px', 
+                        fontFamily: "'Poppins', sans-serif", 
+                        border: activeNav === item.id ? '1px solid rgba(255,215,0,0.5)' : 'none',
+                        borderBottom: activeNav === item.id ? '2px solid #FFD700' : 'none'
+                    }}
                     onMouseEnter={(e) => {
                         e.target.style.background = '#FFD700';
                         e.target.style.color = '#1a1a2e';
                         e.target.style.transform = 'translateY(-2px)';
                     }}
                     onMouseLeave={(e) => {
-                        e.target.style.background = 'transparent';
-                        e.target.style.color = '#fff';
+                        if (activeNav === item.id) {
+                            e.target.style.background = 'transparent';
+                            e.target.style.color = '#FFD700';
+                        } else {
+                            e.target.style.background = 'transparent';
+                            e.target.style.color = '#fff';
+                        }
                         e.target.style.transform = 'translateY(0)';
                     }}
                 >
@@ -1843,7 +1955,16 @@ const WinzePage = () => {
                 </button>
             ))}
             <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Get Quote Button', 'cta'); }} style={{
-                background: '#FFD700', color: '#1a1a2e', border: 'none', padding: '8px 24px', borderRadius: '30px', cursor: 'pointer', fontWeight: '700', transition: 'all 0.3s', fontFamily: "'Poppins', sans-serif", boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
+                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                color: '#1a1a2e',
+                border: 'none',
+                padding: '8px 24px',
+                borderRadius: '30px',
+                cursor: 'pointer',
+                fontWeight: '700',
+                transition: 'all 0.3s',
+                fontFamily: "'Poppins', sans-serif",
+                boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
             }}
             onMouseEnter={(e) => { e.target.style.transform = 'scale(1.05)'; e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)'; }}
             onMouseLeave={(e) => { e.target.style.transform = 'scale(1)'; e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)'; }}>
@@ -1853,25 +1974,25 @@ const WinzePage = () => {
     </div>
 </nav>
                 {/* Hero Section */}
-                <section ref={homeRef} id="home" style={{ minHeight: '90vh', position: 'relative', display: 'flex', alignItems: 'center', padding: '80px 5%', overflow: 'hidden' }}>
+                <section id="home" ref={homeRef} style={{ minHeight: '90vh', position: 'relative', display: 'flex', alignItems: 'center', padding: '80px 5%', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.hero} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
                             <div>
                                 <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap' }}>
                                     <span style={{ background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', padding: '6px 20px', borderRadius: '30px', fontSize: '13px', color: '#1a1a2e', display: 'inline-block', fontWeight: '700', boxShadow: '0 4px 15px rgba(255,215,0,0.3)' }}>🏆 16+ Years of Excellence</span>
-                                    <h1 style={{ fontSize: '2.2rem', color: 'white', display: 'inline-block', fontFamily: "'Playfair Display', serif", fontWeight: '700', margin: 0, letterSpacing: '-0.5px' }}>Winze Technologies</h1>
+                                    <h1 style={{ fontSize: '3rem', color: 'white', display: 'inline-block', fontFamily: "'Playfair Display', serif", fontWeight: '700', margin: 0, letterSpacing: '-0.5px' }}>Winze Technologies</h1>
                                 </div>
-                                <p style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ddd', lineHeight: '1.6' }}>Leading Enterprise Communication, Security, and AI Technology Solutions Provider</p>
-                                <p style={{ marginBottom: '30px', color: '#aaa', lineHeight: '1.7' }}>With over 16 years of industry experience, Winze Technologies Pvt Ltd specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.</p>
+                                <p style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ddd', lineHeight: '1.8' }}>Leading Enterprise Communication, Security, and AI Technology Solutions Provider</p>
+                                <p style={{ marginBottom: '30px', color: '#aaa', lineHeight: '1.8' }}>With over 16 years of industry experience, Winze Technologies Pvt Ltd specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.</p>
                                 
                                 <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-                                    <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} style={{ background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#1a1a2e', border: 'none', padding: '14px 40px', borderRadius: '50px', fontSize: '16px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.3s', boxShadow: '0 4px 15px rgba(255,215,0,0.3)' }}
-                                    onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)'; }}
-                                    onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)'; }}>✨ Get a Free Consultation →</button>
-                                    <button onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} style={{ background: 'transparent', color: '#FFD700', border: '2px solid #FFD700', padding: '14px 40px', borderRadius: '50px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.3s' }}
-                                    onMouseEnter={(e) => { e.target.style.background = 'rgba(255,215,0,0.1)'; e.target.style.transform = 'translateY(-2px)'; }}
-                                    onMouseLeave={(e) => { e.target.style.background = 'transparent'; e.target.style.transform = 'translateY(0)'; }}>Explore Solutions</button>
+                                    <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} style={{ background: 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)', color: '#1a1a2e', border: 'none', padding: '16px 48px', borderRadius: '50px', fontSize: '16px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.3s', boxShadow: '0 8px 25px rgba(255,215,0,0.4)' }}
+                                    onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 12px 30px rgba(255,215,0,0.6)'; }}
+                                    onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.4)'; }}>✨ Get a Free Consultation →</button>
+                                    <button onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} style={{ background: 'rgba(255,215,0,0.15)', color: '#FFD700', border: '2px solid #FFD700', padding: '14px 40px', borderRadius: '50px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.3s', backdropFilter: 'blur(10px)' }}
+                                    onMouseEnter={(e) => { e.target.style.background = 'rgba(255,215,0,0.3)'; e.target.style.transform = 'translateY(-2px)'; }}
+                                    onMouseLeave={(e) => { e.target.style.background = 'rgba(255,215,0,0.15)'; e.target.style.transform = 'translateY(0)'; }}>Explore Solutions</button>
                                 </div>
                             </div>
 
@@ -1919,7 +2040,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* Solutions Portfolio Section */}
-                <section ref={solutionsRef} id="solutions" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+                <section id="solutions" ref={solutionsRef} style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.solutions} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px', fontWeight: '800' }}>Our Solutions Portfolio</h2>
@@ -1954,7 +2075,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* Industries Section */}
-                <section ref={industriesRef} id="industries" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+                <section id="industries" ref={industriesRef} style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.industries} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '3rem', color: 'white', marginBottom: '15px', fontWeight: '800' }}>Industries We Serve</h2>
@@ -1987,7 +2108,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* Partners Section */}
-                <section ref={partnersRef} id="partners" style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)' }}>
+                <section id="partners" ref={partnersRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)' }}>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Trusted Partners</h2>
                         <p style={{ color: '#FFD700', marginBottom: '20px', fontSize: '1.2rem', fontStyle: 'italic', fontWeight: '600' }}>Innovation. Excellence. Trust.</p>
@@ -1997,7 +2118,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* Clients Section */}
-                <section ref={clientsRef} id="clients" style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)' }}>
+                <section id="clients" ref={clientsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)' }}>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Our Valued Clients</h2>
                         <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1.1rem' }}>Trusted by industry leaders across India</p>
@@ -2006,7 +2127,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* Work With Winze Section */}
-                <section ref={workwithRef} id="workwith" style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
+                <section id="workwith" ref={workwithRef} style={{ padding: '100px 5%', position: 'relative', overflow: 'hidden' }}>
                     <DarkBackgroundImage imageSrc={bgImages.workwith} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px', fontFamily: "'Playfair Display', serif", fontWeight: '800' }}>Why Work With Winze?</h2>
@@ -2070,15 +2191,84 @@ const WinzePage = () => {
                 {/* Landing Page Modal */}
                 {landingModalOpen && (<LandingPage item={landingData} onClose={closeLandingPage} onRequestQuote={openQuoteModalForItem} />)}
 
-                {/* Footer */}
+                {/* Enhanced Footer with Social Icons */}
                 <footer style={{ background: '#0a0a1a', color: 'white', padding: '60px 5% 30px', borderTop: '1px solid rgba(255,215,0,0.1)' }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '45px', marginBottom: '45px' }}>
-                            <div><div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}><img src="/winze-logo.jpg" alt="Logo" style={{ width: '45px', height: '45px', objectFit: 'contain', background: 'white', padding: '6px', borderRadius: '10px' }} /><span style={{ fontWeight: '800', fontSize: '1.2rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span></div><p style={{ color: '#aaa', lineHeight: '1.6' }}>Driving Innovation through Customer-Centric Technology Solutions.</p></div>
-                            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Quick Links</h4>{navItems.map((item) => (<p key={item.name}><button onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (item.path) { handleTrackClick(`${item.name} Page Visit`, 'footer'); window.location.href = item.path; } else { scrollToSection(item.ref, item.name); } }} style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '12px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s' }} onMouseEnter={(e) => e.target.style.color = '#FFD700'} onMouseLeave={(e) => e.target.style.color = '#aaa'}>{item.name}</button></p>))}</div>
-                            <div><h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Contact Info</h4><p style={{ color: '#aaa', marginBottom: '12px' }}>📧 sales@winzetech.com</p><p style={{ color: '#aaa', marginBottom: '12px' }}>📞 +91 95500 10417</p><p style={{ color: '#aaa', marginBottom: '12px' }}>🌐 www.winzetech.com</p></div>
+                            <div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}>
+                                    <img src="/winze-logo.jpg" alt="Logo" style={{ width: '45px', height: '45px', objectFit: 'contain', background: 'white', padding: '6px', borderRadius: '10px' }} />
+                                    <span style={{ fontWeight: '800', fontSize: '1.2rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span>
+                                </div>
+                                <p style={{ color: '#aaa', lineHeight: '1.6', marginBottom: '20px' }}>Driving Innovation through Customer-Centric Technology Solutions.</p>
+                                {/* Social Media Icons */}
+                                <div style={{ display: 'flex', gap: '15px', marginTop: '20px' }}>
+                                    {footerSocialLinks.map((social, idx) => (
+                                        <a
+                                            key={idx}
+                                            href={social.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="footer-social-icon"
+                                            style={{ 
+                                                display: 'flex', 
+                                                alignItems: 'center', 
+                                                justifyContent: 'center',
+                                                width: '36px', 
+                                                height: '36px', 
+                                                background: 'rgba(255,255,255,0.1)',
+                                                borderRadius: '50%',
+                                                transition: 'all 0.3s ease',
+                                                color: '#fff'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.background = social.color;
+                                                e.currentTarget.style.transform = 'translateY(-5px)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                                                e.currentTarget.style.transform = 'translateY(0)';
+                                            }}
+                                        >
+                                            <FontAwesomeIcon icon={social.icon} style={{ fontSize: '18px' }} />
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
+                            <div>
+                                <h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Quick Links</h4>
+                                {navItems.map((item) => (
+                                    <p key={item.name}>
+                                        <button 
+                                            onClick={(e) => { 
+                                                e.preventDefault(); 
+                                                e.stopPropagation(); 
+                                                if (item.path) { 
+                                                    handleTrackClick(`${item.name} Page Visit`, 'footer'); 
+                                                    window.location.href = item.path; 
+                                                } else { 
+                                                    scrollToSection(item.ref, item.name); 
+                                                } 
+                                            }} 
+                                            style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '12px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s' }} 
+                                            onMouseEnter={(e) => e.target.style.color = '#FFD700'} 
+                                            onMouseLeave={(e) => e.target.style.color = '#aaa'}
+                                        >
+                                            {item.name}
+                                        </button>
+                                    </p>
+                                ))}
+                            </div>
+                            <div>
+                                <h4 style={{ marginBottom: '20px', color: '#FFD700', fontSize: '1.1rem' }}>Contact Info</h4>
+                                <p style={{ color: '#aaa', marginBottom: '12px' }}>📧 <a href="mailto:sales@winzetech.com" style={{ color: '#aaa', textDecoration: 'none' }}>sales@winzetech.com</a></p>
+                                <p style={{ color: '#aaa', marginBottom: '12px' }}>📞 <a href="tel:+919550010417" style={{ color: '#aaa', textDecoration: 'none' }}>+91 95500 10417</a></p>
+                                <p style={{ color: '#aaa', marginBottom: '12px' }}>🌐 www.winzetech.com</p>
+                            </div>
                         </div>
-                        <div style={{ textAlign: 'center', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#666' }}><p>© 2025 Winze Technologies Pvt Ltd. All rights reserved.</p></div>
+                        <div style={{ textAlign: 'center', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', color: '#666' }}>
+                            <p>© 2025 Winze Technologies Pvt Ltd. All rights reserved.</p>
+                        </div>
                     </div>
                 </footer>
             </div>
