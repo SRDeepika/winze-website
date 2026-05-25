@@ -438,6 +438,7 @@ app.get('/api/clicks', async (req, res) => {
 app.get('/api/admin/stats', authenticateToken, async (req, res) => {
   try {
     const jobCount = await db.query(`SELECT COUNT(*) FROM jobs`);
+    const activeJobCount = await db.query(`SELECT COUNT(*) FROM jobs WHERE status = 'active'`);
     const appCount = await db.query(`SELECT COUNT(*) FROM job_applications`);
     const quoteCount = await db.query(`SELECT COUNT(*) FROM quotes`);
     const blogCount = await db.query(`SELECT COUNT(*) FROM blogs`);
@@ -449,6 +450,7 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
       success: true,
       stats: {
         totalJobs: parseInt(jobCount.rows[0].count) || 0,
+        activeJobs: parseInt(activeJobCount.rows[0].count) || 0,
         totalApplications: parseInt(appCount.rows[0].count) || 0,
         totalQuotes: parseInt(quoteCount.rows[0].count) || 0,
         totalBlogs: parseInt(blogCount.rows[0].count) || 0,
