@@ -236,7 +236,6 @@ const BlogManager = () => {
                             <th style={styles.th}>Read Time</th>
                             <th style={styles.th}>Views</th>
                             <th style={styles.th}>Status</th>
-                            <th style={styles.th}>Created By</th>
                             <th style={styles.th}>Created At</th>
                             <th style={styles.th}>Updated At</th>
                             <th style={styles.th}>Actions</th>
@@ -258,7 +257,6 @@ const BlogManager = () => {
                                         {blog.status || 'draft'}
                                     </span>
                                 </td>
-                                <td style={styles.td}>{blog.created_by_name || blog.created_by || 'N/A'}</td>
                                 <td style={styles.td}>{blog.created_at ? new Date(blog.created_at).toLocaleString() : 'N/A'}</td>
                                 <td style={styles.td}>{blog.updated_at ? new Date(blog.updated_at).toLocaleString() : 'N/A'}</td>
                                 <td style={styles.td}>
@@ -392,7 +390,6 @@ const JobManager = () => {
                             <th style={styles.th}>Benefits</th>
                             <th style={styles.th}>Status</th>
                             <th style={styles.th}>Deadline</th>
-                            <th style={styles.th}>Posted By</th>
                             <th style={styles.th}>Created At</th>
                             <th style={styles.th}>Actions</th>
                         </tr>
@@ -429,7 +426,6 @@ const JobManager = () => {
                                     </span>
                                 </td>
                                 <td style={styles.td}>{job.deadline ? new Date(job.deadline).toLocaleDateString() : 'N/A'}</td>
-                                <td style={styles.td}>{job.posted_by_name || job.posted_by || 'N/A'}</td>
                                 <td style={styles.td}>{new Date(job.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
                                     <button onClick={() => { setEditingJob(job); setFormData({...job}); setShowForm(true); }} style={styles.editBtn}>Edit</button>
