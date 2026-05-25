@@ -328,12 +328,12 @@ app.get('/api/jobs', async (req, res) => {
 app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT j.id, j.title, j.department, j.location, j.type, 
-             j.experience, j.salary, j.description, j.requirements, 
-             j.benefits, j.status, j.deadline, j.created_at, j.updated_at
-      FROM jobs j 
-      ORDER BY j.created_at DESC
+      SELECT id, title, department, location, type, experience, salary, 
+             description, requirements, benefits, status, created_at
+      FROM jobs 
+      ORDER BY created_at DESC
     `);
+    console.log('Jobs fetched:', result.rows.length); // Debug log
     res.json({ success: true, jobs: result.rows });
   } catch (error) {
     console.error('Error fetching jobs:', error);

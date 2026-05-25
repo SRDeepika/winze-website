@@ -312,9 +312,14 @@ const JobManager = () => {
     useEffect(() => { loadJobs(); }, []);
 
     const loadJobs = async () => {
-        const res = await getAdminJobs();
-        if (res.success) setJobs(res.jobs);
-    };
+    console.log('Loading jobs...');
+    const res = await getAdminJobs();
+    console.log('Jobs API response:', res);
+    if (res.success) {
+        console.log('Jobs count:', res.jobs?.length);
+        setJobs(res.jobs);
+    }
+};
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -371,64 +376,64 @@ const JobManager = () => {
                 <button onClick={() => setShowForm(true)} style={styles.addButton}>+ Post Job</button>
             </div>
             <div style={{ overflowX: 'auto' }}>
-                <table style={styles.table}>
-                    <thead>
-                        <tr>
-                            <th style={styles.th}>ID</th>
-                            <th style={styles.th}>Title</th>
-                            <th style={styles.th}>Department</th>
-                            <th style={styles.th}>Location</th>
-                            <th style={styles.th}>Type</th>
-                            <th style={styles.th}>Experience</th>
-                            <th style={styles.th}>Salary</th>
-                            <th style={styles.th}>Requirements</th>
-                            <th style={styles.th}>Benefits</th>
-                            <th style={styles.th}>Status</th>
-                            <th style={styles.th}>Created At</th>
-                            <th style={styles.th}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {jobs.map(job => (
-                            <tr key={job.id}>
-                                <td style={styles.td}>{job.id}</td>
-                                <td style={styles.td}>{job.title}</td>
-                                <td style={styles.td}>{job.department || 'N/A'}</td>
-                                <td style={styles.td}>{job.location || 'N/A'}</td>
-                                <td style={styles.td}>{job.type || 'Full-time'}</td>
-                                <td style={styles.td}>{job.experience || 'N/A'}</td>
-                                <td style={styles.td}>{job.salary || 'N/A'}</td>
-                                <td style={styles.td}>
-                                    <details>
-                                        <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
-                                        <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px', maxWidth: '250px', wordBreak: 'break-word' }}>
-                                            {job.requirements || 'No requirements specified'}
-                                        </div>
-                                    </details>
-                                </td>
-                                <td style={styles.td}>
-                                    <details>
-                                        <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
-                                        <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px', maxWidth: '250px', wordBreak: 'break-word' }}>
-                                            {job.benefits || 'No benefits specified'}
-                                        </div>
-                                    </details>
-                                </td>
-                                <td style={styles.td}>
-                                    <span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>
-                                        {job.status || 'active'}
-                                    </span>
-                                </td>
-                                <td style={styles.td}>{new Date(job.created_at).toLocaleDateString()}</td>
-                                <td style={styles.td}>
-                                    <button onClick={() => { setEditingJob(job); setFormData({...job}); setShowForm(true); }} style={styles.editBtn}>Edit</button>
-                                    <button onClick={() => handleDelete(job.id)} style={styles.deleteBtn}>Delete</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+    <table style={styles.table}>
+        <thead>
+            <tr>
+                <th style={styles.th}>ID</th>
+                <th style={styles.th}>Title</th>
+                <th style={styles.th}>Department</th>
+                <th style={styles.th}>Location</th>
+                <th style={styles.th}>Type</th>
+                <th style={styles.th}>Experience</th>
+                <th style={styles.th}>Salary</th>
+                <th style={styles.th}>Requirements</th>
+                <th style={styles.th}>Benefits</th>
+                <th style={styles.th}>Status</th>
+                <th style={styles.th}>Created At</th>
+                <th style={styles.th}>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {jobs.map(job => (
+                <tr key={job.id}>
+                    <td style={styles.td}>{job.id}</td>
+                    <td style={styles.td}>{job.title}</td>
+                    <td style={styles.td}>{job.department || 'N/A'}</td>
+                    <td style={styles.td}>{job.location || 'N/A'}</td>
+                    <td style={styles.td}>{job.type || 'Full-time'}</td>
+                    <td style={styles.td}>{job.experience || 'N/A'} yrs</td>
+                    <td style={styles.td}>{job.salary || 'N/A'} LPA</td>
+                    <td style={styles.td}>
+                        <details>
+                            <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
+                            <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px', maxWidth: '250px', wordBreak: 'break-word' }}>
+                                {job.requirements || 'No requirements specified'}
+                            </div>
+                        </details>
+                    </td>
+                    <td style={styles.td}>
+                        <details>
+                            <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
+                            <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px', maxWidth: '250px', wordBreak: 'break-word' }}>
+                                {job.benefits || 'No benefits specified'}
+                            </div>
+                        </details>
+                    </td>
+                    <td style={styles.td}>
+                        <span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>
+                            {job.status || 'active'}
+                        </span>
+                    </td>
+                    <td style={styles.td}>{new Date(job.created_at).toLocaleDateString()}</td>
+                    <td style={styles.td}>
+                        <button onClick={() => { setEditingJob(job); setFormData({...job}); setShowForm(true); }} style={styles.editBtn}>Edit</button>
+                        <button onClick={() => handleDelete(job.id)} style={styles.deleteBtn}>Delete</button>
+                    </td>
+                </tr>
+            ))}
+        </tbody>
+    </table>
+</div>
             {showForm && (
                 <div style={styles.modal} onClick={() => setShowForm(false)}>
                     <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
