@@ -117,7 +117,7 @@ const BlogManager = () => {
     const [formData, setFormData] = useState({
         id: null, title: '', slug: '', excerpt: '', content: '', 
         category: '', image: null, author: '', author_role: '', 
-        read_time: 5, views: 0, status: 'draft', created_by: null
+        read_time: 5, views: 0, status: 'draft'
     });
 
     useEffect(() => { loadBlogs(); }, []);
@@ -174,7 +174,7 @@ const BlogManager = () => {
             setFormData({
                 id: null, title: '', slug: '', excerpt: '', content: '', 
                 category: '', image: null, author: '', author_role: '', 
-                read_time: 5, views: 0, status: 'draft', created_by: null
+                read_time: 5, views: 0, status: 'draft'
             });
         } catch (error) {
             console.error('Error saving blog:', error);
@@ -211,8 +211,7 @@ const BlogManager = () => {
             author_role: blog.author_role || '',
             read_time: blog.read_time ? Number(blog.read_time) : 5,
             views: blog.views || 0,
-            status: blog.status || 'draft',
-            created_by: blog.created_by || null
+            status: blog.status || 'draft'
         });
         setShowForm(true);
     };
@@ -311,7 +310,7 @@ const JobManager = () => {
     const [formData, setFormData] = useState({
         id: null, title: '', department: '', location: '', type: 'Full-time',
         experience: '', salary: '', description: '', requirements: '',
-        benefits: '', status: 'active', deadline: '', posted_by: null
+        benefits: '', status: 'active', deadline: ''
     });
 
     useEffect(() => { loadJobs(); }, []);
@@ -339,7 +338,7 @@ const JobManager = () => {
             setFormData({
                 id: null, title: '', department: '', location: '', type: 'Full-time',
                 experience: '', salary: '', description: '', requirements: '',
-                benefits: '', status: 'active', deadline: '', posted_by: null
+                benefits: '', status: 'active', deadline: ''
             });
         } catch (error) {
             console.error('Error saving job:', error);
@@ -401,7 +400,7 @@ const JobManager = () => {
                                 <td style={styles.td}>{job.title}</td>
                                 <td style={styles.td}>{job.department || 'N/A'}</td>
                                 <td style={styles.td}>{job.location || 'N/A'}</td>
-                                <td style={styles.td}>{job.type || 'Full-time'}</td>
+                                <td style={styles.td}>{job.type || 'Full-time'}<td>
                                 <td style={styles.td}>{job.experience || 'N/A'}</td>
                                 <td style={styles.td}>{job.salary || 'N/A'}</td>
                                 <td style={styles.td}>
@@ -535,8 +534,8 @@ const ApplicationsManager = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {loading && <tr><td colSpan="11" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading applications...</td></tr>}
-                        {!loading && applications.length === 0 && <tr><td colSpan="11" style={{ textAlign: 'center', padding: '40px' }}>📭 No applications found.</td></tr>}
+                        {loading && <tr><td colSpan="11" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading applications...<\/td>39<\/tr>}
+                        {!loading && applications.length === 0 && <tr><td colSpan="11" style={{ textAlign: 'center', padding: '40px' }}>📭 No applications found.<\/td>39<\/tr>}
                         {!loading && applications.map(app => (
                             <tr key={app.id}>
                                 <td style={styles.td}>{app.id}</td>
@@ -545,8 +544,8 @@ const ApplicationsManager = () => {
                                 <td style={styles.td}>{app.name}</td>
                                 <td style={styles.td}>{app.email}</td>
                                 <td style={styles.td}>{app.phone}</td>
-                                <td style={styles.td}>{app.experience || 'N/A'} yrs</td>
-                                <td style={styles.td}>{app.current_company || 'N/A'}</td>
+                                <td style={styles.td}>{app.experience || 'N/A'} yrs<\/td>
+                                <td style={styles.td}>{app.current_company || 'N/A'}<\/td>
                                 <td style={styles.td}>
                                     <select value={app.status} onChange={e => updateStatus(app.id, e.target.value)} style={styles.select}>
                                         <option value="pending">⏳ Pending</option>
@@ -554,42 +553,42 @@ const ApplicationsManager = () => {
                                         <option value="shortlisted">⭐ Shortlisted</option>
                                         <option value="rejected">❌ Rejected</option>
                                     </select>
-                                </td>
-                                <td style={styles.td}>{new Date(app.applied_at).toLocaleString()}</td>
+                                <\/td>
+                                <td style={styles.td}>{new Date(app.applied_at).toLocaleString()}<\/td>
                                 <td style={styles.td}>
                                     <button onClick={() => setSelectedApp(app)} style={styles.viewBtn}>View Details</button>
-                                </td>
-                            </tr>
+                                <\/td>
+                            <\/tr>
                         ))}
                     </tbody>
-                </table>
-            </div>
+                <\/table>
+            <\/div>
             {selectedApp && (
                 <div style={styles.modal} onClick={() => setSelectedApp(null)}>
                     <div style={styles.modalContent}>
-                        <h3>📄 Application Details</h3>
-                        <p><strong>ID:</strong> {selectedApp.id}</p>
-                        <p><strong>Job ID:</strong> {selectedApp.job_id}</p>
-                        <p><strong>Job Title:</strong> {selectedApp.job_title}</p>
-                        <p><strong>Name:</strong> {selectedApp.name}</p>
-                        <p><strong>Email:</strong> {selectedApp.email}</p>
-                        <p><strong>Phone:</strong> {selectedApp.phone}</p>
-                        <p><strong>Experience:</strong> {selectedApp.experience} years</p>
-                        <p><strong>Current Company:</strong> {selectedApp.current_company || 'N/A'}</p>
-                        <p><strong>Status:</strong> {selectedApp.status}</p>
-                        <p><strong>Applied At:</strong> {new Date(selectedApp.applied_at).toLocaleString()}</p>
-                        <p><strong>Cover Letter:</strong></p>
+                        <h3>📄 Application Details<\/h3>
+                        <p><strong>ID:<\/strong> {selectedApp.id}<\/p>
+                        <p><strong>Job ID:<\/strong> {selectedApp.job_id}<\/p>
+                        <p><strong>Job Title:<\/strong> {selectedApp.job_title}<\/p>
+                        <p><strong>Name:<\/strong> {selectedApp.name}<\/p>
+                        <p><strong>Email:<\/strong> {selectedApp.email}<\/p>
+                        <p><strong>Phone:<\/strong> {selectedApp.phone}<\/p>
+                        <p><strong>Experience:<\/strong> {selectedApp.experience} years<\/p>
+                        <p><strong>Current Company:<\/strong> {selectedApp.current_company || 'N/A'}<\/p>
+                        <p><strong>Status:<\/strong> {selectedApp.status}<\/p>
+                        <p><strong>Applied At:<\/strong> {new Date(selectedApp.applied_at).toLocaleString()}<\/p>
+                        <p><strong>Cover Letter:<\/strong><\/p>
                         <div style={{ background: '#f5f5f5', padding: '10px', borderRadius: '5px', maxHeight: '200px', overflow: 'auto' }}>
                             {selectedApp.cover_letter || 'No cover letter provided'}
-                        </div>
+                        <\/div>
                         {selectedApp.resume_url && (
-                            <p><a href={selectedApp.resume_url} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea' }}>📄 Download Resume</a></p>
+                            <p><a href={selectedApp.resume_url} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea' }}>📄 Download Resume<\/a><\/p>
                         )}
-                        <button onClick={() => setSelectedApp(null)} style={styles.closeModalBtn}>Close</button>
-                    </div>
-                </div>
+                        <button onClick={() => setSelectedApp(null)} style={styles.closeModalBtn}>Close<\/button>
+                    <\/div>
+                <\/div>
             )}
-        </div>
+        <\/div>
     );
 };
 
@@ -652,23 +651,23 @@ const QuotesManager = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {loading && <tr><td colSpan="9" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading quotes...</td></tr>}
-                        {!loading && quotes.length === 0 && <tr><td colSpan="9" style={{ textAlign: 'center', padding: '40px' }}>📭 No quote requests found.</td></tr>}
+                        {loading && <tr><td colSpan="9" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading quotes...<\/td>39<\/tr>}
+                        {!loading && quotes.length === 0 && <tr><td colSpan="9" style={{ textAlign: 'center', padding: '40px' }}>📭 No quote requests found.<\/td>39<\/tr>}
                         {!loading && quotes.map(quote => (
                             <tr key={quote.id}>
                                 <td style={styles.td}>{quote.id}</td>
                                 <td style={styles.td}>{quote.name}</td>
-                                <td style={styles.td}><a href={`mailto:${quote.email}`} style={{ color: '#667eea', textDecoration: 'none' }}>{quote.email}</a></td>
+                                <td style={styles.td}><a href={`mailto:${quote.email}`} style={{ color: '#667eea', textDecoration: 'none' }}>{quote.email}</a><\/td>
                                 <td style={styles.td}>
                                     <div>
                                         {quote.phone || 'N/A'}
                                         <div style={{ marginTop: '5px' }}>
                                             <a href={`tel:${quote.phone}`} style={{ color: '#4facfe', textDecoration: 'none', marginRight: '10px', fontSize: '12px' }}>📞 Call</a>
                                             <a href={`https://wa.me/${quote.phone}`} target="_blank" rel="noopener noreferrer" style={{ color: '#25D366', textDecoration: 'none', fontSize: '12px' }}>💬 WhatsApp</a>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td style={styles.td}>{quote.service}</td>
+                                        <\/div>
+                                    <\/div>
+                                <\/td>
+                                <td style={styles.td}>{quote.service}<\/td>
                                 <td style={styles.td}>
                                     <select value={quote.status || 'pending'} onChange={e => updateQuoteStatus(quote.id, e.target.value)} style={styles.select}>
                                         <option value="pending">⏳ Pending</option>
@@ -676,26 +675,26 @@ const QuotesManager = () => {
                                         <option value="converted">✅ Converted</option>
                                         <option value="closed">🔒 Closed</option>
                                     </select>
-                                </td>
+                                <\/td>
                                 <td style={styles.td}>
                                     <details>
                                         <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
                                         <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px', maxWidth: '250px', wordBreak: 'break-word' }}>
                                             {quote.message || 'No message provided'}
-                                        </div>
-                                    </details>
-                                </td>
-                                <td style={styles.td}>{new Date(quote.created_at).toLocaleString()}</td>
+                                        <\/div>
+                                    <\/details>
+                                <\/td>
+                                <td style={styles.td}>{new Date(quote.created_at).toLocaleString()}<\/td>
                                 <td style={styles.td}>
                                     <button onClick={() => window.open(`tel:${quote.phone}`)} style={{ ...styles.editBtn, marginRight: '5px', fontSize: '12px' }}>📞 Call</button>
                                     <button onClick={() => window.open(`mailto:${quote.email}`)} style={{ ...styles.viewBtn, fontSize: '12px' }}>✉️ Email</button>
-                                </td>
-                            </tr>
+                                <\/td>
+                            <\/tr>
                         ))}
                     </tbody>
-                </table>
-            </div>
-        </div>
+                <\/table>
+            <\/div>
+        <\/div>
     );
 };
 
@@ -963,7 +962,7 @@ const ClickAnalytics = ({ clicks, totalClicks, uniqueLinks, last24Hours, expande
                                                 <td style={{ padding: '8px' }}>{new Date(click.clicked_at).toLocaleString()}</td>
                                                 <td style={{ padding: '8px' }}>{click.ip_address || 'unknown'}</td>
                                                 <td style={{ padding: '8px', wordBreak: 'break-all' }}>{click.link_url || click.link_title}</td>
-                                            </tr>
+                                            <tr>
                                         ))}
                                     </tbody>
                                 </table>
