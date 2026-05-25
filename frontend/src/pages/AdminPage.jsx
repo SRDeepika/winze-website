@@ -105,9 +105,8 @@ const AdminLogin = ({ onLogin }) => {
         </div>
     );
 };
-
 // ============================================
-// BLOG MANAGER
+// BLOG MANAGER (Complete - All Database Fields)
 // ============================================
 const BlogManager = () => {
     const [blogs, setBlogs] = useState([]);
@@ -115,8 +114,9 @@ const BlogManager = () => {
     const [editingBlog, setEditingBlog] = useState(null);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        title: '', excerpt: '', content: '', category: '', 
-        author: '', author_role: '', read_time: 5, status: 'draft', image: null
+        id: null, title: '', slug: '', excerpt: '', content: '', 
+        category: '', image: null, author: '', author_role: '', 
+        read_time: 5, views: 0, status: 'draft', created_by: null
     });
 
     useEffect(() => { loadBlogs(); }, []);
@@ -144,7 +144,7 @@ const BlogManager = () => {
                     category: formData.category,
                     author: formData.author,
                     author_role: formData.author_role,
-                    read_time: parseInt(formData.read_time),
+                    read_time: parseInt(formData.read_time) || 5,
                     status: formData.status
                 };
                 await updateBlog(editingBlog.id, updateData);
@@ -152,12 +152,14 @@ const BlogManager = () => {
             } else {
                 const createData = new FormData();
                 createData.append('title', formData.title);
+                createData.append('slug', formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
                 createData.append('excerpt', formData.excerpt || '');
                 createData.append('content', formData.content);
                 createData.append('category', formData.category || 'General');
                 createData.append('author', formData.author || 'Admin');
                 createData.append('author_role', formData.author_role || 'Author');
-                createData.append('read_time', formData.read_time || 5);
+                createData.append('read_time', parseInt(formData.read_time) || 5);
+                createData.append('views', 0);
                 createData.append('status', formData.status);
                 if (formData.image) {
                     createData.append('image', formData.image);
@@ -169,8 +171,9 @@ const BlogManager = () => {
             setShowForm(false);
             setEditingBlog(null);
             setFormData({
-                title: '', excerpt: '', content: '', category: '', 
-                author: '', author_role: '', read_time: 5, status: 'draft', image: null
+                id: null, title: '', slug: '', excerpt: '', content: '', 
+                category: '', image: null, author: '', author_role: '', 
+                read_time: 5, views: 0, status: 'draft', created_by: null
             });
         } catch (error) {
             console.error('Error saving blog:', error);
@@ -194,20 +197,25 @@ const BlogManager = () => {
     };
 
     const handleEdit = (blog) => {
-    setEditingBlog(blog);
-    setFormData({
-        title: blog.title || '',
-        excerpt: blog.excerpt || '',
-        content: blog.content || '',
-        category: blog.category || '',
-        author: blog.author || '',
-        author_role: blog.author_role || '',
-        read_time: blog.read_time ? parseInt(blog.read_time) : 5,  // Convert to number properly
-        status: blog.status || 'draft',
-        image: null
-    });
-    setShowForm(true);
-};
+        setEditingBlog(blog);
+        setFormData({
+            id: blog.id,
+            title: blog.title || '',
+            slug: blog.slug || '',
+            excerpt: blog.excerpt || '',
+            content: blog.content || '',
+            category: blog.category || '',
+            image: null,
+            author: blog.author || '',
+            author_role: blog.author_role || '',
+            read_time: blog.read_time ? Number(blog.read_time) : 5,
+            views: blog.views || 0,
+            status: blog.status || 'draft',
+            created_by: blog.created_by || null
+        });
+        setShowForm(true);
+    };
+
     return (
         <div style={styles.dashboardCard}>
             <div style={styles.cardHeader}>
@@ -218,28 +226,40 @@ const BlogManager = () => {
                 <table style={styles.table}>
                     <thead>
                         <tr>
+                            <th style={styles.th}>ID</th>
                             <th style={styles.th}>Title</th>
+                            <th style={styles.th}>Slug</th>
                             <th style={styles.th}>Category</th>
                             <th style={styles.th}>Author</th>
-                            <th style={styles.th}>Status</th>
+                            <th style={styles.th}>Author Role</th>
+                            <th style={styles.th}>Read Time</th>
                             <th style={styles.th}>Views</th>
-                            <th style={styles.th}>Created</th>
+                            <th style={styles.th}>Status</th>
+                            <th style={styles.th}>Created By</th>
+                            <th style={styles.th}>Created At</th>
+                            <th style={styles.th}>Updated At</th>
                             <th style={styles.th}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {blogs.map(blog => (
                             <tr key={blog.id}>
+                                <td style={styles.td}>{blog.id}</td>
                                 <td style={styles.td}>{blog.title}</td>
-                                <td style={styles.td}>{blog.category}</td>
-                                <td style={styles.td}>{blog.author}</td>
+                                <td style={styles.td}>{blog.slug}</td>
+                                <td style={styles.td}>{blog.category || 'General'}</td>
+                                <td style={styles.td}>{blog.author || 'Admin'}</td>
+                                <td style={styles.td}>{blog.author_role || 'Author'}</td>
+                                <td style={styles.td}>{blog.read_time || 5} min</td>
+                                <td style={styles.td}>{blog.views || 0}</td>
                                 <td style={styles.td}>
                                     <span style={{...styles.statusBadge, background: blog.status === 'published' ? '#d4edda' : '#ffeaa7'}}>
-                                        {blog.status}
+                                        {blog.status || 'draft'}
                                     </span>
                                 </td>
-                                <td style={styles.td}>{blog.views || 0}</td>
-                                <td style={styles.td}>{new Date(blog.created_at).toLocaleDateString()}</td>
+                                <td style={styles.td}>{blog.created_by || 'N/A'}</td>
+                                <td style={styles.td}>{blog.created_at ? new Date(blog.created_at).toLocaleString() : 'N/A'}</td>
+                                <td style={styles.td}>{blog.updated_at ? new Date(blog.updated_at).toLocaleString() : 'N/A'}</td>
                                 <td style={styles.td}>
                                     <button onClick={() => handleEdit(blog)} style={styles.editBtn}>Edit</button>
                                     <button onClick={() => handleDelete(blog.id)} style={styles.deleteBtn}>Delete</button>
@@ -258,8 +278,8 @@ const BlogManager = () => {
                             <input type="text" placeholder="Title *" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={styles.input} required />
                             <input type="text" placeholder="Category" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={styles.input} />
                             <input type="text" placeholder="Author" value={formData.author} onChange={e => setFormData({...formData, author: e.target.value})} style={styles.input} />
-                            <input type="text" placeholder="Author Role" value={formData.author_role} onChange={e => setFormData({...formData, author_role: e.target.value})} style={styles.input} />
-                            <input type="number" placeholder="Read Time (minutes)" value={formData.read_time} onChange={e => setFormData({...formData, read_time: e.target.value})} style={styles.input} />
+                            <input type="text" placeholder="Author Role (e.g., Expert, Admin, Guest)" value={formData.author_role} onChange={e => setFormData({...formData, author_role: e.target.value})} style={styles.input} />
+                            <input type="number" placeholder="Read Time (minutes)" value={formData.read_time} onChange={e => setFormData({...formData, read_time: parseInt(e.target.value) || 5})} style={styles.input} />
                             <textarea placeholder="Excerpt" rows="3" value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} style={styles.textarea} />
                             <textarea placeholder="Content *" rows="10" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} style={styles.textarea} required />
                             {!editingBlog && <input type="file" accept="image/*" onChange={e => setFormData({...formData, image: e.target.files[0]})} style={styles.input} />}
@@ -282,7 +302,7 @@ const BlogManager = () => {
 };
 
 // ============================================
-// JOB MANAGER
+// JOB MANAGER (Complete - All Database Fields)
 // ============================================
 const JobManager = () => {
     const [jobs, setJobs] = useState([]);
@@ -290,9 +310,9 @@ const JobManager = () => {
     const [editingJob, setEditingJob] = useState(null);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        title: '', department: '', location: '', type: 'Full-time', 
-        experience: '', salary: '', description: '', requirements: '', 
-        benefits: '', status: 'active', deadline: ''
+        id: null, title: '', department: '', location: '', type: 'Full-time',
+        experience: '', salary: '', description: '', requirements: '',
+        benefits: '', status: 'active', deadline: '', posted_by: null
     });
 
     useEffect(() => { loadJobs(); }, []);
@@ -303,53 +323,33 @@ const JobManager = () => {
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    
-    try {
-        if (editingBlog) {
-            const updateData = {
-                title: formData.title,
-                excerpt: formData.excerpt,
-                content: formData.content,
-                category: formData.category,
-                author: formData.author,
-                author_role: formData.author_role,
-                read_time: parseInt(formData.read_time) || 5,  // Ensure it's a number
-                status: formData.status
-            };
-            await updateBlog(editingBlog.id, updateData);
-            alert('Blog updated successfully!');
-        } else {
-            const createData = new FormData();
-            createData.append('title', formData.title);
-            createData.append('excerpt', formData.excerpt || '');
-            createData.append('content', formData.content);
-            createData.append('category', formData.category || 'General');
-            createData.append('author', formData.author || 'Admin');
-            createData.append('author_role', formData.author_role || 'Author');
-            createData.append('read_time', parseInt(formData.read_time) || 5);  // Ensure it's a number
-            createData.append('status', formData.status);
-            if (formData.image) {
-                createData.append('image', formData.image);
+        e.preventDefault();
+        setLoading(true);
+        
+        try {
+            if (editingJob) {
+                await updateJob(editingJob.id, formData);
+                alert('Job updated successfully!');
+            } else {
+                await createJob(formData);
+                alert('Job created successfully!');
             }
-            await createBlog(createData);
-            alert('Blog created successfully!');
+            await loadJobs();
+            setShowForm(false);
+            setEditingJob(null);
+            setFormData({
+                id: null, title: '', department: '', location: '', type: 'Full-time',
+                experience: '', salary: '', description: '', requirements: '',
+                benefits: '', status: 'active', deadline: '', posted_by: null
+            });
+        } catch (error) {
+            console.error('Error saving job:', error);
+            alert('Error saving job: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setLoading(false);
         }
-        await loadBlogs();
-        setShowForm(false);
-        setEditingBlog(null);
-        setFormData({
-            title: '', excerpt: '', content: '', category: '', 
-            author: '', author_role: '', read_time: 5, status: 'draft', image: null
-        });
-    } catch (error) {
-        console.error('Error saving blog:', error);
-        alert('Error saving blog: ' + (error.response?.data?.error || error.message));
-    } finally {
-        setLoading(false);
-    }
-};
+    };
+
     const handleDelete = async (id) => {
         if (window.confirm('Delete this job?')) {
             await deleteJob(id);
@@ -358,60 +358,62 @@ const JobManager = () => {
     };
 
     const formInputStyle = {
-        width: '100%',
-        padding: '12px',
-        marginBottom: '15px',
-        borderRadius: '8px',
-        border: '1px solid #ddd',
-        background: 'white',
-        color: '#333',
-        fontSize: '14px',
-        boxSizing: 'border-box'
+        width: '100%', padding: '12px', marginBottom: '15px', borderRadius: '8px',
+        border: '1px solid #ddd', background: 'white', color: '#333', fontSize: '14px', boxSizing: 'border-box'
     };
-
     const formTextareaStyle = {
-        width: '100%',
-        padding: '12px',
-        marginBottom: '15px',
-        borderRadius: '8px',
-        border: '1px solid #ddd',
-        background: 'white',
-        color: '#333',
-        fontSize: '14px',
-        resize: 'vertical',
-        boxSizing: 'border-box'
+        width: '100%', padding: '12px', marginBottom: '15px', borderRadius: '8px',
+        border: '1px solid #ddd', background: 'white', color: '#333', fontSize: '14px', resize: 'vertical', boxSizing: 'border-box'
     };
-
     const formSelectStyle = {
-        width: '100%',
-        padding: '12px',
-        marginBottom: '15px',
-        borderRadius: '8px',
-        border: '1px solid #ddd',
-        background: 'white',
-        color: '#333',
-        fontSize: '14px',
-        boxSizing: 'border-box'
+        width: '100%', padding: '12px', marginBottom: '15px', borderRadius: '8px',
+        border: '1px solid #ddd', background: 'white', color: '#333', fontSize: '14px', boxSizing: 'border-box'
     };
 
     return (
         <div style={styles.dashboardCard}>
-            <div style={styles.cardHeader}><h2>💼 Job Management</h2><button onClick={() => setShowForm(true)} style={styles.addButton}>+ Post Job</button></div>
+            <div style={styles.cardHeader}>
+                <h2>💼 Job Management</h2>
+                <button onClick={() => setShowForm(true)} style={styles.addButton}>+ Post Job</button>
+            </div>
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
                     <thead>
-                        <tr><th style={styles.th}>Title</th><th style={styles.th}>Department</th><th style={styles.th}>Location</th><th style={styles.th}>Type</th><th style={styles.th}>Status</th><th style={styles.th}>Actions</th></tr>
+                        <tr>
+                            <th style={styles.th}>ID</th>
+                            <th style={styles.th}>Title</th>
+                            <th style={styles.th}>Department</th>
+                            <th style={styles.th}>Location</th>
+                            <th style={styles.th}>Type</th>
+                            <th style={styles.th}>Experience</th>
+                            <th style={styles.th}>Salary</th>
+                            <th style={styles.th}>Status</th>
+                            <th style={styles.th}>Deadline</th>
+                            <th style={styles.th}>Posted By</th>
+                            <th style={styles.th}>Created At</th>
+                            <th style={styles.th}>Actions</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {jobs.map(job => (
                             <tr key={job.id}>
+                                <td style={styles.td}>{job.id}</td>
                                 <td style={styles.td}>{job.title}</td>
-                                <td style={styles.td}>{job.department}</td>
-                                <td style={styles.td}>{job.location}</td>
-                                <td style={styles.td}>{job.type}</td>
-                                <td style={styles.td}><span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>{job.status}</span></td>
+                                <td style={styles.td}>{job.department || 'N/A'}</td>
+                                <td style={styles.td}>{job.location || 'N/A'}</td>
+                                <td style={styles.td}>{job.type || 'Full-time'}</td>
+                                <td style={styles.td}>{job.experience || 'N/A'}</td>
+                                <td style={styles.td}>{job.salary || 'N/A'}</td>
                                 <td style={styles.td}>
-                                    <button onClick={() => { setEditingJob(job); setFormData(job); setShowForm(true); }} style={styles.editBtn}>Edit</button>
+                                    <span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>
+                                        {job.status || 'active'}
+                                    </span>
+                                </td>
+                                <td style={styles.td}>{job.deadline ? new Date(job.deadline).toLocaleDateString() : 'N/A'}</td>
+                                <td style={styles.td}>{job.posted_by || 'N/A'}</td>
+                                <td style={styles.td}>{new Date(job.created_at).toLocaleDateString()}</td>
+                                <td style={styles.td}>
+                                    <button onClick={() => { setEditingJob(job); setFormData({...job}); setShowForm(true); }} style={styles.editBtn}>Edit</button>
                                     <button onClick={() => handleDelete(job.id)} style={styles.deleteBtn}>Delete</button>
                                 </td>
                             </tr>
@@ -424,9 +426,9 @@ const JobManager = () => {
                     <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
                         <h3>{editingJob ? 'Edit Job' : 'Post New Job'}</h3>
                         <form onSubmit={handleSubmit}>
-                            <input type="text" placeholder="Job Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={formInputStyle} required />
-                            <input type="text" placeholder="Department" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} style={formInputStyle} required />
-                            <input type="text" placeholder="Location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} style={formInputStyle} required />
+                            <input type="text" placeholder="Job Title *" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={formInputStyle} required />
+                            <input type="text" placeholder="Department" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} style={formInputStyle} />
+                            <input type="text" placeholder="Location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} style={formInputStyle} />
                             <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={formSelectStyle}>
                                 <option value="Full-time">Full-time</option>
                                 <option value="Part-time">Part-time</option>
@@ -434,11 +436,12 @@ const JobManager = () => {
                                 <option value="Hybrid">Hybrid</option>
                                 <option value="Contract">Contract</option>
                             </select>
-                            <input type="text" placeholder="Experience Required" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} style={formInputStyle} />
-                            <input type="text" placeholder="Salary Range" value={formData.salary} onChange={e => setFormData({...formData, salary: e.target.value})} style={formInputStyle} />
-                            <textarea placeholder="Job Description" rows="5" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={formTextareaStyle} required />
+                            <input type="text" placeholder="Experience Required (e.g., 2-3 years)" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} style={formInputStyle} />
+                            <input type="text" placeholder="Salary Range (e.g., ₹5L - ₹8L PA)" value={formData.salary} onChange={e => setFormData({...formData, salary: e.target.value})} style={formInputStyle} />
+                            <textarea placeholder="Job Description *" rows="5" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={formTextareaStyle} required />
                             <textarea placeholder="Requirements" rows="4" value={formData.requirements} onChange={e => setFormData({...formData, requirements: e.target.value})} style={formTextareaStyle} />
                             <textarea placeholder="Benefits" rows="3" value={formData.benefits} onChange={e => setFormData({...formData, benefits: e.target.value})} style={formTextareaStyle} />
+                            <input type="date" placeholder="Deadline" value={formData.deadline} onChange={e => setFormData({...formData, deadline: e.target.value})} style={formInputStyle} />
                             <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={formSelectStyle}>
                                 <option value="active">Active</option>
                                 <option value="closed">Closed</option>
@@ -456,9 +459,8 @@ const JobManager = () => {
         </div>
     );
 };
-
 // ============================================
-// APPLICATIONS MANAGER (WORKING REFRESH BUTTON)
+// APPLICATIONS MANAGER (Complete - All Database Fields)
 // ============================================
 const ApplicationsManager = () => {
     const [applications, setApplications] = useState([]);
@@ -466,44 +468,26 @@ const ApplicationsManager = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    useEffect(() => { 
-        loadApplications(); 
-    }, []);
+    useEffect(() => { loadApplications(); }, []);
 
     const loadApplications = async () => {
-        console.log('🔄 Refresh button clicked - Loading applications...');
         setLoading(true);
         setError(null);
         try {
             const res = await getApplications();
-            console.log('Applications API response:', res);
-            if (res.success) {
-                setApplications(res.applications);
-                console.log(`✅ Successfully loaded ${res.applications.length} applications`);
-                if (res.applications.length === 0) {
-                    console.log('No applications found in database');
-                }
-            } else {
-                setError('Failed to load applications');
-                console.error('API returned success=false');
-            }
+            if (res.success) setApplications(res.applications);
         } catch (err) {
-            console.error('Error loading applications:', err);
             setError(err.message || 'Error loading applications');
-            alert('Error loading applications. Check console for details.');
         } finally {
             setLoading(false);
         }
     };
 
     const updateStatus = async (id, status) => {
-        console.log(`Updating application ${id} to status: ${status}`);
         try {
             await updateApplicationStatus(id, status);
             await loadApplications();
-            console.log('Status updated successfully');
         } catch (err) {
-            console.error('Error updating status:', err);
             alert('Failed to update status');
         }
     };
@@ -512,47 +496,41 @@ const ApplicationsManager = () => {
         <div style={styles.dashboardCard}>
             <div style={styles.cardHeader}>
                 <h2>📋 Job Applications</h2>
-                <button 
-                    onClick={() => {
-                        console.log('🟢 Refresh button CLICKED!');
-                        loadApplications();
-                    }} 
-                    style={styles.refreshBtn}
-                    disabled={loading}
-                >
+                <button onClick={loadApplications} style={styles.refreshBtn} disabled={loading}>
                     {loading ? '🔄 Loading...' : '🔄 Refresh'}
                 </button>
             </div>
-            {error && (
-                <div style={{ background: '#f8d7da', color: '#721c24', padding: '10px', borderRadius: '8px', marginBottom: '15px' }}>
-                    Error: {error}
-                </div>
-            )}
+            {error && <div style={{ background: '#f8d7da', color: '#721c24', padding: '10px', borderRadius: '8px', marginBottom: '15px' }}>Error: {error}</div>}
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
                     <thead>
                         <tr>
+                            <th style={styles.th}>ID</th>
+                            <th style={styles.th}>Job ID</th>
+                            <th style={styles.th}>Job Title</th>
                             <th style={styles.th}>Name</th>
-                            <th style={styles.th}>Job</th>
                             <th style={styles.th}>Email</th>
+                            <th style={styles.th}>Phone</th>
                             <th style={styles.th}>Experience</th>
+                            <th style={styles.th}>Current Company</th>
                             <th style={styles.th}>Status</th>
-                            <th style={styles.th}>Action</th>
+                            <th style={styles.th}>Applied At</th>
+                            <th style={styles.th}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {loading && (
-                            <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading applications...</td></tr>
-                        )}
-                        {!loading && applications.length === 0 && (
-                            <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>📭 No applications found. Submit a job application to see it here.</td></tr>
-                        )}
+                        {loading && <tr><td colSpan="11" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading applications...</td></tr>}
+                        {!loading && applications.length === 0 && <tr><td colSpan="11" style={{ textAlign: 'center', padding: '40px' }}>📭 No applications found.</td></tr>}
                         {!loading && applications.map(app => (
                             <tr key={app.id}>
-                                <td style={styles.td}>{app.name}</td>
+                                <td style={styles.td}>{app.id}</td>
+                                <td style={styles.td}>{app.job_id}</td>
                                 <td style={styles.td}>{app.job_title}</td>
+                                <td style={styles.td}>{app.name}</td>
                                 <td style={styles.td}>{app.email}</td>
+                                <td style={styles.td}>{app.phone}</td>
                                 <td style={styles.td}>{app.experience || 'N/A'} yrs</td>
+                                <td style={styles.td}>{app.current_company || 'N/A'}</td>
                                 <td style={styles.td}>
                                     <select value={app.status} onChange={e => updateStatus(app.id, e.target.value)} style={styles.select}>
                                         <option value="pending">⏳ Pending</option>
@@ -561,6 +539,7 @@ const ApplicationsManager = () => {
                                         <option value="rejected">❌ Rejected</option>
                                     </select>
                                 </td>
+                                <td style={styles.td}>{new Date(app.applied_at).toLocaleString()}</td>
                                 <td style={styles.td}>
                                     <button onClick={() => setSelectedApp(app)} style={styles.viewBtn}>View Details</button>
                                 </td>
@@ -573,14 +552,16 @@ const ApplicationsManager = () => {
                 <div style={styles.modal} onClick={() => setSelectedApp(null)}>
                     <div style={styles.modalContent}>
                         <h3>📄 Application Details</h3>
+                        <p><strong>ID:</strong> {selectedApp.id}</p>
+                        <p><strong>Job ID:</strong> {selectedApp.job_id}</p>
+                        <p><strong>Job Title:</strong> {selectedApp.job_title}</p>
                         <p><strong>Name:</strong> {selectedApp.name}</p>
                         <p><strong>Email:</strong> {selectedApp.email}</p>
                         <p><strong>Phone:</strong> {selectedApp.phone}</p>
                         <p><strong>Experience:</strong> {selectedApp.experience} years</p>
                         <p><strong>Current Company:</strong> {selectedApp.current_company || 'N/A'}</p>
-                        <p><strong>Applied for:</strong> {selectedApp.job_title}</p>
                         <p><strong>Status:</strong> {selectedApp.status}</p>
-                        <p><strong>Submitted:</strong> {new Date(selectedApp.created_at).toLocaleString()}</p>
+                        <p><strong>Applied At:</strong> {new Date(selectedApp.applied_at).toLocaleString()}</p>
                         <p><strong>Cover Letter:</strong></p>
                         <div style={{ background: '#f5f5f5', padding: '10px', borderRadius: '5px', maxHeight: '200px', overflow: 'auto' }}>
                             {selectedApp.cover_letter || 'No cover letter provided'}
@@ -595,42 +576,36 @@ const ApplicationsManager = () => {
         </div>
     );
 };
-
 // ============================================
-// QUOTES MANAGER (WORKING REFRESH BUTTON)
+// QUOTES MANAGER (Complete - All Database Fields)
 // ============================================
 const QuotesManager = () => {
     const [quotes, setQuotes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    useEffect(() => { 
-        loadQuotes(); 
-    }, []);
+    useEffect(() => { loadQuotes(); }, []);
 
     const loadQuotes = async () => {
-        console.log('🔄 Refresh button clicked - Loading quotes...');
         setLoading(true);
         setError(null);
         try {
             const res = await getQuotes();
-            console.log('Quotes API response:', res);
-            if (res.success) {
-                setQuotes(res.quotes);
-                console.log(`✅ Successfully loaded ${res.quotes.length} quotes`);
-                if (res.quotes.length === 0) {
-                    console.log('No quotes found in database');
-                }
-            } else {
-                setError('Failed to load quotes');
-                console.error('API returned success=false');
-            }
+            if (res.success) setQuotes(res.quotes);
         } catch (err) {
-            console.error('Error loading quotes:', err);
             setError(err.message || 'Error loading quotes');
-            alert('Error loading quotes. Check console for details.');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const updateQuoteStatus = async (id, status) => {
+        try {
+            await axios.put(`${API_BASE_URL}/admin/quotes/${id}/status`, { status }, getAuthConfig());
+            await loadQuotes();
+        } catch (err) {
+            console.error('Error updating status:', err);
+            alert('Failed to update status');
         }
     };
 
@@ -638,51 +613,37 @@ const QuotesManager = () => {
         <div style={styles.dashboardCard}>
             <div style={styles.cardHeader}>
                 <h2>📧 Quote Requests</h2>
-                <button 
-                    onClick={() => {
-                        console.log('🟢 Refresh button CLICKED for Quotes!');
-                        loadQuotes();
-                    }} 
-                    style={styles.refreshBtn}
-                    disabled={loading}
-                >
+                <button onClick={loadQuotes} style={styles.refreshBtn} disabled={loading}>
                     {loading ? '🔄 Loading...' : '🔄 Refresh'}
                 </button>
             </div>
-            {error && (
-                <div style={{ background: '#f8d7da', color: '#721c24', padding: '10px', borderRadius: '8px', marginBottom: '15px' }}>
-                    Error: {error}
-                </div>
-            )}
+            {error && <div style={{ background: '#f8d7da', color: '#721c24', padding: '10px', borderRadius: '8px', marginBottom: '15px' }}>Error: {error}</div>}
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
                     <thead>
                         <tr>
+                            <th style={styles.th}>ID</th>
                             <th style={styles.th}>Name</th>
                             <th style={styles.th}>Email</th>
                             <th style={styles.th}>Phone</th>
                             <th style={styles.th}>Service</th>
-                            <th style={styles.th}>Date</th>
+                            <th style={styles.th}>Status</th>
                             <th style={styles.th}>Message</th>
+                            <th style={styles.th}>Created At</th>
                             <th style={styles.th}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {loading && (
-                            <tr><td colSpan="7" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading quotes...</td></tr>
-                        )}
-                        {!loading && quotes.length === 0 && (
-                            <tr><td colSpan="7" style={{ textAlign: 'center', padding: '40px' }}>📭 No quote requests found. Submit a quote to see it here.</td></tr>
-                        )}
+                        {loading && <tr><td colSpan="9" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading quotes...</td></tr>}
+                        {!loading && quotes.length === 0 && <tr><td colSpan="9" style={{ textAlign: 'center', padding: '40px' }}>📭 No quote requests found.</td></tr>}
                         {!loading && quotes.map(quote => (
                             <tr key={quote.id}>
+                                <td style={styles.td}>{quote.id}</td>
                                 <td style={styles.td}>{quote.name}</td>
-                                <td style={styles.td}>
-                                    <a href={`mailto:${quote.email}`} style={{ color: '#667eea', textDecoration: 'none' }}>{quote.email}</a>
-                                </td>
+                                <td style={styles.td}><a href={`mailto:${quote.email}`} style={{ color: '#667eea', textDecoration: 'none' }}>{quote.email}</a></td>
                                 <td style={styles.td}>
                                     <div>
-                                        <strong>{quote.phone || 'N/A'}</strong>
+                                        {quote.phone || 'N/A'}
                                         <div style={{ marginTop: '5px' }}>
                                             <a href={`tel:${quote.phone}`} style={{ color: '#4facfe', textDecoration: 'none', marginRight: '10px', fontSize: '12px' }}>📞 Call</a>
                                             <a href={`https://wa.me/${quote.phone}`} target="_blank" rel="noopener noreferrer" style={{ color: '#25D366', textDecoration: 'none', fontSize: '12px' }}>💬 WhatsApp</a>
@@ -690,15 +651,23 @@ const QuotesManager = () => {
                                     </div>
                                 </td>
                                 <td style={styles.td}>{quote.service}</td>
-                                <td style={styles.td}>{new Date(quote.created_at).toLocaleDateString()}</td>
+                                <td style={styles.td}>
+                                    <select value={quote.status || 'pending'} onChange={e => updateQuoteStatus(quote.id, e.target.value)} style={styles.select}>
+                                        <option value="pending">⏳ Pending</option>
+                                        <option value="contacted">📞 Contacted</option>
+                                        <option value="converted">✅ Converted</option>
+                                        <option value="closed">🔒 Closed</option>
+                                    </select>
+                                </td>
                                 <td style={styles.td}>
                                     <details>
-                                        <summary style={{ cursor: 'pointer', color: '#667eea' }}>View Message</summary>
+                                        <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
                                         <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px', maxWidth: '250px', wordBreak: 'break-word' }}>
                                             {quote.message || 'No message provided'}
                                         </div>
                                     </details>
                                 </td>
+                                <td style={styles.td}>{new Date(quote.created_at).toLocaleString()}</td>
                                 <td style={styles.td}>
                                     <button onClick={() => window.open(`tel:${quote.phone}`)} style={{ ...styles.editBtn, marginRight: '5px', fontSize: '12px' }}>📞 Call</button>
                                     <button onClick={() => window.open(`mailto:${quote.email}`)} style={{ ...styles.viewBtn, fontSize: '12px' }}>✉️ Email</button>
@@ -711,9 +680,8 @@ const QuotesManager = () => {
         </div>
     );
 };
-
 // ============================================
-// USER MANAGER
+// USER MANAGER (Complete - All Database Fields)
 // ============================================
 const UserManager = () => {
     const [users, setUsers] = useState([]);
@@ -751,14 +719,27 @@ const UserManager = () => {
             <div style={{ overflowX: 'auto' }}>
                 <table style={styles.table}>
                     <thead>
-                        <tr><th style={styles.th}>Username</th><th style={styles.th}>Role</th><th style={styles.th}>Created</th><th style={styles.th}>Actions</th></tr>
+                        <tr>
+                            <th style={styles.th}>ID</th>
+                            <th style={styles.th}>Username</th>
+                            <th style={styles.th}>Role</th>
+                            <th style={styles.th}>Created At</th>
+                            <th style={styles.th}>Updated At</th>
+                            <th style={styles.th}>Actions</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {users.map((user) => (
                             <tr key={user.id}>
+                                <td style={styles.td}>{user.id}</td>
                                 <td style={styles.td}>{user.username}</td>
-                                <td style={styles.td}><span style={{...styles.statusBadge, background: user.role === 'admin' ? '#d4edda' : '#ffeaa7'}}>{user.role}</span></td>
-                                <td style={styles.td}>{new Date(user.created_at).toLocaleDateString()}</td>
+                                <td style={styles.td}>
+                                    <span style={{...styles.statusBadge, background: user.role === 'admin' ? '#d4edda' : '#ffeaa7'}}>
+                                        {user.role}
+                                    </span>
+                                </td>
+                                <td style={styles.td}>{new Date(user.created_at).toLocaleString()}</td>
+                                <td style={styles.td}>{user.updated_at ? new Date(user.updated_at).toLocaleString() : 'N/A'}</td>
                                 <td style={styles.td}>
                                     {user.username !== 'admin' && <button onClick={() => handleDeleteUser(user.id)} style={styles.deleteBtn}>Delete</button>}
                                     {user.username === 'admin' && <span style={{ color: '#888', fontSize: '12px' }}>Primary Admin</span>}
@@ -775,6 +756,11 @@ const UserManager = () => {
                         <form onSubmit={handleCreateUser}>
                             <input type="text" placeholder="Username" value={newUser.username} onChange={e => setNewUser({...newUser, username: e.target.value})} style={styles.input} required />
                             <input type="password" placeholder="Password" value={newUser.password} onChange={e => setNewUser({...newUser, password: e.target.value})} style={styles.input} required />
+                            <select value={newUser.role} onChange={e => setNewUser({...newUser, role: e.target.value})} style={styles.input}>
+                                <option value="admin">Admin</option>
+                                <option value="editor">Editor</option>
+                                <option value="viewer">Viewer</option>
+                            </select>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
                                 <button type="submit" style={styles.saveBtn}>Create Admin</button>
                                 <button type="button" onClick={() => setShowForm(false)} style={styles.cancelBtn}>Cancel</button>
