@@ -261,6 +261,7 @@ app.get('/api/blogs', async (req, res) => {
 app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`SELECT * FROM blogs ORDER BY created_at DESC`);
+    console.log('Blogs fetched, first read_time:', result.rows[0]?.read_time);
     res.json({ success: true, blogs: result.rows });
   } catch (error) {
     res.json({ success: true, blogs: [] });
@@ -269,15 +270,16 @@ app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
 
 app.post('/api/admin/blogs', authenticateToken, async (req, res) => {
   try {
-    const { title, excerpt, content, category, author, status } = req.body;
+    const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     await db.query(
-      `INSERT INTO blogs (title, slug, excerpt, content, category, author, status, created_at, updated_at, views) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW(), 0)`,
-      [title, slug, excerpt || '', content, category || 'General', author || 'Admin', status || 'draft']
+      `INSERT INTO blogs (title, slug, excerpt, content, category, author, author_role, read_time, status, created_at, updated_at, views) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW(), 0)`,
+      [title, slug, excerpt || '', content, category || 'General', author || 'Admin', author_role || 'Author', read_time || 5, status || 'draft']
     );
     res.json({ success: true, message: 'Blog created' });
   } catch (error) {
+    console.error('Create blog error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -285,7 +287,10 @@ app.post('/api/admin/blogs', authenticateToken, async (req, res) => {
 app.put('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, excerpt, content, category, author, status } = req.body;
+    const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
+    
+    console.log('Updating blog ID:', id, 'read_time:', read_time);
+    
     if (title) {
       const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       await db.query(`UPDATE blogs SET title=$1, slug=$2, updated_at=NOW() WHERE id=$3`, [title, slug, id]);
@@ -294,9 +299,13 @@ app.put('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
     if (content) await db.query(`UPDATE blogs SET content=$1, updated_at=NOW() WHERE id=$2`, [content, id]);
     if (category) await db.query(`UPDATE blogs SET category=$1, updated_at=NOW() WHERE id=$2`, [category, id]);
     if (author) await db.query(`UPDATE blogs SET author=$1, updated_at=NOW() WHERE id=$2`, [author, id]);
+    if (author_role !== undefined) await db.query(`UPDATE blogs SET author_role=$1, updated_at=NOW() WHERE id=$2`, [author_role, id]);
+    if (read_time !== undefined) await db.query(`UPDATE blogs SET read_time=$1, updated_at=NOW() WHERE id=$2`, [read_time, id]);
     if (status) await db.query(`UPDATE blogs SET status=$1, updated_at=NOW() WHERE id=$2`, [status, id]);
+    
     res.json({ success: true, message: 'Blog updated' });
   } catch (error) {
+    console.error('Update blog error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
