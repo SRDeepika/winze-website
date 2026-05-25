@@ -105,8 +105,9 @@ const AdminLogin = ({ onLogin }) => {
         </div>
     );
 };
+
 // ============================================
-// BLOG MANAGER (Complete - All Database Fields)
+// BLOG MANAGER
 // ============================================
 const BlogManager = () => {
     const [blogs, setBlogs] = useState([]);
@@ -257,7 +258,7 @@ const BlogManager = () => {
                                         {blog.status || 'draft'}
                                     </span>
                                 </td>
-                                <td style={styles.td}>{blog.created_by || 'N/A'}</td>
+                                <td style={styles.td}>{blog.created_by_name || blog.created_by || 'N/A'}</td>
                                 <td style={styles.td}>{blog.created_at ? new Date(blog.created_at).toLocaleString() : 'N/A'}</td>
                                 <td style={styles.td}>{blog.updated_at ? new Date(blog.updated_at).toLocaleString() : 'N/A'}</td>
                                 <td style={styles.td}>
@@ -278,7 +279,7 @@ const BlogManager = () => {
                             <input type="text" placeholder="Title *" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={styles.input} required />
                             <input type="text" placeholder="Category" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={styles.input} />
                             <input type="text" placeholder="Author" value={formData.author} onChange={e => setFormData({...formData, author: e.target.value})} style={styles.input} />
-                            <input type="text" placeholder="Author Role (e.g., Expert, Admin, Guest)" value={formData.author_role} onChange={e => setFormData({...formData, author_role: e.target.value})} style={styles.input} />
+                            <input type="text" placeholder="Author Role" value={formData.author_role} onChange={e => setFormData({...formData, author_role: e.target.value})} style={styles.input} />
                             <input type="number" placeholder="Read Time (minutes)" value={formData.read_time} onChange={e => setFormData({...formData, read_time: parseInt(e.target.value) || 5})} style={styles.input} />
                             <textarea placeholder="Excerpt" rows="3" value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} style={styles.textarea} />
                             <textarea placeholder="Content *" rows="10" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} style={styles.textarea} required />
@@ -302,7 +303,7 @@ const BlogManager = () => {
 };
 
 // ============================================
-// JOB MANAGER (Complete - All Database Fields)
+// JOB MANAGER
 // ============================================
 const JobManager = () => {
     const [jobs, setJobs] = useState([]);
@@ -387,6 +388,8 @@ const JobManager = () => {
                             <th style={styles.th}>Type</th>
                             <th style={styles.th}>Experience</th>
                             <th style={styles.th}>Salary</th>
+                            <th style={styles.th}>Requirements</th>
+                            <th style={styles.th}>Benefits</th>
                             <th style={styles.th}>Status</th>
                             <th style={styles.th}>Deadline</th>
                             <th style={styles.th}>Posted By</th>
@@ -405,12 +408,28 @@ const JobManager = () => {
                                 <td style={styles.td}>{job.experience || 'N/A'}</td>
                                 <td style={styles.td}>{job.salary || 'N/A'}</td>
                                 <td style={styles.td}>
+                                    <details>
+                                        <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
+                                        <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px', maxWidth: '250px', wordBreak: 'break-word' }}>
+                                            {job.requirements || 'No requirements specified'}
+                                        </div>
+                                    </details>
+                                </td>
+                                <td style={styles.td}>
+                                    <details>
+                                        <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
+                                        <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px', maxWidth: '250px', wordBreak: 'break-word' }}>
+                                            {job.benefits || 'No benefits specified'}
+                                        </div>
+                                    </details>
+                                </td>
+                                <td style={styles.td}>
                                     <span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>
                                         {job.status || 'active'}
                                     </span>
                                 </td>
                                 <td style={styles.td}>{job.deadline ? new Date(job.deadline).toLocaleDateString() : 'N/A'}</td>
-                                <td style={styles.td}>{job.posted_by || 'N/A'}</td>
+                                <td style={styles.td}>{job.posted_by_name || job.posted_by || 'N/A'}</td>
                                 <td style={styles.td}>{new Date(job.created_at).toLocaleDateString()}</td>
                                 <td style={styles.td}>
                                     <button onClick={() => { setEditingJob(job); setFormData({...job}); setShowForm(true); }} style={styles.editBtn}>Edit</button>
@@ -436,8 +455,8 @@ const JobManager = () => {
                                 <option value="Hybrid">Hybrid</option>
                                 <option value="Contract">Contract</option>
                             </select>
-                            <input type="text" placeholder="Experience Required (e.g., 2-3 years)" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} style={formInputStyle} />
-                            <input type="text" placeholder="Salary Range (e.g., ₹5L - ₹8L PA)" value={formData.salary} onChange={e => setFormData({...formData, salary: e.target.value})} style={formInputStyle} />
+                            <input type="text" placeholder="Experience Required" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} style={formInputStyle} />
+                            <input type="text" placeholder="Salary Range" value={formData.salary} onChange={e => setFormData({...formData, salary: e.target.value})} style={formInputStyle} />
                             <textarea placeholder="Job Description *" rows="5" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={formTextareaStyle} required />
                             <textarea placeholder="Requirements" rows="4" value={formData.requirements} onChange={e => setFormData({...formData, requirements: e.target.value})} style={formTextareaStyle} />
                             <textarea placeholder="Benefits" rows="3" value={formData.benefits} onChange={e => setFormData({...formData, benefits: e.target.value})} style={formTextareaStyle} />
@@ -459,8 +478,9 @@ const JobManager = () => {
         </div>
     );
 };
+
 // ============================================
-// APPLICATIONS MANAGER (Complete - All Database Fields)
+// APPLICATIONS MANAGER
 // ============================================
 const ApplicationsManager = () => {
     const [applications, setApplications] = useState([]);
@@ -576,8 +596,9 @@ const ApplicationsManager = () => {
         </div>
     );
 };
+
 // ============================================
-// QUOTES MANAGER (Complete - All Database Fields)
+// QUOTES MANAGER
 // ============================================
 const QuotesManager = () => {
     const [quotes, setQuotes] = useState([]);
@@ -603,6 +624,7 @@ const QuotesManager = () => {
         try {
             await axios.put(`${API_BASE_URL}/admin/quotes/${id}/status`, { status }, getAuthConfig());
             await loadQuotes();
+            alert('Status updated successfully!');
         } catch (err) {
             console.error('Error updating status:', err);
             alert('Failed to update status');
@@ -680,8 +702,9 @@ const QuotesManager = () => {
         </div>
     );
 };
+
 // ============================================
-// USER MANAGER (Complete - All Database Fields)
+// USER MANAGER
 // ============================================
 const UserManager = () => {
     const [users, setUsers] = useState([]);
