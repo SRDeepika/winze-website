@@ -743,7 +743,6 @@ const WinzePage = () => {
     const [showQuoteModal, setShowQuoteModal] = useState(false);
     const [showLogoModal, setShowLogoModal] = useState(false);
     const [showBackToTop, setShowBackToTop] = useState(false);
-    const [activeNav, setActiveNav] = useState('home');
     const [hoveredCard, setHoveredCard] = useState(null);
     const [counters, setCounters] = useState({
         years: 0,
@@ -775,19 +774,6 @@ const WinzePage = () => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 50);
             setShowBackToTop(window.scrollY > 500);
-            
-            // Update active nav based on scroll position
-            const sections = ['home', 'solutions', 'industries', 'partners', 'clients', 'workwith'];
-            for (const section of sections) {
-                const ref = { current: document.getElementById(section) };
-                if (ref.current) {
-                    const rect = ref.current.getBoundingClientRect();
-                    if (rect.top <= 100 && rect.bottom >= 100) {
-                        setActiveNav(section);
-                        break;
-                    }
-                }
-            }
         };
         
         window.addEventListener('scroll', handleScroll);
@@ -930,7 +916,6 @@ const WinzePage = () => {
 
     const scrollToSection = (ref, sectionName, path) => {
         handleTrackClick(`Navigation - ${sectionName}`, 'nav');
-        setActiveNav(sectionName.toLowerCase().replace(/\s/g, ''));
         
         if (path) {
             window.location.href = path;
@@ -971,14 +956,14 @@ const WinzePage = () => {
     ];
 
     const navItems = [
-        { name: "Home", ref: homeRef, id: "home" },
-        { name: "Solutions", ref: solutionsRef, id: "solutions" },
-        { name: "Industries", ref: industriesRef, id: "industries" },
-        { name: "Partners", ref: partnersRef, id: "partners" },
-        { name: "Clients", ref: clientsRef, id: "clients" },
-        { name: "Work With Winze", ref: workwithRef, id: "workwith" },
-        { name: "Careers", ref: null, path: "/careers", id: "careers" },
-        { name: "Blogs", ref: null, path: "/blogs", id: "blogs" }
+        { name: "Home", ref: homeRef },
+        { name: "Solutions", ref: solutionsRef },
+        { name: "Industries", ref: industriesRef },
+        { name: "Partners", ref: partnersRef },
+        { name: "Clients", ref: clientsRef },
+        { name: "Work With Winze", ref: workwithRef },
+        { name: "Careers", ref: null, path: "/careers" },
+        { name: "Blogs", ref: null, path: "/blogs" }
     ];
 
     const deliveryItems = [
@@ -1842,12 +1827,6 @@ const WinzePage = () => {
                     padding: 6px;
                 }
                 
-                /* Active Nav Link Styling */
-                .nav-active {
-                    border-bottom: 2px solid #FFD700;
-                    transform: translateY(-2px);
-                }
-                
                 /* Scrollbar styling for landing page */
                 .landing-scroll {
                     scrollbar-width: thin;
@@ -1886,93 +1865,88 @@ const WinzePage = () => {
                 )}
                 
                 {/* Navigation Bar */}
-<nav style={{
-    position: 'sticky',
-    top: 0,
-    left: 0,
-    right: 0,
-    background: '#0D2B2B',
-    backdropFilter: 'blur(20px)',
-    padding: '12px 5%',
-    zIndex: 1000,
-    transition: 'all 0.3s',
-    boxShadow: scrolled ? '0 4px 20px rgba(0,0,0,0.3)' : 'none',
-    borderBottom: '1px solid rgba(255,215,0,0.2)'
-}}>
-    <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
-        <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
-            <img src="/winze-logo.jpg" alt="Winze Technologies Logo" className="logo-image" onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.parentElement.innerHTML = '<div style="width:48px;height:48px;background:#FFD700;border-radius:12px;display:flex;align-items:center;justify-content:center;"><span style="color:#1a1a2e;font-size:24px;font-weight:bold">W</span></div><span style="font-weight:800;font-size:1.4rem;background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Winze Technologies</span>';
-            }} />
-            <span style={{ fontWeight: '800', fontSize: '1.4rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: "'Playfair Display', serif", letterSpacing: '-0.5px' }}>Winze Technologies</span>
-        </div>
-        
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
-            {navItems.map((item) => (
-                <button 
-                    key={item.name} 
-                    onClick={(e) => { 
-                        e.preventDefault(); 
-                        e.stopPropagation(); 
-                        if (item.path) {
-                            handleTrackClick(`${item.name} Page Visit`, 'navigation');
-                            window.location.href = item.path;
-                        } else {
-                            scrollToSection(item.ref, item.name);
-                        }
-                    }} 
-                    style={{ 
-                        background: 'transparent', 
-                        color: activeNav === item.id ? '#FFD700' : '#fff', 
-                        fontWeight: '600', 
-                        padding: '8px 18px', 
-                        borderRadius: '30px', 
-                        transition: 'all 0.3s', 
-                        cursor: 'pointer', 
-                        fontSize: '14px', 
-                        fontFamily: "'Poppins', sans-serif", 
-                        border: activeNav === item.id ? '1px solid rgba(255,215,0,0.5)' : 'none',
-                        borderBottom: activeNav === item.id ? '2px solid #FFD700' : 'none'
-                    }}
-                    onMouseEnter={(e) => {
-                        e.target.style.background = '#FFD700';
-                        e.target.style.color = '#1a1a2e';
-                        e.target.style.transform = 'translateY(-2px)';
-                    }}
-                    onMouseLeave={(e) => {
-                        if (activeNav === item.id) {
-                            e.target.style.background = 'transparent';
-                            e.target.style.color = '#FFD700';
-                        } else {
-                            e.target.style.background = 'transparent';
-                            e.target.style.color = '#fff';
-                        }
-                        e.target.style.transform = 'translateY(0)';
-                    }}
-                >
-                    {item.name}
-                </button>
-            ))}
-            <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Get Quote Button', 'cta'); }} style={{
-                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                color: '#1a1a2e',
-                border: 'none',
-                padding: '8px 24px',
-                borderRadius: '30px',
-                cursor: 'pointer',
-                fontWeight: '700',
-                transition: 'all 0.3s',
-                fontFamily: "'Poppins', sans-serif",
-                boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
-            }}
-            onMouseEnter={(e) => { e.target.style.transform = 'scale(1.05)'; e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)'; }}
-            onMouseLeave={(e) => { e.target.style.transform = 'scale(1)'; e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)'; }}>
-                ✨ Get a Quote
-            </button>
-        </div>
-    </div>
-</nav>
+                <nav style={{
+                    position: 'sticky',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    background: '#0D2B2B',
+                    backdropFilter: 'blur(20px)',
+                    padding: '12px 5%',
+                    zIndex: 1000,
+                    transition: 'all 0.3s',
+                    boxShadow: scrolled ? '0 4px 20px rgba(0,0,0,0.3)' : 'none',
+                    borderBottom: '1px solid rgba(255,215,0,0.2)'
+                }}>
+                    <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
+                        <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
+                            <img src="/winze-logo.jpg" alt="Winze Technologies Logo" className="logo-image" onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.parentElement.innerHTML = '<div style="width:48px;height:48px;background:#FFD700;border-radius:12px;display:flex;align-items:center;justify-content:center;"><span style="color:#1a1a2e;font-size:24px;font-weight:bold">W</span></div><span style="font-weight:800;font-size:1.4rem;background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Winze Technologies</span>';
+                            }} />
+                            <span style={{ fontWeight: '800', fontSize: '1.4rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: "'Playfair Display', serif", letterSpacing: '-0.5px' }}>Winze Technologies</span>
+                        </div>
+                        
+                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+                            {navItems.map((item) => (
+                                <button 
+                                    key={item.name} 
+                                    onClick={(e) => { 
+                                        e.preventDefault(); 
+                                        e.stopPropagation(); 
+                                        if (item.path) {
+                                            handleTrackClick(`${item.name} Page Visit`, 'navigation');
+                                            window.location.href = item.path;
+                                        } else {
+                                            scrollToSection(item.ref, item.name);
+                                        }
+                                    }} 
+                                    style={{ 
+                                        background: 'transparent', 
+                                        color: '#fff', 
+                                        fontWeight: '600', 
+                                        padding: '8px 18px', 
+                                        borderRadius: '30px', 
+                                        transition: 'all 0.3s', 
+                                        cursor: 'pointer', 
+                                        fontSize: '14px', 
+                                        fontFamily: "'Poppins', sans-serif", 
+                                        border: 'none'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.background = '#FFD700';
+                                        e.target.style.color = '#1a1a2e';
+                                        e.target.style.transform = 'translateY(-2px)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.background = 'transparent';
+                                        e.target.style.color = '#fff';
+                                        e.target.style.transform = 'translateY(0)';
+                                    }}
+                                >
+                                    {item.name}
+                                </button>
+                            ))}
+                            <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Get Quote Button', 'cta'); }} style={{
+                                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                                color: '#1a1a2e',
+                                border: 'none',
+                                padding: '8px 24px',
+                                borderRadius: '30px',
+                                cursor: 'pointer',
+                                fontWeight: '700',
+                                transition: 'all 0.3s',
+                                fontFamily: "'Poppins', sans-serif",
+                                boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
+                            }}
+                            onMouseEnter={(e) => { e.target.style.transform = 'scale(1.05)'; e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)'; }}
+                            onMouseLeave={(e) => { e.target.style.transform = 'scale(1)'; e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)'; }}>
+                                ✨ Get a Quote
+                            </button>
+                        </div>
+                    </div>
+                </nav>
+
                 {/* Hero Section */}
                 <section id="home" ref={homeRef} style={{ minHeight: '90vh', position: 'relative', display: 'flex', alignItems: 'center', padding: '80px 5%', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.hero} />
