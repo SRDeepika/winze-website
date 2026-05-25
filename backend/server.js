@@ -251,12 +251,12 @@ app.get('/api/blogs', async (req, res) => {
 app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT b.id, b.title, b.slug, b.excerpt, b.content, b.category, 
-             b.image, b.author, b.author_role, b.read_time, b.views, 
-             b.status, b.created_at, b.updated_at
-      FROM blogs b 
-      ORDER BY b.created_at DESC
+      SELECT id, title, slug, excerpt, content, category, image, 
+             author, author_role, read_time, status, created_at, updated_at
+      FROM blogs 
+      ORDER BY created_at DESC
     `);
+    console.log('Blogs fetched count:', result.rows.length);
     res.json({ success: true, blogs: result.rows });
   } catch (error) {
     console.error('Error fetching blogs:', error);
@@ -268,12 +268,11 @@ app.post('/api/admin/blogs', authenticateToken, async (req, res) => {
   try {
     const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    const created_by = req.user.id;
     
     await db.query(
-      `INSERT INTO blogs (title, slug, excerpt, content, category, author, author_role, read_time, status, created_by, created_at, updated_at, views) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW(), 0)`,
-      [title, slug, excerpt || '', content, category || 'General', author || 'Admin', author_role || 'Author', read_time || 5, status || 'draft', created_by]
+      `INSERT INTO blogs (title, slug, excerpt, content, category, author, author_role, read_time, status, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())`,
+      [title, slug, excerpt || '', content, category || 'General', author || 'Admin', author_role || 'Author', read_time || 5, status || 'draft']
     );
     res.json({ success: true, message: 'Blog created' });
   } catch (error) {
