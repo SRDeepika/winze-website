@@ -117,7 +117,7 @@ const BlogManager = () => {
     const [formData, setFormData] = useState({
         id: null, title: '', slug: '', excerpt: '', content: '', 
         category: '', image: null, author: '', author_role: '', 
-        read_time: 5, views: 0, status: 'draft'
+        read_time: 5, status: 'draft'
     });
 
     useEffect(() => { loadBlogs(); }, []);
@@ -160,7 +160,6 @@ const BlogManager = () => {
                 createData.append('author', formData.author || 'Admin');
                 createData.append('author_role', formData.author_role || 'Author');
                 createData.append('read_time', parseInt(formData.read_time) || 5);
-                createData.append('views', 0);
                 createData.append('status', formData.status);
                 if (formData.image) {
                     createData.append('image', formData.image);
@@ -174,7 +173,7 @@ const BlogManager = () => {
             setFormData({
                 id: null, title: '', slug: '', excerpt: '', content: '', 
                 category: '', image: null, author: '', author_role: '', 
-                read_time: 5, views: 0, status: 'draft'
+                read_time: 5, status: 'draft'
             });
         } catch (error) {
             console.error('Error saving blog:', error);
@@ -210,7 +209,6 @@ const BlogManager = () => {
             author: blog.author || '',
             author_role: blog.author_role || '',
             read_time: blog.read_time ? Number(blog.read_time) : 5,
-            views: blog.views || 0,
             status: blog.status || 'draft'
         });
         setShowForm(true);
@@ -233,7 +231,6 @@ const BlogManager = () => {
                             <th style={styles.th}>Author</th>
                             <th style={styles.th}>Author Role</th>
                             <th style={styles.th}>Read Time</th>
-                            <th style={styles.th}>Views</th>
                             <th style={styles.th}>Status</th>
                             <th style={styles.th}>Created At</th>
                             <th style={styles.th}>Updated At</th>
@@ -250,7 +247,6 @@ const BlogManager = () => {
                                 <td style={styles.td}>{blog.author || 'Admin'}</td>
                                 <td style={styles.td}>{blog.author_role || 'Author'}</td>
                                 <td style={styles.td}>{blog.read_time || 5} min</td>
-                                <td style={styles.td}>{blog.views || 0}</td>
                                 <td style={styles.td}>
                                     <span style={{...styles.statusBadge, background: blog.status === 'published' ? '#d4edda' : '#ffeaa7'}}>
                                         {blog.status || 'draft'}
