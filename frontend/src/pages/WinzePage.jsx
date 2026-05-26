@@ -1774,24 +1774,28 @@ const WinzePage = () => {
                 .client-logo-img, .partner-logo-img { width: 80px; height: 80px; margin: 0 auto 12px; display: flex; align-items: center; justifyContent: center; }
                 .client-logo-img img, .partner-logo-img img { width: 100%; height: 100%; object-fit: contain; }
                 
-                /* Stats Card Style - Restored to previous style */
                 .stat-card {
-                    padding: 30px 20px;
-                    border-radius: 15px;
-                    text-align: center;
-                    transition: all 0.3s ease;
-                    animation: fadeInUp 0.6s ease-out;
-                    background: linear-gradient(135deg, #1a2a40, #0f1a2c);
-                    border: 1px solid rgba(255,215,0,0.2);
-                }
-                .stat-card:hover {
-                    transform: translateY(-8px);
-                }
-                
-                @keyframes fadeInUp {
-                    from { opacity: 0; transform: translateY(30px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
+    padding: 30px 20px;
+    border-radius: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.6s ease-out;
+}
+.stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.02); opacity: 0.95; }
+    100% { transform: scale(1); opacity: 1; }
+}
                 
                 /* Navbar styling - Royal Burgundy */
                 .nav-button {
@@ -2090,20 +2094,41 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Stats Section - Restored to previous style */}
-                <section ref={statsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #0a1620 0%, #0f1a25 100%)' }}>
-                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }}>Our Impact in Numbers</h2>
-                        <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }}>DELIVERING EXCELLENCE THROUGH MEASURABLE RESULTS</p>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '25px' }}>
-                            <div className="stat-card"><div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '10px' }}>{counters.years}+</div><h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: '600' }}>Years in Business</h3><p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>Industry Experience</p></div>
-                            <div className="stat-card"><div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '10px' }}>{counters.expertise}+</div><h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: '600' }}>Expertise</h3><p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>Domain Specialists</p></div>
-                            <div className="stat-card"><div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '10px' }}>{counters.clients}+</div><h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: '600' }}>Clients</h3><p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>Satisfied Customers</p></div>
-                            <div className="stat-card"><div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '10px' }}>{counters.awards}+</div><h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: '600' }}>Awards</h3><p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>Industry Recognition</p></div>
-                            <div className="stat-card"><div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '10px' }}>{counters.projects}+</div><h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: '600' }}>Projects</h3><p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>Successfully Delivered</p></div>
-                        </div>
-                    </div>
-                </section>
+                {/* Stats Section - With Background Image and Highlighted Cards */}
+<section ref={statsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }}>
+    <BackgroundImage imageSrc={bgImages.stats} />
+    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
+        <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }}>Our Impact in Numbers</h2>
+        <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }}>DELIVERING EXCELLENCE THROUGH MEASURABLE RESULTS</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '25px' }}>
+            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite' }}>
+                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'white', marginBottom: '10px' }}>{counters.years}+</div>
+                <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Years in Business</h3>
+                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '12px' }}>Industry Experience</p>
+            </div>
+            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.3s' }}>
+                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'white', marginBottom: '10px' }}>{counters.expertise}+</div>
+                <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Expertise</h3>
+                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '12px' }}>Domain Specialists</p>
+            </div>
+            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.6s' }}>
+                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'white', marginBottom: '10px' }}>{counters.clients}+</div>
+                <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Clients</h3>
+                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '12px' }}>Satisfied Customers</p>
+            </div>
+            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 0.9s' }}>
+                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#333', marginBottom: '10px' }}>{counters.awards}+</div>
+                <h3 style={{ fontSize: '1.1rem', color: '#333', marginBottom: '8px', fontWeight: 'bold' }}>Awards</h3>
+                <p style={{ color: '#555', fontSize: '12px' }}>Industry Recognition</p>
+            </div>
+            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', border: '1px solid rgba(255,255,255,0.3)', animation: 'pulse 2s infinite 1.2s' }}>
+                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#333', marginBottom: '10px' }}>{counters.projects}+</div>
+                <h3 style={{ fontSize: '1.1rem', color: '#333', marginBottom: '8px', fontWeight: 'bold' }}>Projects</h3>
+                <p style={{ color: '#555', fontSize: '12px' }}>Successfully Delivered</p>
+            </div>
+        </div>
+    </div>
+</section>
 
                 {/* Logo Modal - No White Background */}
                 {showLogoModal && (
