@@ -1,81 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { getJobs, applyForJob, trackClick } from '../services/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarker, faBriefcase, faClock, faMoneyBill } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faFileAlt } from '@fortawesome/free-solid-svg-icons';
 
 const CareersSection = () => {
     const [jobs, setJobs] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
-    const [showApplyForm, setShowApplyForm] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [submitting, setSubmitting] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
+    const [showApplicationForm, setShowApplicationForm] = useState(false);
+    const [resumeFile, setResumeFile] = useState(null);
     const [formData, setFormData] = useState({
-        name: '', email: '', phone: '', experience: '', currentCompany: '', 
-        currentCTC: '', noticePeriod: '', coverLetter: '', resume: null
+        name: '',
+        email: '',
+        phone: '',
+        experience: '',
+        current_company: ''
     });
 
-    useEffect(() => { loadJobs(); }, []);
+    // Load jobs on component mount
+    React.useEffect(() => {
+        loadJobs();
+    }, []);
 
     const loadJobs = async () => {
         try {
             const response = await getJobs();
-            if (response.success && response.jobs.length > 0) {
+            if (response.success) {
                 setJobs(response.jobs);
-            } else {
-                // Fallback dummy data
-                setJobs([
-                    {
-                        id: 1,
-                        title: "Senior Software Engineer",
-                        department: "Engineering",
-                        location: "Bangalore, India",
-                        type: "Full-time",
-                        experience: "5-8 years",
-                        salary: "15-22 LPA",
-                        description: "<p>We are looking for a Senior Software Engineer to lead our development team.</p>",
-                        requirements: "Bachelor's degree in CS",
-                        benefits: "Health insurance"
-                    },
-                    {
-                        id: 2,
-                        title: "Cybersecurity Specialist",
-                        department: "Security",
-                        location: "Remote",
-                        type: "Full-time",
-                        experience: "3-6 years",
-                        salary: "10-16 LPA",
-                        description: "<p>Join our security team to protect enterprise clients.</p>",
-                        requirements: "Security certifications",
-                        benefits: "Professional development"
-                    }
-                ]);
             }
         } catch (error) {
             console.error('Error loading jobs:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleApply = async (job) => {
-        // Track the click
-        await trackClick({
-            link_url: window.location.href,
-            link_title: `Apply for Job: ${job.title}`,
-            ip_address: await getIpAddress()
-        });
-        setSelectedJob(job);
-        setShowApplyForm(true);
-    };
-
-    const getIpAddress = async () => {
-        try {
-            const response = await fetch('https://api.ipify.org?format=json');
-            const data = await response.json();
-            return data.ip;
-        } catch (err) {
-            return '0.0.0.0';
         }
     };
 
@@ -84,147 +38,132 @@ const CareersSection = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleFileChange = (e) => {
-        setFormData(prev => ({ ...prev, resume: e.target.files[0] }));
+    const handleResumeChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!validTypes.includes(file.type)) {
+                alert('Please upload PDF or DOC/DOCX file only');
+                return;
+            }
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size should be less than 5MB');
+                return;
+            }
+            setResumeFile(file);
+            
+            // Convert to base64 for storage (or you can upload to cloud)
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData(prev => ({ ...prev, resume_url: reader.result }));
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
-    const handleSubmit = async (e) => {
+    const handleApply = async (job) => {
+        setSelectedJob(job);
+        setShowApplicationForm(true);
+        // Reset form
+        setFormData({
+            name: '',
+            email: '',
+            phone: '',
+            experience: '',
+            current_company: ''
+        });
+        setResumeFile(null);
+    };
+
+    const handleSubmitApplication = async (e) => {
         e.preventDefault();
-        setSubmitting(true);
+        setLoading(true);
         
         try {
-            // Track application submission
-            await trackClick({
-                link_url: window.location.href,
-                link_title: `Job Application Submitted: ${selectedJob?.title} by ${formData.name}`,
-                ip_address: await getIpAddress()
-            });
-            
-            await applyForJob(selectedJob.id, {
+            const applicationData = {
                 name: formData.name,
                 email: formData.email,
                 phone: formData.phone,
                 experience: formData.experience,
-                current_company: formData.currentCompany,
-                current_ctc: formData.currentCTC,
-                notice_period: formData.noticePeriod,
-                cover_letter: formData.coverLetter,
-                resume: formData.resume
-            });
-            setSuccessMessage('Application submitted successfully! We will contact you soon.');
-            setShowApplyForm(false);
-            setFormData({ name: '', email: '', phone: '', experience: '', currentCompany: '', currentCTC: '', noticePeriod: '', coverLetter: '', resume: null });
-            setTimeout(() => setSuccessMessage(''), 3000);
+                current_company: formData.current_company,
+                resume_url: formData.resume_url
+            };
+            
+            const response = await applyForJob(selectedJob.id, applicationData);
+            
+            if (response.success) {
+                alert('Application submitted successfully!');
+                setShowApplicationForm(false);
+                setSelectedJob(null);
+                setResumeFile(null);
+            } else {
+                alert('Failed to submit application. Please try again.');
+            }
         } catch (error) {
+            console.error('Error submitting application:', error);
             alert('Error submitting application. Please try again.');
         } finally {
-            setSubmitting(false);
+            setLoading(false);
         }
     };
 
-    if (loading) return null;
-
     return (
-        <section style={{
-            padding: '100px 5%',
-            background: 'linear-gradient(135deg, #1a1a3e 0%, #2d2d5e 100%)'
-        }}>
-            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-                <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-                    <h2 style={{ fontSize: '3rem', color: 'white', marginBottom: '15px' }}>Join Our Team</h2>
-                    <p style={{ color: '#FFD700', fontSize: '1.1rem' }}>Build your career with Winze Technologies</p>
-                </div>
-
-                {successMessage && (
-                    <div style={{
-                        background: '#d4edda', color: '#155724', padding: '15px', borderRadius: '10px',
-                        textAlign: 'center', marginBottom: '30px'
-                    }}>{successMessage}</div>
-                )}
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '30px' }}>
-                    {jobs.map(job => (
-                        <div key={job.id} style={{
-                            background: 'white',
-                            borderRadius: '20px',
-                            padding: '25px',
-                            transition: 'transform 0.3s',
-                            cursor: 'pointer'
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
-                        onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-                            <h3 style={{ color: '#1a1a2e', marginBottom: '10px' }}>{job.title}</h3>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', marginBottom: '15px', fontSize: '14px', color: '#666' }}>
-                                <span><FontAwesomeIcon icon={faBriefcase} /> {job.department}</span>
-                                <span><FontAwesomeIcon icon={faMapMarker} /> {job.location}</span>
-                                <span><FontAwesomeIcon icon={faClock} /> {job.type}</span>
-                                <span><FontAwesomeIcon icon={faMoneyBill} /> {job.salary}</span>
-                            </div>
-                            <p style={{ color: '#666', marginBottom: '15px', fontSize: '14px' }}><strong>Experience:</strong> {job.experience}</p>
-                            <div dangerouslySetInnerHTML={{ __html: job.description?.substring(0, 150) + '...' }} style={{ color: '#666', marginBottom: '20px' }} />
-                            <button
-                                onClick={() => handleApply(job)}
-                                style={{
-                                    width: '100%',
-                                    padding: '12px',
-                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '10px',
-                                    cursor: 'pointer',
-                                    fontWeight: '600'
-                                }}
-                            >Apply Now →</button>
-                        </div>
-                    ))}
-                </div>
+        <div className="careers-section">
+            <h2>Current Openings</h2>
+            <div className="jobs-grid">
+                {jobs.map(job => (
+                    <div key={job.id} className="job-card">
+                        <h3>{job.title}</h3>
+                        <p className="location">{job.location}</p>
+                        <p className="type">{job.type}</p>
+                        <button onClick={() => handleApply(job)}>Apply Now</button>
+                    </div>
+                ))}
             </div>
 
-            {/* Application Form Modal */}
-            {showApplyForm && selectedJob && (
-                <div style={{
-                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                    background: 'rgba(0,0,0,0.95)', zIndex: 10000,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    padding: '20px', overflow: 'auto'
-                }} onClick={() => setShowApplyForm(false)}>
-                    <div style={{
-                        background: 'white', borderRadius: '20px', maxWidth: '700px',
-                        width: '100%', maxHeight: '90vh', overflow: 'auto',
-                        padding: '30px', position: 'relative'
-                    }} onClick={(e) => e.stopPropagation()}>
-                        <button onClick={() => setShowApplyForm(false)} style={{
-                            position: 'sticky', top: '0', right: '0', float: 'right',
-                            background: '#667eea', color: 'white', border: 'none',
-                            width: '30px', height: '30px', borderRadius: '50%',
-                            cursor: 'pointer', fontSize: '18px'
-                        }}>×</button>
-                        <h2 style={{ marginBottom: '20px' }}>Apply for {selectedJob.title}</h2>
-                        <form onSubmit={handleSubmit}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                                <input type="text" name="name" placeholder="Full Name*" value={formData.name} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} required />
-                                <input type="email" name="email" placeholder="Email*" value={formData.email} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} required />
-                                <input type="tel" name="phone" placeholder="Phone*" value={formData.phone} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} required />
-                                <input type="text" name="experience" placeholder="Years of Experience*" value={formData.experience} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} required />
-                                <input type="text" name="currentCompany" placeholder="Current Company" value={formData.currentCompany} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
-                                <input type="text" name="currentCTC" placeholder="Current CTC" value={formData.currentCTC} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
-                                <input type="text" name="noticePeriod" placeholder="Notice Period" value={formData.noticePeriod} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
-                                <input type="file" name="resume" accept=".pdf,.doc,.docx" onChange={handleFileChange} style={{ width: '100%', padding: '12px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
+            {showApplicationForm && selectedJob && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <button className="close-btn" onClick={() => setShowApplicationForm(false)}>
+                            <FontAwesomeIcon icon={faTimes} />
+                        </button>
+                        <h3>Apply for {selectedJob.title}</h3>
+                        <form onSubmit={handleSubmitApplication}>
+                            <input type="text" name="name" placeholder="Full Name *" value={formData.name} onChange={handleInputChange} required />
+                            <input type="email" name="email" placeholder="Email Address *" value={formData.email} onChange={handleInputChange} required />
+                            <input type="tel" name="phone" placeholder="Phone Number *" value={formData.phone} onChange={handleInputChange} required />
+                            <input type="text" name="experience" placeholder="Years of Experience" value={formData.experience} onChange={handleInputChange} />
+                            <input type="text" name="current_company" placeholder="Current Company" value={formData.current_company} onChange={handleInputChange} />
+                            
+                            {/* Resume Upload - No cover letter */}
+                            <div className="file-upload">
+                                <label>Resume (PDF, DOC, DOCX) *</label>
+                                <input 
+                                    type="file" 
+                                    accept=".pdf,.doc,.docx"
+                                    onChange={handleResumeChange}
+                                    required 
+                                />
+                                {resumeFile && (
+                                    <div className="file-info">
+                                        <FontAwesomeIcon icon={faFileAlt} />
+                                        <span>{resumeFile.name}</span>
+                                        <button type="button" onClick={() => { setResumeFile(null); setFormData(prev => ({ ...prev, resume_url: '' })); }}>Remove</button>
+                                    </div>
+                                )}
+                                <small>Max file size: 5MB. Allowed formats: PDF, DOC, DOCX</small>
                             </div>
-                            <textarea name="coverLetter" placeholder="Cover Letter / Additional Information" rows="4" value={formData.coverLetter} onChange={handleInputChange} style={{ width: '100%', padding: '12px', marginBottom: '20px', borderRadius: '8px', border: '1px solid #ddd', resize: 'vertical' }} />
-                            <button type="submit" disabled={submitting} style={{
-                                width: '100%', padding: '14px',
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                color: 'white', border: 'none', borderRadius: '10px',
-                                cursor: 'pointer', fontWeight: '600', fontSize: '16px'
-                            }}>
-                                {submitting ? 'Submitting...' : 'Submit Application'}
+                            
+                            <button type="submit" disabled={loading}>
+                                {loading ? 'Submitting...' : 'Submit Application'}
                             </button>
                         </form>
                     </div>
                 </div>
             )}
-        </section>
+        </div>
     );
 };
 
