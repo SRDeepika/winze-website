@@ -105,7 +105,6 @@ const AdminLogin = ({ onLogin }) => {
         </div>
     );
 };
-
 // ============================================
 // BLOG MANAGER
 // ============================================
@@ -116,7 +115,7 @@ const BlogManager = () => {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         id: null, title: '', slug: '', excerpt: '', content: '', 
-        category: '', image: null, author: '', author_role: '', 
+        category: '', image: null, image_url: '', author: '', author_role: '', 
         read_time: 5, status: 'draft'
     });
 
@@ -138,17 +137,33 @@ const BlogManager = () => {
         
         try {
             if (editingBlog) {
-                const updateData = {
-                    title: formData.title,
-                    excerpt: formData.excerpt,
-                    content: formData.content,
-                    category: formData.category,
-                    author: formData.author,
-                    author_role: formData.author_role,
-                    read_time: parseInt(formData.read_time) || 5,
-                    status: formData.status
-                };
-                await updateBlog(editingBlog.id, updateData);
+                // Check if there's a new image file
+                if (formData.image && formData.image instanceof File) {
+                    const updateData = new FormData();
+                    updateData.append('title', formData.title);
+                    updateData.append('excerpt', formData.excerpt);
+                    updateData.append('content', formData.content);
+                    updateData.append('category', formData.category);
+                    updateData.append('author', formData.author);
+                    updateData.append('author_role', formData.author_role);
+                    updateData.append('read_time', parseInt(formData.read_time) || 5);
+                    updateData.append('status', formData.status);
+                    updateData.append('image', formData.image);
+                    await updateBlog(editingBlog.id, updateData);
+                } else {
+                    // No new image, send as JSON
+                    const updateData = {
+                        title: formData.title,
+                        excerpt: formData.excerpt,
+                        content: formData.content,
+                        category: formData.category,
+                        author: formData.author,
+                        author_role: formData.author_role,
+                        read_time: parseInt(formData.read_time) || 5,
+                        status: formData.status
+                    };
+                    await updateBlog(editingBlog.id, updateData);
+                }
                 alert('Blog updated successfully!');
             } else {
                 const createData = new FormData();
@@ -172,7 +187,7 @@ const BlogManager = () => {
             setEditingBlog(null);
             setFormData({
                 id: null, title: '', slug: '', excerpt: '', content: '', 
-                category: '', image: null, author: '', author_role: '', 
+                category: '', image: null, image_url: '', author: '', author_role: '', 
                 read_time: 5, status: 'draft'
             });
         } catch (error) {
@@ -206,6 +221,7 @@ const BlogManager = () => {
             content: blog.content || '',
             category: blog.category || '',
             image: null,
+            image_url: blog.image || '',
             author: blog.author || '',
             author_role: blog.author_role || '',
             read_time: blog.read_time ? Number(blog.read_time) : 5,
@@ -225,12 +241,11 @@ const BlogManager = () => {
                     <thead>
                         <tr>
                             <th style={styles.th}>ID</th>
+                            <th style={styles.th}>📎</th>
                             <th style={styles.th}>Title</th>
                             <th style={styles.th}>Slug</th>
                             <th style={styles.th}>Category</th>
                             <th style={styles.th}>Author</th>
-                            <th style={styles.th}>Author Role</th>
-                            <th style={styles.th}>Read Time</th>
                             <th style={styles.th}>Status</th>
                             <th style={styles.th}>Created At</th>
                             <th style={styles.th}>Updated At</th>
@@ -241,12 +256,17 @@ const BlogManager = () => {
                         {blogs.map(blog => (
                             <tr key={blog.id}>
                                 <td style={styles.td}>{blog.id}</td>
+                                <td style={styles.td}>
+                                    {blog.image ? (
+                                        <span title="Has attachment" style={{ fontSize: '20px', cursor: 'pointer' }}>📎</span>
+                                    ) : (
+                                        <span style={{ color: '#ccc', fontSize: '20px' }}>○</span>
+                                    )}
+                                </td>
                                 <td style={styles.td}>{blog.title}</td>
                                 <td style={styles.td}>{blog.slug}</td>
                                 <td style={styles.td}>{blog.category || 'General'}</td>
                                 <td style={styles.td}>{blog.author || 'Admin'}</td>
-                                <td style={styles.td}>{blog.author_role || 'Author'}</td>
-                                <td style={styles.td}>{blog.read_time || 5} min</td>
                                 <td style={styles.td}>
                                     <span style={{...styles.statusBadge, background: blog.status === 'published' ? '#d4edda' : '#ffeaa7'}}>
                                         {blog.status || 'draft'}
@@ -276,7 +296,64 @@ const BlogManager = () => {
                             <input type="number" placeholder="Read Time (minutes)" value={formData.read_time} onChange={e => setFormData({...formData, read_time: parseInt(e.target.value) || 5})} style={styles.input} />
                             <textarea placeholder="Excerpt" rows="3" value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} style={styles.textarea} />
                             <textarea placeholder="Content *" rows="10" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} style={styles.textarea} required />
-                            {!editingBlog && <input type="file" accept="image/*" onChange={e => setFormData({...formData, image: e.target.files[0]})} style={styles.input} />}
+                            
+                            {/* Attachment/Image Upload Section */}
+                            <div style={{ marginBottom: '15px' }}>
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                                    📎 Featured Image / Attachment
+                                </label>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                                    <label style={{
+                                        background: '#667eea',
+                                        color: 'white',
+                                        padding: '10px 20px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        fontSize: '14px'
+                                    }}>
+                                        📁 Choose File
+                                        <input 
+                                            type="file" 
+                                            accept="image/*,video/*,.pdf" 
+                                            onChange={e => setFormData({...formData, image: e.target.files[0]})} 
+                                            style={{ display: 'none' }}
+                                        />
+                                    </label>
+                                    <span style={{ fontSize: '13px', color: '#666' }}>
+                                        {formData.image ? formData.image.name : (formData.image_url ? 'Current image saved' : 'No file chosen')}
+                                    </span>
+                                </div>
+                                
+                                {/* Image Preview */}
+                                {(formData.image || formData.image_url) && (
+                                    <div style={{ marginTop: '10px' }}>
+                                        {formData.image ? (
+                                            <img 
+                                                src={URL.createObjectURL(formData.image)} 
+                                                alt="Preview" 
+                                                style={{ maxWidth: '200px', maxHeight: '150px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                            />
+                                        ) : formData.image_url && (
+                                            <img 
+                                                src={formData.image_url} 
+                                                alt="Current" 
+                                                style={{ maxWidth: '200px', maxHeight: '150px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                            />
+                                        )}
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData({...formData, image: null, image_url: null})}
+                                            style={{ marginTop: '5px', background: '#ff6b6b', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                                        >
+                                            Remove Image
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                            
                             <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={styles.input}>
                                 <option value="draft">Draft</option>
                                 <option value="published">Published</option>
@@ -294,7 +371,6 @@ const BlogManager = () => {
         </div>
     );
 };
-
 // ============================================
 // JOB MANAGER
 // ============================================

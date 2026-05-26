@@ -79,7 +79,11 @@ export const createBlog = async (blogData) => {
 
 export const updateBlog = async (id, blogData) => {
   try {
-    const response = await api.put(`/admin/blogs/${id}`, blogData);
+    // If blogData is FormData, don't set Content-Type header (let browser set it with boundary)
+    const isFormData = blogData instanceof FormData;
+    const response = await api.put(`/admin/blogs/${id}`, blogData, {
+      headers: isFormData ? { 'Content-Type': 'multipart/form-data' } : {}
+    });
     return response.data;
   } catch (error) {
     console.error('Error updating blog:', error);
