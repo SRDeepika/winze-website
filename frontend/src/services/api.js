@@ -120,7 +120,7 @@ export const getJobById = async (id) => {
 
 export const getAdminJobs = async () => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/admin/jobs`, getAuthConfig());
+        const response = await api.get('/admin/jobs');
         console.log('Raw API response:', response.data);
         return response.data;
     } catch (error) {
