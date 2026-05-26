@@ -313,11 +313,22 @@ const JobManager = () => {
 
     const loadJobs = async () => {
     console.log('Loading jobs...');
-    const res = await getAdminJobs();
-    console.log('Jobs API response:', res);
-    if (res.success) {
-        console.log('Jobs count:', res.jobs?.length);
-        setJobs(res.jobs);
+    try {
+        const res = await getAdminJobs();
+        console.log('Jobs API response:', res);
+        console.log('Response type:', typeof res);
+        console.log('Jobs array:', res.jobs);
+        
+        if (res.success && Array.isArray(res.jobs)) {
+            console.log('Jobs count:', res.jobs.length);
+            setJobs(res.jobs);
+        } else {
+            console.error('Invalid response format:', res);
+            setJobs([]);
+        }
+    } catch (error) {
+        console.error('Error loading jobs:', error);
+        setJobs([]);
     }
 };
 

@@ -339,27 +339,18 @@ app.get('/api/jobs', async (req, res) => {
 
 app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
-    // Auto-close expired jobs
-    await db.query(`
-      UPDATE jobs 
-      SET status = 'closed', updated_at = NOW() 
-      WHERE status = 'active' 
-      AND deadline IS NOT NULL 
-      AND deadline < CURRENT_DATE
-    `);
-    
     const result = await db.query(`
       SELECT id, title, department, location, type, experience, salary, 
-             description, requirements, benefits, status, deadline, 
-             created_at, updated_at
+             description, requirements, benefits, status, created_at, updated_at
       FROM jobs 
       ORDER BY created_at DESC
     `);
     console.log('Jobs fetched:', result.rows.length);
+    console.log('Jobs data:', result.rows);
     res.json({ success: true, jobs: result.rows });
   } catch (error) {
     console.error('Error fetching jobs:', error);
-    res.json({ success: true, jobs: [] });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 

@@ -119,13 +119,14 @@ export const getJobById = async (id) => {
 };
 
 export const getAdminJobs = async () => {
-  try {
-    const response = await api.get('/admin/jobs');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching admin jobs:', error);
-    throw error;
-  }
+    try {
+        const response = await axios.get(`${API_BASE_URL}/admin/jobs`, getAuthConfig());
+        console.log('Raw API response:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('API error:', error);
+        return { success: false, jobs: [] };
+    }
 };
 
 export const createJob = async (jobData) => {
