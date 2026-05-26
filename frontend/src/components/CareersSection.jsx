@@ -15,7 +15,7 @@ const CareersSection = () => {
         phone: '',
         experience: '',
         current_company: '',
-        resume_url: ''
+        resume: ''  // ✅ Changed from resume_url to resume
     });
 
     React.useEffect(() => {
@@ -54,7 +54,7 @@ const CareersSection = () => {
             
             const reader = new FileReader();
             reader.onloadend = () => {
-                setFormData(prev => ({ ...prev, resume_url: reader.result }));
+                setFormData(prev => ({ ...prev, resume: reader.result }));  // ✅ Changed to resume
             };
             reader.readAsDataURL(file);
         }
@@ -69,7 +69,7 @@ const CareersSection = () => {
             phone: '',
             experience: '',
             current_company: '',
-            resume_url: ''
+            resume: ''  // ✅ Changed to resume
         });
         setResumeFile(null);
     };
@@ -85,7 +85,7 @@ const CareersSection = () => {
                 phone: formData.phone,
                 experience: formData.experience,
                 current_company: formData.current_company,
-                resume_url: formData.resume_url
+                resume: formData.resume  // ✅ Changed to resume
             };
             
             const response = await applyForJob(selectedJob.id, applicationData);
@@ -106,7 +106,7 @@ const CareersSection = () => {
         }
     };
 
-    // Your existing styles - keep them as they are
+    // Styles remain the same...
     const styles = {
         modal: {
             position: 'fixed',
@@ -138,16 +138,6 @@ const CareersSection = () => {
             borderRadius: '8px',
             border: '1px solid #ddd',
             fontSize: '14px',
-            boxSizing: 'border-box'
-        },
-        textarea: {
-            width: '100%',
-            padding: '12px',
-            marginBottom: '15px',
-            borderRadius: '8px',
-            border: '1px solid #ddd',
-            fontSize: '14px',
-            resize: 'vertical',
             boxSizing: 'border-box'
         },
         button: {
@@ -211,7 +201,6 @@ const CareersSection = () => {
 
     return (
         <div>
-            {/* Your existing jobs display - keep as is */}
             <div className="jobs-container">
                 {jobs.map(job => (
                     <div key={job.id} style={styles.jobCard}>
@@ -222,76 +211,24 @@ const CareersSection = () => {
                 ))}
             </div>
 
-            {/* Application Modal - Same style, just no cover_letter */}
             {showApplicationForm && selectedJob && (
                 <div style={styles.modal} onClick={() => setShowApplicationForm(false)}>
                     <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
                         <button style={styles.closeBtn} onClick={() => setShowApplicationForm(false)}>×</button>
                         <h3 style={{ marginBottom: '20px' }}>Apply for {selectedJob.title}</h3>
                         <form onSubmit={handleSubmitApplication}>
-                            <input 
-                                type="text" 
-                                name="name" 
-                                placeholder="Full Name *" 
-                                value={formData.name} 
-                                onChange={handleInputChange} 
-                                style={styles.input} 
-                                required 
-                            />
-                            <input 
-                                type="email" 
-                                name="email" 
-                                placeholder="Email Address *" 
-                                value={formData.email} 
-                                onChange={handleInputChange} 
-                                style={styles.input} 
-                                required 
-                            />
-                            <input 
-                                type="tel" 
-                                name="phone" 
-                                placeholder="Phone Number *" 
-                                value={formData.phone} 
-                                onChange={handleInputChange} 
-                                style={styles.input} 
-                                required 
-                            />
-                            <input 
-                                type="text" 
-                                name="experience" 
-                                placeholder="Years of Experience" 
-                                value={formData.experience} 
-                                onChange={handleInputChange} 
-                                style={styles.input} 
-                            />
-                            <input 
-                                type="text" 
-                                name="current_company" 
-                                placeholder="Current Company" 
-                                value={formData.current_company} 
-                                onChange={handleInputChange} 
-                                style={styles.input} 
-                            />
+                            <input type="text" name="name" placeholder="Full Name *" value={formData.name} onChange={handleInputChange} style={styles.input} required />
+                            <input type="email" name="email" placeholder="Email Address *" value={formData.email} onChange={handleInputChange} style={styles.input} required />
+                            <input type="tel" name="phone" placeholder="Phone Number *" value={formData.phone} onChange={handleInputChange} style={styles.input} required />
+                            <input type="text" name="experience" placeholder="Years of Experience" value={formData.experience} onChange={handleInputChange} style={styles.input} />
+                            <input type="text" name="current_company" placeholder="Current Company" value={formData.current_company} onChange={handleInputChange} style={styles.input} />
                             
-                            {/* Resume Upload - No cover letter */}
                             <div>
-                                <input 
-                                    type="file" 
-                                    accept=".pdf,.doc,.docx"
-                                    onChange={handleFileChange}
-                                    style={styles.fileInput}
-                                    required 
-                                />
+                                <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} style={styles.fileInput} required />
                                 {resumeFile && (
                                     <div style={styles.fileInfo}>
                                         <span>📄 {resumeFile.name}</span>
-                                        <button 
-                                            type="button" 
-                                            onClick={() => { setResumeFile(null); setFormData(prev => ({ ...prev, resume_url: '' })); }}
-                                            style={styles.removeFileBtn}
-                                        >
-                                            Remove
-                                        </button>
+                                        <button type="button" onClick={() => { setResumeFile(null); setFormData(prev => ({ ...prev, resume: '' })); }} style={styles.removeFileBtn}>Remove</button>
                                     </div>
                                 )}
                                 <small style={{ color: '#666', fontSize: '11px', display: 'block', marginBottom: '15px' }}>

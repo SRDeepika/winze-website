@@ -16,7 +16,7 @@ const JobsPage = () => {
         phone: '',
         experience: '',
         current_company: '',
-        resume_url: ''
+        resume: ''  // ✅ Changed from resume_url to resume
     });
 
     useEffect(() => {
@@ -56,7 +56,7 @@ const JobsPage = () => {
             
             const reader = new FileReader();
             reader.onloadend = () => {
-                setFormData(prev => ({ ...prev, resume_url: reader.result }));
+                setFormData(prev => ({ ...prev, resume: reader.result }));  // ✅ Changed to resume
             };
             reader.readAsDataURL(file);
         }
@@ -71,7 +71,7 @@ const JobsPage = () => {
             phone: '',
             experience: '',
             current_company: '',
-            resume_url: ''
+            resume: ''  // ✅ Changed to resume
         });
         setResumeFile(null);
     };
@@ -87,7 +87,7 @@ const JobsPage = () => {
                 phone: formData.phone,
                 experience: formData.experience,
                 current_company: formData.current_company,
-                resume_url: formData.resume_url
+                resume: formData.resume  // ✅ Changed to resume
             };
             
             const response = await applyForJob(selectedJob.id, applicationData);
@@ -97,6 +97,14 @@ const JobsPage = () => {
                 setShowApplicationForm(false);
                 setSelectedJob(null);
                 setResumeFile(null);
+                setFormData({
+                    name: '',
+                    email: '',
+                    phone: '',
+                    experience: '',
+                    current_company: '',
+                    resume: ''  // ✅ Changed to resume
+                });
             } else {
                 alert('Failed to submit application. Please try again.');
             }
@@ -108,7 +116,7 @@ const JobsPage = () => {
         }
     };
 
-    // Professional styles matching WinzePage
+    // Rest of your styles remain the same...
     const styles = {
         container: {
             maxWidth: '1400px',
@@ -396,69 +404,19 @@ const JobsPage = () => {
                         </button>
                         <h3 style={styles.modalTitle}>Apply for {selectedJob.title}</h3>
                         <form onSubmit={handleSubmit}>
-                            <input 
-                                type="text" 
-                                name="name" 
-                                placeholder="Full Name *" 
-                                value={formData.name} 
-                                onChange={handleInputChange} 
-                                style={styles.input} 
-                                required 
-                            />
-                            <input 
-                                type="email" 
-                                name="email" 
-                                placeholder="Email Address *" 
-                                value={formData.email} 
-                                onChange={handleInputChange} 
-                                style={styles.input} 
-                                required 
-                            />
-                            <input 
-                                type="tel" 
-                                name="phone" 
-                                placeholder="Phone Number *" 
-                                value={formData.phone} 
-                                onChange={handleInputChange} 
-                                style={styles.input} 
-                                required 
-                            />
-                            <input 
-                                type="text" 
-                                name="experience" 
-                                placeholder="Years of Experience" 
-                                value={formData.experience} 
-                                onChange={handleInputChange} 
-                                style={styles.input} 
-                            />
-                            <input 
-                                type="text" 
-                                name="current_company" 
-                                placeholder="Current Company" 
-                                value={formData.current_company} 
-                                onChange={handleInputChange} 
-                                style={styles.input} 
-                            />
+                            <input type="text" name="name" placeholder="Full Name *" value={formData.name} onChange={handleInputChange} style={styles.input} required />
+                            <input type="email" name="email" placeholder="Email Address *" value={formData.email} onChange={handleInputChange} style={styles.input} required />
+                            <input type="tel" name="phone" placeholder="Phone Number *" value={formData.phone} onChange={handleInputChange} style={styles.input} required />
+                            <input type="text" name="experience" placeholder="Years of Experience" value={formData.experience} onChange={handleInputChange} style={styles.input} />
+                            <input type="text" name="current_company" placeholder="Current Company" value={formData.current_company} onChange={handleInputChange} style={styles.input} />
                             
                             {/* Resume Upload */}
                             <div>
-                                <input 
-                                    type="file" 
-                                    accept=".pdf,.doc,.docx"
-                                    onChange={handleFileChange}
-                                    style={styles.fileInput}
-                                    required 
-                                />
+                                <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} style={styles.fileInput} required />
                                 {resumeFile && (
                                     <div style={styles.fileInfo}>
                                         <span>📄 {resumeFile.name}</span>
-                                        <button 
-                                            type="button" 
-                                            onClick={() => { setResumeFile(null); setFormData(prev => ({ ...prev, resume_url: '' })); }}
-                                            style={styles.removeFileBtn}
-                                        >
-                                            Remove
-                                        </button>
+                                        <button type="button" onClick={() => { setResumeFile(null); setFormData(prev => ({ ...prev, resume: '' })); }} style={styles.removeFileBtn}>Remove</button>
                                     </div>
                                 )}
                                 <small style={{ color: '#aaa', fontSize: '11px', display: 'block', marginBottom: '15px' }}>
@@ -466,19 +424,7 @@ const JobsPage = () => {
                                 </small>
                             </div>
                             
-                            <button 
-                                type="submit" 
-                                disabled={loading} 
-                                style={styles.submitBtn}
-                                onMouseEnter={(e) => {
-                                    e.target.style.transform = 'scale(1.02)';
-                                    e.target.style.boxShadow = '0 8px 20px rgba(255,215,0,0.4)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.target.style.transform = 'scale(1)';
-                                    e.target.style.boxShadow = 'none';
-                                }}
-                            >
+                            <button type="submit" disabled={loading} style={styles.submitBtn}>
                                 {loading ? 'Submitting...' : 'Submit Application'}
                             </button>
                         </form>
