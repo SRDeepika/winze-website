@@ -633,18 +633,19 @@ const ApplicationsManager = () => {
                             <th style={styles.th}>Current Company</th>
                             <th style={styles.th}>Status</th>
                             <th style={styles.th}>Applied At</th>
+                            <th style={styles.th}>Resume</th>
                             <th style={styles.th}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading && (
                             <tr>
-                                <td colSpan="11" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading applications...</td>
+                                <td colSpan="12" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading applications...</td>
                             </tr>
                         )}
                         {!loading && applications.length === 0 && (
                             <tr>
-                                <td colSpan="11" style={{ textAlign: 'center', padding: '40px' }}>📭 No applications found.</td>
+                                <td colSpan="12" style={{ textAlign: 'center', padding: '40px' }}>📭 No applications found.</td>
                             </tr>
                         )}
                         {!loading && applications.map((app) => (
@@ -666,6 +667,15 @@ const ApplicationsManager = () => {
                                     </select>
                                 </td>
                                 <td style={styles.td}>{new Date(app.applied_at).toLocaleString()}</td>
+                                <td style={styles.td}>
+                                    {app.resume_url ? (
+                                        <a href={app.resume_url} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea' }}>
+                                            📄 View
+                                        </a>
+                                    ) : (
+                                        '—'
+                                    )}
+                                </td>
                                 <td style={styles.td}>
                                     <button onClick={() => setSelectedApp(app)} style={styles.viewBtn}>View Details</button>
                                 </td>
