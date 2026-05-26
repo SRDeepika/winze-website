@@ -416,6 +416,51 @@ app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
   }
 });
 
+// ========== JOB APPLICATIONS (Public - Apply for Job) ==========
+app.post('/api/jobs/:id/apply', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, phone, experience, current_company, cover_letter, resume_url } = req.body;
+    
+    console.log('=== JOB APPLICATION RECEIVED ===');
+    console.log('Job ID:', id);
+    console.log('Name:', name);
+    console.log('Email:', email);
+    
+    // Validate required fields
+    if (!name || !email || !phone) {
+      return res.status(400).json({ success: false, error: 'Name, email and phone are required' });
+    }
+    
+    // Check if job exists and is active
+    const jobCheck = await db.query(`SELECT id, title FROM jobs WHERE id = $1 AND status = 'active'`, [id]);
+    if (jobCheck.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Job not found or no longer active' });
+    }
+    
+    const jobTitle = jobCheck.rows[0].title;
+    
+    // Insert application
+    const result = await db.query(
+      `INSERT INTO job_applications (job_id, job_title, name, email, phone, experience, current_company, cover_letter, resume_url, status, applied_at, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', NOW(), NOW(), NOW())
+       RETURNING *`,
+      [id, jobTitle, name, email, phone, experience || null, current_company || null, cover_letter || null, resume_url || null]
+    );
+    
+    console.log('✅ Application saved successfully for job:', jobTitle);
+    
+    res.json({ 
+      success: true, 
+      message: 'Application submitted successfully',
+      application: result.rows[0]
+    });
+  } catch (error) {
+    console.error('❌ Job application error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // ========== APPLICATIONS ==========
 app.get('/api/admin/applications', authenticateToken, async (req, res) => {
   try {
