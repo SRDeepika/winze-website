@@ -484,27 +484,25 @@ app.get('/api/admin/applications', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`
       SELECT 
-        a.id, 
-        a.job_id, 
-        a.job_title, 
-        a.name, 
-        a.email, 
-        a.phone, 
-        a.experience, 
-        a.current_company, 
-        a.cover_letter, 
-        a.resume_url, 
-        a.status, 
-        a.applied_at
-      FROM job_applications a 
-      ORDER BY a.applied_at DESC
+        id, 
+        job_id, 
+        job_title, 
+        name, 
+        email, 
+        phone, 
+        experience, 
+        current_company, 
+        resume_url, 
+        status, 
+        applied_at
+      FROM job_applications 
+      ORDER BY applied_at DESC
     `);
-    console.log('Applications fetched:', result.rows.length);
-    console.log('Sample application:', result.rows[0] || 'No applications');
+    console.log('✅ Applications fetched:', result.rows.length);
     res.json({ success: true, applications: result.rows });
   } catch (error) {
-    console.error('Error fetching applications:', error);
-    res.status(500).json({ success: false, error: error.message, applications: [] });
+    console.error('❌ Error fetching applications:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -512,9 +510,20 @@ app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res
   try {
     const { id } = req.params;
     const { status } = req.body;
-    await db.query(`UPDATE job_applications SET status = $1 WHERE id = $2`, [status, id]);
+    
+    const result = await db.query(
+      `UPDATE job_applications SET status = $1 WHERE id = $2 RETURNING *`,
+      [status, id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Application not found' });
+    }
+    
+    console.log(`✅ Application ${id} status updated to: ${status}`);
     res.json({ success: true, message: 'Status updated' });
   } catch (error) {
+    console.error('❌ Error updating status:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
