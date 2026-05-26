@@ -420,12 +420,13 @@ app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
 app.post('/api/jobs/:id/apply', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, phone, experience, current_company, resume_url } = req.body;
+    const { name, email, phone, experience, current_company, resume } = req.body;  // ✅ Changed resume_url to resume
     
     console.log('=== JOB APPLICATION RECEIVED ===');
     console.log('Job ID:', id);
     console.log('Name:', name);
     console.log('Email:', email);
+    console.log('Resume received:', resume ? 'Yes' : 'No');
     
     // Validate required fields
     if (!name || !email || !phone) {
@@ -440,7 +441,7 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
     
     const jobTitle = jobCheck.rows[0].title;
     
-    // Insert application - NO cover_letter column
+    // Insert application - using 'resume' column (not resume_url)
     const result = await db.query(
       `INSERT INTO job_applications (
         job_id, 
@@ -450,7 +451,7 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
         phone, 
         experience, 
         current_company, 
-        resume_url, 
+        resume, 
         status, 
         applied_at
       ) 
@@ -464,7 +465,7 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
         phone, 
         experience || null, 
         current_company || null, 
-        resume_url || null
+        resume || null  // ✅ Changed to resume
       ]
     );
     
@@ -492,7 +493,7 @@ app.get('/api/admin/applications', authenticateToken, async (req, res) => {
         phone, 
         experience, 
         current_company, 
-        resume_url, 
+        resume, 
         status, 
         applied_at
       FROM job_applications 
@@ -505,7 +506,6 @@ app.get('/api/admin/applications', authenticateToken, async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
-
 app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
