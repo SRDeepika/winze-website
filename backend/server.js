@@ -314,26 +314,48 @@ app.delete('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
-
-// ========== JOBS ==========
 app.get('/api/jobs', async (req, res) => {
   try {
-    const result = await db.query(`SELECT * FROM jobs WHERE status = 'active' ORDER BY created_at DESC`);
+    // Auto-close expired jobs
+    await db.query(`
+      UPDATE jobs 
+      SET status = 'closed', updated_at = NOW() 
+      WHERE status = 'active' 
+      AND deadline IS NOT NULL 
+      AND deadline < CURRENT_DATE
+    `);
+    
+    const result = await db.query(`
+      SELECT * FROM jobs 
+      WHERE status = 'active' 
+      ORDER BY created_at DESC
+    `);
     res.json({ success: true, jobs: result.rows });
   } catch (error) {
+    console.error('Error fetching jobs:', error);
     res.json({ success: true, jobs: [] });
   }
 });
 
 app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
+    // Auto-close expired jobs
+    await db.query(`
+      UPDATE jobs 
+      SET status = 'closed', updated_at = NOW() 
+      WHERE status = 'active' 
+      AND deadline IS NOT NULL 
+      AND deadline < CURRENT_DATE
+    `);
+    
     const result = await db.query(`
       SELECT id, title, department, location, type, experience, salary, 
-             description, requirements, benefits, status, created_at
+             description, requirements, benefits, status, deadline, 
+             created_at, updated_at
       FROM jobs 
       ORDER BY created_at DESC
     `);
-    console.log('Jobs fetched:', result.rows.length); // Debug log
+    console.log('Jobs fetched:', result.rows.length);
     res.json({ success: true, jobs: result.rows });
   } catch (error) {
     console.error('Error fetching jobs:', error);
@@ -343,12 +365,17 @@ app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
 
 app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
-    const { title, department, location, type, experience, salary, description, requirements, benefits, status, deadline } = req.body;
+    const { title, department, location, type, experience, salary, 
+            description, requirements, benefits, status, deadline } = req.body;
     
     await db.query(
-      `INSERT INTO jobs (title, department, location, type, experience, salary, description, requirements, benefits, status, deadline, created_at, updated_at) 
+      `INSERT INTO jobs (title, department, location, type, experience, salary, 
+                         description, requirements, benefits, status, deadline, 
+                         created_at, updated_at) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())`,
-      [title, department || '', location || '', type || 'Full-time', experience || '', salary || '', description || '', requirements || '', benefits || '', status || 'active', deadline || null]
+      [title, department || '', location || '', type || 'Full-time', 
+       experience || '', salary || '', description || '', requirements || '', 
+       benefits || '', status || 'active', deadline || null]
     );
     res.json({ success: true, message: 'Job created' });
   } catch (error) {
@@ -360,7 +387,8 @@ app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
 app.put('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, department, location, type, experience, salary, description, requirements, benefits, status, deadline } = req.body;
+    const { title, department, location, type, experience, salary, 
+            description, requirements, benefits, status, deadline } = req.body;
     
     await db.query(
       `UPDATE jobs SET 
@@ -368,7 +396,8 @@ app.put('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
         experience=$5, salary=$6, description=$7, requirements=$8, 
         benefits=$9, status=$10, deadline=$11, updated_at=NOW() 
        WHERE id=$12`,
-      [title, department, location, type, experience, salary, description, requirements, benefits, status, deadline, id]
+      [title, department, location, type, experience, salary, 
+       description, requirements, benefits, status, deadline, id]
     );
     res.json({ success: true, message: 'Job updated' });
   } catch (error) {
