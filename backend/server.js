@@ -426,29 +426,58 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
     console.log('Job ID:', id);
     console.log('Name:', name);
     console.log('Email:', email);
+    console.log('Phone:', phone);
+    console.log('Experience:', experience);
+    console.log('Current Company:', current_company);
+    console.log('Cover Letter:', cover_letter);
+    console.log('Resume URL:', resume_url);
     
     // Validate required fields
     if (!name || !email || !phone) {
       return res.status(400).json({ success: false, error: 'Name, email and phone are required' });
     }
     
-    // Check if job exists and is active
-    const jobCheck = await db.query(`SELECT id, title FROM jobs WHERE id = $1 AND status = 'active'`, [id]);
+    // Check if job exists
+    const jobCheck = await db.query(`SELECT id, title FROM jobs WHERE id = $1`, [id]);
     if (jobCheck.rows.length === 0) {
-      return res.status(404).json({ success: false, error: 'Job not found or no longer active' });
+      return res.status(404).json({ success: false, error: 'Job not found' });
     }
     
     const jobTitle = jobCheck.rows[0].title;
     
-    // Insert application
+    // Insert application with ALL fields matching your table
     const result = await db.query(
-      `INSERT INTO job_applications (job_id, job_title, name, email, phone, experience, current_company, cover_letter, resume_url, status, applied_at, created_at, updated_at) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', NOW(), NOW(), NOW())
-       RETURNING *`,
-      [id, jobTitle, name, email, phone, experience || null, current_company || null, cover_letter || null, resume_url || null]
+      `INSERT INTO job_applications (
+        job_id, 
+        job_title, 
+        name, 
+        email, 
+        phone, 
+        experience, 
+        current_company, 
+        cover_letter, 
+        resume_url, 
+        status, 
+        applied_at,
+        updated_at
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', NOW(), NOW())
+      RETURNING *`,
+      [
+        id, 
+        jobTitle, 
+        name, 
+        email, 
+        phone, 
+        experience || null, 
+        current_company || null, 
+        cover_letter || null, 
+        resume_url || null
+      ]
     );
     
-    console.log('✅ Application saved successfully for job:', jobTitle);
+    console.log('✅ Application saved! ID:', result.rows[0].id);
+    console.log('✅ Job Title:', jobTitle);
     
     res.json({ 
       success: true, 
