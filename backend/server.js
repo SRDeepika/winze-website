@@ -415,17 +415,17 @@ app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
-
 // ========== JOB APPLICATIONS (Public - Apply for Job) ==========
 app.post('/api/jobs/:id/apply', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, phone, experience, current_company, resume } = req.body;  // ✅ Changed resume_url to resume
+    const { name, email, phone, experience, current_company, resume } = req.body;
     
     console.log('=== JOB APPLICATION RECEIVED ===');
     console.log('Job ID:', id);
     console.log('Name:', name);
     console.log('Email:', email);
+    console.log('Phone:', phone);
     console.log('Resume received:', resume ? 'Yes' : 'No');
     
     // Validate required fields
@@ -433,15 +433,15 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Name, email and phone are required' });
     }
     
-    // Check if job exists
-    const jobCheck = await db.query(`SELECT id, title FROM jobs WHERE id = $1`, [id]);
+    // Check if job exists and is active
+    const jobCheck = await db.query(`SELECT id, title FROM jobs WHERE id = $1 AND status = 'active'`, [id]);
     if (jobCheck.rows.length === 0) {
-      return res.status(404).json({ success: false, error: 'Job not found' });
+      return res.status(404).json({ success: false, error: 'Job not found or inactive' });
     }
     
     const jobTitle = jobCheck.rows[0].title;
     
-    // Insert application - using 'resume' column (not resume_url)
+    // Insert application
     const result = await db.query(
       `INSERT INTO job_applications (
         job_id, 
@@ -465,7 +465,7 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
         phone, 
         experience || null, 
         current_company || null, 
-        resume || null  // ✅ Changed to resume
+        resume || null
       ]
     );
     
@@ -473,10 +473,12 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
     
     res.json({ 
       success: true, 
-      message: 'Application submitted successfully'
+      message: 'Application submitted successfully',
+      applicationId: result.rows[0].id
     });
   } catch (error) {
     console.error('❌ Job application error:', error);
+    console.error('Error details:', error.message);
     res.status(500).json({ success: false, error: error.message });
   }
 });

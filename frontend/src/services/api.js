@@ -172,16 +172,15 @@ export const deleteJob = async (id) => {
 
 // ========== APPLICATION APIs ==========
 export const applyForJob = async (jobId, applicationData) => {
-  const formData = new FormData();
-  Object.keys(applicationData).forEach(key => {
-    if (applicationData[key] !== undefined && applicationData[key] !== null) {
-      formData.append(key, applicationData[key]);
-    }
-  });
-  
   try {
-    const response = await api.post(`/jobs/${jobId}/apply`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+    // Send as JSON, not FormData
+    const response = await api.post(`/jobs/${jobId}/apply`, {
+      name: applicationData.name,
+      email: applicationData.email,
+      phone: applicationData.phone,
+      experience: applicationData.experience,
+      current_company: applicationData.current_company,
+      resume: applicationData.resume
     });
     return response.data;
   } catch (error) {
