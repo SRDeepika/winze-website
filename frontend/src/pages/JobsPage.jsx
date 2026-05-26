@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getJobs, applyForJob } from '../services/api';
 import SEO from '../components/SEO';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes, faFileAlt, faBriefcase, faMapMarkerAlt, faClock } from '@fortawesome/free-solid-svg-icons';
 
 const JobsPage = () => {
     const [jobs, setJobs] = useState([]);
@@ -19,6 +21,7 @@ const JobsPage = () => {
 
     useEffect(() => {
         loadJobs();
+        window.scrollTo(0, 0);
     }, []);
 
     const loadJobs = async () => {
@@ -105,54 +108,97 @@ const JobsPage = () => {
         }
     };
 
+    // Professional styles matching WinzePage
     const styles = {
         container: {
-            maxWidth: '1200px',
+            maxWidth: '1400px',
             margin: '0 auto',
-            padding: '40px 20px'
+            padding: '60px 5%',
+            minHeight: '100vh',
+            background: '#0a0a1a'
+        },
+        header: {
+            textAlign: 'center',
+            marginBottom: '50px'
         },
         title: {
-            fontSize: '2.5rem',
-            marginBottom: '10px',
-            color: '#333'
+            fontSize: '3rem',
+            color: 'white',
+            marginBottom: '15px',
+            fontWeight: '800',
+            fontFamily: "'Playfair Display', serif",
+            background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
         },
         subtitle: {
             fontSize: '1.1rem',
-            color: '#666',
-            marginBottom: '40px'
-        },
-        jobCard: {
-            background: 'white',
-            borderRadius: '10px',
-            padding: '25px',
-            marginBottom: '20px',
-            boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-            border: '1px solid #eee'
-        },
-        jobTitle: {
-            fontSize: '1.3rem',
-            marginBottom: '10px',
-            color: '#333'
-        },
-        jobMeta: {
-            color: '#667eea',
-            marginBottom: '15px',
-            fontSize: '14px'
-        },
-        jobDesc: {
-            color: '#666',
-            marginBottom: '20px',
+            color: '#aaa',
+            maxWidth: '600px',
+            margin: '0 auto',
             lineHeight: '1.6'
         },
-        applyBtn: {
-            background: '#667eea',
-            color: 'white',
-            border: 'none',
-            padding: '10px 25px',
-            borderRadius: '5px',
+        jobsGrid: {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))',
+            gap: '30px',
+            marginTop: '40px'
+        },
+        jobCard: {
+            background: 'linear-gradient(145deg, #1a0b2e, #2d1b4e)',
+            borderRadius: '20px',
+            padding: '28px',
+            transition: 'all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1)',
             cursor: 'pointer',
+            border: '1px solid rgba(255,215,0,0.2)',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
+        },
+        jobCardHover: {
+            transform: 'translateY(-10px) scale(1.02)',
+            borderColor: 'rgba(255,215,0,0.8)',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(255,215,0,0.2)'
+        },
+        jobTitle: {
+            fontSize: '1.4rem',
+            color: '#FFD700',
+            marginBottom: '15px',
+            fontWeight: '700',
+            fontFamily: "'Playfair Display', serif"
+        },
+        jobMeta: {
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '15px',
+            marginBottom: '20px',
+            paddingBottom: '15px',
+            borderBottom: '1px solid rgba(255,215,0,0.15)'
+        },
+        metaItem: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            color: '#ccc',
+            fontSize: '13px'
+        },
+        jobDescription: {
+            color: 'rgba(255,255,255,0.75)',
+            lineHeight: '1.6',
+            marginBottom: '20px',
+            fontSize: '14px'
+        },
+        applyBtn: {
+            background: 'rgba(255,215,0,0.15)',
+            backdropFilter: 'blur(4px)',
+            border: '1px solid rgba(255,215,0,0.3)',
+            padding: '12px 28px',
+            borderRadius: '40px',
+            fontWeight: '600',
             fontSize: '14px',
-            fontWeight: '600'
+            transition: '0.3s',
+            cursor: 'pointer',
+            width: '100%',
+            color: '#FFD700',
+            fontFamily: "'Poppins', sans-serif"
         },
         modal: {
             position: 'fixed',
@@ -160,39 +206,58 @@ const JobsPage = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'rgba(0,0,0,0.8)',
-            zIndex: 1000,
+            background: 'rgba(0,0,0,0.95)',
+            backdropFilter: 'blur(10px)',
+            zIndex: 2000,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             padding: '20px'
         },
         modalContent: {
-            background: 'white',
-            borderRadius: '15px',
-            padding: '30px',
-            maxWidth: '500px',
+            background: 'linear-gradient(145deg, #1a0b2e, #2d1b4e)',
+            borderRadius: '28px',
+            padding: '40px',
+            maxWidth: '550px',
             width: '100%',
+            position: 'relative',
+            border: '1px solid rgba(255,215,0,0.3)',
             maxHeight: '85vh',
-            overflow: 'auto',
-            position: 'relative'
+            overflow: 'auto'
         },
         closeBtn: {
             position: 'absolute',
-            top: '15px',
-            right: '20px',
-            background: 'none',
+            top: '20px',
+            right: '25px',
+            background: '#FFD700',
             border: 'none',
-            fontSize: '24px',
+            fontSize: '20px',
             cursor: 'pointer',
-            color: '#999'
+            color: '#1a0b2e',
+            width: '35px',
+            height: '35px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 'bold',
+            transition: 'all 0.3s'
+        },
+        modalTitle: {
+            color: '#FFD700',
+            marginBottom: '25px',
+            textAlign: 'center',
+            fontSize: '1.8rem',
+            fontFamily: "'Playfair Display', serif"
         },
         input: {
             width: '100%',
             padding: '12px',
             marginBottom: '15px',
-            borderRadius: '8px',
-            border: '1px solid #ddd',
+            borderRadius: '12px',
+            border: '1px solid rgba(255,215,0,0.3)',
+            background: 'rgba(255,255,255,0.1)',
+            color: 'white',
             fontSize: '14px',
             boxSizing: 'border-box'
         },
@@ -200,92 +265,220 @@ const JobsPage = () => {
             width: '100%',
             padding: '10px',
             marginBottom: '15px',
-            borderRadius: '8px',
-            border: '1px solid #ddd',
-            background: '#f9f9f9',
-            fontSize: '14px',
-            boxSizing: 'border-box'
+            borderRadius: '12px',
+            border: '1px solid rgba(255,215,0,0.3)',
+            background: 'rgba(255,255,255,0.1)',
+            color: 'white',
+            fontSize: '13px',
+            boxSizing: 'border-box',
+            cursor: 'pointer'
         },
         fileInfo: {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '8px 12px',
-            background: '#f0f0f0',
-            borderRadius: '8px',
+            padding: '10px 15px',
+            background: 'rgba(255,255,255,0.08)',
+            borderRadius: '10px',
             marginBottom: '15px',
-            fontSize: '13px'
+            fontSize: '13px',
+            color: '#FFD700'
         },
         removeFileBtn: {
             background: '#ff6b6b',
             color: 'white',
             border: 'none',
-            borderRadius: '5px',
-            padding: '4px 10px',
+            borderRadius: '6px',
+            padding: '4px 12px',
             cursor: 'pointer',
-            fontSize: '12px'
+            fontSize: '12px',
+            fontWeight: '600'
         },
         submitBtn: {
             width: '100%',
-            padding: '12px',
-            background: '#667eea',
-            color: 'white',
+            background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+            color: '#1a0b2e',
+            padding: '14px',
             border: 'none',
-            borderRadius: '8px',
+            borderRadius: '12px',
             fontSize: '16px',
-            fontWeight: '600',
-            cursor: 'pointer'
+            fontWeight: '700',
+            cursor: 'pointer',
+            transition: 'all 0.3s'
+        },
+        noJobs: {
+            textAlign: 'center',
+            padding: '60px',
+            color: '#aaa',
+            fontSize: '1.1rem'
         }
     };
+
+    const [hoveredCard, setHoveredCard] = useState(null);
 
     return (
         <>
             <SEO title="Careers | Winze Technologies" />
             <div style={styles.container}>
-                <h1 style={styles.title}>Join Our Team</h1>
-                <p style={styles.subtitle}>Be part of something great. Explore our current opportunities.</p>
+                <div style={styles.header}>
+                    <h1 style={styles.title}>Join Our Team</h1>
+                    <p style={styles.subtitle}>Be part of something great. Explore our current opportunities.</p>
+                </div>
                 
-                <div>
-                    {jobs.map(job => (
-                        <div key={job.id} style={styles.jobCard}>
-                            <h3 style={styles.jobTitle}>{job.title}</h3>
-                            <div style={styles.jobMeta}>
-                                {job.location} | {job.type} | {job.experience} years exp
+                <div style={styles.jobsGrid}>
+                    {jobs.length === 0 ? (
+                        <div style={styles.noJobs}>No active job openings at the moment. Please check back later.</div>
+                    ) : (
+                        jobs.map(job => (
+                            <div 
+                                key={job.id} 
+                                style={{
+                                    ...styles.jobCard,
+                                    ...(hoveredCard === job.id ? styles.jobCardHover : {})
+                                }}
+                                onMouseEnter={() => setHoveredCard(job.id)}
+                                onMouseLeave={() => setHoveredCard(null)}
+                            >
+                                <h3 style={styles.jobTitle}>{job.title}</h3>
+                                <div style={styles.jobMeta}>
+                                    <span style={styles.metaItem}>
+                                        <FontAwesomeIcon icon={faMapMarkerAlt} style={{ color: '#FFD700' }} />
+                                        {job.location || 'N/A'}
+                                    </span>
+                                    <span style={styles.metaItem}>
+                                        <FontAwesomeIcon icon={faClock} style={{ color: '#FFD700' }} />
+                                        {job.type || 'Full-time'}
+                                    </span>
+                                    <span style={styles.metaItem}>
+                                        <FontAwesomeIcon icon={faBriefcase} style={{ color: '#FFD700' }} />
+                                        {job.experience || '0'} years exp
+                                    </span>
+                                </div>
+                                <p style={styles.jobDescription}>{job.description}</p>
+                                <button 
+                                    style={styles.applyBtn}
+                                    onClick={() => handleApply(job)}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.background = '#FFD700';
+                                        e.target.style.color = '#1a0b2e';
+                                        e.target.style.transform = 'scale(1.05)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.background = 'rgba(255,215,0,0.15)';
+                                        e.target.style.color = '#FFD700';
+                                        e.target.style.transform = 'scale(1)';
+                                    }}
+                                >
+                                    Apply Now →
+                                </button>
                             </div>
-                            <p style={styles.jobDesc}>{job.description}</p>
-                            <button style={styles.applyBtn} onClick={() => handleApply(job)}>Apply Now →</button>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             </div>
 
             {showApplicationForm && selectedJob && (
                 <div style={styles.modal} onClick={() => setShowApplicationForm(false)}>
                     <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
-                        <button style={styles.closeBtn} onClick={() => setShowApplicationForm(false)}>×</button>
-                        <h3 style={{ marginBottom: '20px' }}>Apply for {selectedJob.title}</h3>
+                        <button 
+                            style={styles.closeBtn} 
+                            onClick={() => setShowApplicationForm(false)}
+                            onMouseEnter={(e) => {
+                                e.target.style.transform = 'scale(1.1)';
+                                e.target.style.background = '#fff';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.transform = 'scale(1)';
+                                e.target.style.background = '#FFD700';
+                            }}
+                        >
+                            ×
+                        </button>
+                        <h3 style={styles.modalTitle}>Apply for {selectedJob.title}</h3>
                         <form onSubmit={handleSubmit}>
-                            <input type="text" name="name" placeholder="Full Name *" value={formData.name} onChange={handleInputChange} style={styles.input} required />
-                            <input type="email" name="email" placeholder="Email Address *" value={formData.email} onChange={handleInputChange} style={styles.input} required />
-                            <input type="tel" name="phone" placeholder="Phone Number *" value={formData.phone} onChange={handleInputChange} style={styles.input} required />
-                            <input type="text" name="experience" placeholder="Years of Experience" value={formData.experience} onChange={handleInputChange} style={styles.input} />
-                            <input type="text" name="current_company" placeholder="Current Company" value={formData.current_company} onChange={handleInputChange} style={styles.input} />
+                            <input 
+                                type="text" 
+                                name="name" 
+                                placeholder="Full Name *" 
+                                value={formData.name} 
+                                onChange={handleInputChange} 
+                                style={styles.input} 
+                                required 
+                            />
+                            <input 
+                                type="email" 
+                                name="email" 
+                                placeholder="Email Address *" 
+                                value={formData.email} 
+                                onChange={handleInputChange} 
+                                style={styles.input} 
+                                required 
+                            />
+                            <input 
+                                type="tel" 
+                                name="phone" 
+                                placeholder="Phone Number *" 
+                                value={formData.phone} 
+                                onChange={handleInputChange} 
+                                style={styles.input} 
+                                required 
+                            />
+                            <input 
+                                type="text" 
+                                name="experience" 
+                                placeholder="Years of Experience" 
+                                value={formData.experience} 
+                                onChange={handleInputChange} 
+                                style={styles.input} 
+                            />
+                            <input 
+                                type="text" 
+                                name="current_company" 
+                                placeholder="Current Company" 
+                                value={formData.current_company} 
+                                onChange={handleInputChange} 
+                                style={styles.input} 
+                            />
                             
-                            {/* Resume Upload - No cover letter */}
+                            {/* Resume Upload */}
                             <div>
-                                <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} style={styles.fileInput} required />
+                                <input 
+                                    type="file" 
+                                    accept=".pdf,.doc,.docx"
+                                    onChange={handleFileChange}
+                                    style={styles.fileInput}
+                                    required 
+                                />
                                 {resumeFile && (
                                     <div style={styles.fileInfo}>
                                         <span>📄 {resumeFile.name}</span>
-                                        <button type="button" onClick={() => { setResumeFile(null); setFormData(prev => ({ ...prev, resume_url: '' })); }} style={styles.removeFileBtn}>Remove</button>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => { setResumeFile(null); setFormData(prev => ({ ...prev, resume_url: '' })); }}
+                                            style={styles.removeFileBtn}
+                                        >
+                                            Remove
+                                        </button>
                                     </div>
                                 )}
-                                <small style={{ color: '#666', fontSize: '11px', display: 'block', marginBottom: '15px' }}>
+                                <small style={{ color: '#aaa', fontSize: '11px', display: 'block', marginBottom: '15px' }}>
                                     Allowed: PDF, DOC, DOCX (Max 5MB)
                                 </small>
                             </div>
                             
-                            <button type="submit" disabled={loading} style={styles.submitBtn}>
+                            <button 
+                                type="submit" 
+                                disabled={loading} 
+                                style={styles.submitBtn}
+                                onMouseEnter={(e) => {
+                                    e.target.style.transform = 'scale(1.02)';
+                                    e.target.style.boxShadow = '0 8px 20px rgba(255,215,0,0.4)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.target.style.transform = 'scale(1)';
+                                    e.target.style.boxShadow = 'none';
+                                }}
+                            >
                                 {loading ? 'Submitting...' : 'Submit Application'}
                             </button>
                         </form>
