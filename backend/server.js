@@ -426,10 +426,6 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
     console.log('Job ID:', id);
     console.log('Name:', name);
     console.log('Email:', email);
-    console.log('Phone:', phone);
-    console.log('Experience:', experience);
-    console.log('Current Company:', current_company);
-    console.log('Cover Letter:', cover_letter);
     console.log('Resume URL:', resume_url);
     
     // Validate required fields
@@ -445,7 +441,7 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
     
     const jobTitle = jobCheck.rows[0].title;
     
-    // Insert application with ALL fields matching your table
+    // Insert application - without updated_at
     const result = await db.query(
       `INSERT INTO job_applications (
         job_id, 
@@ -458,10 +454,9 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
         cover_letter, 
         resume_url, 
         status, 
-        applied_at,
-        updated_at
+        applied_at
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', NOW(), NOW())
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', NOW())
       RETURNING *`,
       [
         id, 
@@ -477,7 +472,7 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
     );
     
     console.log('✅ Application saved! ID:', result.rows[0].id);
-    console.log('✅ Job Title:', jobTitle);
+    console.log('✅ Resume URL:', resume_url);
     
     res.json({ 
       success: true, 
@@ -489,19 +484,32 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
-
 // ========== APPLICATIONS ==========
 app.get('/api/admin/applications', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT a.*, j.title as job_title 
+      SELECT 
+        a.id, 
+        a.job_id, 
+        a.job_title, 
+        a.name, 
+        a.email, 
+        a.phone, 
+        a.experience, 
+        a.current_company, 
+        a.cover_letter, 
+        a.resume_url, 
+        a.status, 
+        a.applied_at
       FROM job_applications a 
-      LEFT JOIN jobs j ON a.job_id = j.id 
       ORDER BY a.applied_at DESC
     `);
+    console.log('Applications fetched:', result.rows.length);
+    console.log('Sample application:', result.rows[0] || 'No applications');
     res.json({ success: true, applications: result.rows });
   } catch (error) {
-    res.json({ success: true, applications: [] });
+    console.error('Error fetching applications:', error);
+    res.status(500).json({ success: false, error: error.message, applications: [] });
   }
 });
 
