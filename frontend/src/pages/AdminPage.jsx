@@ -105,6 +105,7 @@ const AdminLogin = ({ onLogin }) => {
         </div>
     );
 };
+
 // ============================================
 // BLOG MANAGER
 // ============================================
@@ -137,7 +138,6 @@ const BlogManager = () => {
         
         try {
             if (editingBlog) {
-                // Check if there's a new image file
                 if (formData.image && formData.image instanceof File) {
                     const updateData = new FormData();
                     updateData.append('title', formData.title);
@@ -151,7 +151,6 @@ const BlogManager = () => {
                     updateData.append('image', formData.image);
                     await updateBlog(editingBlog.id, updateData);
                 } else {
-                    // No new image, send as JSON
                     const updateData = {
                         title: formData.title,
                         excerpt: formData.excerpt,
@@ -297,11 +296,8 @@ const BlogManager = () => {
                             <textarea placeholder="Excerpt" rows="3" value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} style={styles.textarea} />
                             <textarea placeholder="Content *" rows="10" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} style={styles.textarea} required />
                             
-                            {/* Attachment/Image Upload Section */}
                             <div style={{ marginBottom: '15px' }}>
-                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-                                    📎 Featured Image / Attachment
-                                </label>
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>📎 Featured Image / Attachment</label>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                                     <label style={{
                                         background: '#667eea',
@@ -315,41 +311,21 @@ const BlogManager = () => {
                                         fontSize: '14px'
                                     }}>
                                         📁 Choose File
-                                        <input 
-                                            type="file" 
-                                            accept="image/*,video/*,.pdf" 
-                                            onChange={e => setFormData({...formData, image: e.target.files[0]})} 
-                                            style={{ display: 'none' }}
-                                        />
+                                        <input type="file" accept="image/*,video/*,.pdf" onChange={e => setFormData({...formData, image: e.target.files[0]})} style={{ display: 'none' }} />
                                     </label>
                                     <span style={{ fontSize: '13px', color: '#666' }}>
                                         {formData.image ? formData.image.name : (formData.image_url ? 'Current image saved' : 'No file chosen')}
                                     </span>
                                 </div>
                                 
-                                {/* Image Preview */}
                                 {(formData.image || formData.image_url) && (
                                     <div style={{ marginTop: '10px' }}>
                                         {formData.image ? (
-                                            <img 
-                                                src={URL.createObjectURL(formData.image)} 
-                                                alt="Preview" 
-                                                style={{ maxWidth: '200px', maxHeight: '150px', borderRadius: '8px', border: '1px solid #ddd' }}
-                                            />
+                                            <img src={URL.createObjectURL(formData.image)} alt="Preview" style={{ maxWidth: '200px', maxHeight: '150px', borderRadius: '8px', border: '1px solid #ddd' }} />
                                         ) : formData.image_url && (
-                                            <img 
-                                                src={formData.image_url} 
-                                                alt="Current" 
-                                                style={{ maxWidth: '200px', maxHeight: '150px', borderRadius: '8px', border: '1px solid #ddd' }}
-                                            />
+                                            <img src={formData.image_url} alt="Current" style={{ maxWidth: '200px', maxHeight: '150px', borderRadius: '8px', border: '1px solid #ddd' }} />
                                         )}
-                                        <button
-                                            type="button"
-                                            onClick={() => setFormData({...formData, image: null, image_url: null})}
-                                            style={{ marginTop: '5px', background: '#ff6b6b', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
-                                        >
-                                            Remove Image
-                                        </button>
+                                        <button type="button" onClick={() => setFormData({...formData, image: null, image_url: null})} style={{ marginTop: '5px', background: '#ff6b6b', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>Remove Image</button>
                                     </div>
                                 )}
                             </div>
@@ -371,6 +347,7 @@ const BlogManager = () => {
         </div>
     );
 };
+
 // ============================================
 // JOB MANAGER
 // ============================================
@@ -388,65 +365,60 @@ const JobManager = () => {
     useEffect(() => { loadJobs(); }, []);
 
     const loadJobs = async () => {
-    console.log('Loading jobs...');
-    try {
-        const res = await getAdminJobs();
-        console.log('Jobs API response:', res);
-        console.log('Response type:', typeof res);
-        console.log('Jobs array:', res.jobs);
-        
-        if (res.success && Array.isArray(res.jobs)) {
-            console.log('Jobs count:', res.jobs.length);
-            setJobs(res.jobs);
-        } else {
-            console.error('Invalid response format:', res);
+        console.log('Loading jobs...');
+        try {
+            const res = await getAdminJobs();
+            console.log('Jobs API response:', res);
+            if (res.success && Array.isArray(res.jobs)) {
+                console.log('Jobs count:', res.jobs.length);
+                setJobs(res.jobs);
+            } else {
+                console.error('Invalid response format:', res);
+                setJobs([]);
+            }
+        } catch (error) {
+            console.error('Error loading jobs:', error);
             setJobs([]);
         }
-    } catch (error) {
-        console.error('Error loading jobs:', error);
-        setJobs([]);
-    }
-};
+    };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    
-    try {
-        if (editingJob) {
-            const response = await updateJob(editingJob.id, formData);
-            console.log('Update response:', response);
-            if (response.success) {
-                alert('Job updated successfully!');
-                await loadJobs();
-                setShowForm(false);
-                setEditingJob(null);
+        e.preventDefault();
+        setLoading(true);
+        
+        try {
+            if (editingJob) {
+                const response = await updateJob(editingJob.id, formData);
+                if (response.success) {
+                    alert('Job updated successfully!');
+                    await loadJobs();
+                    setShowForm(false);
+                    setEditingJob(null);
+                } else {
+                    alert('Failed to update job: ' + (response.error || 'Unknown error'));
+                }
             } else {
-                alert('Failed to update job: ' + (response.error || 'Unknown error'));
+                const response = await createJob(formData);
+                if (response.success) {
+                    alert('Job created successfully!');
+                    await loadJobs();
+                    setShowForm(false);
+                } else {
+                    alert('Failed to create job: ' + (response.error || 'Unknown error'));
+                }
             }
-        } else {
-            const response = await createJob(formData);
-            if (response.success) {
-                alert('Job created successfully!');
-                await loadJobs();
-                setShowForm(false);
-            } else {
-                alert('Failed to create job: ' + (response.error || 'Unknown error'));
-            }
+            setFormData({
+                id: null, title: '', department: '', location: '', type: 'Full-time',
+                experience: '', salary: '', description: '', requirements: '',
+                benefits: '', status: 'active'
+            });
+        } catch (error) {
+            console.error('Error saving job:', error);
+            alert('Error saving job: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setLoading(false);
         }
-        // Reset form
-        setFormData({
-            id: null, title: '', department: '', location: '', type: 'Full-time',
-            experience: '', salary: '', description: '', requirements: '',
-            benefits: '', status: 'active'
-        });
-    } catch (error) {
-        console.error('Error saving job:', error);
-        alert('Error saving job: ' + (error.response?.data?.error || error.message));
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
     const handleDelete = async (id) => {
         if (window.confirm('Delete this job?')) {
@@ -475,64 +447,64 @@ const JobManager = () => {
                 <button onClick={() => setShowForm(true)} style={styles.addButton}>+ Post Job</button>
             </div>
             <div style={{ overflowX: 'auto' }}>
-    <table style={styles.table}>
-        <thead>
-            <tr>
-                <th style={styles.th}>ID</th>
-                <th style={styles.th}>Title</th>
-                <th style={styles.th}>Department</th>
-                <th style={styles.th}>Location</th>
-                <th style={styles.th}>Type</th>
-                <th style={styles.th}>Experience</th>
-                <th style={styles.th}>Salary</th>
-                <th style={styles.th}>Requirements</th>
-                <th style={styles.th}>Benefits</th>
-                <th style={styles.th}>Status</th>
-                <th style={styles.th}>Created At</th>
-                <th style={styles.th}>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {jobs.map(job => (
-                <tr key={job.id}>
-                    <td style={styles.td}>{job.id}</td>
-                    <td style={styles.td}>{job.title}</td>
-                    <td style={styles.td}>{job.department || 'N/A'}</td>
-                    <td style={styles.td}>{job.location || 'N/A'}</td>
-                    <td style={styles.td}>{job.type || 'Full-time'}</td>
-                    <td style={styles.td}>{job.experience || 'N/A'} yrs</td>
-                    <td style={styles.td}>{job.salary || 'N/A'} LPA</td>
-                    <td style={styles.td}>
-                        <details>
-                            <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
-                            <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px', maxWidth: '250px', wordBreak: 'break-word' }}>
-                                {job.requirements || 'No requirements specified'}
-                            </div>
-                        </details>
-                    </td>
-                    <td style={styles.td}>
-                        <details>
-                            <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
-                            <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px', maxWidth: '250px', wordBreak: 'break-word' }}>
-                                {job.benefits || 'No benefits specified'}
-                            </div>
-                        </details>
-                    </td>
-                    <td style={styles.td}>
-                        <span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>
-                            {job.status || 'active'}
-                        </span>
-                    </td>
-                    <td style={styles.td}>{new Date(job.created_at).toLocaleDateString()}</td>
-                    <td style={styles.td}>
-                        <button onClick={() => { setEditingJob(job); setFormData({...job}); setShowForm(true); }} style={styles.editBtn}>Edit</button>
-                        <button onClick={() => handleDelete(job.id)} style={styles.deleteBtn}>Delete</button>
-                    </td>
-                </tr>
-            ))}
-        </tbody>
-    </table>
-</div>
+                <table style={styles.table}>
+                    <thead>
+                        <tr>
+                            <th style={styles.th}>ID</th>
+                            <th style={styles.th}>Title</th>
+                            <th style={styles.th}>Department</th>
+                            <th style={styles.th}>Location</th>
+                            <th style={styles.th}>Type</th>
+                            <th style={styles.th}>Experience</th>
+                            <th style={styles.th}>Salary</th>
+                            <th style={styles.th}>Requirements</th>
+                            <th style={styles.th}>Benefits</th>
+                            <th style={styles.th}>Status</th>
+                            <th style={styles.th}>Created At</th>
+                            <th style={styles.th}>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {jobs.map(job => (
+                            <tr key={job.id}>
+                                <td style={styles.td}>{job.id}</td>
+                                <td style={styles.td}>{job.title}</td>
+                                <td style={styles.td}>{job.department || 'N/A'}</td>
+                                <td style={styles.td}>{job.location || 'N/A'}</td>
+                                <td style={styles.td}>{job.type || 'Full-time'}</td>
+                                <td style={styles.td}>{job.experience || 'N/A'} yrs</td>
+                                <td style={styles.td}>{job.salary || 'N/A'} LPA</td>
+                                <td style={styles.td}>
+                                    <details>
+                                        <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
+                                        <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px', maxWidth: '250px', wordBreak: 'break-word' }}>
+                                            {job.requirements || 'No requirements specified'}
+                                        </div>
+                                    </details>
+                                </td>
+                                <td style={styles.td}>
+                                    <details>
+                                        <summary style={{ cursor: 'pointer', color: '#667eea' }}>View</summary>
+                                        <div style={{ marginTop: '8px', padding: '8px', background: '#f5f5f5', borderRadius: '5px', fontSize: '12px', maxWidth: '250px', wordBreak: 'break-word' }}>
+                                            {job.benefits || 'No benefits specified'}
+                                        </div>
+                                    </details>
+                                </td>
+                                <td style={styles.td}>
+                                    <span style={{...styles.statusBadge, background: job.status === 'active' ? '#d4edda' : '#f8d7da'}}>
+                                        {job.status || 'active'}
+                                    </span>
+                                </td>
+                                <td style={styles.td}>{new Date(job.created_at).toLocaleDateString()}</td>
+                                <td style={styles.td}>
+                                    <button onClick={() => { setEditingJob(job); setFormData({...job}); setShowForm(true); }} style={styles.editBtn}>Edit</button>
+                                    <button onClick={() => handleDelete(job.id)} style={styles.deleteBtn}>Delete</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
             {showForm && (
                 <div style={styles.modal} onClick={() => setShowForm(false)}>
                     <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
@@ -624,7 +596,6 @@ const ApplicationsManager = () => {
                     <thead>
                         <tr>
                             <th style={styles.th}>ID</th>
-                            <th style={styles.th}>Job ID</th>
                             <th style={styles.th}>Job Title</th>
                             <th style={styles.th}>Name</th>
                             <th style={styles.th}>Email</th>
@@ -640,19 +611,18 @@ const ApplicationsManager = () => {
                     <tbody>
                         {loading && (
                             <tr>
-                                <td colSpan="12" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading applications...</td>
+                                <td colSpan="11" style={{ textAlign: 'center', padding: '40px' }}>🔄 Loading applications...</td>
                             </tr>
                         )}
                         {!loading && applications.length === 0 && (
                             <tr>
-                                <td colSpan="12" style={{ textAlign: 'center', padding: '40px' }}>📭 No applications found.</td>
+                                <td colSpan="11" style={{ textAlign: 'center', padding: '40px' }}>📭 No applications found.</td>
                             </tr>
                         )}
                         {!loading && applications.map((app) => (
                             <tr key={app.id}>
                                 <td style={styles.td}>{app.id}</td>
-                                <td style={styles.td}>{app.job_id}</td>
-                                <td style={styles.td}>{app.job_title}</td>
+                                <td style={styles.td}>{app.job_title || 'N/A'}</td>
                                 <td style={styles.td}>{app.name}</td>
                                 <td style={styles.td}>{app.email}</td>
                                 <td style={styles.td}>{app.phone}</td>
@@ -668,9 +638,9 @@ const ApplicationsManager = () => {
                                 </td>
                                 <td style={styles.td}>{new Date(app.applied_at).toLocaleString()}</td>
                                 <td style={styles.td}>
-                                    {app.resume_url ? (
-                                        <a href={app.resume_url} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea' }}>
-                                            📄 View
+                                    {app.resume ? (
+                                        <a href={app.resume} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea', textDecoration: 'none' }}>
+                                            📄 View Resume
                                         </a>
                                     ) : (
                                         '—'
@@ -689,21 +659,21 @@ const ApplicationsManager = () => {
                     <div style={styles.modalContent}>
                         <h3>📄 Application Details</h3>
                         <p><strong>ID:</strong> {selectedApp.id}</p>
-                        <p><strong>Job ID:</strong> {selectedApp.job_id}</p>
                         <p><strong>Job Title:</strong> {selectedApp.job_title}</p>
                         <p><strong>Name:</strong> {selectedApp.name}</p>
                         <p><strong>Email:</strong> {selectedApp.email}</p>
                         <p><strong>Phone:</strong> {selectedApp.phone}</p>
-                        <p><strong>Experience:</strong> {selectedApp.experience} years</p>
+                        <p><strong>Experience:</strong> {selectedApp.experience || 'N/A'} years</p>
                         <p><strong>Current Company:</strong> {selectedApp.current_company || 'N/A'}</p>
                         <p><strong>Status:</strong> {selectedApp.status}</p>
                         <p><strong>Applied At:</strong> {new Date(selectedApp.applied_at).toLocaleString()}</p>
-                        <p><strong>Cover Letter:</strong></p>
-                        <div style={{ background: '#f5f5f5', padding: '10px', borderRadius: '5px', maxHeight: '200px', overflow: 'auto' }}>
-                            {selectedApp.cover_letter || 'No cover letter provided'}
-                        </div>
-                        {selectedApp.resume_url && (
-                            <p><a href={selectedApp.resume_url} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea' }}>📄 Download Resume</a></p>
+                        {selectedApp.resume && (
+                            <p>
+                                <strong>Resume:</strong> 
+                                <a href={selectedApp.resume} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea', marginLeft: '10px', display: 'inline-block' }}>
+                                    📄 Download / View Resume
+                                </a>
+                            </p>
                         )}
                         <button onClick={() => setSelectedApp(null)} style={styles.closeModalBtn}>Close</button>
                     </div>
@@ -996,26 +966,10 @@ const ProfileSettings = ({ username, onLogout }) => {
                 <h3>📝 Change Username</h3>
                 <form onSubmit={handleUpdateUsername}>
                     <div style={{ position: 'relative' }}>
-                        <input 
-                            type={showUsernamePassword ? "text" : "password"} 
-                            placeholder="Current Password" 
-                            value={usernamePassword} 
-                            onChange={e => setUsernamePassword(e.target.value)} 
-                            style={styles.input} 
-                            required 
-                        />
-                        <span onClick={() => setShowUsernamePassword(!showUsernamePassword)} style={styles.eyeIcon}>
-                            {showUsernamePassword ? '🙈' : '👁️'}
-                        </span>
+                        <input type={showUsernamePassword ? "text" : "password"} placeholder="Current Password" value={usernamePassword} onChange={e => setUsernamePassword(e.target.value)} style={styles.input} required />
+                        <span onClick={() => setShowUsernamePassword(!showUsernamePassword)} style={styles.eyeIcon}>{showUsernamePassword ? '🙈' : '👁️'}</span>
                     </div>
-                    <input 
-                        type="text" 
-                        placeholder="New Username" 
-                        value={newUsername} 
-                        onChange={e => setNewUsername(e.target.value)} 
-                        style={styles.input} 
-                        required 
-                    />
+                    <input type="text" placeholder="New Username" value={newUsername} onChange={e => setNewUsername(e.target.value)} style={styles.input} required />
                     <button type="submit" style={styles.saveBtn}>Update Username</button>
                 </form>
             </div>
@@ -1024,39 +978,14 @@ const ProfileSettings = ({ username, onLogout }) => {
                 <h3>🔒 Change Password</h3>
                 <form onSubmit={handleUpdatePassword}>
                     <div style={{ position: 'relative' }}>
-                        <input 
-                            type={showCurrent ? "text" : "password"} 
-                            placeholder="Current Password" 
-                            value={currentPassword} 
-                            onChange={e => setCurrentPassword(e.target.value)} 
-                            style={styles.input} 
-                            required 
-                        />
-                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>
-                            {showCurrent ? '🙈' : '👁️'}
-                        </span>
+                        <input type={showCurrent ? "text" : "password"} placeholder="Current Password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} style={styles.input} required />
+                        <span onClick={() => setShowCurrent(!showCurrent)} style={styles.eyeIcon}>{showCurrent ? '🙈' : '👁️'}</span>
                     </div>
                     <div style={{ position: 'relative' }}>
-                        <input 
-                            type={showNew ? "text" : "password"} 
-                            placeholder="New Password" 
-                            value={newPassword} 
-                            onChange={e => setNewPassword(e.target.value)} 
-                            style={styles.input} 
-                            required 
-                        />
-                        <span onClick={() => setShowNew(!showNew)} style={styles.eyeIcon}>
-                            {showNew ? '🙈' : '👁️'}
-                        </span>
+                        <input type={showNew ? "text" : "password"} placeholder="New Password" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={styles.input} required />
+                        <span onClick={() => setShowNew(!showNew)} style={styles.eyeIcon}>{showNew ? '🙈' : '👁️'}</span>
                     </div>
-                    <input 
-                        type="password" 
-                        placeholder="Confirm Password" 
-                        value={confirmPassword} 
-                        onChange={e => setConfirmPassword(e.target.value)} 
-                        style={styles.input} 
-                        required 
-                    />
+                    <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} style={styles.input} required />
                     <button type="submit" style={styles.saveBtn}>Update Password</button>
                 </form>
             </div>
