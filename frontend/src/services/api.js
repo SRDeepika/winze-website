@@ -142,7 +142,14 @@ export const createJob = async (jobData) => {
 export const updateJob = async (id, jobData) => {
   try {
     const response = await api.put(`/admin/jobs/${id}`, jobData);
-    return response.data;
+    console.log('Update job response:', response.data);
+    
+    // Make sure we return the data properly
+    if (response.data.success) {
+      return response.data;
+    } else {
+      throw new Error(response.data.error || 'Update failed');
+    }
   } catch (error) {
     console.error('Error updating job:', error);
     throw error;

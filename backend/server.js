@@ -1,3 +1,5 @@
+// FORCE NEW DEPLOYMENT - $(date)
+const express = require('express');
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
@@ -314,17 +316,9 @@ app.delete('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+// ========== JOBS ==========
 app.get('/api/jobs', async (req, res) => {
   try {
-    // Auto-close expired jobs
-    await db.query(`
-      UPDATE jobs 
-      SET status = 'closed', updated_at = NOW() 
-      WHERE status = 'active' 
-      AND deadline IS NOT NULL 
-      AND deadline < CURRENT_DATE
-    `);
-    
     const result = await db.query(`
       SELECT * FROM jobs 
       WHERE status = 'active' 
@@ -346,7 +340,6 @@ app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
       ORDER BY created_at DESC
     `);
     console.log('Jobs fetched:', result.rows.length);
-    console.log('Jobs data:', result.rows);
     res.json({ success: true, jobs: result.rows });
   } catch (error) {
     console.error('Error fetching jobs:', error);
@@ -357,18 +350,20 @@ app.get('/api/admin/jobs', authenticateToken, async (req, res) => {
 app.post('/api/admin/jobs', authenticateToken, async (req, res) => {
   try {
     const { title, department, location, type, experience, salary, 
-            description, requirements, benefits, status, deadline } = req.body;
+            description, requirements, benefits, status } = req.body;
     
-    await db.query(
+    const result = await db.query(
       `INSERT INTO jobs (title, department, location, type, experience, salary, 
-                         description, requirements, benefits, status, deadline, 
+                         description, requirements, benefits, status, 
                          created_at, updated_at) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW())
+       RETURNING *`,
       [title, department || '', location || '', type || 'Full-time', 
        experience || '', salary || '', description || '', requirements || '', 
-       benefits || '', status || 'active', deadline || null]
+       benefits || '', status || 'active']
     );
-    res.json({ success: true, message: 'Job created' });
+    
+    res.json({ success: true, message: 'Job created', job: result.rows[0] });
   } catch (error) {
     console.error('Create job error:', error);
     res.status(500).json({ success: false, error: error.message });
@@ -379,18 +374,34 @@ app.put('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { title, department, location, type, experience, salary, 
-            description, requirements, benefits, status, deadline } = req.body;
+            description, requirements, benefits, status } = req.body;
     
-    await db.query(
+    console.log('Updating job ID:', id);
+    
+    const result = await db.query(
       `UPDATE jobs SET 
-        title=$1, department=$2, location=$3, type=$4, 
-        experience=$5, salary=$6, description=$7, requirements=$8, 
-        benefits=$9, status=$10, deadline=$11, updated_at=NOW() 
-       WHERE id=$12`,
+        title = $1, 
+        department = $2, 
+        location = $3, 
+        type = $4, 
+        experience = $5, 
+        salary = $6, 
+        description = $7, 
+        requirements = $8, 
+        benefits = $9, 
+        status = $10,
+        updated_at = NOW()
+       WHERE id = $11
+       RETURNING *`,
       [title, department, location, type, experience, salary, 
-       description, requirements, benefits, status, deadline, id]
+       description, requirements, benefits, status, id]
     );
-    res.json({ success: true, message: 'Job updated' });
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Job not found' });
+    }
+    
+    res.json({ success: true, message: 'Job updated', job: result.rows[0] });
   } catch (error) {
     console.error('Update job error:', error);
     res.status(500).json({ success: false, error: error.message });

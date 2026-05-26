@@ -333,32 +333,44 @@ const JobManager = () => {
 };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        
-        try {
-            if (editingJob) {
-                await updateJob(editingJob.id, formData);
+    e.preventDefault();
+    setLoading(true);
+    
+    try {
+        if (editingJob) {
+            const response = await updateJob(editingJob.id, formData);
+            console.log('Update response:', response);
+            if (response.success) {
                 alert('Job updated successfully!');
+                await loadJobs();
+                setShowForm(false);
+                setEditingJob(null);
             } else {
-                await createJob(formData);
-                alert('Job created successfully!');
+                alert('Failed to update job: ' + (response.error || 'Unknown error'));
             }
-            await loadJobs();
-            setShowForm(false);
-            setEditingJob(null);
-            setFormData({
-                id: null, title: '', department: '', location: '', type: 'Full-time',
-                experience: '', salary: '', description: '', requirements: '',
-                benefits: '', status: 'active'
-            });
-        } catch (error) {
-            console.error('Error saving job:', error);
-            alert('Error saving job: ' + (error.response?.data?.error || error.message));
-        } finally {
-            setLoading(false);
+        } else {
+            const response = await createJob(formData);
+            if (response.success) {
+                alert('Job created successfully!');
+                await loadJobs();
+                setShowForm(false);
+            } else {
+                alert('Failed to create job: ' + (response.error || 'Unknown error'));
+            }
         }
-    };
+        // Reset form
+        setFormData({
+            id: null, title: '', department: '', location: '', type: 'Full-time',
+            experience: '', salary: '', description: '', requirements: '',
+            benefits: '', status: 'active'
+        });
+    } catch (error) {
+        console.error('Error saving job:', error);
+        alert('Error saving job: ' + (error.response?.data?.error || error.message));
+    } finally {
+        setLoading(false);
+    }
+};
 
     const handleDelete = async (id) => {
         if (window.confirm('Delete this job?')) {
