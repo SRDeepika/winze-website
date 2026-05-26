@@ -420,13 +420,12 @@ app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
 app.post('/api/jobs/:id/apply', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, phone, experience, current_company, cover_letter, resume_url } = req.body;
+    const { name, email, phone, experience, current_company, resume_url } = req.body;
     
     console.log('=== JOB APPLICATION RECEIVED ===');
     console.log('Job ID:', id);
     console.log('Name:', name);
     console.log('Email:', email);
-    console.log('Resume URL:', resume_url);
     
     // Validate required fields
     if (!name || !email || !phone) {
@@ -441,7 +440,7 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
     
     const jobTitle = jobCheck.rows[0].title;
     
-    // Insert application - without updated_at
+    // Insert application - NO cover_letter column
     const result = await db.query(
       `INSERT INTO job_applications (
         job_id, 
@@ -451,12 +450,11 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
         phone, 
         experience, 
         current_company, 
-        cover_letter, 
         resume_url, 
         status, 
         applied_at
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', NOW())
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'pending', NOW())
       RETURNING *`,
       [
         id, 
@@ -466,18 +464,15 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
         phone, 
         experience || null, 
         current_company || null, 
-        cover_letter || null, 
         resume_url || null
       ]
     );
     
     console.log('✅ Application saved! ID:', result.rows[0].id);
-    console.log('✅ Resume URL:', resume_url);
     
     res.json({ 
       success: true, 
-      message: 'Application submitted successfully',
-      application: result.rows[0]
+      message: 'Application submitted successfully'
     });
   } catch (error) {
     console.error('❌ Job application error:', error);
