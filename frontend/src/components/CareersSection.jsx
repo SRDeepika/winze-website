@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { getJobs, applyForJob, trackClick } from '../services/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faFileAlt } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faFileAlt, faUpload } from '@fortawesome/free-solid-svg-icons';
 
 const CareersSection = () => {
     const [jobs, setJobs] = useState([]);
@@ -14,10 +14,10 @@ const CareersSection = () => {
         email: '',
         phone: '',
         experience: '',
-        current_company: ''
+        current_company: '',
+        resume_url: ''
     });
 
-    // Load jobs on component mount
     React.useEffect(() => {
         loadJobs();
     }, []);
@@ -38,23 +38,20 @@ const CareersSection = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleResumeChange = (e) => {
+    const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Validate file type
             const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
             if (!validTypes.includes(file.type)) {
                 alert('Please upload PDF or DOC/DOCX file only');
                 return;
             }
-            // Validate file size (max 5MB)
             if (file.size > 5 * 1024 * 1024) {
                 alert('File size should be less than 5MB');
                 return;
             }
             setResumeFile(file);
             
-            // Convert to base64 for storage (or you can upload to cloud)
             const reader = new FileReader();
             reader.onloadend = () => {
                 setFormData(prev => ({ ...prev, resume_url: reader.result }));
@@ -66,13 +63,13 @@ const CareersSection = () => {
     const handleApply = async (job) => {
         setSelectedJob(job);
         setShowApplicationForm(true);
-        // Reset form
         setFormData({
             name: '',
             email: '',
             phone: '',
             experience: '',
-            current_company: ''
+            current_company: '',
+            resume_url: ''
         });
         setResumeFile(null);
     };
@@ -109,54 +106,200 @@ const CareersSection = () => {
         }
     };
 
+    // Your existing styles - keep them as they are
+    const styles = {
+        modal: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.8)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
+        },
+        modalContent: {
+            background: 'white',
+            borderRadius: '15px',
+            padding: '30px',
+            maxWidth: '500px',
+            width: '100%',
+            maxHeight: '85vh',
+            overflow: 'auto',
+            position: 'relative'
+        },
+        input: {
+            width: '100%',
+            padding: '12px',
+            marginBottom: '15px',
+            borderRadius: '8px',
+            border: '1px solid #ddd',
+            fontSize: '14px',
+            boxSizing: 'border-box'
+        },
+        textarea: {
+            width: '100%',
+            padding: '12px',
+            marginBottom: '15px',
+            borderRadius: '8px',
+            border: '1px solid #ddd',
+            fontSize: '14px',
+            resize: 'vertical',
+            boxSizing: 'border-box'
+        },
+        button: {
+            width: '100%',
+            padding: '12px',
+            background: '#667eea',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: 'pointer'
+        },
+        closeBtn: {
+            position: 'absolute',
+            top: '15px',
+            right: '20px',
+            background: 'none',
+            border: 'none',
+            fontSize: '24px',
+            cursor: 'pointer',
+            color: '#999'
+        },
+        fileInput: {
+            width: '100%',
+            padding: '10px',
+            marginBottom: '15px',
+            borderRadius: '8px',
+            border: '1px solid #ddd',
+            background: '#f9f9f9',
+            fontSize: '14px',
+            boxSizing: 'border-box'
+        },
+        fileInfo: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '8px 12px',
+            background: '#f0f0f0',
+            borderRadius: '8px',
+            marginBottom: '15px',
+            fontSize: '13px'
+        },
+        removeFileBtn: {
+            background: '#ff6b6b',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            padding: '4px 10px',
+            cursor: 'pointer',
+            fontSize: '12px'
+        },
+        jobCard: {
+            background: 'white',
+            borderRadius: '10px',
+            padding: '20px',
+            marginBottom: '15px',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
+        }
+    };
+
     return (
-        <div className="careers-section">
-            <h2>Current Openings</h2>
-            <div className="jobs-grid">
+        <div>
+            {/* Your existing jobs display - keep as is */}
+            <div className="jobs-container">
                 {jobs.map(job => (
-                    <div key={job.id} className="job-card">
+                    <div key={job.id} style={styles.jobCard}>
                         <h3>{job.title}</h3>
-                        <p className="location">{job.location}</p>
-                        <p className="type">{job.type}</p>
-                        <button onClick={() => handleApply(job)}>Apply Now</button>
+                        <p>{job.location} | {job.type}</p>
+                        <button onClick={() => handleApply(job)} style={{ padding: '8px 20px', background: '#667eea', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Apply Now</button>
                     </div>
                 ))}
             </div>
 
+            {/* Application Modal - Same style, just no cover_letter */}
             {showApplicationForm && selectedJob && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <button className="close-btn" onClick={() => setShowApplicationForm(false)}>
-                            <FontAwesomeIcon icon={faTimes} />
-                        </button>
-                        <h3>Apply for {selectedJob.title}</h3>
+                <div style={styles.modal} onClick={() => setShowApplicationForm(false)}>
+                    <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
+                        <button style={styles.closeBtn} onClick={() => setShowApplicationForm(false)}>×</button>
+                        <h3 style={{ marginBottom: '20px' }}>Apply for {selectedJob.title}</h3>
                         <form onSubmit={handleSubmitApplication}>
-                            <input type="text" name="name" placeholder="Full Name *" value={formData.name} onChange={handleInputChange} required />
-                            <input type="email" name="email" placeholder="Email Address *" value={formData.email} onChange={handleInputChange} required />
-                            <input type="tel" name="phone" placeholder="Phone Number *" value={formData.phone} onChange={handleInputChange} required />
-                            <input type="text" name="experience" placeholder="Years of Experience" value={formData.experience} onChange={handleInputChange} />
-                            <input type="text" name="current_company" placeholder="Current Company" value={formData.current_company} onChange={handleInputChange} />
+                            <input 
+                                type="text" 
+                                name="name" 
+                                placeholder="Full Name *" 
+                                value={formData.name} 
+                                onChange={handleInputChange} 
+                                style={styles.input} 
+                                required 
+                            />
+                            <input 
+                                type="email" 
+                                name="email" 
+                                placeholder="Email Address *" 
+                                value={formData.email} 
+                                onChange={handleInputChange} 
+                                style={styles.input} 
+                                required 
+                            />
+                            <input 
+                                type="tel" 
+                                name="phone" 
+                                placeholder="Phone Number *" 
+                                value={formData.phone} 
+                                onChange={handleInputChange} 
+                                style={styles.input} 
+                                required 
+                            />
+                            <input 
+                                type="text" 
+                                name="experience" 
+                                placeholder="Years of Experience" 
+                                value={formData.experience} 
+                                onChange={handleInputChange} 
+                                style={styles.input} 
+                            />
+                            <input 
+                                type="text" 
+                                name="current_company" 
+                                placeholder="Current Company" 
+                                value={formData.current_company} 
+                                onChange={handleInputChange} 
+                                style={styles.input} 
+                            />
                             
                             {/* Resume Upload - No cover letter */}
-                            <div className="file-upload">
-                                <label>Resume (PDF, DOC, DOCX) *</label>
+                            <div>
                                 <input 
                                     type="file" 
                                     accept=".pdf,.doc,.docx"
-                                    onChange={handleResumeChange}
+                                    onChange={handleFileChange}
+                                    style={styles.fileInput}
                                     required 
                                 />
                                 {resumeFile && (
-                                    <div className="file-info">
-                                        <FontAwesomeIcon icon={faFileAlt} />
-                                        <span>{resumeFile.name}</span>
-                                        <button type="button" onClick={() => { setResumeFile(null); setFormData(prev => ({ ...prev, resume_url: '' })); }}>Remove</button>
+                                    <div style={styles.fileInfo}>
+                                        <span>📄 {resumeFile.name}</span>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => { setResumeFile(null); setFormData(prev => ({ ...prev, resume_url: '' })); }}
+                                            style={styles.removeFileBtn}
+                                        >
+                                            Remove
+                                        </button>
                                     </div>
                                 )}
-                                <small>Max file size: 5MB. Allowed formats: PDF, DOC, DOCX</small>
+                                <small style={{ color: '#666', fontSize: '11px', display: 'block', marginBottom: '15px' }}>
+                                    Allowed: PDF, DOC, DOCX (Max 5MB)
+                                </small>
                             </div>
                             
-                            <button type="submit" disabled={loading}>
+                            <button type="submit" disabled={loading} style={styles.button}>
                                 {loading ? 'Submitting...' : 'Submit Application'}
                             </button>
                         </form>
