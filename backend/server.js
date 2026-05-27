@@ -4,12 +4,41 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Configure multer for file upload
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed'));
+        }
+    }
+});
+
+// Serve static files from uploads directory
+app.use('/uploads', express.static('uploads'));
 
 // ========== Database Connection ==========
 const pool = new Pool({
@@ -265,42 +294,95 @@ app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
   }
 });
 
-app.post('/api/admin/blogs', authenticateToken, async (req, res) => {
+app.post('/api/admin/blogs', authenticateToken, upload.single('image'), async (req, res) => {
   try {
     const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     
-    await db.query(
-      `INSERT INTO blogs (title, slug, excerpt, content, category, author, author_role, read_time, status, created_at, updated_at) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())`,
-      [title, slug, excerpt || '', content, category || 'General', author || 'Admin', author_role || 'Author', read_time || 5, status || 'draft']
+    let imageUrl = null;
+    if (req.file) {
+      imageUrl = `/uploads/${req.file.filename}`;
+    }
+    
+    const result = await db.query(
+      `INSERT INTO blogs (title, slug, excerpt, content, category, author, author_role, read_time, status, image, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW())
+       RETURNING *`,
+      [title, slug, excerpt || '', content, category || 'General', author || 'Admin', author_role || 'Author', read_time || 5, status || 'draft', imageUrl]
     );
-    res.json({ success: true, message: 'Blog created' });
+    
+    res.json({ success: true, message: 'Blog created', blog: result.rows[0] });
   } catch (error) {
     console.error('Create blog error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-app.put('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
+app.put('/api/admin/blogs/:id', authenticateToken, upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
     const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
     
-    if (title) {
-      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      await db.query(`UPDATE blogs SET title=$1, slug=$2, updated_at=NOW() WHERE id=$3`, [title, slug, id]);
-    }
-    if (excerpt !== undefined) await db.query(`UPDATE blogs SET excerpt=$1, updated_at=NOW() WHERE id=$2`, [excerpt, id]);
-    if (content !== undefined) await db.query(`UPDATE blogs SET content=$1, updated_at=NOW() WHERE id=$2`, [content, id]);
-    if (category !== undefined) await db.query(`UPDATE blogs SET category=$1, updated_at=NOW() WHERE id=$2`, [category, id]);
-    if (author !== undefined) await db.query(`UPDATE blogs SET author=$1, updated_at=NOW() WHERE id=$2`, [author, id]);
-    if (author_role !== undefined) await db.query(`UPDATE blogs SET author_role=$1, updated_at=NOW() WHERE id=$2`, [author_role, id]);
-    if (read_time !== undefined) await db.query(`UPDATE blogs SET read_time=$1, updated_at=NOW() WHERE id=$2`, [read_time, id]);
-    if (status !== undefined) await db.query(`UPDATE blogs SET status=$1, updated_at=NOW() WHERE id=$2`, [status, id]);
+    console.log('Updating blog ID:', id);
     
-    const updated = await db.query(`SELECT * FROM blogs WHERE id = $1`, [id]);
-    res.json({ success: true, message: 'Blog updated successfully', blog: updated.rows[0] });
+    // Build dynamic update query
+    const updates = [];
+    const values = [];
+    let paramCount = 1;
+    
+    if (title !== undefined && title !== '') {
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      updates.push(`title = $${paramCount++}`);
+      values.push(title);
+      updates.push(`slug = $${paramCount++}`);
+      values.push(slug);
+    }
+    if (excerpt !== undefined) {
+      updates.push(`excerpt = $${paramCount++}`);
+      values.push(excerpt);
+    }
+    if (content !== undefined) {
+      updates.push(`content = $${paramCount++}`);
+      values.push(content);
+    }
+    if (category !== undefined) {
+      updates.push(`category = $${paramCount++}`);
+      values.push(category);
+    }
+    if (author !== undefined) {
+      updates.push(`author = $${paramCount++}`);
+      values.push(author);
+    }
+    if (author_role !== undefined) {
+      updates.push(`author_role = $${paramCount++}`);
+      values.push(author_role);
+    }
+    if (read_time !== undefined) {
+      updates.push(`read_time = $${paramCount++}`);
+      values.push(read_time);
+    }
+    if (status !== undefined) {
+      updates.push(`status = $${paramCount++}`);
+      values.push(status);
+    }
+    if (req.file) {
+      const imageUrl = `/uploads/${req.file.filename}`;
+      updates.push(`image = $${paramCount++}`);
+      values.push(imageUrl);
+    }
+    
+    updates.push(`updated_at = NOW()`);
+    values.push(id);
+    
+    const query = `UPDATE blogs SET ${updates.join(', ')} WHERE id = $${paramCount} RETURNING *`;
+    
+    const result = await db.query(query, values);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Blog not found' });
+    }
+    
+    res.json({ success: true, message: 'Blog updated successfully', blog: result.rows[0] });
   } catch (error) {
     console.error('Update blog error:', error);
     res.status(500).json({ success: false, error: error.message });
@@ -315,6 +397,7 @@ app.delete('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
 // ========== JOBS ==========
 app.get('/api/jobs', async (req, res) => {
   try {
@@ -415,6 +498,7 @@ app.delete('/api/admin/jobs/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
 // ========== JOB APPLICATIONS (Public - Apply for Job) ==========
 app.post('/api/jobs/:id/apply', async (req, res) => {
   try {
@@ -425,15 +509,13 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
     console.log('Job ID:', id);
     console.log('Name:', name);
     console.log('Email:', email);
-    console.log('Phone:', phone);
-    console.log('Resume received:', resume ? 'Yes' : 'No');
     
     // Validate required fields
     if (!name || !email || !phone) {
       return res.status(400).json({ success: false, error: 'Name, email and phone are required' });
     }
     
-    // Check if job exists and is active
+    // Check if job exists
     const jobCheck = await db.query(`SELECT id, title FROM jobs WHERE id = $1 AND status = 'active'`, [id]);
     if (jobCheck.rows.length === 0) {
       return res.status(404).json({ success: false, error: 'Job not found or inactive' });
@@ -441,63 +523,30 @@ app.post('/api/jobs/:id/apply', async (req, res) => {
     
     const jobTitle = jobCheck.rows[0].title;
     
-    // Insert application
     const result = await db.query(
       `INSERT INTO job_applications (
-        job_id, 
-        job_title, 
-        name, 
-        email, 
-        phone, 
-        experience, 
-        current_company, 
-        resume, 
-        status, 
-        applied_at
+        job_id, job_title, name, email, phone, experience, 
+        current_company, resume, status, applied_at
       ) 
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'pending', NOW())
       RETURNING *`,
-      [
-        id, 
-        jobTitle, 
-        name, 
-        email, 
-        phone, 
-        experience || null, 
-        current_company || null, 
-        resume || null
-      ]
+      [id, jobTitle, name, email, phone, experience || null, current_company || null, resume || null]
     );
     
     console.log('✅ Application saved! ID:', result.rows[0].id);
-    
-    res.json({ 
-      success: true, 
-      message: 'Application submitted successfully',
-      applicationId: result.rows[0].id
-    });
+    res.json({ success: true, message: 'Application submitted successfully' });
   } catch (error) {
     console.error('❌ Job application error:', error);
-    console.error('Error details:', error.message);
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
 // ========== APPLICATIONS ==========
 app.get('/api/admin/applications', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT 
-        id, 
-        job_id, 
-        job_title, 
-        name, 
-        email, 
-        phone, 
-        experience, 
-        current_company, 
-        resume, 
-        status, 
-        applied_at
+      SELECT id, job_id, job_title, name, email, phone, 
+             experience, current_company, resume, status, applied_at
       FROM job_applications 
       ORDER BY applied_at DESC
     `);
@@ -508,6 +557,7 @@ app.get('/api/admin/applications', authenticateToken, async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
 app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -538,9 +588,7 @@ app.post('/api/quotes', async (req, res) => {
     console.log('=== NEW QUOTE RECEIVED ===');
     console.log('Name:', name);
     console.log('Email:', email);
-    console.log('Service:', service);
     
-    // Validate required fields
     if (!name || !email) {
       return res.status(400).json({ success: false, error: 'Name and email are required' });
     }
@@ -571,7 +619,7 @@ app.get('/api/admin/quotes', authenticateToken, async (req, res) => {
     res.json({ success: true, quotes: result.rows });
   } catch (error) {
     console.error('❌ Error fetching quotes:', error);
-    res.status(500).json({ success: false, error: error.message, quotes: [] });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
