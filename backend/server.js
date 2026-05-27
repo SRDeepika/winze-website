@@ -534,20 +534,44 @@ app.put('/api/admin/applications/:id/status', authenticateToken, async (req, res
 app.post('/api/quotes', async (req, res) => {
   try {
     const { name, email, phone, service, message } = req.body;
-    await db.query(`INSERT INTO quotes (name, email, phone, service, message, status, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, 'pending', NOW(), NOW())`, 
-      [name, email, phone, service, message]);
+    
+    console.log('=== NEW QUOTE RECEIVED ===');
+    console.log('Name:', name);
+    console.log('Email:', email);
+    console.log('Service:', service);
+    
+    // Validate required fields
+    if (!name || !email) {
+      return res.status(400).json({ success: false, error: 'Name and email are required' });
+    }
+    
+    const result = await db.query(
+      `INSERT INTO quotes (name, email, phone, service, message, status, created_at) 
+       VALUES ($1, $2, $3, $4, $5, 'pending', NOW())
+       RETURNING *`,
+      [name, email, phone || null, service || null, message || null]
+    );
+    
+    console.log('✅ Quote saved! ID:', result.rows[0].id);
     res.json({ success: true, message: 'Quote submitted successfully' });
   } catch (error) {
+    console.error('❌ Quote submission error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
 app.get('/api/admin/quotes', authenticateToken, async (req, res) => {
   try {
-    const result = await db.query(`SELECT id, name, email, phone, service, message, status, created_at FROM quotes ORDER BY created_at DESC`);
+    const result = await db.query(`
+      SELECT id, name, email, phone, service, message, status, created_at 
+      FROM quotes 
+      ORDER BY created_at DESC
+    `);
+    console.log('✅ Quotes fetched:', result.rows.length);
     res.json({ success: true, quotes: result.rows });
   } catch (error) {
-    res.json({ success: true, quotes: [] });
+    console.error('❌ Error fetching quotes:', error);
+    res.status(500).json({ success: false, error: error.message, quotes: [] });
   }
 });
 
@@ -559,7 +583,7 @@ app.put('/api/admin/quotes/:id/status', authenticateToken, async (req, res) => {
     console.log(`Updating quote ${id} status to: ${status}`);
     
     const result = await db.query(
-      `UPDATE quotes SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *`,
+      `UPDATE quotes SET status = $1 WHERE id = $2 RETURNING *`,
       [status, id]
     );
     
@@ -567,9 +591,10 @@ app.put('/api/admin/quotes/:id/status', authenticateToken, async (req, res) => {
       return res.status(404).json({ success: false, error: 'Quote not found' });
     }
     
-    res.json({ success: true, message: 'Quote status updated', quote: result.rows[0] });
+    console.log(`✅ Quote ${id} status updated to: ${status}`);
+    res.json({ success: true, message: 'Quote status updated' });
   } catch (error) {
-    console.error('Error updating quote status:', error);
+    console.error('❌ Error updating quote status:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
