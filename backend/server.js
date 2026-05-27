@@ -4,9 +4,6 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
@@ -14,32 +11,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-    console.log('✅ Uploads directory created at:', uploadDir);
-}
-
-// Configure multer for file upload
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    }
-});
-
-const upload = multer({ 
-    storage: storage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
-});
-
-// Serve static files from uploads directory
-app.use('/uploads', express.static(uploadDir));
 
 // ========== Database Connection ==========
 const pool = new Pool({
@@ -282,7 +253,7 @@ app.get('/api/blogs', async (req, res) => {
 app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT id, title, slug, excerpt, content, category, image, 
+      SELECT id, title, slug, excerpt, content, category, 
              author, author_role, read_time, status, created_at, updated_at
       FROM blogs 
       ORDER BY created_at DESC
@@ -295,29 +266,18 @@ app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
   }
 });
 
-app.post('/api/admin/blogs', authenticateToken, upload.single('image'), async (req, res) => {
+app.post('/api/admin/blogs', authenticateToken, async (req, res) => {
   try {
-    console.log('=== CREATE BLOG ===');
-    console.log('Body fields:', Object.keys(req.body));
-    console.log('File:', req.file ? req.file.filename : 'No file');
-    
     const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
-    
-    if (!title) {
-      return res.status(400).json({ success: false, error: 'Title is required' });
-    }
-    
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    let imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
     
     const result = await db.query(
-      `INSERT INTO blogs (title, slug, excerpt, content, category, author, author_role, read_time, status, image, created_at, updated_at) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW())
+      `INSERT INTO blogs (title, slug, excerpt, content, category, author, author_role, read_time, status, created_at, updated_at) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
        RETURNING *`,
-      [title, slug, excerpt || '', content || '', category || 'General', author || 'Admin', author_role || 'Author', parseInt(read_time) || 5, status || 'draft', imageUrl]
+      [title, slug, excerpt || '', content || '', category || 'General', author || 'Admin', author_role || 'Author', parseInt(read_time) || 5, status || 'draft']
     );
     
-    console.log('✅ Blog created successfully');
     res.json({ success: true, message: 'Blog created', blog: result.rows[0] });
   } catch (error) {
     console.error('Create blog error:', error);
@@ -325,55 +285,27 @@ app.post('/api/admin/blogs', authenticateToken, upload.single('image'), async (r
   }
 });
 
-app.put('/api/admin/blogs/:id', authenticateToken, upload.single('image'), async (req, res) => {
+app.put('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    
-    console.log('=== UPDATE BLOG ===');
-    console.log('Blog ID:', id);
-    console.log('Body fields:', Object.keys(req.body));
-    console.log('File:', req.file ? req.file.filename : 'No file');
-    
     const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
     
-    // Get existing blog
-    const existing = await db.query(`SELECT * FROM blogs WHERE id = $1`, [id]);
-    if (existing.rows.length === 0) {
-      return res.status(404).json({ success: false, error: 'Blog not found' });
+    console.log('Updating blog ID:', id);
+    
+    if (title) {
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      await db.query(`UPDATE blogs SET title=$1, slug=$2, updated_at=NOW() WHERE id=$3`, [title, slug, id]);
     }
+    if (excerpt !== undefined) await db.query(`UPDATE blogs SET excerpt=$1, updated_at=NOW() WHERE id=$2`, [excerpt, id]);
+    if (content !== undefined) await db.query(`UPDATE blogs SET content=$1, updated_at=NOW() WHERE id=$2`, [content, id]);
+    if (category !== undefined) await db.query(`UPDATE blogs SET category=$1, updated_at=NOW() WHERE id=$2`, [category, id]);
+    if (author !== undefined) await db.query(`UPDATE blogs SET author=$1, updated_at=NOW() WHERE id=$2`, [author, id]);
+    if (author_role !== undefined) await db.query(`UPDATE blogs SET author_role=$1, updated_at=NOW() WHERE id=$2`, [author_role, id]);
+    if (read_time !== undefined) await db.query(`UPDATE blogs SET read_time=$1, updated_at=NOW() WHERE id=$2`, [read_time, id]);
+    if (status !== undefined) await db.query(`UPDATE blogs SET status=$1, updated_at=NOW() WHERE id=$2`, [status, id]);
     
-    // Prepare update values - use existing values if not provided
-    const newTitle = title !== undefined && title !== '' ? title : existing.rows[0].title;
-    const newSlug = newTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    const newExcerpt = excerpt !== undefined ? excerpt : existing.rows[0].excerpt;
-    const newContent = content !== undefined ? content : existing.rows[0].content;
-    const newCategory = category !== undefined ? category : existing.rows[0].category;
-    const newAuthor = author !== undefined ? author : existing.rows[0].author;
-    const newAuthorRole = author_role !== undefined ? author_role : existing.rows[0].author_role;
-    const newReadTime = read_time !== undefined ? parseInt(read_time) : existing.rows[0].read_time;
-    const newStatus = status !== undefined ? status : existing.rows[0].status;
-    const newImage = req.file ? `/uploads/${req.file.filename}` : existing.rows[0].image;
-    
-    const result = await db.query(
-      `UPDATE blogs SET 
-        title = $1,
-        slug = $2,
-        excerpt = $3,
-        content = $4,
-        category = $5,
-        author = $6,
-        author_role = $7,
-        read_time = $8,
-        status = $9,
-        image = $10,
-        updated_at = NOW()
-       WHERE id = $11
-       RETURNING *`,
-      [newTitle, newSlug, newExcerpt, newContent, newCategory, newAuthor, newAuthorRole, newReadTime, newStatus, newImage, id]
-    );
-    
-    console.log('✅ Blog updated successfully');
-    res.json({ success: true, message: 'Blog updated successfully', blog: result.rows[0] });
+    const updated = await db.query(`SELECT * FROM blogs WHERE id = $1`, [id]);
+    res.json({ success: true, message: 'Blog updated successfully', blog: updated.rows[0] });
   } catch (error) {
     console.error('Update blog error:', error);
     res.status(500).json({ success: false, error: error.message });
