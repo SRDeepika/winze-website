@@ -212,7 +212,13 @@ export const updateApplicationStatus = async (id, status) => {
 // ========== QUOTE APIs ==========
 export const submitQuote = async (quoteData) => {
   try {
-    const response = await api.post('/quotes', quoteData);
+    const response = await api.post('/quotes', {
+      name: quoteData.name,
+      email: quoteData.email,
+      phone: quoteData.phone,
+      service: quoteData.service,
+      message: quoteData.message
+    });
     return response.data;
   } catch (error) {
     console.error('Error submitting quote:', error);
