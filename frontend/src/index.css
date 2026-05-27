@@ -46,3 +46,84 @@ html {
 html {
     scroll-behavior: smooth;
 }
+
+/* Custom Animations for Professional Look */
+.prof-card {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    /* overflow: hidden; removing overflow hidden to allow glowing shadows */
+    z-index: 1;
+}
+
+/* Glowing Effects */
+.prof-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(255, 215, 0, 0.4);
+    z-index: 10;
+}
+
+/* Neon Glow Outline */
+.prof-card::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: linear-gradient(45deg, #ff00cc, #3333ff, #00ffcc, #ffcc00, #ff00cc);
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(8px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    animation: glowing 20s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    border-radius: inherit;
+}
+
+.prof-card:hover::before {
+    opacity: 1;
+}
+
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
+}
+
+/* Moving animations */
+@keyframes slideInLeft {
+    from { transform: translateX(-100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInTop {
+    from { transform: translateY(-100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInBottom {
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.slide-left { animation: slideInLeft 1s ease-out forwards; }
+.slide-right { animation: slideInRight 1s ease-out forwards; }
+.slide-top { animation: slideInTop 1s ease-out forwards; }
+.slide-bottom { animation: slideInBottom 1s ease-out forwards; }
+
+/* Rotating Effects */
+.rotate-hover {
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.rotate-hover:hover {
+    transform: rotate(3deg) scale(1.03);
+}
+
+.icon-spin:hover svg {
+    transform: rotate(360deg);
+    transition: transform 0.8s ease-in-out;
+}

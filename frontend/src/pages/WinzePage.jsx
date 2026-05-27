@@ -1999,9 +1999,9 @@ const WinzePage = () => {
                             {deliveryItems.map((item, i) => {
                                 const extraPoints = getDeliveryExtraPoints(item.title);
                                 return (
-                                    <div key={i} className="modern-card delivery-card-animate" style={{ background: getCardGradient(i, 'delivery') }} data-aos="zoom-in" data-aos-delay={i * 100}>
+                                    <div key={i} className="modern-card delivery-card-animate prof-card slide-bottom" style={{ background: getCardGradient(i, 'delivery') }} data-aos="zoom-in" data-aos-delay={i * 100}>
                                         <div className="card-inner">
-                                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '45px', marginBottom: '20px', color: '#FFD700' }} />
+                                            <FontAwesomeIcon icon={item.icon} className="rotate-hover" style={{ fontSize: '45px', marginBottom: '20px', color: '#FFD700' }} />
                                             <h3 style={{ marginBottom: '12px', color: 'white', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
                                             <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.5', marginBottom: '15px', fontSize: '14px' }}>{item.desc}</p>
                                             <div className="extra-points">
@@ -2032,11 +2032,12 @@ const WinzePage = () => {
                             {solutions.map((solution, idx) => {
                                 const extraPoints = getSolutionExtraPoints(solution.title);
                                 return (
-                                    <div key={idx} className="modern-card solution-card-animate" style={{ background: getCardGradient(idx, 'solution') }} data-aos="flip-left" data-aos-delay={idx * 50}>
-                                        <img src={solution.img} alt={solution.title} className="card-image" onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x400/2a3a5f/FFD700?text=' + encodeURIComponent(solution.title); }} />
-                                        <div className="card-inner">
-                                            <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '35px', marginBottom: '12px', color: '#FFD700' }} />
-                                            <h3 style={{ marginBottom: '10px', color: 'white', fontSize: '1.15rem', fontWeight: '700' }}>{solution.title}</h3>
+                                    <div key={idx} className="modern-card solution-card-animate prof-card slide-right" style={{ background: getCardGradient(idx, 'solution') }} data-aos="flip-left" data-aos-delay={idx * 50}>
+                                        <div className="flip-card-inner" style={{ height: '100%' }}>
+                                            <img src={solution.img} alt={solution.title} className="card-image" onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x400/2a3a5f/FFD700?text=' + encodeURIComponent(solution.title); }} />
+                                            <div className="card-inner">
+                                                <FontAwesomeIcon icon={solution.icon} className="rotate-hover icon-spin" style={{ fontSize: '35px', marginBottom: '12px', color: '#FFD700' }} />
+                                                <h3 style={{ marginBottom: '10px', color: 'white', fontSize: '1.15rem', fontWeight: '700' }}>{solution.title}</h3>
                                             <p style={{ color: 'rgba(255,255,255,0.75)', lineHeight: '1.45', marginBottom: '15px', fontSize: '13px' }}>{solution.desc}</p>
                                             <div className="extra-points">
                                                 {extraPoints.slice(0,3).map((point, pid) => (
@@ -2046,7 +2047,8 @@ const WinzePage = () => {
                                                     </div>
                                                 ))}
                                             </div>
-                                            <button className="btn-learn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleTrackClick(solution.title, 'solution'); openLandingPage(solution, 'solution'); }}>Learn More →</button>
+                                                <button className="btn-learn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleTrackClick(solution.title, 'solution'); openLandingPage(solution, 'solution'); }}>Learn More →</button>
+                                            </div>
                                         </div>
                                     </div>
                                 );
@@ -2064,10 +2066,10 @@ const WinzePage = () => {
                             {industries.map((industry, idx) => {
                                 const extraPoints = getIndustryExtraPoints(industry.name);
                                 return (
-                                    <div key={idx} className="modern-card industry-card-animate" style={{ background: getCardGradient(idx, 'industry') }} data-aos="fade-right" data-aos-delay={idx * 100}>
+                                    <div key={idx} className="modern-card industry-card-animate prof-card slide-left" style={{ background: getCardGradient(idx, 'industry') }} data-aos="fade-right" data-aos-delay={idx * 100}>
                                         <img src={industry.img} alt={industry.name} className="card-image" />
                                         <div className="card-inner">
-                                            <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#FFD700' }} />
+                                            <FontAwesomeIcon icon={industry.icon} className="rotate-hover" style={{ fontSize: '40px', marginBottom: '15px', color: '#FFD700' }} />
                                             <h3 style={{ marginBottom: '10px', color: 'white', fontSize: '1.25rem', fontWeight: '700' }}>{industry.name}</h3>
                                             <p style={{ color: 'rgba(255,255,255,0.75)', lineHeight: '1.45', fontSize: '13px', marginBottom: '15px' }}>{industry.desc}</p>
                                             <div className="extra-points">
@@ -2115,9 +2117,9 @@ const WinzePage = () => {
                             {workWithWinze.map((item, idx) => {
                                 const extraPoints = getWorkExtraPoints(item.title);
                                 return (
-                                    <div key={idx} className="modern-card work-card-animate" style={{ background: getCardGradient(idx, 'work') }} data-aos="fade-left" data-aos-delay={idx * 100}>
+                                    <div key={idx} className="modern-card work-card-animate prof-card slide-top" style={{ background: getCardGradient(idx, 'work') }} data-aos="fade-left" data-aos-delay={idx * 100}>
                                         <div className="card-inner">
-                                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '50px', marginBottom: '20px', color: '#FFD700' }} />
+                                            <FontAwesomeIcon icon={item.icon} className="rotate-hover" style={{ fontSize: '50px', marginBottom: '20px', color: '#FFD700' }} />
                                             <h3 style={{ marginBottom: '12px', color: 'white', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
                                             <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.5', marginBottom: '15px', fontSize: '14px' }}>{item.desc}</p>
                                             <div className="extra-points">
