@@ -1076,42 +1076,42 @@ const WinzePage = () => {
     const getCardGradient = (index, type) => {
         const royalGradients = {
             delivery: [
-                'linear-gradient(145deg, #1a0b2e, #2d1b4e, #4a2a7a)',
-                'linear-gradient(145deg, #0b1a2e, #1b2d4e, #2a4a7a)',
-                'linear-gradient(145deg, #2e0b1a, #4e1b2d, #7a2a4a)',
-                'linear-gradient(145deg, #1a2e0b, #2d4e1b, #4a7a2a)',
-                'linear-gradient(145deg, #2e1a0b, #4e2d1b, #7a4a2a)',
-                'linear-gradient(145deg, #0b2e2e, #1b4e4e, #2a7a7a)'
+                'linear-gradient(145deg, #0f2027, #203a43, #2c5364)',
+                'linear-gradient(145deg, #114357, #f29492)',
+                'linear-gradient(145deg, #00b4db, #0083b0)',
+                'linear-gradient(145deg, #1d976c, #93f9b9)',
+                'linear-gradient(145deg, #1fa2ff, #12d8fa, #a6ffcb)',
+                'linear-gradient(145deg, #4cb8c4, #3cd3ad)'
             ],
             solution: [
-                'linear-gradient(145deg, #1a0b2e, #2d1b4e, #4a2a7a)',
-                'linear-gradient(145deg, #0b1a2e, #1b2d4e, #2a4a7a)',
-                'linear-gradient(145deg, #2e0b1a, #4e1b2d, #7a2a4a)',
-                'linear-gradient(145deg, #1a2e0b, #2d4e1b, #4a7a2a)',
-                'linear-gradient(145deg, #2e1a0b, #4e2d1b, #7a4a2a)',
-                'linear-gradient(145deg, #0b2e2e, #1b4e4e, #2a7a7a)',
-                'linear-gradient(145deg, #2a0b1a, #4a1b2d, #7a2a4a)',
-                'linear-gradient(145deg, #1a2a0b, #2d4a1b, #4a7a2a)',
-                'linear-gradient(145deg, #2a1a0b, #4a2d1b, #7a4a2a)',
-                'linear-gradient(145deg, #0b2a1a, #1b4a2d, #2a7a4a)',
-                'linear-gradient(145deg, #1a0b2e, #2d1b4e, #4a2a7a)',
-                'linear-gradient(145deg, #0b1a2e, #1b2d4e, #2a4a7a)',
-                'linear-gradient(145deg, #2e0b1a, #4e1b2d, #7a2a4a)',
-                'linear-gradient(145deg, #1a2e0b, #2d4e1b, #4a7a2a)',
-                'linear-gradient(145deg, #2e1a0b, #4e2d1b, #7a4a2a)',
-                'linear-gradient(145deg, #0b2e2e, #1b4e4e, #2a7a7a)'
+                'linear-gradient(145deg, #3a1c71, #d76d77, #ffaf7b)',
+                'linear-gradient(145deg, #8e2de2, #4a00e0)',
+                'linear-gradient(145deg, #c31432, #240b36)',
+                'linear-gradient(145deg, #cc2b5e, #753a88)',
+                'linear-gradient(145deg, #ec008c, #fc6767)',
+                'linear-gradient(145deg, #b92b27, #1565C0)',
+                'linear-gradient(145deg, #ff416c, #ff4b2b)',
+                'linear-gradient(145deg, #f12711, #f5af19)',
+                'linear-gradient(145deg, #8A2387, #E94057, #F27121)',
+                'linear-gradient(145deg, #bc4e9c, #f80759)',
+                'linear-gradient(145deg, #141e30, #243b55)',
+                'linear-gradient(145deg, #8360c3, #2ebf91)',
+                'linear-gradient(145deg, #654ea3, #eaafc8)',
+                'linear-gradient(145deg, #2b5876, #4e4376)',
+                'linear-gradient(145deg, #e52d27, #b31217)',
+                'linear-gradient(145deg, #f05053, #e1eec3)'
             ],
             industry: [
-                'linear-gradient(145deg, #1a0b2e, #2d1b4e, #4a2a7a)',
-                'linear-gradient(145deg, #0b1a2e, #1b2d4e, #2a4a7a)',
-                'linear-gradient(145deg, #2e1a0b, #4e2d1b, #7a4a2a)',
-                'linear-gradient(145deg, #1a2e0b, #2d4e1b, #4a7a2a)'
+                'linear-gradient(145deg, #000000, #0f9b0f)',
+                'linear-gradient(145deg, #f79d00, #64f38c)',
+                'linear-gradient(145deg, #00b09b, #96c93d)',
+                'linear-gradient(145deg, #11998e, #38ef7d)'
             ],
             work: [
-                'linear-gradient(145deg, #1a0b2e, #2d1b4e, #4a2a7a)',
-                'linear-gradient(145deg, #0b1a2e, #1b2d4e, #2a4a7a)',
-                'linear-gradient(145deg, #2e0b1a, #4e1b2d, #7a2a4a)',
-                'linear-gradient(145deg, #1a2e0b, #2d4e1b, #4a7a2a)'
+                'linear-gradient(145deg, #cb2d3e, #ef473a)',
+                'linear-gradient(145deg, #ff0844, #ffb199)',
+                'linear-gradient(145deg, #e65c00, #F9D423)',
+                'linear-gradient(145deg, #fc4a1a, #f7b733)'
             ]
         };
         
@@ -1999,7 +1999,7 @@ const WinzePage = () => {
                             {deliveryItems.map((item, i) => {
                                 const extraPoints = getDeliveryExtraPoints(item.title);
                                 return (
-                                    <div key={i} className="modern-card delivery-card-animate prof-card slide-bottom" style={{ background: getCardGradient(i, 'delivery') }} data-aos="zoom-in" data-aos-delay={i * 100}>
+                                    <div key={i} className="modern-card delivery-card-animate custom-card-base style-delivery slide-bottom" style={{ background: getCardGradient(i, 'delivery') }} data-aos="zoom-in" data-aos-delay={i * 100}>
                                         <div className="card-inner">
                                             <FontAwesomeIcon icon={item.icon} className="rotate-hover" style={{ fontSize: '45px', marginBottom: '20px', color: '#FFD700' }} />
                                             <h3 style={{ marginBottom: '12px', color: 'white', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
@@ -2032,7 +2032,7 @@ const WinzePage = () => {
                             {solutions.map((solution, idx) => {
                                 const extraPoints = getSolutionExtraPoints(solution.title);
                                 return (
-                                    <div key={idx} className="modern-card solution-card-animate prof-card slide-right" style={{ background: getCardGradient(idx, 'solution') }} data-aos="flip-left" data-aos-delay={idx * 50}>
+                                    <div key={idx} className="modern-card solution-card-animate custom-card-base style-solutions slide-right" style={{ background: getCardGradient(idx, 'solution') }} data-aos="flip-left" data-aos-delay={idx * 50}>
                                         <div className="flip-card-inner" style={{ height: '100%' }}>
                                             <img src={solution.img} alt={solution.title} className="card-image" onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x400/2a3a5f/FFD700?text=' + encodeURIComponent(solution.title); }} />
                                             <div className="card-inner">
@@ -2066,7 +2066,7 @@ const WinzePage = () => {
                             {industries.map((industry, idx) => {
                                 const extraPoints = getIndustryExtraPoints(industry.name);
                                 return (
-                                    <div key={idx} className="modern-card industry-card-animate prof-card slide-left" style={{ background: getCardGradient(idx, 'industry') }} data-aos="fade-right" data-aos-delay={idx * 100}>
+                                    <div key={idx} className="modern-card industry-card-animate custom-card-base style-industries slide-left" style={{ background: getCardGradient(idx, 'industry') }} data-aos="fade-right" data-aos-delay={idx * 100}>
                                         <img src={industry.img} alt={industry.name} className="card-image" />
                                         <div className="card-inner">
                                             <FontAwesomeIcon icon={industry.icon} className="rotate-hover" style={{ fontSize: '40px', marginBottom: '15px', color: '#FFD700' }} />
@@ -2117,7 +2117,7 @@ const WinzePage = () => {
                             {workWithWinze.map((item, idx) => {
                                 const extraPoints = getWorkExtraPoints(item.title);
                                 return (
-                                    <div key={idx} className="modern-card work-card-animate prof-card slide-top" style={{ background: getCardGradient(idx, 'work') }} data-aos="fade-left" data-aos-delay={idx * 100}>
+                                    <div key={idx} className="modern-card work-card-animate custom-card-base style-work slide-top" style={{ background: getCardGradient(idx, 'work') }} data-aos="fade-left" data-aos-delay={idx * 100}>
                                         <div className="card-inner">
                                             <FontAwesomeIcon icon={item.icon} className="rotate-hover" style={{ fontSize: '50px', marginBottom: '20px', color: '#FFD700' }} />
                                             <h3 style={{ marginBottom: '12px', color: 'white', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
