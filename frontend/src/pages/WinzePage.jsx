@@ -1839,22 +1839,33 @@ const WinzePage = () => {
                 /* Navbar styling */
                 .nav-button {
                     background: transparent;
-                    color: white;
-                    font-weight: 600;
-                    padding: 10px 22px;
-                    border-radius: 35px;
-                    transition: all 0.3s ease;
+                    color: rgba(255, 255, 255, 0.85);
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
                     cursor: pointer;
-                    font-size: 14px;
+                    font-size: 15px;
+                    font-weight: 500;
+                    transition: all 0.3s ease;
                     font-family: 'Poppins', sans-serif;
-                    border: 1px solid rgba(255,215,0,0.3);
+                    position: relative;
+                }
+                .nav-button::after {
+                    content: '';
+                    position: absolute;
+                    width: 0;
+                    height: 2px;
+                    bottom: 0;
+                    left: 50%;
+                    background-color: #FFD700;
+                    transition: all 0.3s ease;
+                    transform: translateX(-50%);
                 }
                 .nav-button:hover {
-                    background: #FFD700;
-                    color: #4a0e4e;
-                    border-color: #FFD700;
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+                    color: #FFD700;
+                }
+                .nav-button:hover::after {
+                    width: 80%;
                 }
                 
                 .quote-button {
@@ -1905,12 +1916,13 @@ const WinzePage = () => {
                     top: 0,
                     left: 0,
                     right: 0,
-                    background: 'linear-gradient(135deg, #4a0e4e 0%, #8a2387 50%, #4a0e4e 100%)',
-                    padding: '12px 5%',
+                    background: 'rgba(11, 15, 25, 0.85)',
+                    backdropFilter: 'blur(12px)',
+                    padding: '15px 5%',
                     zIndex: 1000,
-                    transition: 'all 0.3s',
-                    boxShadow: scrolled ? '0 4px 20px rgba(0,0,0,0.3)' : '0 2px 10px rgba(0,0,0,0.1)',
-                    borderBottom: '2px solid #FFD700'
+                    transition: 'all 0.4s ease',
+                    boxShadow: scrolled ? '0 10px 30px rgba(0,0,0,0.5)' : 'none',
+                    borderBottom: scrolled ? '1px solid rgba(255,215,0,0.1)' : '1px solid transparent'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
                         <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
@@ -1958,7 +1970,12 @@ const WinzePage = () => {
 
                 {/* Hero Section */}
                 <section id="home" ref={homeRef} style={{ minHeight: '85vh', position: 'relative', display: 'flex', alignItems: 'center', padding: '80px 5%', overflow: 'hidden' }}>
-                    <BackgroundImage imageSrc={bgImages.hero} />
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', zIndex: 1 }}>
+                        <video autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }}>
+                            <source src="https://assets.mixkit.co/videos/preview/mixkit-technology-background-with-binary-code-21782-large.mp4" type="video/mp4" />
+                        </video>
+                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(135deg, rgba(8, 12, 25, 0.85) 0%, rgba(20, 15, 45, 0.90) 100%)' }} />
+                    </div>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '50px', alignItems: 'center' }}>
                             <div data-aos="fade-right" data-aos-duration="1000">
@@ -1991,7 +2008,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* What We Deliver Section */}
-                <section id="delivery" style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: '#0f0f1f' }}>
+                <section id="delivery" style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: '#0b1120' }}>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} data-aos="fade-down">What We Deliver</h2>
                         <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} data-aos="fade-up">COMPREHENSIVE TECHNOLOGY LIFECYCLE</p>
@@ -2022,7 +2039,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* Solutions Portfolio Section */}
-                <section id="solutions" ref={solutionsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: '#0a1525' }}>
+                <section id="solutions" ref={solutionsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: '#170f2a' }}>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} data-aos="fade-down">Our Solutions Portfolio</h2>
                         <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '10px', fontSize: '1rem', letterSpacing: '1px' }} data-aos="fade-up">PRACTICAL ACTION. BOLD AMBITION. ENDLESS POSSIBILITIES.</p>
@@ -2058,7 +2075,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* Industries Section */}
-                <section id="industries" ref={industriesRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: '#1a0f0a' }}>
+                <section id="industries" ref={industriesRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: '#042518' }}>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} data-aos="fade-down">Industries We Serve</h2>
                         <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} data-aos="fade-up">TRANSFORMING BUSINESSES ACROSS SECTORS</p>
@@ -2090,7 +2107,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* Partners Section */}
-                <section id="partners" ref={partnersRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden', background: '#0f0a1a' }}>
+                <section id="partners" ref={partnersRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden', background: '#0a0a0a' }}>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} data-aos="fade-down">Our Trusted Partners</h2>
                         <p style={{ color: '#FFD700', marginBottom: '20px', fontSize: '1rem', letterSpacing: '1px' }} data-aos="fade-up">INNOVATION. EXCELLENCE. TRUST.</p>
@@ -2100,7 +2117,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* Clients Section */}
-                <section id="clients" ref={clientsRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden', background: '#0a0f1a' }}>
+                <section id="clients" ref={clientsRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden', background: '#050505' }}>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} data-aos="fade-down">Our Valued Clients</h2>
                         <p style={{ color: '#FFD700', marginBottom: '40px', fontSize: '1rem', letterSpacing: '1px' }} data-aos="fade-up">TRUSTED BY INDUSTRY LEADERS ACROSS INDIA</p>
@@ -2109,7 +2126,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* Work With Winze Section */}
-                <section id="workwith" ref={workwithRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: '#1a0f1a' }}>
+                <section id="workwith" ref={workwithRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: '#2e0712' }}>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} data-aos="fade-down">Why Work With Winze?</h2>
                         <p style={{ color: '#FFD700', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} data-aos="fade-up">PARTNER WITH US FOR A TRANSFORMATIVE EXPERIENCE</p>
