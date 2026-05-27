@@ -1970,11 +1970,8 @@ const WinzePage = () => {
 
                 {/* Hero Section */}
                 <section id="home" ref={homeRef} style={{ minHeight: '85vh', position: 'relative', display: 'flex', alignItems: 'center', padding: '80px 5%', overflow: 'hidden' }}>
-                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', zIndex: 1 }}>
-                        <video autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }}>
-                            <source src="https://assets.mixkit.co/videos/preview/mixkit-technology-background-with-binary-code-21782-large.mp4" type="video/mp4" />
-                        </video>
-                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(135deg, rgba(8, 12, 25, 0.85) 0%, rgba(20, 15, 45, 0.90) 100%)' }} />
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', zIndex: 1, background: 'linear-gradient(135deg, #1e0b36 0%, #4a0e4e 50%, #1e0b36 100%)' }}>
+                        {/* Interactive particles or background elements can go here */}
                     </div>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '50px', alignItems: 'center' }}>
@@ -1997,10 +1994,12 @@ const WinzePage = () => {
                             </div>
 
                             <div data-aos="fade-left" data-aos-duration="1000" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                <div style={{ transition: 'all 0.4s ease', cursor: 'pointer', background: 'linear-gradient(135deg, rgba(255,215,0,0.05), rgba(255,165,0,0.03))', padding: '3px', borderRadius: '20px' }}
-                                    onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-5px)'; }}
-                                    onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}>
-                                    <img src="/images/hero-image.jpg" alt="Hero" style={{ width: '100%', maxWidth: '500px', height: 'auto', borderRadius: '20px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', border: '1px solid rgba(255,215,0,0.3)', display: 'block' }} />
+                                <div style={{ transition: 'all 0.4s ease', cursor: 'pointer', background: 'linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,165,0,0.1))', padding: '4px', borderRadius: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }}
+                                    onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-10px)'; e.currentTarget.style.boxShadow = '0 30px 60px rgba(255,215,0,0.2)'; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 20px 50px rgba(0,0,0,0.5)'; }}>
+                                    <video autoPlay loop muted playsInline style={{ width: '100%', maxWidth: '500px', height: 'auto', borderRadius: '20px', display: 'block' }}>
+                                        <source src="https://assets.mixkit.co/videos/preview/mixkit-software-developer-working-on-code-21742-large.mp4" type="video/mp4" />
+                                    </video>
                                 </div>
                             </div>
                         </div>
