@@ -13,7 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Configure multer for file upload
+/// Configure multer for file upload
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/');
@@ -24,15 +24,21 @@ const storage = multer.diskStorage({
     }
 });
 
+// Configure multer to handle both text fields and file
 const upload = multer({ 
     storage: storage,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
     fileFilter: (req, file, cb) => {
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        // Allow images and documents
+        const allowedTypes = [
+            'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+            'application/pdf', 'application/msword', 
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ];
         if (allowedTypes.includes(file.mimetype)) {
             cb(null, true);
         } else {
-            cb(new Error('Only image files are allowed'));
+            cb(new Error('Only images, PDF, and DOC files are allowed'));
         }
     }
 });
@@ -297,6 +303,11 @@ app.get('/api/admin/blogs', authenticateToken, async (req, res) => {
 app.post('/api/admin/blogs', authenticateToken, upload.single('image'), async (req, res) => {
   try {
     const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
+    
+    console.log('=== CREATING BLOG ===');
+    console.log('Title:', title);
+    console.log('File:', req.file ? req.file.filename : 'No file');
+    
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     
     let imageUrl = null;
@@ -311,6 +322,7 @@ app.post('/api/admin/blogs', authenticateToken, upload.single('image'), async (r
       [title, slug, excerpt || '', content, category || 'General', author || 'Admin', author_role || 'Author', read_time || 5, status || 'draft', imageUrl]
     );
     
+    console.log('✅ Blog created successfully');
     res.json({ success: true, message: 'Blog created', blog: result.rows[0] });
   } catch (error) {
     console.error('Create blog error:', error);
@@ -321,11 +333,30 @@ app.post('/api/admin/blogs', authenticateToken, upload.single('image'), async (r
 app.put('/api/admin/blogs/:id', authenticateToken, upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
+    
+    // Log what we received
+    console.log('=== UPDATING BLOG ===');
+    console.log('Blog ID:', id);
+    console.log('Request body fields:', req.body);
+    console.log('File received:', req.file ? req.file.filename : 'No file');
+    
+    // Extract fields from request body (multer parses FormData into req.body)
     const { title, excerpt, content, category, author, author_role, read_time, status } = req.body;
     
-    console.log('Updating blog ID:', id);
+    // Get current blog to preserve existing image
+    const currentBlog = await db.query(`SELECT image FROM blogs WHERE id = $1`, [id]);
+    if (currentBlog.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Blog not found' });
+    }
     
-    // Build dynamic update query
+    let imageUrl = currentBlog.rows[0].image;
+    
+    // If a new image is uploaded, update the image URL
+    if (req.file) {
+      imageUrl = `/uploads/${req.file.filename}`;
+    }
+    
+    // Build update query dynamically
     const updates = [];
     const values = [];
     let paramCount = 1;
@@ -365,16 +396,15 @@ app.put('/api/admin/blogs/:id', authenticateToken, upload.single('image'), async
       updates.push(`status = $${paramCount++}`);
       values.push(status);
     }
-    if (req.file) {
-      const imageUrl = `/uploads/${req.file.filename}`;
-      updates.push(`image = $${paramCount++}`);
-      values.push(imageUrl);
-    }
     
+    updates.push(`image = $${paramCount++}`);
+    values.push(imageUrl);
     updates.push(`updated_at = NOW()`);
     values.push(id);
     
     const query = `UPDATE blogs SET ${updates.join(', ')} WHERE id = $${paramCount} RETURNING *`;
+    
+    console.log('Executing query:', query);
     
     const result = await db.query(query, values);
     
@@ -382,22 +412,13 @@ app.put('/api/admin/blogs/:id', authenticateToken, upload.single('image'), async
       return res.status(404).json({ success: false, error: 'Blog not found' });
     }
     
+    console.log('✅ Blog updated successfully');
     res.json({ success: true, message: 'Blog updated successfully', blog: result.rows[0] });
   } catch (error) {
-    console.error('Update blog error:', error);
+    console.error('❌ Update blog error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
-
-app.delete('/api/admin/blogs/:id', authenticateToken, async (req, res) => {
-  try {
-    await db.query(`DELETE FROM blogs WHERE id = $1`, [req.params.id]);
-    res.json({ success: true, message: 'Blog deleted' });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
 // ========== JOBS ==========
 app.get('/api/jobs', async (req, res) => {
   try {
