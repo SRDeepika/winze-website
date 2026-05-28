@@ -2135,7 +2135,7 @@ const WinzePage = () => {
                 .bg-solutions { background: radial-gradient(circle at 20% 80%, rgba(0, 229, 255, 0.1) 0%, transparent 65%), radial-gradient(circle at 80% 20%, rgba(124, 77, 255, 0.08) 0%, #f4f6fc 100%); }
                 .bg-industries { background: radial-gradient(circle at 15% 30%, rgba(0, 230, 118, 0.26) 0%, transparent 65%), radial-gradient(circle at 85% 70%, rgba(0, 229, 255, 0.24) 0%, #010805 100%); }
                 .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.12) 0%, transparent 70%), #f8fafc; }
-                .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.12) 0%, transparent 70%), #f4f6fc; }
+                .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.18) 0%, transparent 70%), #05020c; }
                 .bg-work { background: radial-gradient(circle at 85% 15%, rgba(255, 23, 68, 0.28) 0%, transparent 65%), radial-gradient(circle at 15% 85%, rgba(101, 31, 255, 0.24) 0%, #060107 100%); }
             `}</style>
             
@@ -2165,14 +2165,14 @@ const WinzePage = () => {
                     top: 0,
                     left: 0,
                     right: 0,
-                    background: scrolled ? 'rgba(8, 4, 20, 0.88)' : 'rgba(8, 4, 20, 0.45)',
+                    background: scrolled ? 'rgba(15, 6, 32, 0.96)' : 'rgba(25, 12, 54, 0.78)',
                     backdropFilter: 'blur(25px)',
                     WebkitBackdropFilter: 'blur(25px)',
                     padding: '12px 5%',
                     zIndex: 1000,
                     transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                    boxShadow: scrolled ? '0 10px 40px rgba(0,0,0,0.8), inset 0 -1px 0 rgba(0, 229, 255, 0.12)' : 'none',
-                    borderBottom: scrolled ? '1px solid rgba(0, 229, 255, 0.5)' : '1px solid rgba(255, 255, 255, 0.08)'
+                    boxShadow: scrolled ? '0 10px 40px rgba(0,0,0,0.8), 0 4px 20px rgba(0, 229, 255, 0.15)' : '0 4px 15px rgba(124, 77, 255, 0.15)',
+                    borderBottom: scrolled ? '2px solid #00E5FF' : '2px solid rgba(124, 77, 255, 0.4)'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
                         <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
@@ -2301,8 +2301,8 @@ const WinzePage = () => {
                 <section id="solutions" ref={solutionsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-solutions">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: '#060112', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Solutions Portfolio</h2>
-                        <p style={{ textAlign: 'center', color: '#475569', marginBottom: '10px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">PRACTICAL ACTION. BOLD AMBITION. ENDLESS POSSIBILITIES.</p>
-                        <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '50px', fontSize: '14px' }} className="scroll-animate slide-up delay-3">Enterprise-grade technology solutions for modern businesses</p>
+                        <p style={{ textAlign: 'center', color: '#0f172a', marginBottom: '10px', fontSize: '1rem', letterSpacing: '1px', fontWeight: '600' }} className="scroll-animate slide-up delay-2">PRACTICAL ACTION. BOLD AMBITION. ENDLESS POSSIBILITIES.</p>
+                        <p style={{ textAlign: 'center', color: '#1e293b', marginBottom: '50px', fontSize: '14px', fontWeight: '500' }} className="scroll-animate slide-up delay-3">Enterprise-grade technology solutions for modern businesses</p>
                         
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '30px' }}>
                             {solutions.map((solution, idx) => {
@@ -2378,8 +2378,8 @@ const WinzePage = () => {
                 {/* Clients Section */}
                 <section id="clients" ref={clientsRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden' }} className="bg-clients">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '2.5rem', color: '#060112', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Valued Clients</h2>
-                        <p style={{ color: '#475569', marginBottom: '40px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">TRUSTED BY INDUSTRY LEADERS ACROSS INDIA</p>
+                        <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Valued Clients</h2>
+                        <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '40px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">TRUSTED BY INDUSTRY LEADERS ACROSS INDIA</p>
                         <div className="marquee-container scroll-animate slide-up delay-3"><div className="marquee-content">{[...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (<div key={idx} className="client-logo-item" onClick={() => handleTrackClick(client.name, 'client')}><div className="client-logo-img"><img src={client.url} alt={client.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/1a1a2e?text=${client.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{client.name}</h3></div>))}</div></div>
                     </div>
                 </section>
