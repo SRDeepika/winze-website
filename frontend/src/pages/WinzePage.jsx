@@ -1853,28 +1853,25 @@ const WinzePage = () => {
                 /* Card entrance scroll-triggered animations - Cinematic Focal Blur-In & Scale */
                 .scroll-animate {
                     opacity: 0 !important;
-                    filter: blur(15px);
-                    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-                                filter 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-                                transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                                transform 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
                 }
                 .scroll-animate.slide-left {
-                    transform: translateX(-100px) scale(0.92);
+                    transform: translateX(-20px);
                 }
                 .scroll-animate.slide-right {
-                    transform: translateX(100px) scale(0.92);
+                    transform: translateX(20px);
                 }
                 .scroll-animate.slide-up {
-                    transform: translateY(90px) scale(0.92);
+                    transform: translateY(20px);
                 }
                 .scroll-animate.rotate-in {
-                    transform: rotate(-10deg) scale(0.85);
+                    transform: translateY(25px);
                 }
                 
                 /* Trigger active state with custom staggered delays */
                 .scroll-animate.active {
                     opacity: 1 !important;
-                    filter: blur(0) !important;
                     transform: translate(0) rotate(0) scale(1) !important;
                 }
                 
@@ -1938,73 +1935,67 @@ const WinzePage = () => {
                 /* Advanced Running Glowing Border on Hover */
                 .modern-card {
                     border-radius: 20px;
-                    transition: all 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+                    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
                     cursor: pointer;
                     overflow: hidden;
                     height: 100%;
                     display: flex;
                     flex-direction: column;
-                    border: 1px solid rgba(255, 255, 255, 0.12);
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
                     position: relative;
                     z-index: 1;
+                    background: rgba(255, 255, 255, 0.02);
+                    backdrop-filter: blur(5px);
                 }
                 
-                /* Conic rotating border glow */
+                /* Subtle premium background gradient overlay */
                 .modern-card::before {
                     content: '';
                     position: absolute;
-                    top: -50%;
-                    left: -50%;
-                    width: 200%;
-                    height: 200%;
-                    background: conic-gradient(
-                        from 0deg,
-                        transparent 20%,
-                        var(--card-glow, #00E5FF) 40%,
-                        var(--card-glow-2, #00B0FF) 50%,
-                        var(--card-glow, #00E5FF) 60%,
-                        transparent 80%
-                    );
-                    animation: rotateGlow 5s linear infinite;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 100%);
                     z-index: 0;
-                    opacity: 0;
-                    transition: opacity 0.4s ease;
+                    opacity: 1;
+                    transition: all 0.35s ease;
                 }
                 
-                /* Left-to-Right Sweeping Light Ray */
+                /* Fast High-Speed Diagonal Reflex Shimmer */
                 .modern-card::after {
                     content: '';
                     position: absolute;
                     top: 0;
                     left: -150%;
-                    width: 60%;
+                    width: 50%;
                     height: 100%;
                     background: linear-gradient(
-                        to right,
-                        rgba(255, 255, 255, 0) 0%,
-                        var(--card-glow-soft, rgba(0, 229, 255, 0.25)) 50%,
-                        rgba(255, 255, 255, 0) 100%
+                        90deg,
+                        transparent,
+                        rgba(255, 255, 255, 0.16),
+                        transparent
                     );
                     transform: skewX(-25deg);
-                    transition: none;
                     z-index: 5;
                     pointer-events: none;
+                    transition: none;
                 }
                 
                 .modern-card:hover::before {
-                    opacity: 1;
+                    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 100%);
                 }
                 .modern-card:hover::after {
-                    animation: shimmerSweep 1.5s ease-out forwards;
+                    animation: shimmerSweep 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
                 }
                 .modern-card:hover {
-                    transform: translateY(-12px) scale(1.03);
-                    box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 30px var(--card-glow-soft, rgba(0, 229, 255, 0.45));
+                    transform: translateY(-8px);
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 25px var(--card-glow-soft);
                     border-color: var(--card-glow, #00E5FF) !important;
                 }
                 .modern-card:hover .card-inner {
-                    background: radial-gradient(circle at top right, var(--card-glow-soft, rgba(0, 229, 255, 0.16)) 0%, rgba(10, 5, 25, 0.92) 80%) !important;
+                    background: radial-gradient(circle at top right, var(--card-glow-soft, rgba(0, 229, 255, 0.12)) 0%, rgba(8, 4, 25, 0.94) 80%) !important;
                 }
                 
                 /* section h2 tags with glows */
