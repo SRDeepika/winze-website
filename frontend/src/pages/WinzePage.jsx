@@ -1557,7 +1557,7 @@ const WinzePage = () => {
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    opacity: 0.45
+                    opacity: 0.65
                 }}
             >
                 <source src={videoSrc} type="video/mp4" />
@@ -1569,7 +1569,7 @@ const WinzePage = () => {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                background: 'linear-gradient(135deg, rgba(8, 5, 20, 0.92) 0%, rgba(15, 10, 35, 0.82) 50%, rgba(8, 5, 20, 0.95) 100%)',
+                background: 'linear-gradient(135deg, rgba(6, 3, 24, 0.88) 0%, rgba(20, 8, 48, 0.72) 50%, rgba(6, 3, 24, 0.94) 100%)',
                 mixBlendMode: 'multiply'
             }} />
         </div>
@@ -2239,7 +2239,7 @@ const WinzePage = () => {
                 </nav>
 
                 {/* Hero Section */}
-                <section id="home" ref={homeRef} style={{ minHeight: '85vh', position: 'relative', display: 'flex', alignItems: 'center', padding: '80px 5%', overflow: 'hidden' }}>
+                <section id="home" ref={homeRef} style={{ minHeight: '95vh', position: 'relative', display: 'flex', alignItems: 'center', padding: '80px 5%', overflow: 'hidden' }}>
                     <BackgroundVideo videoSrc={bgVideos.hero} fallbackVideo={bgVideos.heroFallback} fallbackImg={bgImages.hero} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '50px', alignItems: 'center' }}>

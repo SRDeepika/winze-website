@@ -123,7 +123,7 @@ const JobsPage = () => {
             margin: '0 auto',
             padding: '60px 5%',
             minHeight: '100vh',
-            background: '#0a0a1a'
+            background: 'radial-gradient(circle at 50% 50%, rgba(0, 191, 165, 0.08) 0%, #020614 100%)'
         },
         header: {
             textAlign: 'center',
@@ -153,18 +153,20 @@ const JobsPage = () => {
             marginTop: '40px'
         },
         jobCard: {
-            background: 'linear-gradient(145deg, #1a0b2e, #2d1b4e)',
+            background: 'rgba(10, 5, 25, 0.45)',
+            backdropFilter: 'blur(25px)',
+            WebkitBackdropFilter: 'blur(25px)',
             borderRadius: '20px',
             padding: '28px',
-            transition: 'all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1)',
+            transition: 'all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
             cursor: 'pointer',
-            border: '1px solid rgba(255,215,0,0.2)',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
+            border: '1px solid rgba(255,215,0,0.15)',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
         },
         jobCardHover: {
             transform: 'translateY(-10px) scale(1.02)',
-            borderColor: 'rgba(255,215,0,0.8)',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(255,215,0,0.2)'
+            borderColor: 'rgba(255,215,0,0.6)',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.6), 0 0 25px rgba(6,182,212,0.3)'
         },
         jobTitle: {
             fontSize: '1.4rem',
@@ -223,15 +225,18 @@ const JobsPage = () => {
             padding: '20px'
         },
         modalContent: {
-            background: 'linear-gradient(145deg, #1a0b2e, #2d1b4e)',
+            background: 'rgba(10, 5, 25, 0.95)',
+            backdropFilter: 'blur(30px)',
+            WebkitBackdropFilter: 'blur(30px)',
             borderRadius: '28px',
             padding: '40px',
             maxWidth: '550px',
             width: '100%',
             position: 'relative',
-            border: '1px solid rgba(255,215,0,0.3)',
+            border: '1px solid rgba(255,215,0,0.35)',
             maxHeight: '85vh',
-            overflow: 'auto'
+            overflow: 'auto',
+            boxShadow: '0 25px 60px rgba(0,0,0,0.8)'
         },
         closeBtn: {
             position: 'absolute',

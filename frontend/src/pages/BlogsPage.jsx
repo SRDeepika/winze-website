@@ -27,7 +27,7 @@ const BlogsPage = () => {
         return (
             <div style={{ 
                 minHeight: '100vh', 
-                background: '#0a0a1a', 
+                background: 'radial-gradient(circle at 50% 50%, rgba(98, 0, 234, 0.12) 0%, #05020c 100%)', 
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center' 
@@ -45,7 +45,7 @@ const BlogsPage = () => {
                 margin: '0 auto', 
                 padding: '60px 20px',
                 minHeight: '100vh',
-                background: '#0a0a1a'
+                background: 'radial-gradient(circle at 50% 50%, rgba(98, 0, 234, 0.12) 0%, #05020c 100%)'
             }}>
                 <h1 style={{ 
                     textAlign: 'center', 
@@ -71,18 +71,25 @@ const BlogsPage = () => {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '30px' }}>
                         {blogs.map(blog => (
                             <div key={blog.id} style={{ 
-                                background: 'linear-gradient(145deg, #1a0b2e, #2d1b4e)',
+                                background: 'rgba(10, 5, 25, 0.45)',
+                                backdropFilter: 'blur(25px)',
+                                WebkitBackdropFilter: 'blur(25px)',
                                 borderRadius: '20px', 
                                 overflow: 'hidden',
-                                border: '1px solid rgba(255,215,0,0.2)',
-                                transition: 'transform 0.3s ease',
+                                border: '1px solid rgba(255,215,0,0.15)',
+                                boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                                transition: 'all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
                                 cursor: 'pointer'
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = 'translateY(-10px)';
+                                e.currentTarget.style.transform = 'translateY(-10px) scale(1.02)';
+                                e.currentTarget.style.borderColor = 'rgba(255,215,0,0.6)';
+                                e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.6), 0 0 25px rgba(168,85,247,0.3)';
                             }}
                             onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                                e.currentTarget.style.borderColor = 'rgba(255,215,0,0.15)';
+                                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
                             }}
                             onClick={() => window.location.href = `/blog/${blog.slug}`}
                             >
