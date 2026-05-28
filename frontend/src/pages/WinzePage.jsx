@@ -1004,40 +1004,82 @@ const WinzePage = () => {
         { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients, and 16+ years of excellence." }
     ];
 
-    // Enhanced Royal Card Gradients with majestic section-specific royal jewel tones
-    const getCardGradient = (index, type) => {
-        const royalGradients = {
-            // Delivery Section: Majestic Imperial Amethyst (Purples & Violets)
-            delivery: [
-                'linear-gradient(135deg, #1c0033 0%, #3a0066 50%, #590099 100%)',
-                'linear-gradient(135deg, #240040 0%, #460080 50%, #6b00b3 100%)',
-                'linear-gradient(135deg, #19002d 0%, #330059 50%, #52008c 100%)'
-            ],
-            // Solutions Portfolio Section: Majestic Cobalt Sapphire (Royal Blues & Cobalts)
-            solution: [
-                'linear-gradient(135deg, #001133 0%, #002266 50%, #003399 100%)',
-                'linear-gradient(135deg, #001a4d 0%, #003399 50%, #004dd6 100%)',
-                'linear-gradient(135deg, #000d26 0%, #001a4d 50%, #002db3 100%)'
-            ],
-            // Industries We Serve Section: Majestic Jade Emerald (Deep Greens & Jades)
-            industry: [
-                'linear-gradient(135deg, #001a0d 0%, #00331a 50%, #004d26 100%)',
-                'linear-gradient(135deg, #002613 0%, #004d26 50%, #007339 100%)',
-                'linear-gradient(135deg, #00130a 0%, #002613 50%, #003a1d 100%)'
-            ],
-            // Why Work With Winze Section: Majestic Ruby Crimson (Wine Burgundies & Crimson Glows)
-            work: [
-                'linear-gradient(135deg, #26000b 0%, #4d0016 50%, #730021 100%)',
-                'linear-gradient(135deg, #33000f 0%, #66001e 50%, #99002d 100%)',
-                'linear-gradient(135deg, #1a0008 0%, #33000f 50%, #4d0016 100%)'
-            ]
+    // Enhanced Jewel Spectrum Card Styles with distinct vibrant color mapping per card
+    const getCardStyles = (index, sectionType) => {
+        // Define a beautiful spectrum of bright jewel gradient colors!
+        const spectrum = [
+            // 0: Electric Cyan / Aqua Glow
+            {
+                gradient: 'linear-gradient(135deg, #00E5FF 0%, #00B0FF 100%)',
+                glow: '#00E5FF',
+                glow2: '#00B0FF',
+                glowSoft: 'rgba(0, 229, 255, 0.22)'
+            },
+            // 1: Electric Amethyst Purple Glow
+            {
+                gradient: 'linear-gradient(135deg, #7C4DFF 0%, #E040FB 100%)',
+                glow: '#7C4DFF',
+                glow2: '#E040FB',
+                glowSoft: 'rgba(124, 77, 255, 0.22)'
+            },
+            // 2: Vivid Emerald Green Glow
+            {
+                gradient: 'linear-gradient(135deg, #00E676 0%, #B2FF59 100%)',
+                glow: '#00E676',
+                glow2: '#B2FF59',
+                glowSoft: 'rgba(0, 230, 118, 0.22)'
+            },
+            // 3: Glowing Sunset Rose Glow
+            {
+                gradient: 'linear-gradient(135deg, #FF1744 0%, #FF9100 100%)',
+                glow: '#FF1744',
+                glow2: '#FF9100',
+                glowSoft: 'rgba(255, 23, 68, 0.22)'
+            },
+            // 4: Oceanic Sapphire Glow
+            {
+                gradient: 'linear-gradient(135deg, #2979FF 0%, #00E5FF 100%)',
+                glow: '#2979FF',
+                glow2: '#00E5FF',
+                glowSoft: 'rgba(41, 121, 255, 0.22)'
+            },
+            // 5: Neon Sunfire Glow
+            {
+                gradient: 'linear-gradient(135deg, #FF9100 0%, #FF3D00 100%)',
+                glow: '#FF9100',
+                glow2: '#FF3D00',
+                glowSoft: 'rgba(255, 145, 0, 0.22)'
+            },
+            // 6: Deep Cybermint Glow
+            {
+                gradient: 'linear-gradient(135deg, #00B0FF 0%, #00E676 100%)',
+                glow: '#00B0FF',
+                glow2: '#00E676',
+                glowSoft: 'rgba(0, 176, 255, 0.22)'
+            },
+            // 7: Bright Coral Purple Glow
+            {
+                gradient: 'linear-gradient(135deg, #E040FB 0%, #FF1744 100%)',
+                glow: '#E040FB',
+                glow2: '#FF1744',
+                glowSoft: 'rgba(224, 64, 251, 0.22)'
+            }
+        ];
+
+        // Shift index based on sectionType so that sections look distinct and unique!
+        let offset = 0;
+        if (sectionType === 'delivery') offset = 0;
+        else if (sectionType === 'solution') offset = 2;
+        else if (sectionType === 'industry') offset = 4;
+        else if (sectionType === 'work') offset = 6;
+
+        const theme = spectrum[(index + offset) % spectrum.length];
+        return {
+            '--card-glow': theme.glow,
+            '--card-glow-2': theme.glow2,
+            '--card-glow-soft': theme.glowSoft,
+            background: theme.gradient
         };
-        
-        if (type === 'delivery') return royalGradients.delivery[index % royalGradients.delivery.length];
-        if (type === 'solution') return royalGradients.solution[index % royalGradients.solution.length];
-        if (type === 'industry') return royalGradients.industry[index % royalGradients.industry.length];
-        if (type === 'work') return royalGradients.work[index % royalGradients.work.length];
-        return 'linear-gradient(135deg, #1c0033, #3a0066, #590099)';
     };
 
     // Updated Landing Page Modal Component
@@ -1120,11 +1162,11 @@ const WinzePage = () => {
                         padding: '20px 40px 0 0'
                     }}>
                         <button onClick={onClose} style={{
-                            background: '#FFD700',
+                            background: '#00E5FF',
                             border: 'none',
                             fontSize: '24px',
                             cursor: 'pointer',
-                            color: '#1a1a2e',
+                            color: '#05020c',
                             width: '48px',
                             height: '48px',
                             borderRadius: '50%',
@@ -1138,7 +1180,7 @@ const WinzePage = () => {
                         }}
                         onMouseLeave={(e) => {
                             e.target.style.transform = 'scale(1)';
-                            e.target.style.background = '#FFD700';
+                            e.target.style.background = '#00E5FF';
                         }}>
                             ×
                         </button>
@@ -1186,14 +1228,14 @@ const WinzePage = () => {
                         width: '100%'
                     }}>
                         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '70px', color: '#FFD700', marginBottom: '20px' }} />
+                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '70px', color: '#00E5FF', marginBottom: '20px' }} />
                             <h1 style={{ color: 'white', marginBottom: '20px', fontSize: '48px', fontWeight: '800', fontFamily: "'Playfair Display', serif" }}>
                                 {item.title || item.name}
                             </h1>
                             <div style={{ 
                                 width: '80px', 
                                 height: '4px', 
-                                background: '#FFD700', 
+                                background: '#00E5FF', 
                                 margin: '0 auto 25px',
                                 borderRadius: '2px'
                             }} />
@@ -1205,11 +1247,11 @@ const WinzePage = () => {
                         {content && content.benefits && (
                             <div style={{ marginBottom: '50px' }}>
                                 <h2 style={{ 
-                                    color: '#FFD700', 
+                                    color: '#00E5FF', 
                                     marginBottom: '30px', 
                                     fontSize: '32px',
                                     fontWeight: '700',
-                                    borderLeft: '4px solid #FFD700',
+                                    borderLeft: '4px solid #00E5FF',
                                     paddingLeft: '20px'
                                 }}>
                                     Key Benefits
@@ -1228,7 +1270,7 @@ const WinzePage = () => {
                                         onMouseEnter={(e) => e.currentTarget.style.transform = 'translateX(5px)'}
                                         onMouseLeave={(e) => e.currentTarget.style.transform = 'translateX(0)'}
                                         >
-                                            <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#FFD700', fontSize: '22px', minWidth: '24px' }} />
+                                            <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#00E5FF', fontSize: '22px', minWidth: '24px' }} />
                                             <span style={{ color: '#eee', fontSize: '15px', lineHeight: '1.5' }}>{benefit}</span>
                                         </div>
                                     ))}
@@ -1239,11 +1281,11 @@ const WinzePage = () => {
                         {content && content.features && (
                             <div style={{ marginBottom: '50px' }}>
                                 <h2 style={{ 
-                                    color: '#FFD700', 
+                                    color: '#00E5FF', 
                                     marginBottom: '30px', 
                                     fontSize: '32px',
                                     fontWeight: '700',
-                                    borderLeft: '4px solid #FFD700',
+                                    borderLeft: '4px solid #00E5FF',
                                     paddingLeft: '20px'
                                 }}>
                                     Key Features
@@ -1257,19 +1299,19 @@ const WinzePage = () => {
                                             padding: '18px', 
                                             background: 'rgba(255,255,255,0.05)', 
                                             borderRadius: '16px',
-                                            border: '1px solid rgba(255,215,0,0.15)',
+                                            border: '1px solid rgba(0,229,255,0.15)',
                                             transition: 'all 0.3s ease'
                                         }}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.background = 'rgba(255,215,0,0.1)';
-                                            e.currentTarget.style.borderColor = 'rgba(255,215,0,0.4)';
+                                            e.currentTarget.style.background = 'rgba(0,229,255,0.1)';
+                                            e.currentTarget.style.borderColor = 'rgba(0,229,255,0.4)';
                                         }}
                                         onMouseLeave={(e) => {
                                             e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-                                            e.currentTarget.style.borderColor = 'rgba(255,215,0,0.15)';
+                                            e.currentTarget.style.borderColor = 'rgba(0,229,255,0.15)';
                                         }}
                                         >
-                                            <FontAwesomeIcon icon={faStar} style={{ color: '#FFD700', fontSize: '20px', minWidth: '22px' }} />
+                                            <FontAwesomeIcon icon={faStar} style={{ color: '#00E5FF', fontSize: '20px', minWidth: '22px' }} />
                                             <span style={{ color: '#ddd', fontSize: '15px' }}>{feature}</span>
                                         </div>
                                     ))}
@@ -1280,11 +1322,11 @@ const WinzePage = () => {
                         {content && content.useCases && (
                             <div style={{ marginBottom: '60px' }}>
                                 <h2 style={{ 
-                                    color: '#FFD700', 
+                                    color: '#00E5FF', 
                                     marginBottom: '30px', 
                                     fontSize: '32px',
                                     fontWeight: '700',
-                                    borderLeft: '4px solid #FFD700',
+                                    borderLeft: '4px solid #00E5FF',
                                     paddingLeft: '20px'
                                 }}>
                                     Use Cases
@@ -1292,13 +1334,13 @@ const WinzePage = () => {
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
                                     {content.useCases.map((useCase, idx) => (
                                         <span key={idx} style={{ 
-                                            background: 'linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,165,0,0.15))',
-                                            color: '#FFD700',
+                                            background: 'linear-gradient(135deg, rgba(0,229,255,0.2), rgba(0,176,255,0.15))',
+                                            color: '#00E5FF',
                                             padding: '10px 24px',
                                             borderRadius: '40px',
                                             fontSize: '15px',
                                             fontWeight: '500',
-                                            border: '1px solid rgba(255,215,0,0.3)'
+                                            border: '1px solid rgba(0,229,255,0.3)'
                                         }}>
                                             {useCase}
                                         </span>
@@ -1312,11 +1354,11 @@ const WinzePage = () => {
                                 textAlign: 'center', 
                                 marginTop: '40px', 
                                 padding: '50px 40px', 
-                                background: 'linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,165,0,0.05))',
+                                background: 'linear-gradient(135deg, rgba(0,229,255,0.1), rgba(0,176,255,0.05))',
                                 borderRadius: '24px',
-                                border: '1px solid rgba(255,215,0,0.2)'
+                                border: '1px solid rgba(0,229,255,0.2)'
                             }}>
-                                <h3 style={{ color: '#FFD700', marginBottom: '15px', fontSize: '28px', fontWeight: '700' }}>
+                                <h3 style={{ color: '#00E5FF', marginBottom: '15px', fontSize: '28px', fontWeight: '700' }}>
                                     Ready to get started with {item.title || item.name}?
                                 </h3>
                                 <p style={{ color: 'rgba(255,255,255,0.85)', marginBottom: '30px', fontSize: '16px', maxWidth: '600px', margin: '0 auto 30px' }}>
@@ -1326,23 +1368,23 @@ const WinzePage = () => {
                                     onClick={() => setShowInnerQuoteForm(true)}
                                     style={{
                                         padding: '16px 50px',
-                                        background: '#FFD700',
-                                        color: '#1a1a2e',
+                                        background: '#00E5FF',
+                                        color: '#05020c',
                                         border: 'none',
                                         borderRadius: '50px',
                                         cursor: 'pointer',
                                         fontSize: '18px',
                                         fontWeight: '700',
                                         transition: 'all 0.3s ease',
-                                        boxShadow: '0 4px 15px rgba(255,215,0,0.3)'
+                                        boxShadow: '0 4px 15px rgba(0,229,255,0.3)'
                                     }}
                                     onMouseEnter={(e) => {
                                         e.target.style.transform = 'scale(1.05)';
-                                        e.target.style.boxShadow = '0 8px 25px rgba(255,215,0,0.5)';
+                                        e.target.style.boxShadow = '0 8px 25px rgba(0,229,255,0.5)';
                                     }}
                                     onMouseLeave={(e) => {
                                         e.target.style.transform = 'scale(1)';
-                                        e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.3)';
+                                        e.target.style.boxShadow = '0 4px 15px rgba(0,229,255,0.3)';
                                     }}
                                 >
                                     Request a Quote for {item.title || item.name} →
@@ -1355,12 +1397,12 @@ const WinzePage = () => {
                                 background: 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(0,0,0,0.3))',
                                 borderRadius: '28px',
                                 backdropFilter: 'blur(10px)',
-                                border: '1px solid rgba(255,215,0,0.3)',
+                                border: '1px solid rgba(0,229,255,0.3)',
                                 maxWidth: '700px',
                                 margin: '40px auto 0'
                             }}>
-                                <h3 style={{ color: '#FFD700', marginBottom: '25px', textAlign: 'center', fontSize: '28px', fontWeight: '700' }}>
-                                    Request a Quote for <span style={{ color: '#FFD700' }}>{item.title || item.name}</span>
+                                <h3 style={{ color: '#00E5FF', marginBottom: '25px', textAlign: 'center', fontSize: '28px', fontWeight: '700' }}>
+                                    Request a Quote for <span style={{ color: '#00E5FF' }}>{item.title || item.name}</span>
                                 </h3>
                                 <form onSubmit={handleInnerSubmit}>
                                     <input 
@@ -1375,7 +1417,7 @@ const WinzePage = () => {
                                             padding: '16px', 
                                             marginBottom: '18px', 
                                             borderRadius: '14px', 
-                                            border: '1px solid rgba(255,215,0,0.3)',
+                                            border: '1px solid rgba(0,229,255,0.3)',
                                             background: 'rgba(255,255,255,0.1)',
                                             color: 'white',
                                             fontSize: '16px',
@@ -1465,8 +1507,8 @@ const WinzePage = () => {
                                             style={{
                                                 flex: 1,
                                                 padding: '14px',
-                                                background: '#FFD700',
-                                                color: '#1a1a2e',
+                                                background: '#00E5FF',
+                                                color: '#05020c',
                                                 border: 'none',
                                                 borderRadius: '14px',
                                                 cursor: 'pointer',
@@ -1476,7 +1518,7 @@ const WinzePage = () => {
                                             }}
                                             onMouseEnter={(e) => {
                                                 e.target.style.transform = 'scale(1.02)';
-                                                e.target.style.boxShadow = '0 4px 15px rgba(255,215,0,0.4)';
+                                                e.target.style.boxShadow = '0 4px 15px rgba(0,229,255,0.4)';
                                             }}
                                             onMouseLeave={(e) => {
                                                 e.target.style.transform = 'scale(1)';
@@ -1623,8 +1665,8 @@ const WinzePage = () => {
                     100% { left: 150%; }
                 }
                 @keyframes titlePulse {
-                    0%, 100% { filter: drop-shadow(0 2px 10px rgba(255, 215, 0, 0.25)); }
-                    50% { filter: drop-shadow(0 2px 25px rgba(255, 215, 0, 0.5)); }
+                    0%, 100% { filter: drop-shadow(0 2px 10px rgba(0, 229, 255, 0.25)); }
+                    50% { filter: drop-shadow(0 2px 25px rgba(0, 229, 255, 0.5)); }
                 }
                 
                 /* Card entrance scroll-triggered animations */
@@ -1678,7 +1720,7 @@ const WinzePage = () => {
                     right: 30px;
                     width: 50px;
                     height: 50px;
-                    background: linear-gradient(135deg, #FFD700, #FFA500);
+                    background: linear-gradient(135deg, #00E5FF, #7C4DFF);
                     border: none;
                     border-radius: 50%;
                     cursor: pointer;
@@ -1687,7 +1729,7 @@ const WinzePage = () => {
                     justify-content: center;
                     z-index: 999;
                     transition: all 0.3s ease;
-                    box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+                    box-shadow: 0 4px 15px rgba(0,229,255,0.3);
                     animation: bounce 2s ease-in-out infinite;
                 }
                 
@@ -1713,6 +1755,7 @@ const WinzePage = () => {
                 }
                 
                 /* Advanced Running Glowing Border on Hover */
+                /* Advanced Running Glowing Border on Hover */
                 .modern-card {
                     border-radius: 20px;
                     transition: all 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -1721,7 +1764,7 @@ const WinzePage = () => {
                     height: 100%;
                     display: flex;
                     flex-direction: column;
-                    border: 1px solid rgba(255, 215, 0, 0.15);
+                    border: 1px solid rgba(255, 255, 255, 0.12);
                     box-shadow: 0 10px 30px rgba(0,0,0,0.4);
                     position: relative;
                     z-index: 1;
@@ -1738,57 +1781,15 @@ const WinzePage = () => {
                     background: conic-gradient(
                         from 0deg,
                         transparent 20%,
-                        #FFD700 40%,
-                        #FFA500 50%,
-                        #FFD700 60%,
+                        var(--card-glow, #00E5FF) 40%,
+                        var(--card-glow-2, #00B0FF) 50%,
+                        var(--card-glow, #00E5FF) 60%,
                         transparent 80%
                     );
                     animation: rotateGlow 5s linear infinite;
                     z-index: 0;
                     opacity: 0;
                     transition: opacity 0.4s ease;
-                }
-                
-                /* Section-specific border colors */
-                .bg-delivery .modern-card::before {
-                    background: conic-gradient(
-                        from 0deg,
-                        transparent 20%,
-                        #a855f7 40%,
-                        #ec4899 50%,
-                        #a855f7 60%,
-                        transparent 80%
-                    );
-                }
-                .bg-solutions .modern-card::before {
-                    background: conic-gradient(
-                        from 0deg,
-                        transparent 20%,
-                        #06b6d4 40%,
-                        #eab308 50%,
-                        #06b6d4 60%,
-                        transparent 80%
-                    );
-                }
-                .bg-industries .modern-card::before {
-                    background: conic-gradient(
-                        from 0deg,
-                        transparent 20%,
-                        #00e673 40%,
-                        #007339 50%,
-                        #00e673 60%,
-                        transparent 80%
-                    );
-                }
-                .bg-work .modern-card::before {
-                    background: conic-gradient(
-                        from 0deg,
-                        transparent 20%,
-                        #ff0055 40%,
-                        #99002d 50%,
-                        #ff0055 60%,
-                        transparent 80%
-                    );
                 }
                 
                 /* Left-to-Right Sweeping Light Ray */
@@ -1802,7 +1803,7 @@ const WinzePage = () => {
                     background: linear-gradient(
                         to right,
                         rgba(255, 255, 255, 0) 0%,
-                        rgba(255, 215, 0, 0.25) 50%,
+                        var(--card-glow-soft, rgba(0, 229, 255, 0.25)) 50%,
                         rgba(255, 255, 255, 0) 100%
                     );
                     transform: skewX(-25deg);
@@ -1819,42 +1820,21 @@ const WinzePage = () => {
                 }
                 .modern-card:hover {
                     transform: translateY(-12px) scale(1.03);
-                    box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-                    border-color: rgba(255, 215, 0, 0.45) !important;
+                    box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 30px var(--card-glow-soft, rgba(0, 229, 255, 0.45));
+                    border-color: var(--card-glow, #00E5FF) !important;
                 }
-                .bg-delivery .modern-card:hover {
-                    box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 35px rgba(168, 85, 247, 0.45);
-                }
-                .bg-delivery .modern-card:hover .card-inner {
-                    background: radial-gradient(circle at top right, rgba(168, 85, 247, 0.16) 0%, rgba(10, 5, 25, 0.9) 80%) !important;
-                }
-                .bg-solutions .modern-card:hover {
-                    box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 35px rgba(6, 182, 212, 0.45);
-                }
-                .bg-solutions .modern-card:hover .card-inner {
-                    background: radial-gradient(circle at top right, rgba(6, 182, 212, 0.16) 0%, rgba(10, 5, 25, 0.9) 80%) !important;
-                }
-                .bg-industries .modern-card:hover {
-                    box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 35px rgba(0, 230, 115, 0.45);
-                }
-                .bg-industries .modern-card:hover .card-inner {
-                    background: radial-gradient(circle at top right, rgba(0, 230, 115, 0.16) 0%, rgba(10, 5, 25, 0.9) 80%) !important;
-                }
-                .bg-work .modern-card:hover {
-                    box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 35px rgba(236, 72, 153, 0.45);
-                }
-                .bg-work .modern-card:hover .card-inner {
-                    background: radial-gradient(circle at top right, rgba(236, 72, 153, 0.16) 0%, rgba(10, 5, 25, 0.9) 80%) !important;
+                .modern-card:hover .card-inner {
+                    background: radial-gradient(circle at top right, var(--card-glow-soft, rgba(0, 229, 255, 0.16)) 0%, rgba(10, 5, 25, 0.92) 80%) !important;
                 }
                 
                 /* section h2 tags with glows */
                 h2 {
-                    text-shadow: 0 0 15px rgba(255,215,0,0.25);
+                    text-shadow: 0 0 15px rgba(0,229,255,0.25);
                 }
                 
                 /* Beautiful metallic header title */
                 .hero-title {
-                    background: linear-gradient(135deg, #FFF5C3 0%, #FFD700 45%, #FFA500 55%, #E6C200 100%);
+                    background: linear-gradient(135deg, #E0F7FA 0%, #00E5FF 45%, #7C4DFF 75%, #00B0FF 100%);
                     -webkit-background-clip: text;
                     -webkit-text-fill-color: transparent;
                     display: inline-block;
@@ -1881,7 +1861,7 @@ const WinzePage = () => {
                 }
                 .btn-consultation-glow:hover {
                     transform: translateY(-4px) scale(1.03) !important;
-                    box-shadow: 0 15px 35px rgba(255, 215, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.25) !important;
+                    box-shadow: 0 15px 35px rgba(0, 229, 255, 0.45), 0 0 20px rgba(0, 229, 255, 0.3) !important;
                 }
                 
                 /* Smooth Scroll Behavior */
@@ -1911,7 +1891,7 @@ const WinzePage = () => {
                 }
                 .logo-image:hover {
                     transform: rotate(5deg) scale(1.05);
-                    filter: drop-shadow(0 0 10px rgba(255,215,0,0.5));
+                    filter: drop-shadow(0 0 10px rgba(0,229,255,0.5));
                 }
                 
                 .logo-clean {
@@ -1951,11 +1931,11 @@ const WinzePage = () => {
                 }
                 .modern-card:hover .card-inner {
                     background: rgba(5, 2, 15, 0.25);
-                    border-color: rgba(255, 215, 0, 0.25);
+                    border-color: var(--card-glow, rgba(0, 229, 255, 0.35));
                 }
                 .extra-points {
                     margin-top: 20px;
-                    border-top: 1px solid rgba(255,215,0,0.15);
+                    border-top: 1px solid rgba(0, 229, 255, 0.15);
                     padding-top: 16px;
                 }
                 .point-item {
@@ -1982,7 +1962,7 @@ const WinzePage = () => {
                     cursor: pointer;
                     width: fit-content;
                     margin-top: 20px;
-                    color: #FFD700;
+                    color: #00E5FF;
                     position: relative;
                     overflow: hidden;
                     z-index: 3;
@@ -2001,11 +1981,11 @@ const WinzePage = () => {
                     left: 100%;
                 }
                 .btn-learn:hover {
-                    background: #FFD700;
-                    color: #1a1a2e;
-                    border-color: #FFD700;
+                    background: #00E5FF;
+                    color: #05020c;
+                    border-color: #00E5FF;
                     transform: scale(1.05);
-                    box-shadow: 0 0 20px rgba(255,215,0,0.5);
+                    box-shadow: 0 0 20px rgba(0,229,255,0.5);
                 }
                 .client-logo-item, .partner-logo-item {
                     background: white; 
@@ -2028,7 +2008,7 @@ const WinzePage = () => {
                     left: -100%;
                     width: 100%;
                     height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.2), transparent);
+                    background: linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent);
                     transition: left 0.5s ease;
                 }
                 .client-logo-item:hover::before, .partner-logo-item:hover::before {
@@ -2037,10 +2017,10 @@ const WinzePage = () => {
                 .client-logo-item:hover, .partner-logo-item:hover { 
                     transform: translateY(-8px) scale(1.03); 
                     box-shadow: 0 20px 35px rgba(0,0,0,0.2); 
-                    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); 
-                    border-color: #FFD700;
+                    background: linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%); 
+                    border-color: #00E5FF;
                 }
-                .client-logo-item:hover h3, .partner-logo-item:hover h3 { color: #1a1a2e; }
+                .client-logo-item:hover h3, .partner-logo-item:hover h3 { color: #ffffff; }
                 .client-logo-img, .partner-logo-img { width: 80px; height: 80px; margin: 0 auto 12px; display: flex; align-items: center; justifyContent: center; }
                 .client-logo-img img, .partner-logo-img img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s ease; }
                 .client-logo-item:hover img, .partner-logo-item:hover img { transform: scale(1.1); }
@@ -2103,9 +2083,9 @@ const WinzePage = () => {
                     left: 20%;
                     width: 0%;
                     height: 2px;
-                    background: linear-gradient(90deg, #FFD700, #FFA500);
+                    background: linear-gradient(90deg, #00E5FF, #7C4DFF);
                     transition: width 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), left 0.35s ease;
-                    box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+                    box-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
                 }
                 .nav-button:hover::after {
                     width: 60%;
@@ -2113,13 +2093,13 @@ const WinzePage = () => {
                 }
                 .nav-button:hover {
                     background: rgba(255, 255, 255, 0.07);
-                    color: #FFD700 !important;
+                    color: #00E5FF !important;
                     transform: translateY(-1px);
                 }
                 
                 .quote-button {
-                    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-                    color: #4a0e4e;
+                    background: linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%);
+                    color: #ffffff;
                     border: none;
                     padding: 10px 28px;
                     border-radius: 40px;
@@ -2127,7 +2107,7 @@ const WinzePage = () => {
                     font-weight: 700;
                     transition: all 0.4s ease;
                     font-family: 'Poppins', sans-serif;
-                    box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+                    box-shadow: 0 4px 15px rgba(0,229,255,0.3);
                     position: relative;
                     overflow: hidden;
                 }
@@ -2146,17 +2126,17 @@ const WinzePage = () => {
                 }
                 .quote-button:hover {
                     transform: translateY(-2px);
-                    box-shadow: 0 8px 25px rgba(255,215,0,0.5);
-                    background: linear-gradient(135deg, #FFE44D 0%, #FFB347 100%);
+                    box-shadow: 0 8px 25px rgba(0,229,255,0.5);
+                    background: linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%);
                 }
                 
                 /* Section background gradients - Cyber-Mystic Deep Radial Gradients */
-                .bg-delivery { background: radial-gradient(circle at 10% 20%, rgba(98, 0, 234, 0.18) 0%, transparent 60%), radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.14) 0%, #04020c 100%); }
-                .bg-solutions { background: radial-gradient(circle at 20% 80%, rgba(0, 191, 165, 0.18) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(41, 121, 255, 0.14) 0%, #020614 100%); }
-                .bg-industries { background: radial-gradient(circle at 15% 30%, rgba(0, 200, 83, 0.18) 0%, transparent 60%), radial-gradient(circle at 85% 70%, rgba(255, 215, 0, 0.12) 0%, #010a06 100%); }
-                .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.08) 0%, transparent 70%), #030107; }
-                .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.08) 0%, transparent 70%), #01030b; }
-                .bg-work { background: radial-gradient(circle at 85% 15%, rgba(255, 0, 127, 0.18) 0%, transparent 60%), radial-gradient(circle at 15% 85%, rgba(101, 31, 255, 0.14) 0%, #0d0108 100%); }
+                .bg-delivery { background: radial-gradient(circle at 10% 20%, rgba(98, 0, 234, 0.28) 0%, transparent 65%), radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.24) 0%, #03010b 100%); }
+                .bg-solutions { background: radial-gradient(circle at 20% 80%, rgba(0, 191, 165, 0.26) 0%, transparent 65%), radial-gradient(circle at 80% 20%, rgba(41, 121, 255, 0.24) 0%, #010410 100%); }
+                .bg-industries { background: radial-gradient(circle at 15% 30%, rgba(0, 230, 118, 0.26) 0%, transparent 65%), radial-gradient(circle at 85% 70%, rgba(0, 229, 255, 0.24) 0%, #010805 100%); }
+                .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.16) 0%, transparent 70%), #04010a; }
+                .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.16) 0%, transparent 70%), #01030b; }
+                .bg-work { background: radial-gradient(circle at 85% 15%, rgba(255, 23, 68, 0.28) 0%, transparent 65%), radial-gradient(circle at 15% 85%, rgba(101, 31, 255, 0.24) 0%, #060107 100%); }
             `}</style>
             
             <SEO 
@@ -2191,18 +2171,18 @@ const WinzePage = () => {
                     padding: '12px 5%',
                     zIndex: 1000,
                     transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                    boxShadow: scrolled ? '0 10px 40px rgba(0,0,0,0.8), inset 0 -1px 0 rgba(255, 215, 0, 0.12)' : 'none',
-                    borderBottom: scrolled ? '1px solid rgba(255, 215, 0, 0.5)' : '1px solid rgba(255, 255, 255, 0.08)'
+                    boxShadow: scrolled ? '0 10px 40px rgba(0,0,0,0.8), inset 0 -1px 0 rgba(0, 229, 255, 0.12)' : 'none',
+                    borderBottom: scrolled ? '1px solid rgba(0, 229, 255, 0.5)' : '1px solid rgba(255, 255, 255, 0.08)'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
                         <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
                             <img src="/images/winze-logo.jpg" alt="Winze Technologies Logo" className="logo-image" 
                                 onError={(e) => {
                                     e.target.onerror = null;
-                                    e.target.src = "https://placehold.co/48x48/FFD700/4a0e4e?text=W";
+                                    e.target.src = "https://placehold.co/48x48/00E5FF/05020c?text=W";
                                 }} 
                             />
-                            <span style={{ fontWeight: '800', fontSize: '1.4rem', color: '#FFD700', fontFamily: "'Playfair Display', serif", letterSpacing: '-0.5px' }}>Winze Technologies</span>
+                            <span style={{ fontWeight: '800', fontSize: '1.4rem', color: '#ffffff', textShadow: '0 0 10px rgba(0, 229, 255, 0.5)', fontFamily: "'Playfair Display', serif", letterSpacing: '-0.5px' }}>Winze Technologies</span>
                         </div>
                         
                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -2245,32 +2225,32 @@ const WinzePage = () => {
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '50px', alignItems: 'center' }}>
                             <div className="slide-left delay-1">
                                 <div style={{ marginBottom: '20px' }}>
-                                    <span style={{ background: 'rgba(255,215,0,0.15)', padding: '5px 16px', borderRadius: '30px', fontSize: '12px', color: '#FFD700', display: 'inline-block', fontWeight: '600', letterSpacing: '1px', animation: 'neonGlow 2s infinite' }}>16+ YEARS OF EXCELLENCE</span>
+                                    <span style={{ background: 'rgba(0, 229, 255, 0.15)', padding: '5px 16px', borderRadius: '30px', fontSize: '12px', color: '#00E5FF', display: 'inline-block', fontWeight: '600', letterSpacing: '1px', animation: 'neonGlow 2s infinite' }}>16+ YEARS OF EXCELLENCE</span>
                                     <h1 className="hero-title" style={{ fontSize: '2.8rem', marginTop: '20px', fontFamily: "'Playfair Display', serif", fontWeight: '700', marginBottom: '20px', lineHeight: '1.2' }}>Winze Technologies</h1>
                                 </div>
                                 <p style={{ fontSize: '1.1rem', marginBottom: '20px', color: '#ddd', lineHeight: '1.7' }}>Leading Enterprise Communication, Security, and AI Technology Solutions Provider</p>
                                 <p style={{ marginBottom: '30px', color: '#aaa', lineHeight: '1.7' }}>With over 16 years of industry experience, Winze Technologies specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.</p>
                                 
                                 <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-                                    <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} className="btn-consultation-glow" style={{ background: 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)', color: '#4a0e4e', border: 'none', padding: '14px 40px', borderRadius: '50px', fontSize: '15px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 8px 25px rgba(255,215,0,0.3)' }}>Get Free Consultation →</button>
-                                    <button onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} style={{ background: 'transparent', color: '#FFD700', border: '2px solid #FFD700', padding: '12px 35px', borderRadius: '50px', fontSize: '15px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.4s ease' }}
-                                    onMouseEnter={(e) => { e.target.style.background = 'rgba(255,215,0,0.15)'; e.target.style.transform = 'translateY(-4px)'; e.target.style.boxShadow = '0 0 15px rgba(255, 215, 0, 0.3)'; }}
+                                    <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} className="btn-consultation-glow" style={{ background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)', color: '#ffffff', border: 'none', padding: '14px 40px', borderRadius: '50px', fontSize: '15px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,229,255,0.3)' }}>Get Free Consultation →</button>
+                                    <button onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} style={{ background: 'transparent', color: '#00E5FF', border: '2px solid #00E5FF', padding: '12px 35px', borderRadius: '50px', fontSize: '15px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.4s ease' }}
+                                    onMouseEnter={(e) => { e.target.style.background = 'rgba(0,229,255,0.15)'; e.target.style.transform = 'translateY(-4px)'; e.target.style.boxShadow = '0 0 15px rgba(0, 229, 255, 0.3)'; }}
                                     onMouseLeave={(e) => { e.target.style.background = 'transparent'; e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}>Explore Solutions</button>
                                 </div>
                             </div>
-
+ 
                             <div className="slide-right delay-1" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 <div style={{ 
                                     transition: 'all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)', 
                                     cursor: 'pointer', 
-                                    background: 'linear-gradient(135deg, rgba(255,215,0,0.4), rgba(255,165,0,0.1))', 
+                                    background: 'linear-gradient(135deg, rgba(0,229,255,0.4), rgba(124,77,255,0.1))', 
                                     padding: '3px', 
                                     borderRadius: '24px',
                                     boxShadow: '0 15px 35px rgba(0,0,0,0.4)'
                                 }}
                                     onMouseEnter={(e) => { 
                                         e.currentTarget.style.transform = 'translateY(-8px) rotate(1deg)'; 
-                                        e.currentTarget.style.boxShadow = '0 25px 50px rgba(0,0,0,0.6), 0 0 25px rgba(255,215,0,0.3)'; 
+                                        e.currentTarget.style.boxShadow = '0 25px 50px rgba(0,0,0,0.6), 0 0 25px rgba(0,229,255,0.3)'; 
                                     }}
                                     onMouseLeave={(e) => { 
                                         e.currentTarget.style.transform = 'translateY(0) rotate(0)'; 
@@ -2287,24 +2267,24 @@ const WinzePage = () => {
                 <section id="delivery" style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-delivery">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">What We Deliver</h2>
-                        <p style={{ textAlign: 'center', color: '#FFD700', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">COMPREHENSIVE TECHNOLOGY LIFECYCLE</p>
+                        <p style={{ textAlign: 'center', color: '#00E5FF', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">COMPREHENSIVE TECHNOLOGY LIFECYCLE</p>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(330px, 1fr))', gap: '30px' }}>
                             {deliveryItems.map((item, i) => {
                                 const extraPoints = getDeliveryExtraPoints(item.title);
                                 const floatClass = `float-${(i % 4) + 1}`;
                                 return (
-                                    <div key={i} className={`modern-card ${floatClass} scroll-animate slide-up delay-${Math.min(i + 3, 8)}`} style={{ background: getCardGradient(i, 'delivery') }}>
+                                    <div key={i} className={`modern-card ${floatClass} scroll-animate slide-up delay-${Math.min(i + 3, 8)}`} style={getCardStyles(i, 'delivery')}>
                                         <div className="card-inner">
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                                                <FontAwesomeIcon icon={item.icon} style={{ fontSize: '45px', color: '#FFD700' }} />
-                                                <span style={{ fontSize: '36px', fontWeight: 'bold', color: 'rgba(255,215,0,0.15)' }}>0{i+1}</span>
+                                                <FontAwesomeIcon icon={item.icon} style={{ fontSize: '45px', color: 'var(--card-glow)' }} />
+                                                <span style={{ fontSize: '36px', fontWeight: 'bold', color: 'var(--card-glow-soft)' }}>0{i+1}</span>
                                             </div>
                                             <h3 style={{ marginBottom: '12px', color: 'white', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
                                             <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.5', marginBottom: '15px', fontSize: '14px' }}>{item.desc}</p>
                                             <div className="extra-points">
                                                 {extraPoints.slice(0,4).map((point, idx) => (
                                                     <div key={idx} className="point-item">
-                                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#FFD700', fontSize: '12px' }} />
+                                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: 'var(--card-glow)', fontSize: '12px' }} />
                                                         <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '12px' }}>{point}</span>
                                                     </div>
                                                 ))}
@@ -2321,7 +2301,7 @@ const WinzePage = () => {
                 {/* Solutions Portfolio Section */}
                 <section id="solutions" ref={solutionsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-solutions">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: '#FFD700', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Solutions Portfolio</h2>
+                        <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Solutions Portfolio</h2>
                         <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '10px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">PRACTICAL ACTION. BOLD AMBITION. ENDLESS POSSIBILITIES.</p>
                         <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.6)', marginBottom: '50px', fontSize: '14px' }} className="scroll-animate slide-up delay-3">Enterprise-grade technology solutions for modern businesses</p>
                         
@@ -2330,16 +2310,16 @@ const WinzePage = () => {
                                 const extraPoints = getSolutionExtraPoints(solution.title);
                                 const floatClass = `float-${(idx % 4) + 1}`;
                                 return (
-                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate rotate-in delay-${Math.min(idx % 8 + 1, 8)}`} style={{ background: getCardGradient(idx, 'solution') }}>
-                                        <img src={solution.img} alt={solution.title} className="card-image" onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x400/2a3a5f/FFD700?text=' + encodeURIComponent(solution.title); }} />
+                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate rotate-in delay-${Math.min(idx % 8 + 1, 8)}`} style={getCardStyles(idx, 'solution')}>
+                                        <img src={solution.img} alt={solution.title} className="card-image" onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x400/2a3a5f/00E5FF?text=' + encodeURIComponent(solution.title); }} />
                                         <div className="card-inner">
-                                            <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '35px', marginBottom: '12px', color: '#FFD700' }} />
+                                            <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '35px', marginBottom: '12px', color: 'var(--card-glow)' }} />
                                             <h3 style={{ marginBottom: '10px', color: 'white', fontSize: '1.15rem', fontWeight: '700' }}>{solution.title}</h3>
                                             <p style={{ color: 'rgba(255,255,255,0.75)', lineHeight: '1.45', marginBottom: '15px', fontSize: '13px' }}>{solution.desc}</p>
                                             <div className="extra-points">
                                                 {extraPoints.slice(0,3).map((point, pid) => (
                                                     <div key={pid} className="point-item">
-                                                        <FontAwesomeIcon icon={faStar} style={{ color: '#FFD700', fontSize: '11px' }} />
+                                                        <FontAwesomeIcon icon={faStar} style={{ color: 'var(--card-glow)', fontSize: '11px' }} />
                                                         <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '11px' }}>{point}</span>
                                                     </div>
                                                 ))}
@@ -2356,23 +2336,23 @@ const WinzePage = () => {
                 {/* Industries Section */}
                 <section id="industries" ref={industriesRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-industries">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: '#FFD700', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Industries We Serve</h2>
+                        <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Industries We Serve</h2>
                         <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">TRANSFORMING BUSINESSES ACROSS SECTORS</p>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(330px, 1fr))', gap: '30px' }}>
                             {industries.map((industry, idx) => {
                                 const extraPoints = getIndustryExtraPoints(industry.name);
                                 const floatClass = `float-${(idx % 4) + 1}`;
                                 return (
-                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate slide-left delay-${idx + 2}`} style={{ background: getCardGradient(idx, 'industry') }}>
+                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate slide-left delay-${idx + 2}`} style={getCardStyles(idx, 'industry')}>
                                         <img src={industry.img} alt={industry.name} className="card-image" />
                                         <div className="card-inner">
-                                            <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '40px', marginBottom: '15px', color: '#FFD700' }} />
+                                            <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '40px', marginBottom: '15px', color: 'var(--card-glow)' }} />
                                             <h3 style={{ marginBottom: '10px', color: 'white', fontSize: '1.25rem', fontWeight: '700' }}>{industry.name}</h3>
                                             <p style={{ color: 'rgba(255,255,255,0.75)', lineHeight: '1.45', fontSize: '13px', marginBottom: '15px' }}>{industry.desc}</p>
                                             <div className="extra-points">
                                                 {extraPoints.slice(0,4).map((point, pid) => (
                                                     <div key={pid} className="point-item">
-                                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: '#FFD700', fontSize: '11px' }} />
+                                                        <FontAwesomeIcon icon={faCheckCircle} style={{ color: 'var(--card-glow)', fontSize: '11px' }} />
                                                         <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '11px' }}>{point}</span>
                                                     </div>
                                                 ))}
@@ -2389,41 +2369,41 @@ const WinzePage = () => {
                 {/* Partners Section */}
                 <section id="partners" ref={partnersRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden' }} className="bg-partners">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '2.5rem', color: '#FFD700', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Trusted Partners</h2>
+                        <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Trusted Partners</h2>
                         <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '20px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">INNOVATION. EXCELLENCE. TRUST.</p>
                         <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '40px', fontSize: '14px' }} className="scroll-animate slide-up delay-3">Partnering with industry leaders to deliver world-class technology solutions</p>
-                        <div className="marquee-container scroll-animate slide-up delay-4"><div className="marquee-content">{[...partnerLogos, ...partnerLogos, ...partnerLogos].map((partner, idx) => (<div key={idx} className="partner-logo-item" onClick={() => handleTrackClick(partner.name, 'partner')}><div className="partner-logo-img"><img src={partner.url} alt={partner.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/FFD700/1a1a2e?text=${partner.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{partner.name}</h3></div>))}</div></div>
+                        <div className="marquee-container scroll-animate slide-up delay-4"><div className="marquee-content">{[...partnerLogos, ...partnerLogos, ...partnerLogos].map((partner, idx) => (<div key={idx} className="partner-logo-item" onClick={() => handleTrackClick(partner.name, 'partner')}><div className="partner-logo-img"><img src={partner.url} alt={partner.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/05020c?text=${partner.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{partner.name}</h3></div>))}</div></div>
                     </div>
                 </section>
 
                 {/* Clients Section */}
                 <section id="clients" ref={clientsRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden' }} className="bg-clients">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '2.5rem', color: '#FFD700', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Valued Clients</h2>
+                        <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Valued Clients</h2>
                         <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '40px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">TRUSTED BY INDUSTRY LEADERS ACROSS INDIA</p>
-                        <div className="marquee-container scroll-animate slide-up delay-3"><div className="marquee-content">{[...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (<div key={idx} className="client-logo-item" onClick={() => handleTrackClick(client.name, 'client')}><div className="client-logo-img"><img src={client.url} alt={client.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/FFD700/1a1a2e?text=${client.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{client.name}</h3></div>))}</div></div>
+                        <div className="marquee-container scroll-animate slide-up delay-3"><div className="marquee-content">{[...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (<div key={idx} className="client-logo-item" onClick={() => handleTrackClick(client.name, 'client')}><div className="client-logo-img"><img src={client.url} alt={client.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/1a1a2e?text=${client.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{client.name}</h3></div>))}</div></div>
                     </div>
                 </section>
 
                 {/* Work With Winze Section */}
                 <section id="workwith" ref={workwithRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-work">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '2.5rem', color: '#FFD700', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Why Work With Winze?</h2>
+                        <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Why Work With Winze?</h2>
                         <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">PARTNER WITH US FOR A TRANSFORMATIVE EXPERIENCE</p>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px' }}>
                             {workWithWinze.map((item, idx) => {
                                 const extraPoints = getWorkExtraPoints(item.title);
                                 const floatClass = `float-${(idx % 4) + 1}`;
                                 return (
-                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate slide-right delay-${idx + 3}`} style={{ background: getCardGradient(idx, 'work') }}>
+                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate slide-right delay-${idx + 3}`} style={getCardStyles(idx, 'work')}>
                                         <div className="card-inner">
-                                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '50px', marginBottom: '20px', color: '#FFD700' }} />
+                                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '50px', marginBottom: '20px', color: 'var(--card-glow)' }} />
                                             <h3 style={{ marginBottom: '12px', color: 'white', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
                                             <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.5', marginBottom: '15px', fontSize: '14px' }}>{item.desc}</p>
                                             <div className="extra-points">
                                                 {extraPoints.slice(0,4).map((point, pid) => (
                                                     <div key={pid} className="point-item">
-                                                        <FontAwesomeIcon icon={faGem} style={{ color: '#FFD700', fontSize: '11px' }} />
+                                                        <FontAwesomeIcon icon={faGem} style={{ color: 'var(--card-glow)', fontSize: '11px' }} />
                                                         <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '11px' }}>{point}</span>
                                                     </div>
                                                 ))}
@@ -2441,31 +2421,31 @@ const WinzePage = () => {
                 <section ref={statsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }}>
                     <BackgroundImage imageSrc={bgImages.stats} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '2.5rem', color: '#FFD700', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Impact in Numbers</h2>
+                        <h2 style={{ fontSize: '2.5rem', color: '#00E5FF', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Impact in Numbers</h2>
                         <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">DELIVERING EXCELLENCE THROUGH MEASURABLE RESULTS</p>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '25px' }}>
-                            <div className="stat-card scroll-animate slide-up delay-1" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', border: '1px solid rgba(255,215,0,0.3)', animation: 'pulse 2s infinite' }}>
-                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '10px' }}>{counters.years}+</div>
+                            <div className="stat-card scroll-animate slide-up delay-1" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', border: '1px solid rgba(0,229,255,0.3)', animation: 'pulse 2s infinite' }}>
+                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255,255,255,0.6)', marginBottom: '10px' }}>{counters.years}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Years in Business</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Industry Experience</p>
                             </div>
-                            <div className="stat-card scroll-animate slide-up delay-2" style={{ background: 'linear-gradient(135deg, #f093fb, #f5576c)', border: '1px solid rgba(255,215,0,0.3)', animation: 'pulse 2s infinite 0.3s' }}>
-                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '10px' }}>{counters.expertise}+</div>
+                            <div className="stat-card scroll-animate slide-up delay-2" style={{ background: 'linear-gradient(135deg, #f093fb, #f5576c)', border: '1px solid rgba(0,229,255,0.3)', animation: 'pulse 2s infinite 0.3s' }}>
+                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255,255,255,0.6)', marginBottom: '10px' }}>{counters.expertise}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Expertise</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Domain Specialists</p>
                             </div>
-                            <div className="stat-card scroll-animate slide-up delay-3" style={{ background: 'linear-gradient(135deg, #4facfe, #00f2fe)', border: '1px solid rgba(255,215,0,0.3)', animation: 'pulse 2s infinite 0.6s' }}>
-                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '10px' }}>{counters.clients}+</div>
+                            <div className="stat-card scroll-animate slide-up delay-3" style={{ background: 'linear-gradient(135deg, #4facfe, #00f2fe)', border: '1px solid rgba(0,229,255,0.3)', animation: 'pulse 2s infinite 0.6s' }}>
+                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255,255,255,0.6)', marginBottom: '10px' }}>{counters.clients}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Clients</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Satisfied Customers</p>
                             </div>
-                            <div className="stat-card scroll-animate slide-up delay-4" style={{ background: 'linear-gradient(135deg, #fa709a, #fee140)', border: '1px solid rgba(255,215,0,0.3)', animation: 'pulse 2s infinite 0.9s' }}>
-                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '10px' }}>{counters.awards}+</div>
+                            <div className="stat-card scroll-animate slide-up delay-4" style={{ background: 'linear-gradient(135deg, #fa709a, #fee140)', border: '1px solid rgba(0,229,255,0.3)', animation: 'pulse 2s infinite 0.9s' }}>
+                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255,255,255,0.6)', marginBottom: '10px' }}>{counters.awards}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Awards</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Industry Recognition</p>
                             </div>
-                            <div className="stat-card scroll-animate slide-up delay-5" style={{ background: 'linear-gradient(135deg, #a8edea, #fed6e3)', border: '1px solid rgba(255,215,0,0.3)', animation: 'pulse 2s infinite 1.2s' }}>
-                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#FFD700', marginBottom: '10px' }}>{counters.projects}+</div>
+                            <div className="stat-card scroll-animate slide-up delay-5" style={{ background: 'linear-gradient(135deg, #a8edea, #fed6e3)', border: '1px solid rgba(0,229,255,0.3)', animation: 'pulse 2s infinite 1.2s' }}>
+                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255,255,255,0.6)', marginBottom: '10px' }}>{counters.projects}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Projects</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Successfully Delivered</p>
                             </div>
@@ -2502,11 +2482,11 @@ const WinzePage = () => {
                                     position: 'absolute', 
                                     top: '-50px', 
                                     right: '-50px', 
-                                    background: '#FFD700', 
+                                    background: '#00E5FF', 
                                     border: 'none', 
                                     fontSize: '30px', 
                                     cursor: 'pointer', 
-                                    color: '#4a0e4e', 
+                                    color: '#05020c', 
                                     width: '40px', 
                                     height: '40px', 
                                     borderRadius: '50%', 
@@ -2522,7 +2502,7 @@ const WinzePage = () => {
                                 }}
                                 onMouseLeave={(e) => {
                                     e.target.style.transform = 'scale(1)';
-                                    e.target.style.background = '#FFD700';
+                                    e.target.style.background = '#00E5FF';
                                 }}
                             >
                                 ×
@@ -2535,7 +2515,7 @@ const WinzePage = () => {
                                     maxHeight: '70vh', 
                                     objectFit: 'contain',
                                     background: 'transparent',
-                                    boxShadow: '0 0 30px rgba(255,215,0,0.3)',
+                                    boxShadow: '0 0 30px rgba(0,229,255,0.3)',
                                     borderRadius: '20px'
                                 }} 
                             />
@@ -2544,32 +2524,32 @@ const WinzePage = () => {
                 )}
 
                 {/* Quote Modal */}
-                {showQuoteModal && (<div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(5, 3, 10, 0.75)', backdropFilter: 'blur(20px)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowQuoteModal(false)}><div style={{ background: 'rgba(16, 8, 30, 0.9)', borderRadius: '28px', padding: '40px', maxWidth: '520px', width: '100%', position: 'relative', border: '2px solid rgba(255,215,0,0.35)', boxShadow: '0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.15)', maxHeight: '85vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}><button onClick={() => setShowQuoteModal(false)} style={{ position: 'absolute', top: '20px', right: '25px', background: '#FFD700', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#4a0e4e', width: '35px', height: '35px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', transition: 'all 0.3s' }}>×</button><h2 style={{ color: '#FFD700', marginBottom: '20px', textAlign: 'center', fontSize: '1.8rem', fontWeight: '700', textShadow: '0 0 15px rgba(255,215,0,0.2)' }}>Request a Quote</h2><p style={{ color: '#ccc', textAlign: 'center', marginBottom: '25px', fontSize: '13px' }}>Fill out the form and our team will contact you within 24 hours</p>
+                {showQuoteModal && (<div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(5, 3, 10, 0.75)', backdropFilter: 'blur(20px)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowQuoteModal(false)}><div style={{ background: 'rgba(16, 8, 30, 0.9)', borderRadius: '28px', padding: '40px', maxWidth: '520px', width: '100%', position: 'relative', border: '2px solid rgba(0,229,255,0.35)', boxShadow: '0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(0,229,255,0.15)', maxHeight: '85vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}><button onClick={() => setShowQuoteModal(false)} style={{ position: 'absolute', top: '20px', right: '25px', background: '#00E5FF', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#05020c', width: '35px', height: '35px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', transition: 'all 0.3s' }}>×</button><h2 style={{ color: '#00E5FF', marginBottom: '20px', textAlign: 'center', fontSize: '1.8rem', fontWeight: '700', textShadow: '0 0 15px rgba(0,229,255,0.2)' }}>Request a Quote</h2><p style={{ color: '#ccc', textAlign: 'center', marginBottom: '25px', fontSize: '13px' }}>Fill out the form and our team will contact you within 24 hours</p>
                 <form onSubmit={handleSubmitQuote}>
-                    <input type="text" name="name" placeholder="Full Name" required onChange={handleInputChange} className="quote-form-input" style={{ width: '100%', padding: '14px', marginBottom: '16px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.25)', background: 'rgba(255,255,255,0.06)', color: 'white', fontSize: '14px', boxSizing: 'border-box' }} />
-                    <input type="email" name="email" placeholder="Email Address" required onChange={handleInputChange} className="quote-form-input" style={{ width: '100%', padding: '14px', marginBottom: '16px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.25)', background: 'rgba(255,255,255,0.06)', color: 'white', fontSize: '14px', boxSizing: 'border-box' }} />
-                    <input type="tel" name="phone" placeholder="Phone Number" required onChange={handleInputChange} className="quote-form-input" style={{ width: '100%', padding: '14px', marginBottom: '16px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.25)', background: 'rgba(255,255,255,0.06)', color: 'white', fontSize: '14px', boxSizing: 'border-box' }} />
-                    <div style={{ position: 'relative', marginBottom: '16px' }}><select name="service" required value={formData.service} onChange={handleInputChange} className="quote-form-input" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.25)', background: 'rgba(255,255,255,0.06)', color: 'white', fontSize: '14px', boxSizing: 'border-box', cursor: 'pointer' }}><option value="" style={{ background: '#1c0f2b', color: 'white' }}>Select a Service</option>{solutions.map((s, idx) => (<option key={idx} value={s.title} style={{ background: '#1c0f2b', color: 'white', padding: '10px' }}>{s.title}</option>))}</select></div>
-                    <textarea name="message" placeholder="Tell us about your requirements..." rows="3" onChange={handleInputChange} className="quote-form-input" style={{ width: '100%', padding: '14px', marginBottom: '24px', borderRadius: '12px', border: '1px solid rgba(255,215,0,0.25)', background: 'rgba(255,255,255,0.06)', color: 'white', fontSize: '14px', boxSizing: 'border-box', resize: 'vertical' }}></textarea>
-                    <button type="submit" className="btn-consultation-glow" style={{ width: '100%', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#4a0e4e', padding: '14px', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 8px 20px rgba(255,215,0,0.2)' }}>Submit Request →</button>
+                    <input type="text" name="name" placeholder="Full Name" required onChange={handleInputChange} className="quote-form-input" style={{ width: '100%', padding: '14px', marginBottom: '16px', borderRadius: '12px', border: '1px solid rgba(0,229,255,0.25)', background: 'rgba(255,255,255,0.06)', color: 'white', fontSize: '14px', boxSizing: 'border-box' }} />
+                    <input type="email" name="email" placeholder="Email Address" required onChange={handleInputChange} className="quote-form-input" style={{ width: '100%', padding: '14px', marginBottom: '16px', borderRadius: '12px', border: '1px solid rgba(0,229,255,0.25)', background: 'rgba(255,255,255,0.06)', color: 'white', fontSize: '14px', boxSizing: 'border-box' }} />
+                    <input type="tel" name="phone" placeholder="Phone Number" required onChange={handleInputChange} className="quote-form-input" style={{ width: '100%', padding: '14px', marginBottom: '16px', borderRadius: '12px', border: '1px solid rgba(0,229,255,0.25)', background: 'rgba(255,255,255,0.06)', color: 'white', fontSize: '14px', boxSizing: 'border-box' }} />
+                    <div style={{ position: 'relative', marginBottom: '16px' }}><select name="service" required value={formData.service} onChange={handleInputChange} className="quote-form-input" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid rgba(0,229,255,0.25)', background: 'rgba(255,255,255,0.06)', color: 'white', fontSize: '14px', boxSizing: 'border-box', cursor: 'pointer' }}><option value="" style={{ background: '#1c0f2b', color: 'white' }}>Select a Service</option>{solutions.map((s, idx) => (<option key={idx} value={s.title} style={{ background: '#1c0f2b', color: 'white', padding: '10px' }}>{s.title}</option>))}</select></div>
+                    <textarea name="message" placeholder="Tell us about your requirements..." rows="3" onChange={handleInputChange} className="quote-form-input" style={{ width: '100%', padding: '14px', marginBottom: '24px', borderRadius: '12px', border: '1px solid rgba(0,229,255,0.25)', background: 'rgba(255,255,255,0.06)', color: 'white', fontSize: '14px', boxSizing: 'border-box', resize: 'vertical' }}></textarea>
+                    <button type="submit" className="btn-consultation-glow" style={{ width: '100%', background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)', color: '#ffffff', padding: '14px', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 8px 20px rgba(0,229,255,0.2)' }}>Submit Request →</button>
                 </form></div></div>)}
 
                 {/* Landing Page Modal */}
                 {landingModalOpen && (<LandingPage item={landingData} onClose={closeLandingPage} onRequestQuote={openQuoteModalForItem} />)}
 
                 {/* Footer */}
-                <footer style={{ background: '#0a0a1a', color: 'white', padding: '50px 5% 25px', borderTop: '1px solid rgba(255,215,0,0.1)' }}>
+                <footer style={{ background: '#0a0a1a', color: 'white', padding: '50px 5% 25px', borderTop: '1px solid rgba(0,229,255,0.1)' }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '40px', marginBottom: '40px' }}>
                             <div className="slide-up delay-1">
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}>
                                     <img src="/images/winze-logo.jpg" alt="Logo" style={{ width: '40px', height: '40px', objectFit: 'contain', background: 'transparent', borderRadius: '8px' }} />
-                                    <span style={{ fontWeight: '700', fontSize: '1.1rem', background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span>
+                                    <span style={{ fontWeight: '700', fontSize: '1.1rem', background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span>
                                 </div>
                                 <p style={{ color: '#aaa', lineHeight: '1.6', fontSize: '13px' }}>Driving Innovation through Customer-Centric Technology Solutions.</p>
                             </div>
                             <div className="slide-up delay-2">
-                                <h4 style={{ marginBottom: '18px', color: '#FFD700', fontSize: '1rem' }}>Quick Links</h4>
+                                <h4 style={{ marginBottom: '18px', color: '#00E5FF', fontSize: '1rem' }}>Quick Links</h4>
                                 {navItems.map((item) => (
                                     <p key={item.name}>
                                         <button 
@@ -2584,7 +2564,7 @@ const WinzePage = () => {
                                                 } 
                                             }} 
                                             style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '10px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s', fontSize: '13px' }} 
-                                            onMouseEnter={(e) => e.target.style.color = '#FFD700'} 
+                                            onMouseEnter={(e) => e.target.style.color = '#00E5FF'} 
                                             onMouseLeave={(e) => e.target.style.color = '#aaa'}
                                         >
                                             {item.name}
@@ -2593,7 +2573,7 @@ const WinzePage = () => {
                                 ))}
                             </div>
                             <div className="slide-up delay-3">
-                                <h4 style={{ marginBottom: '18px', color: '#FFD700', fontSize: '1rem' }}>Contact Info</h4>
+                                <h4 style={{ marginBottom: '18px', color: '#00E5FF', fontSize: '1rem' }}>Contact Info</h4>
                                 <p style={{ color: '#aaa', marginBottom: '10px', fontSize: '13px' }}>📧 <a href="mailto:sales@winzetech.com" style={{ color: '#aaa', textDecoration: 'none' }}>sales@winzetech.com</a></p>
                                 <p style={{ color: '#aaa', marginBottom: '10px', fontSize: '13px' }}>📞 <a href="tel:+919550010417" style={{ color: '#aaa', textDecoration: 'none' }}>+91 95500 10417</a></p>
                                 <p style={{ color: '#aaa', marginBottom: '10px', fontSize: '13px' }}>🌐 www.winzetech.com</p>

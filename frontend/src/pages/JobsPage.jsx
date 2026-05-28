@@ -123,7 +123,7 @@ const JobsPage = () => {
             margin: '0 auto',
             padding: '60px 5%',
             minHeight: '100vh',
-            background: 'radial-gradient(circle at 50% 50%, rgba(0, 191, 165, 0.08) 0%, #020614 100%)'
+            background: 'radial-gradient(circle at 10% 20%, rgba(98, 0, 234, 0.28) 0%, transparent 65%), radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.24) 0%, #03010b 100%)'
         },
         header: {
             textAlign: 'center',
@@ -135,7 +135,7 @@ const JobsPage = () => {
             marginBottom: '15px',
             fontWeight: '800',
             fontFamily: "'Playfair Display', serif",
-            background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+            background: 'linear-gradient(135deg, #E0F7FA 0%, #00E5FF 45%, #7C4DFF 75%, #00B0FF 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent'
         },
@@ -160,17 +160,17 @@ const JobsPage = () => {
             padding: '28px',
             transition: 'all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
             cursor: 'pointer',
-            border: '1px solid rgba(255,215,0,0.15)',
+            border: '1px solid rgba(0, 229, 255, 0.15)',
             boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
         },
         jobCardHover: {
             transform: 'translateY(-10px) scale(1.02)',
-            borderColor: 'rgba(255,215,0,0.6)',
+            borderColor: 'rgba(0, 229, 255, 0.6)',
             boxShadow: '0 20px 40px rgba(0,0,0,0.6), 0 0 25px rgba(6,182,212,0.3)'
         },
         jobTitle: {
             fontSize: '1.4rem',
-            color: '#FFD700',
+            color: '#00E5FF',
             marginBottom: '15px',
             fontWeight: '700',
             fontFamily: "'Playfair Display', serif"
@@ -181,7 +181,7 @@ const JobsPage = () => {
             gap: '15px',
             marginBottom: '20px',
             paddingBottom: '15px',
-            borderBottom: '1px solid rgba(255,215,0,0.15)'
+            borderBottom: '1px solid rgba(0, 229, 255, 0.15)'
         },
         metaItem: {
             display: 'flex',
@@ -197,9 +197,9 @@ const JobsPage = () => {
             fontSize: '14px'
         },
         applyBtn: {
-            background: 'rgba(255,215,0,0.15)',
+            background: 'rgba(0, 229, 255, 0.12)',
             backdropFilter: 'blur(4px)',
-            border: '1px solid rgba(255,215,0,0.3)',
+            border: '1px solid rgba(0, 229, 255, 0.3)',
             padding: '12px 28px',
             borderRadius: '40px',
             fontWeight: '600',
@@ -207,7 +207,7 @@ const JobsPage = () => {
             transition: '0.3s',
             cursor: 'pointer',
             width: '100%',
-            color: '#FFD700',
+            color: '#00E5FF',
             fontFamily: "'Poppins', sans-serif"
         },
         modal: {
@@ -233,7 +233,7 @@ const JobsPage = () => {
             maxWidth: '550px',
             width: '100%',
             position: 'relative',
-            border: '1px solid rgba(255,215,0,0.35)',
+            border: '1px solid rgba(0, 229, 255, 0.35)',
             maxHeight: '85vh',
             overflow: 'auto',
             boxShadow: '0 25px 60px rgba(0,0,0,0.8)'
@@ -242,11 +242,11 @@ const JobsPage = () => {
             position: 'absolute',
             top: '20px',
             right: '25px',
-            background: '#FFD700',
+            background: '#00E5FF',
             border: 'none',
             fontSize: '20px',
             cursor: 'pointer',
-            color: '#1a0b2e',
+            color: '#05020c',
             width: '35px',
             height: '35px',
             borderRadius: '50%',
@@ -257,7 +257,7 @@ const JobsPage = () => {
             transition: 'all 0.3s'
         },
         modalTitle: {
-            color: '#FFD700',
+            color: '#00E5FF',
             marginBottom: '25px',
             textAlign: 'center',
             fontSize: '1.8rem',
@@ -268,7 +268,7 @@ const JobsPage = () => {
             padding: '12px',
             marginBottom: '15px',
             borderRadius: '12px',
-            border: '1px solid rgba(255,215,0,0.3)',
+            border: '1px solid rgba(0, 229, 255, 0.3)',
             background: 'rgba(255,255,255,0.1)',
             color: 'white',
             fontSize: '14px',
@@ -279,7 +279,7 @@ const JobsPage = () => {
             padding: '10px',
             marginBottom: '15px',
             borderRadius: '12px',
-            border: '1px solid rgba(255,215,0,0.3)',
+            border: '1px solid rgba(0, 229, 255, 0.3)',
             background: 'rgba(255,255,255,0.1)',
             color: 'white',
             fontSize: '13px',
@@ -295,7 +295,7 @@ const JobsPage = () => {
             borderRadius: '10px',
             marginBottom: '15px',
             fontSize: '13px',
-            color: '#FFD700'
+            color: '#00E5FF'
         },
         removeFileBtn: {
             background: '#ff6b6b',
@@ -309,8 +309,8 @@ const JobsPage = () => {
         },
         submitBtn: {
             width: '100%',
-            background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-            color: '#1a0b2e',
+            background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)',
+            color: '#ffffff',
             padding: '14px',
             border: 'none',
             borderRadius: '12px',
@@ -355,15 +355,15 @@ const JobsPage = () => {
                                 <h3 style={styles.jobTitle}>{job.title}</h3>
                                 <div style={styles.jobMeta}>
                                     <span style={styles.metaItem}>
-                                        <FontAwesomeIcon icon={faMapMarkerAlt} style={{ color: '#FFD700' }} />
+                                        <FontAwesomeIcon icon={faMapMarkerAlt} style={{ color: '#00E5FF' }} />
                                         {job.location || 'N/A'}
                                     </span>
                                     <span style={styles.metaItem}>
-                                        <FontAwesomeIcon icon={faClock} style={{ color: '#FFD700' }} />
+                                        <FontAwesomeIcon icon={faClock} style={{ color: '#00E5FF' }} />
                                         {job.type || 'Full-time'}
                                     </span>
                                     <span style={styles.metaItem}>
-                                        <FontAwesomeIcon icon={faBriefcase} style={{ color: '#FFD700' }} />
+                                        <FontAwesomeIcon icon={faBriefcase} style={{ color: '#00E5FF' }} />
                                         {job.experience || '0'} years exp
                                     </span>
                                 </div>
@@ -372,13 +372,13 @@ const JobsPage = () => {
                                     style={styles.applyBtn}
                                     onClick={() => handleApply(job)}
                                     onMouseEnter={(e) => {
-                                        e.target.style.background = '#FFD700';
-                                        e.target.style.color = '#1a0b2e';
+                                        e.target.style.background = '#00E5FF';
+                                        e.target.style.color = '#05020c';
                                         e.target.style.transform = 'scale(1.05)';
                                     }}
                                     onMouseLeave={(e) => {
-                                        e.target.style.background = 'rgba(255,215,0,0.15)';
-                                        e.target.style.color = '#FFD700';
+                                        e.target.style.background = 'rgba(0, 229, 255, 0.12)';
+                                        e.target.style.color = '#00E5FF';
                                         e.target.style.transform = 'scale(1)';
                                     }}
                                 >
@@ -402,7 +402,7 @@ const JobsPage = () => {
                             }}
                             onMouseLeave={(e) => {
                                 e.target.style.transform = 'scale(1)';
-                                e.target.style.background = '#FFD700';
+                                e.target.style.background = '#00E5FF';
                             }}
                         >
                             ×

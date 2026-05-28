@@ -27,12 +27,12 @@ const BlogsPage = () => {
         return (
             <div style={{ 
                 minHeight: '100vh', 
-                background: 'radial-gradient(circle at 50% 50%, rgba(98, 0, 234, 0.12) 0%, #05020c 100%)', 
+                background: 'radial-gradient(circle at 10% 20%, rgba(98, 0, 234, 0.28) 0%, transparent 65%), radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.24) 0%, #03010b 100%)', 
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center' 
             }}>
-                <div style={{ color: '#FFD700', fontSize: '1.2rem' }}>Loading blogs...</div>
+                <div style={{ color: '#00E5FF', fontSize: '1.2rem' }}>Loading blogs...</div>
             </div>
         );
     }
@@ -45,7 +45,7 @@ const BlogsPage = () => {
                 margin: '0 auto', 
                 padding: '60px 20px',
                 minHeight: '100vh',
-                background: 'radial-gradient(circle at 50% 50%, rgba(98, 0, 234, 0.12) 0%, #05020c 100%)'
+                background: 'radial-gradient(circle at 10% 20%, rgba(98, 0, 234, 0.28) 0%, transparent 65%), radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.24) 0%, #03010b 100%)'
             }}>
                 <h1 style={{ 
                     textAlign: 'center', 
@@ -53,7 +53,7 @@ const BlogsPage = () => {
                     fontSize: '3rem',
                     color: 'white',
                     fontFamily: "'Playfair Display', serif",
-                    background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                    background: 'linear-gradient(135deg, #E0F7FA 0%, #00E5FF 45%, #7C4DFF 75%, #00B0FF 100%)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent'
                 }}>Our Blogs</h1>
@@ -76,19 +76,19 @@ const BlogsPage = () => {
                                 WebkitBackdropFilter: 'blur(25px)',
                                 borderRadius: '20px', 
                                 overflow: 'hidden',
-                                border: '1px solid rgba(255,215,0,0.15)',
+                                border: '1px solid rgba(0, 229, 255, 0.15)',
                                 boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
                                 transition: 'all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
                                 cursor: 'pointer'
                             }}
                             onMouseEnter={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-10px) scale(1.02)';
-                                e.currentTarget.style.borderColor = 'rgba(255,215,0,0.6)';
+                                e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.6)';
                                 e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.6), 0 0 25px rgba(168,85,247,0.3)';
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                                e.currentTarget.style.borderColor = 'rgba(255,215,0,0.15)';
+                                e.currentTarget.style.borderColor = 'rgba(0, 229, 255, 0.15)';
                                 e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
                             }}
                             onClick={() => window.location.href = `/blog/${blog.slug}`}
@@ -98,7 +98,7 @@ const BlogsPage = () => {
                                     <h2 style={{ 
                                         fontSize: '1.3rem', 
                                         marginBottom: '15px',
-                                        color: '#FFD700',
+                                        color: '#00E5FF',
                                         fontFamily: "'Playfair Display', serif"
                                     }}>{blog.title}</h2>
                                     <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '20px', lineHeight: '1.6' }}>
@@ -108,7 +108,7 @@ const BlogsPage = () => {
                                         <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px' }}>
                                             By {blog.author || 'Admin'} | {new Date(blog.created_at).toLocaleDateString()}
                                         </span>
-                                        <span style={{ color: '#FFD700', fontSize: '14px' }}>Read More →</span>
+                                        <span style={{ color: '#00E5FF', fontSize: '14px' }}>Read More →</span>
                                     </div>
                                 </div>
                             </div>

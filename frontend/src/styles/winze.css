@@ -107,8 +107,8 @@ body.view-landing .btn { background: #e0e5ec; color: #3182ce; box-shadow: 6px 6p
 }
 .quote-form-input:focus {
     outline: none !important;
-    border-color: #FFD700 !important;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.45) !important;
+    border-color: #00E5FF !important;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.45) !important;
     background: rgba(255, 255, 255, 0.12) !important;
     transform: translateY(-2px);
 }
