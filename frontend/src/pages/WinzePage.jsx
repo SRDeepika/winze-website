@@ -36,7 +36,7 @@ const bgImages = {
 
 // ========== BACKGROUND VIDEOS (LOCAL AI WITH CDN FALLBACK) ==========
 const bgVideos = {
-    hero: "/videos/ai-bg.mp4",
+    hero: "/videos/background video.mp4",
     heroFallback: "https://assets.mixkit.co/videos/preview/mixkit-blockchain-technology-loop-42858-large.mp4"
 };
 
