@@ -34,9 +34,10 @@ const bgImages = {
     stats: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format",
 };
 
-// ========== BACKGROUND VIDEOS (CDN TECHNOLOGY LOOPS) ==========
+// ========== BACKGROUND VIDEOS (LOCAL AI WITH CDN FALLBACK) ==========
 const bgVideos = {
-    hero: "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-and-numbers-31948-large.mp4"
+    hero: "/videos/ai-bg.mp4",
+    heroFallback: "https://assets.mixkit.co/videos/preview/mixkit-blockchain-technology-loop-42858-large.mp4"
 };
 
 // Solution Images for Cards
@@ -1530,7 +1531,7 @@ const WinzePage = () => {
         </div>
     );
 
-    const BackgroundVideo = ({ videoSrc, fallbackImg }) => (
+    const BackgroundVideo = ({ videoSrc, fallbackVideo, fallbackImg }) => (
         <div style={{
             position: 'absolute',
             top: 0,
@@ -1560,6 +1561,7 @@ const WinzePage = () => {
                 }}
             >
                 <source src={videoSrc} type="video/mp4" />
+                {fallbackVideo && <source src={fallbackVideo} type="video/mp4" />}
             </video>
             <div style={{
                 position: 'absolute',
@@ -1626,38 +1628,43 @@ const WinzePage = () => {
                 }
                 
                 /* Card entrance scroll-triggered animations */
+                /* Card entrance scroll-triggered animations - Cinematic Focal Blur-In & Scale */
                 .scroll-animate {
                     opacity: 0 !important;
-                    transition: all 0.95s cubic-bezier(0.25, 1, 0.5, 1) !important;
+                    filter: blur(15px);
+                    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+                                filter 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+                                transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
                 }
                 .scroll-animate.slide-left {
-                    transform: translateX(-85px) scale(0.95);
+                    transform: translateX(-100px) scale(0.92);
                 }
                 .scroll-animate.slide-right {
-                    transform: translateX(85px) scale(0.95);
+                    transform: translateX(100px) scale(0.92);
                 }
                 .scroll-animate.slide-up {
-                    transform: translateY(75px) scale(0.95);
+                    transform: translateY(90px) scale(0.92);
                 }
                 .scroll-animate.rotate-in {
-                    transform: rotate(-8deg) scale(0.88);
+                    transform: rotate(-10deg) scale(0.85);
                 }
                 
                 /* Trigger active state with custom staggered delays */
                 .scroll-animate.active {
                     opacity: 1 !important;
+                    filter: blur(0) !important;
                     transform: translate(0) rotate(0) scale(1) !important;
                 }
                 
-                /* Staggered delays */
-                .delay-1 { animation-delay: 0.1s; }
-                .delay-2 { animation-delay: 0.2s; }
-                .delay-3 { animation-delay: 0.3s; }
-                .delay-4 { animation-delay: 0.4s; }
-                .delay-5 { animation-delay: 0.5s; }
-                .delay-6 { animation-delay: 0.6s; }
-                .delay-7 { animation-delay: 0.7s; }
-                .delay-8 { animation-delay: 0.8s; }
+                /* Staggered transition delays for fluid scroll waves */
+                .delay-1 { transition-delay: 0.1s !important; }
+                .delay-2 { transition-delay: 0.2s !important; }
+                .delay-3 { transition-delay: 0.3s !important; }
+                .delay-4 { transition-delay: 0.4s !important; }
+                .delay-5 { transition-delay: 0.5s !important; }
+                .delay-6 { transition-delay: 0.6s !important; }
+                .delay-7 { transition-delay: 0.7s !important; }
+                .delay-8 { transition-delay: 0.8s !important; }
                 
                 /* Back to Top Button Animation */
                 @keyframes bounce {
@@ -1813,18 +1820,31 @@ const WinzePage = () => {
                 .modern-card:hover {
                     transform: translateY(-12px) scale(1.03);
                     box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+                    border-color: rgba(255, 215, 0, 0.45) !important;
                 }
                 .bg-delivery .modern-card:hover {
                     box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 35px rgba(168, 85, 247, 0.45);
                 }
+                .bg-delivery .modern-card:hover .card-inner {
+                    background: radial-gradient(circle at top right, rgba(168, 85, 247, 0.16) 0%, rgba(10, 5, 25, 0.9) 80%) !important;
+                }
                 .bg-solutions .modern-card:hover {
                     box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 35px rgba(6, 182, 212, 0.45);
+                }
+                .bg-solutions .modern-card:hover .card-inner {
+                    background: radial-gradient(circle at top right, rgba(6, 182, 212, 0.16) 0%, rgba(10, 5, 25, 0.9) 80%) !important;
                 }
                 .bg-industries .modern-card:hover {
                     box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 35px rgba(0, 230, 115, 0.45);
                 }
+                .bg-industries .modern-card:hover .card-inner {
+                    background: radial-gradient(circle at top right, rgba(0, 230, 115, 0.16) 0%, rgba(10, 5, 25, 0.9) 80%) !important;
+                }
                 .bg-work .modern-card:hover {
                     box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 35px rgba(236, 72, 153, 0.45);
+                }
+                .bg-work .modern-card:hover .card-inner {
+                    background: radial-gradient(circle at top right, rgba(236, 72, 153, 0.16) 0%, rgba(10, 5, 25, 0.9) 80%) !important;
                 }
                 
                 /* section h2 tags with glows */
@@ -2061,40 +2081,40 @@ const WinzePage = () => {
                 
                 /* Navbar styling - Royal Burgundy with Glow */
                 .nav-button {
-                    background: rgba(255,255,255,0.08);
-                    backdrop-filter: blur(12px);
-                    -webkit-backdrop-filter: blur(12px);
-                    color: white;
-                    font-weight: 600;
-                    padding: 10px 22px;
-                    border-radius: 40px;
-                    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+                    background: transparent;
+                    color: rgba(255, 255, 255, 0.8) !important;
+                    font-weight: 500;
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    transition: all 0.3s ease;
                     cursor: pointer;
-                    font-size: 14px;
+                    font-size: 13.5px;
                     font-family: 'Poppins', sans-serif;
-                    border: 1px solid rgba(255,215,0,0.3);
+                    border: 1px solid transparent;
                     position: relative;
-                    overflow: hidden;
+                    text-transform: uppercase;
+                    letter-spacing: 0.8px;
+                    display: inline-block;
                 }
-                .nav-button::before {
+                .nav-button::after {
                     content: '';
                     position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.3), transparent);
-                    transition: left 0.5s ease;
+                    bottom: 2px;
+                    left: 20%;
+                    width: 0%;
+                    height: 2px;
+                    background: linear-gradient(90deg, #FFD700, #FFA500);
+                    transition: width 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), left 0.35s ease;
+                    box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
                 }
-                .nav-button:hover::before {
-                    left: 100%;
+                .nav-button:hover::after {
+                    width: 60%;
+                    left: 20%;
                 }
                 .nav-button:hover {
-                    background: #FFD700;
-                    color: #4a0e4e;
-                    border-color: #FFD700;
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 20px rgba(255,215,0,0.4), 0 0 15px rgba(255,215,0,0.3);
+                    background: rgba(255, 255, 255, 0.07);
+                    color: #FFD700 !important;
+                    transform: translateY(-1px);
                 }
                 
                 .quote-button {
@@ -2130,13 +2150,13 @@ const WinzePage = () => {
                     background: linear-gradient(135deg, #FFE44D 0%, #FFB347 100%);
                 }
                 
-                /* Section background gradients - Premium Radial Ambient Light Meshes */
-                .bg-delivery { background: radial-gradient(circle at 20% 30%, rgba(89, 0, 153, 0.16) 0%, transparent 60%), radial-gradient(circle at 80% 70%, rgba(28, 0, 51, 0.3) 0%, #080312 100%); }
-                .bg-solutions { background: radial-gradient(circle at 30% 20%, rgba(0, 77, 214, 0.16) 0%, transparent 60%), radial-gradient(circle at 70% 80%, rgba(0, 17, 51, 0.3) 0%, #010817 100%); }
-                .bg-industries { background: radial-gradient(circle at 25% 75%, rgba(0, 230, 115, 0.14) 0%, transparent 60%), radial-gradient(circle at 75% 25%, rgba(0, 26, 13, 0.35) 0%, #010d07 100%); }
-                .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(137, 0, 255, 0.1) 0%, transparent 70%), #04020a; }
-                .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(0, 182, 212, 0.1) 0%, transparent 70%), #02040d; }
-                .bg-work { background: radial-gradient(circle at 80% 20%, rgba(255, 0, 85, 0.14) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(38, 0, 11, 0.35) 0%, #120106 100%); }
+                /* Section background gradients - Cyber-Mystic Deep Radial Gradients */
+                .bg-delivery { background: radial-gradient(circle at 10% 20%, rgba(98, 0, 234, 0.18) 0%, transparent 60%), radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.14) 0%, #04020c 100%); }
+                .bg-solutions { background: radial-gradient(circle at 20% 80%, rgba(0, 191, 165, 0.18) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(41, 121, 255, 0.14) 0%, #020614 100%); }
+                .bg-industries { background: radial-gradient(circle at 15% 30%, rgba(0, 200, 83, 0.18) 0%, transparent 60%), radial-gradient(circle at 85% 70%, rgba(255, 215, 0, 0.12) 0%, #010a06 100%); }
+                .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.08) 0%, transparent 70%), #030107; }
+                .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.08) 0%, transparent 70%), #01030b; }
+                .bg-work { background: radial-gradient(circle at 85% 15%, rgba(255, 0, 127, 0.18) 0%, transparent 60%), radial-gradient(circle at 15% 85%, rgba(101, 31, 255, 0.14) 0%, #0d0108 100%); }
             `}</style>
             
             <SEO 
@@ -2220,7 +2240,7 @@ const WinzePage = () => {
 
                 {/* Hero Section */}
                 <section id="home" ref={homeRef} style={{ minHeight: '85vh', position: 'relative', display: 'flex', alignItems: 'center', padding: '80px 5%', overflow: 'hidden' }}>
-                    <BackgroundVideo videoSrc={bgVideos.hero} fallbackImg={bgImages.hero} />
+                    <BackgroundVideo videoSrc={bgVideos.hero} fallbackVideo={bgVideos.heroFallback} fallbackImg={bgImages.hero} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '50px', alignItems: 'center' }}>
                             <div className="slide-left delay-1">
