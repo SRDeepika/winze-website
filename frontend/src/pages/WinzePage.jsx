@@ -1941,21 +1941,23 @@ const WinzePage = () => {
                 /* Advanced Running Glowing Border on Hover */
                 /* Advanced Running Glowing Border on Hover */
                 .modern-card {
-                    border-radius: 20px;
-                    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+                    border-radius: 24px;
+                    transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
                     cursor: pointer;
                     overflow: hidden;
                     height: 100%;
                     display: flex;
                     flex-direction: column;
-                    border: 1px solid rgba(255, 255, 255, 0.08);
-                    border-top: 3px solid var(--card-glow, #00E5FF); /* Dynamic Jewel Colored Accent Top Border */
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                    border: 1px solid rgba(255, 255, 255, 0.06);
+                    border-top: 4px solid var(--card-glow, #00E5FF); /* Dynamic Jewel Colored Accent Top Border */
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1);
                     position: relative;
                     z-index: 1;
-                    background: rgba(10, 8, 20, 0.45); /* Premium Dark Obsidian Backdrop */
-                    backdrop-filter: blur(15px);
-                    -webkit-backdrop-filter: blur(15px);
+                    background: rgba(10, 6, 25, 0.6); /* Premium Dark Obsidian Backdrop */
+                    backdrop-filter: blur(20px);
+                    -webkit-backdrop-filter: blur(20px);
+                    transform-style: preserve-3d;
+                    perspective: 1000px;
                 }
                 
                 /* Subtle premium background gradient overlay */
@@ -1966,10 +1968,10 @@ const WinzePage = () => {
                     left: 0;
                     right: 0;
                     bottom: 0;
-                    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 100%);
+                    background: radial-gradient(circle at 50% 0%, rgba(var(--card-glow-rgb), 0.1) 0%, transparent 75%);
                     z-index: 0;
-                    opacity: 1;
-                    transition: all 0.35s ease;
+                    opacity: 0.8;
+                    transition: all 0.45s ease;
                 }
                 
                 /* Fast High-Speed Diagonal Reflex Shimmer */
@@ -1983,7 +1985,7 @@ const WinzePage = () => {
                     background: linear-gradient(
                         90deg,
                         transparent,
-                        rgba(255, 255, 255, 0.16),
+                        rgba(255, 255, 255, 0.22),
                         transparent
                     );
                     transform: skewX(-25deg);
@@ -1993,18 +1995,19 @@ const WinzePage = () => {
                 }
                 
                 .modern-card:hover::before {
-                    background: linear-gradient(135deg, rgba(var(--card-glow-rgb), 0.1) 0%, transparent 100%);
+                    background: radial-gradient(circle at 50% 50%, rgba(var(--card-glow-rgb), 0.25) 0%, transparent 80%);
                 }
                 .modern-card:hover::after {
-                    animation: shimmerSweep 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                    animation: shimmerSweep 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
                 }
                 .modern-card:hover {
-                    transform: translateY(-8px);
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 25px var(--card-glow-soft);
+                    transform: translateY(-10px) scale(1.025);
+                    box-shadow: 0 25px 50px rgba(0,0,0,0.7), 0 0 35px var(--card-glow-soft), inset 0 0 22px var(--card-glow-soft);
                     border-color: var(--card-glow, #00E5FF) !important;
                 }
                 .modern-card:hover .card-inner {
-                    background: radial-gradient(circle at top right, var(--card-glow-soft, rgba(0, 229, 255, 0.12)) 0%, rgba(6, 3, 15, 0.94) 80%) !important;
+                    background: rgba(8, 4, 22, 0.3) !important;
+                    border-color: var(--card-glow-soft, rgba(0, 229, 255, 0.2)) !important;
                 }
                 
                 /* section h2 tags with glows */
@@ -2234,16 +2237,17 @@ const WinzePage = () => {
                 
                 .stat-card {
                     padding: 30px 20px;
-                    border-radius: 20px;
+                    border-radius: 24px;
                     text-align: center;
-                    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-                    backdrop-filter: blur(8px);
-                    -webkit-backdrop-filter: blur(8px);
-                    background: rgba(255, 255, 255, 0.02);
-                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+                    backdrop-filter: blur(20px);
+                    -webkit-backdrop-filter: blur(20px);
+                    background: rgba(10, 6, 25, 0.65); /* Rich Dark Obsidian Glass */
+                    border: 1px solid rgba(255, 255, 255, 0.06);
+                    border-top: 4px solid var(--stat-glow, #00E5FF); /* Dynamic Glowing top stripe */
                     position: relative;
                     overflow: hidden;
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1);
                 }
                 .stat-card::before {
                     content: '';
@@ -2252,13 +2256,15 @@ const WinzePage = () => {
                     left: 0;
                     right: 0;
                     bottom: 0;
-                    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 100%);
-                    transition: opacity 0.35s ease;
+                    background: radial-gradient(circle at 50% 0%, var(--stat-glow-soft) 0%, transparent 70%);
+                    transition: all 0.45s ease;
+                    opacity: 0.8;
                 }
                 .stat-card:hover {
-                    transform: translateY(-8px);
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 25px var(--stat-glow-soft);
+                    transform: translateY(-10px) scale(1.03);
+                    box-shadow: 0 25px 50px rgba(0,0,0,0.7), 0 0 35px var(--stat-glow-soft), inset 0 0 20px var(--stat-glow-soft);
                     border-color: var(--stat-glow, #00E5FF) !important;
+                    background: rgba(15, 8, 35, 0.8) !important;
                 }
  
                 @keyframes fadeInUp {
@@ -2835,14 +2841,13 @@ const WinzePage = () => {
                 </section>
 
                 {/* Stats Section */}
-                <section ref={statsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }}>
-                    <BackgroundImage imageSrc={bgImages.stats} />
+                <section ref={statsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden', background: 'radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.18) 0%, #06020f 100%)' }}>
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '2.5rem', color: '#00E5FF', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Impact in Numbers</h2>
                         <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">DELIVERING EXCELLENCE THROUGH MEASURABLE RESULTS</p>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '25px' }}>
-                            <div className="stat-card scroll-animate slide-left delay-1" style={{ '--stat-glow': '#00E5FF', '--stat-glow-soft': 'rgba(0, 229, 255, 0.2)' }}>
-                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(0, 229, 255, 0.6)', marginBottom: '10px' }}>{counters.years}+</div>
+                            <div className="stat-card scroll-animate slide-left delay-1" style={{ '--stat-glow': '#FFD700', '--stat-glow-soft': 'rgba(255, 215, 0, 0.2)' }}>
+                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255, 215, 0, 0.6)', marginBottom: '10px' }}>{counters.years}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Years in Business</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Industry Experience</p>
                             </div>
@@ -2861,8 +2866,8 @@ const WinzePage = () => {
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Awards</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Industry Recognition</p>
                             </div>
-                            <div className="stat-card scroll-animate slide-right delay-5" style={{ '--stat-glow': '#00B0FF', '--stat-glow-soft': 'rgba(0, 176, 255, 0.2)' }}>
-                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(0, 176, 255, 0.6)', marginBottom: '10px' }}>{counters.projects}+</div>
+                            <div className="stat-card scroll-animate slide-right delay-5" style={{ '--stat-glow': '#FF1744', '--stat-glow-soft': 'rgba(255, 23, 68, 0.2)' }}>
+                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255, 23, 68, 0.6)', marginBottom: '10px' }}>{counters.projects}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Projects</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Successfully Delivered</p>
                             </div>
