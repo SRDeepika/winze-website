@@ -1610,7 +1610,7 @@ const WinzePage = () => {
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    opacity: 0.65
+                    opacity: 0.78
                 }}
             >
                 <source src={videoSrc} type="video/mp4" />
@@ -1622,7 +1622,7 @@ const WinzePage = () => {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                background: 'linear-gradient(135deg, rgba(6, 3, 24, 0.88) 0%, rgba(20, 8, 48, 0.72) 50%, rgba(6, 3, 24, 0.94) 100%)',
+                background: 'linear-gradient(135deg, rgba(5, 3, 20, 0.82) 0%, rgba(18, 7, 44, 0.52) 50%, rgba(5, 3, 20, 0.88) 100%)',
                 mixBlendMode: 'multiply'
             }} />
         </div>
@@ -2310,13 +2310,13 @@ const WinzePage = () => {
                     background: linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%);
                 }
                 
-                /* Section background gradients - Cyber-Mystic Deep Radial Gradients */
-                .bg-delivery { background: radial-gradient(circle at 10% 20%, rgba(98, 0, 234, 0.28) 0%, transparent 65%), radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.24) 0%, #03010b 100%); }
-                .bg-solutions { background: radial-gradient(circle at 20% 80%, rgba(0, 229, 255, 0.1) 0%, transparent 65%), radial-gradient(circle at 80% 20%, rgba(124, 77, 255, 0.08) 0%, #f4f6fc 100%); }
-                .bg-industries { background: radial-gradient(circle at 15% 30%, rgba(0, 230, 118, 0.26) 0%, transparent 65%), radial-gradient(circle at 85% 70%, rgba(0, 229, 255, 0.24) 0%, #010805 100%); }
-                .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.12) 0%, transparent 70%), #f8fafc; }
-                .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.18) 0%, transparent 70%), #05020c; }
-                .bg-work { background: radial-gradient(circle at 85% 15%, rgba(255, 23, 68, 0.28) 0%, transparent 65%), radial-gradient(circle at 15% 85%, rgba(101, 31, 255, 0.24) 0%, #060107 100%); }
+                /* Section background gradients - Balanced Multi-Color Accent System */
+                .bg-delivery { background: radial-gradient(circle at 15% 20%, rgba(255, 167, 38, 0.15) 0%, transparent 60%), radial-gradient(circle at 85% 80%, rgba(124, 77, 255, 0.08) 0%, #06040b 100%); }
+                .bg-solutions { background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); }
+                .bg-industries { background: radial-gradient(circle at 20% 30%, rgba(0, 230, 118, 0.16) 0%, transparent 65%), radial-gradient(circle at 80% 70%, rgba(0, 229, 255, 0.06) 0%, #010704 100%); }
+                .bg-partners { background: #ffffff; }
+                .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.14) 0%, transparent 70%), #040209; }
+                .bg-work { background: radial-gradient(circle at 85% 20%, rgba(255, 23, 68, 0.14) 0%, transparent 60%), radial-gradient(circle at 15% 80%, rgba(124, 77, 255, 0.06) 0%, #060105 100%); }
                 
                 @media (min-width: 1024px) {
                     .hero-grid-responsive {
@@ -2352,18 +2352,18 @@ const WinzePage = () => {
                 
                 {/* Navigation Bar - Royal Burgundy with Gold Accents */}
                 <nav style={{
-                    position: 'sticky',
+                    position: 'fixed',
                     top: 0,
                     left: 0,
                     right: 0,
-                    background: scrolled ? 'rgba(15, 6, 32, 0.96)' : 'rgba(25, 12, 54, 0.78)',
-                    backdropFilter: 'blur(25px)',
-                    WebkitBackdropFilter: 'blur(25px)',
-                    padding: '12px 5%',
+                    background: scrolled ? 'rgba(6, 3, 20, 0.92)' : 'rgba(8, 4, 25, 0.75)',
+                    backdropFilter: 'blur(30px)',
+                    WebkitBackdropFilter: 'blur(30px)',
+                    padding: scrolled ? '10px 5%' : '15px 5%',
                     zIndex: 1000,
-                    transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                    boxShadow: scrolled ? '0 10px 40px rgba(0,0,0,0.8), 0 4px 20px rgba(0, 229, 255, 0.15)' : '0 4px 15px rgba(124, 77, 255, 0.15)',
-                    borderBottom: scrolled ? '2px solid #00E5FF' : '2px solid rgba(124, 77, 255, 0.4)'
+                    transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                    boxShadow: scrolled ? '0 10px 40px rgba(0,0,0,0.9), 0 4px 20px rgba(0, 229, 255, 0.2)' : '0 4px 25px rgba(0, 0, 0, 0.3)',
+                    borderBottom: scrolled ? '3px solid #00E5FF' : '1px solid rgba(255, 255, 255, 0.08)'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
                         <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
@@ -2462,150 +2462,92 @@ const WinzePage = () => {
                         }}
                     />
 
-                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
-                        <div style={{ 
-                            display: 'grid', 
-                            gridTemplateColumns: '1fr',
-                            gap: '50px',
-                            alignItems: 'center'
-                        }}
-                        className="hero-grid-responsive"
-                        >
-                            {/* Left Column: Glass Text Panel */}
-                            <div className="slide-left delay-1" style={{ width: '100%' }}>
-                                <div className="hero-text-glass">
-                                    <div style={{ marginBottom: '20px' }}>
-                                        <span style={{ 
-                                            background: 'rgba(0, 229, 255, 0.12)', 
-                                            padding: '6px 18px', 
-                                            borderRadius: '30px', 
-                                            fontSize: '11px', 
-                                            color: '#00E5FF', 
-                                            display: 'inline-block', 
-                                            fontWeight: '700', 
-                                            letterSpacing: '1.5px', 
-                                            border: '1px solid rgba(0,229,255,0.3)',
-                                            textTransform: 'uppercase',
-                                            boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)'
-                                        }}>
-                                            ⚡ 16+ Years of Enterprise Excellence
-                                        </span>
-                                        <h1 className="hero-title" style={{ 
-                                            fontSize: '3.8rem', 
-                                            marginTop: '22px', 
-                                            fontFamily: "'Playfair Display', serif", 
-                                            fontWeight: '800', 
-                                            marginBottom: '20px', 
-                                            lineHeight: '1.15',
-                                            letterSpacing: '-0.5px'
-                                        }}>
-                                            Winze Technologies
-                                        </h1>
-                                    </div>
-                                    <p style={{ fontSize: '1.25rem', marginBottom: '20px', color: '#ffffff', lineHeight: '1.6', fontWeight: '500' }}>
-                                        Leading Enterprise Communication, Security, and AI Technology Solutions Provider
-                                    </p>
-                                    <p style={{ marginBottom: '35px', color: 'rgba(255, 255, 255, 0.7)', lineHeight: '1.7', fontSize: '1rem' }}>
-                                        With over 16 years of industry experience, Winze Technologies specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.
-                                    </p>
-                                    
-                                    <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-                                        <button 
-                                            onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} 
-                                            className="btn-consultation-glow" 
-                                            style={{ 
-                                                background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)', 
-                                                color: '#ffffff', 
-                                                border: 'none', 
-                                                padding: '16px 42px', 
-                                                borderRadius: '50px', 
-                                                fontSize: '15px', 
-                                                fontWeight: '700', 
-                                                cursor: 'pointer', 
-                                                boxShadow: '0 8px 25px rgba(0,229,255,0.35)' 
-                                            }}
-                                        >
-                                            Get Free Consultation →
-                                        </button>
-                                        <button 
-                                            onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} 
-                                            style={{ 
-                                                background: 'rgba(0, 229, 255, 0.05)', 
-                                                color: '#00E5FF', 
-                                                border: '2px solid rgba(0, 229, 255, 0.6)', 
-                                                padding: '14px 38px', 
-                                                borderRadius: '50px', 
-                                                fontSize: '15px', 
-                                                fontWeight: '600', 
-                                                cursor: 'pointer', 
-                                                transition: 'all 0.4s ease',
-                                                backdropFilter: 'blur(5px)'
-                                            }}
-                                            onMouseEnter={(e) => { 
-                                                e.target.style.background = 'rgba(0,229,255,0.2)'; 
-                                                e.target.style.transform = 'translateY(-3px)'; 
-                                                e.target.style.boxShadow = '0 0 20px rgba(0, 229, 255, 0.4)'; 
-                                                e.target.style.borderColor = '#00E5FF';
-                                            }}
-                                            onMouseLeave={(e) => { 
-                                                e.target.style.background = 'rgba(0, 229, 255, 0.05)'; 
-                                                e.target.style.transform = 'translateY(0)'; 
-                                                e.target.style.boxShadow = 'none'; 
-                                                e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
-                                            }}
-                                        >
-                                            Explore Solutions
-                                        </button>
-                                    </div>
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'center' }}>
+                        {/* Centered clean text glass panel */}
+                        <div className="slide-left delay-1" style={{ maxWidth: '900px', width: '100%', textAlign: 'center' }}>
+                            <div className="hero-text-glass" style={{ borderLeft: 'none', borderTop: '5px solid #00E5FF' }}>
+                                <div style={{ marginBottom: '22px' }}>
+                                    <span style={{ 
+                                        background: 'rgba(0, 229, 255, 0.12)', 
+                                        padding: '6px 18px', 
+                                        borderRadius: '30px', 
+                                        fontSize: '11px', 
+                                        color: '#00E5FF', 
+                                        display: 'inline-block', 
+                                        fontWeight: '700', 
+                                        letterSpacing: '1.5px', 
+                                        border: '1px solid rgba(0,229,255,0.3)',
+                                        textTransform: 'uppercase',
+                                        boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)'
+                                    }}>
+                                        ⚡ 16+ Years of Enterprise Excellence
+                                    </span>
+                                    <h1 className="hero-title" style={{ 
+                                        fontSize: '4rem', 
+                                        marginTop: '22px', 
+                                        fontFamily: "'Playfair Display', serif", 
+                                        fontWeight: '800', 
+                                        marginBottom: '20px', 
+                                        lineHeight: '1.2',
+                                        letterSpacing: '-0.5px'
+                                    }}>
+                                        Winze Technologies
+                                    </h1>
                                 </div>
-                            </div>
-
-                            {/* Right Column: Holographic/HUD Telemetry Dashboard */}
-                            <div className="slide-right delay-2 hud-column" style={{ width: '100%' }}>
-                                <div className="cyber-hud-dashboard">
-                                    {/* Rotating Telemetry Ring Pattern */}
-                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '220px', position: 'relative' }}>
-                                        <div className="hud-grid-ring">
-                                            <div className="hud-grid-ring-inner" />
-                                            <div style={{ position: 'absolute', width: '100%', height: '1px', background: 'rgba(0, 229, 255, 0.12)' }} />
-                                            <div style={{ position: 'absolute', height: '100%', width: '1px', background: 'rgba(0, 229, 255, 0.12)' }} />
-                                        </div>
-                                        <div className="hud-core-pulse" onClick={() => setShowQuoteModal(true)}>
-                                            <FontAwesomeIcon icon={faInfinity} style={{ fontSize: '32px', color: '#ffffff' }} />
-                                        </div>
-                                    </div>
-
-                                    {/* Cyber Telemetry Status Board */}
-                                    <div>
-                                        <div className="telemetry-row">
-                                            <span>SECURITY CORE:</span>
-                                            <span style={{ color: '#00E676', fontWeight: 'bold' }}>✓ SECURE & ACTIVE</span>
-                                        </div>
-                                        <div className="telemetry-row">
-                                            <span>AI SMART EYE:</span>
-                                            <span style={{ color: '#00E5FF' }}>ONLINE [99.8% NOMINAL]</span>
-                                        </div>
-                                        <div className="telemetry-row">
-                                            <span>UNIFIED CHANNELS:</span>
-                                            <span style={{ color: '#7C4DFF' }}>16 BANDS CONNECTED</span>
-                                        </div>
-                                    </div>
-
-                                    {/* Dynamic Status Node Grid */}
-                                    <div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <span style={{ fontSize: '10px', color: '#888', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 'bold' }}>Active Infrastructure Nodes</span>
-                                            <span style={{ fontSize: '10px', color: '#00E5FF', fontFamily: 'monospace' }}>PING: 12ms</span>
-                                        </div>
-                                        <div className="status-grid">
-                                            <div className="status-node cyan" title="Unified Communications" />
-                                            <div className="status-node purple" title="Contact Center" />
-                                            <div className="status-node green" title="AI Smart Eye" />
-                                            <div className="status-node cyan" title="WiFi as a Service" />
-                                            <div className="status-node rose" title="Cyber Security" />
-                                            <div className="status-node green" title="IT Infrastructure" />
-                                        </div>
-                                    </div>
+                                <p style={{ fontSize: '1.35rem', marginBottom: '20px', color: '#ffffff', lineHeight: '1.6', fontWeight: '500' }}>
+                                    Leading Enterprise Communication, Security, and AI Technology Solutions Provider
+                                </p>
+                                <p style={{ marginBottom: '35px', color: 'rgba(255, 255, 255, 0.75)', lineHeight: '1.75', fontSize: '1.05rem', maxWidth: '800px', margin: '0 auto 35px' }}>
+                                    With over 16 years of industry experience, Winze Technologies specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.
+                                </p>
+                                
+                                <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} 
+                                        className="btn-consultation-glow" 
+                                        style={{ 
+                                            background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)', 
+                                            color: '#ffffff', 
+                                            border: 'none', 
+                                            padding: '16px 42px', 
+                                            borderRadius: '50px', 
+                                            fontSize: '15px', 
+                                            fontWeight: '700', 
+                                            cursor: 'pointer', 
+                                            boxShadow: '0 8px 25px rgba(0,229,255,0.35)' 
+                                        }}
+                                    >
+                                        Get Free Consultation →
+                                    </button>
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} 
+                                        style={{ 
+                                            background: 'rgba(0, 229, 255, 0.05)', 
+                                            color: '#00E5FF', 
+                                            border: '2px solid rgba(0, 229, 255, 0.6)', 
+                                            padding: '14px 38px', 
+                                            borderRadius: '50px', 
+                                            fontSize: '15px', 
+                                            fontWeight: '600', 
+                                            cursor: 'pointer', 
+                                            transition: 'all 0.4s ease',
+                                            backdropFilter: 'blur(5px)'
+                                        }}
+                                        onMouseEnter={(e) => { 
+                                            e.target.style.background = 'rgba(0,229,255,0.2)'; 
+                                            e.target.style.transform = 'translateY(-3px)'; 
+                                            e.target.style.boxShadow = '0 0 20px rgba(0, 229, 255, 0.4)'; 
+                                            e.target.style.borderColor = '#00E5FF';
+                                        }}
+                                        onMouseLeave={(e) => { 
+                                            e.target.style.background = 'rgba(0, 229, 255, 0.05)'; 
+                                            e.target.style.transform = 'translateY(0)'; 
+                                            e.target.style.boxShadow = 'none'; 
+                                            e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
+                                        }}
+                                    >
+                                        Explore Solutions
+                                    </button>
                                 </div>
                             </div>
                         </div>
