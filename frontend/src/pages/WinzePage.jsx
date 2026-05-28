@@ -1436,7 +1436,7 @@ const WinzePage = () => {
                                             padding: '16px', 
                                             marginBottom: '18px', 
                                             borderRadius: '14px', 
-                                            border: '1px solid rgba(255,215,0,0.3)',
+                                            border: '1px solid rgba(0,229,255,0.3)',
                                             background: 'rgba(255,255,255,0.1)',
                                             color: 'white',
                                             fontSize: '16px',
@@ -1455,7 +1455,7 @@ const WinzePage = () => {
                                             padding: '16px', 
                                             marginBottom: '18px', 
                                             borderRadius: '14px', 
-                                            border: '1px solid rgba(255,215,0,0.3)',
+                                            border: '1px solid rgba(0,229,255,0.3)',
                                             background: 'rgba(255,255,255,0.1)',
                                             color: 'white',
                                             fontSize: '16px',
@@ -1473,7 +1473,7 @@ const WinzePage = () => {
                                             padding: '16px', 
                                             marginBottom: '25px', 
                                             borderRadius: '14px', 
-                                            border: '1px solid rgba(255,215,0,0.3)',
+                                            border: '1px solid rgba(0,229,255,0.3)',
                                             background: 'rgba(255,255,255,0.1)',
                                             color: 'white',
                                             fontSize: '16px',
@@ -1735,7 +1735,7 @@ const WinzePage = () => {
                 
                 .back-to-top:hover {
                     transform: translateY(-5px);
-                    box-shadow: 0 8px 25px rgba(255,215,0,0.5);
+                    box-shadow: 0 8px 25px rgba(0,229,255,0.5);
                 }
                 
                 /* Card Image Styling */
@@ -1951,9 +1951,9 @@ const WinzePage = () => {
                     transform: translateX(5px);
                 }
                 .btn-learn {
-                    background: rgba(255,215,0,0.15);
+                    background: rgba(0, 229, 255, 0.12);
                     backdrop-filter: blur(4px);
-                    border: 1px solid rgba(255,215,0,0.3);
+                    border: 1px solid rgba(0, 229, 255, 0.3);
                     padding: 10px 24px;
                     border-radius: 40px;
                     font-weight: 600;
@@ -2042,7 +2042,7 @@ const WinzePage = () => {
                     left: -50%;
                     width: 200%;
                     height: 200%;
-                    background: radial-gradient(circle, rgba(255,215,0,0.1), transparent);
+                    background: radial-gradient(circle, rgba(0,229,255,0.15), transparent);
                     opacity: 0;
                     transition: opacity 0.4s ease;
                 }
@@ -2132,10 +2132,10 @@ const WinzePage = () => {
                 
                 /* Section background gradients - Cyber-Mystic Deep Radial Gradients */
                 .bg-delivery { background: radial-gradient(circle at 10% 20%, rgba(98, 0, 234, 0.28) 0%, transparent 65%), radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.24) 0%, #03010b 100%); }
-                .bg-solutions { background: radial-gradient(circle at 20% 80%, rgba(0, 191, 165, 0.26) 0%, transparent 65%), radial-gradient(circle at 80% 20%, rgba(41, 121, 255, 0.24) 0%, #010410 100%); }
+                .bg-solutions { background: radial-gradient(circle at 20% 80%, rgba(0, 229, 255, 0.1) 0%, transparent 65%), radial-gradient(circle at 80% 20%, rgba(124, 77, 255, 0.08) 0%, #f4f6fc 100%); }
                 .bg-industries { background: radial-gradient(circle at 15% 30%, rgba(0, 230, 118, 0.26) 0%, transparent 65%), radial-gradient(circle at 85% 70%, rgba(0, 229, 255, 0.24) 0%, #010805 100%); }
-                .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.16) 0%, transparent 70%), #04010a; }
-                .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.16) 0%, transparent 70%), #01030b; }
+                .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.12) 0%, transparent 70%), #f8fafc; }
+                .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.12) 0%, transparent 70%), #f4f6fc; }
                 .bg-work { background: radial-gradient(circle at 85% 15%, rgba(255, 23, 68, 0.28) 0%, transparent 65%), radial-gradient(circle at 15% 85%, rgba(101, 31, 255, 0.24) 0%, #060107 100%); }
             `}</style>
             
@@ -2277,7 +2277,6 @@ const WinzePage = () => {
                                         <div className="card-inner">
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                                                 <FontAwesomeIcon icon={item.icon} style={{ fontSize: '45px', color: 'var(--card-glow)' }} />
-                                                <span style={{ fontSize: '36px', fontWeight: 'bold', color: 'var(--card-glow-soft)' }}>0{i+1}</span>
                                             </div>
                                             <h3 style={{ marginBottom: '12px', color: 'white', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
                                             <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.5', marginBottom: '15px', fontSize: '14px' }}>{item.desc}</p>
@@ -2301,9 +2300,9 @@ const WinzePage = () => {
                 {/* Solutions Portfolio Section */}
                 <section id="solutions" ref={solutionsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-solutions">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Solutions Portfolio</h2>
-                        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '10px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">PRACTICAL ACTION. BOLD AMBITION. ENDLESS POSSIBILITIES.</p>
-                        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.6)', marginBottom: '50px', fontSize: '14px' }} className="scroll-animate slide-up delay-3">Enterprise-grade technology solutions for modern businesses</p>
+                        <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: '#060112', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Solutions Portfolio</h2>
+                        <p style={{ textAlign: 'center', color: '#475569', marginBottom: '10px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">PRACTICAL ACTION. BOLD AMBITION. ENDLESS POSSIBILITIES.</p>
+                        <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '50px', fontSize: '14px' }} className="scroll-animate slide-up delay-3">Enterprise-grade technology solutions for modern businesses</p>
                         
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '30px' }}>
                             {solutions.map((solution, idx) => {
@@ -2369,9 +2368,9 @@ const WinzePage = () => {
                 {/* Partners Section */}
                 <section id="partners" ref={partnersRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden' }} className="bg-partners">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Trusted Partners</h2>
-                        <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '20px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">INNOVATION. EXCELLENCE. TRUST.</p>
-                        <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '40px', fontSize: '14px' }} className="scroll-animate slide-up delay-3">Partnering with industry leaders to deliver world-class technology solutions</p>
+                        <h2 style={{ fontSize: '2.5rem', color: '#060112', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Trusted Partners</h2>
+                        <p style={{ color: '#475569', marginBottom: '20px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">INNOVATION. EXCELLENCE. TRUST.</p>
+                        <p style={{ color: '#64748b', marginBottom: '40px', fontSize: '14px' }} className="scroll-animate slide-up delay-3">Partnering with industry leaders to deliver world-class technology solutions</p>
                         <div className="marquee-container scroll-animate slide-up delay-4"><div className="marquee-content">{[...partnerLogos, ...partnerLogos, ...partnerLogos].map((partner, idx) => (<div key={idx} className="partner-logo-item" onClick={() => handleTrackClick(partner.name, 'partner')}><div className="partner-logo-img"><img src={partner.url} alt={partner.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/05020c?text=${partner.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{partner.name}</h3></div>))}</div></div>
                     </div>
                 </section>
@@ -2379,8 +2378,8 @@ const WinzePage = () => {
                 {/* Clients Section */}
                 <section id="clients" ref={clientsRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden' }} className="bg-clients">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Valued Clients</h2>
-                        <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '40px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">TRUSTED BY INDUSTRY LEADERS ACROSS INDIA</p>
+                        <h2 style={{ fontSize: '2.5rem', color: '#060112', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Valued Clients</h2>
+                        <p style={{ color: '#475569', marginBottom: '40px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">TRUSTED BY INDUSTRY LEADERS ACROSS INDIA</p>
                         <div className="marquee-container scroll-animate slide-up delay-3"><div className="marquee-content">{[...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (<div key={idx} className="client-logo-item" onClick={() => handleTrackClick(client.name, 'client')}><div className="client-logo-img"><img src={client.url} alt={client.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/1a1a2e?text=${client.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{client.name}</h3></div>))}</div></div>
                     </div>
                 </section>
@@ -2541,17 +2540,17 @@ const WinzePage = () => {
                 <footer style={{ background: '#0a0a1a', color: 'white', padding: '50px 5% 25px', borderTop: '1px solid rgba(0,229,255,0.1)' }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '40px', marginBottom: '40px' }}>
-                            <div className="slide-up delay-1">
+                            <div className="scroll-animate slide-up delay-1">
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', cursor: 'pointer' }} onClick={() => setShowLogoModal(true)}>
                                     <img src="/images/winze-logo.jpg" alt="Logo" style={{ width: '40px', height: '40px', objectFit: 'contain', background: 'transparent', borderRadius: '8px' }} />
                                     <span style={{ fontWeight: '700', fontSize: '1.1rem', background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Winze Technologies</span>
                                 </div>
                                 <p style={{ color: '#aaa', lineHeight: '1.6', fontSize: '13px' }}>Driving Innovation through Customer-Centric Technology Solutions.</p>
                             </div>
-                            <div className="slide-up delay-2">
+                            <div className="scroll-animate slide-up delay-2">
                                 <h4 style={{ marginBottom: '18px', color: '#00E5FF', fontSize: '1rem' }}>Quick Links</h4>
                                 {navItems.map((item) => (
-                                    <p key={item.name}>
+                                    <p key={item.name} style={{ margin: 0 }}>
                                         <button 
                                             onClick={(e) => { 
                                                 e.preventDefault(); 
@@ -2563,23 +2562,31 @@ const WinzePage = () => {
                                                     scrollToSection(item.ref, item.name); 
                                                 } 
                                             }} 
-                                            style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '10px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s', fontSize: '13px' }} 
-                                            onMouseEnter={(e) => e.target.style.color = '#00E5FF'} 
-                                            onMouseLeave={(e) => e.target.style.color = '#aaa'}
+                                            style={{ color: '#aaa', background: 'none', border: 'none', display: 'block', marginBottom: '10px', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)', fontSize: '13px', outline: 'none' }} 
+                                            onMouseEnter={(e) => {
+                                                e.target.style.color = '#00E5FF';
+                                                e.target.style.transform = 'translateX(8px)';
+                                                e.target.style.textShadow = '0 0 10px rgba(0, 229, 255, 0.5)';
+                                            }} 
+                                            onMouseLeave={(e) => {
+                                                e.target.style.color = '#aaa';
+                                                e.target.style.transform = 'translateX(0)';
+                                                e.target.style.textShadow = 'none';
+                                            }}
                                         >
                                             {item.name}
                                         </button>
                                     </p>
                                 ))}
                             </div>
-                            <div className="slide-up delay-3">
+                            <div className="scroll-animate slide-up delay-3">
                                 <h4 style={{ marginBottom: '18px', color: '#00E5FF', fontSize: '1rem' }}>Contact Info</h4>
                                 <p style={{ color: '#aaa', marginBottom: '10px', fontSize: '13px' }}>📧 <a href="mailto:sales@winzetech.com" style={{ color: '#aaa', textDecoration: 'none' }}>sales@winzetech.com</a></p>
                                 <p style={{ color: '#aaa', marginBottom: '10px', fontSize: '13px' }}>📞 <a href="tel:+919550010417" style={{ color: '#aaa', textDecoration: 'none' }}>+91 95500 10417</a></p>
                                 <p style={{ color: '#aaa', marginBottom: '10px', fontSize: '13px' }}>🌐 www.winzetech.com</p>
                             </div>
                         </div>
-                        <div style={{ textAlign: 'center', paddingTop: '25px', borderTop: '1px solid rgba(255,255,255,0.05)', color: '#666', fontSize: '12px' }} className="slide-up delay-4">
+                        <div style={{ textAlign: 'center', paddingTop: '25px', borderTop: '1px solid rgba(255,255,255,0.05)', color: '#666', fontSize: '12px' }} className="scroll-animate slide-up delay-4">
                             <p>© 2025 Winze Technologies Pvt Ltd. All rights reserved.</p>
                         </div>
                     </div>
