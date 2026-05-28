@@ -100,3 +100,15 @@ body.view-landing .btn { background: #e0e5ec; color: #3182ce; box-shadow: 6px 6p
         grid-template-columns: 1fr;
     }
 }
+
+/* Premium input field glowing interactions */
+.quote-form-input {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+.quote-form-input:focus {
+    outline: none !important;
+    border-color: #FFD700 !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.45) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    transform: translateY(-2px);
+}
