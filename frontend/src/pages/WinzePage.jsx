@@ -833,11 +833,15 @@ const WinzePage = () => {
         // Premium dynamic scroll entrance observer
         const scrollObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
+                if (entry.isIntersecting || entry.boundingClientRect.top < window.innerHeight) {
                     entry.target.classList.add('active');
+                    scrollObserver.unobserve(entry.target); // Stop observing once active for peak frame-rates
                 }
             });
-        }, { threshold: 0.05 });
+        }, { 
+            threshold: 0.01,
+            rootMargin: '150px 0px 100px 0px' // Triggers early so user does not experience entry lag!
+        });
 
         const timer = setTimeout(() => {
             document.querySelectorAll('.scroll-animate').forEach(el => {
@@ -1021,59 +1025,59 @@ const WinzePage = () => {
         const spectrum = [
             // 0: Electric Cyan / Aqua Glow
             {
-                gradient: 'linear-gradient(135deg, #00E5FF 0%, #00B0FF 100%)',
                 glow: '#00E5FF',
                 glow2: '#00B0FF',
-                glowSoft: 'rgba(0, 229, 255, 0.22)'
+                glowSoft: 'rgba(0, 229, 255, 0.22)',
+                rgb: '0, 229, 255'
             },
             // 1: Electric Amethyst Purple Glow
             {
-                gradient: 'linear-gradient(135deg, #7C4DFF 0%, #E040FB 100%)',
                 glow: '#7C4DFF',
                 glow2: '#E040FB',
-                glowSoft: 'rgba(124, 77, 255, 0.22)'
+                glowSoft: 'rgba(124, 77, 255, 0.22)',
+                rgb: '124, 77, 255'
             },
             // 2: Vivid Emerald Green Glow
             {
-                gradient: 'linear-gradient(135deg, #00E676 0%, #B2FF59 100%)',
                 glow: '#00E676',
                 glow2: '#B2FF59',
-                glowSoft: 'rgba(0, 230, 118, 0.22)'
+                glowSoft: 'rgba(0, 230, 118, 0.22)',
+                rgb: '0, 230, 118'
             },
             // 3: Glowing Sunset Rose Glow
             {
-                gradient: 'linear-gradient(135deg, #FF1744 0%, #FF9100 100%)',
                 glow: '#FF1744',
                 glow2: '#FF9100',
-                glowSoft: 'rgba(255, 23, 68, 0.22)'
+                glowSoft: 'rgba(255, 23, 68, 0.22)',
+                rgb: '255, 23, 68'
             },
             // 4: Oceanic Sapphire Glow
             {
-                gradient: 'linear-gradient(135deg, #2979FF 0%, #00E5FF 100%)',
                 glow: '#2979FF',
                 glow2: '#00E5FF',
-                glowSoft: 'rgba(41, 121, 255, 0.22)'
+                glowSoft: 'rgba(41, 121, 255, 0.22)',
+                rgb: '41, 121, 255'
             },
             // 5: Neon Sunfire Glow
             {
-                gradient: 'linear-gradient(135deg, #FF9100 0%, #FF3D00 100%)',
                 glow: '#FF9100',
                 glow2: '#FF3D00',
-                glowSoft: 'rgba(255, 145, 0, 0.22)'
+                glowSoft: 'rgba(255, 145, 0, 0.22)',
+                rgb: '255, 145, 0'
             },
             // 6: Deep Cybermint Glow
             {
-                gradient: 'linear-gradient(135deg, #00B0FF 0%, #00E676 100%)',
                 glow: '#00B0FF',
                 glow2: '#00E676',
-                glowSoft: 'rgba(0, 176, 255, 0.22)'
+                glowSoft: 'rgba(0, 176, 255, 0.22)',
+                rgb: '0, 176, 255'
             },
             // 7: Bright Coral Purple Glow
             {
-                gradient: 'linear-gradient(135deg, #E040FB 0%, #FF1744 100%)',
                 glow: '#E040FB',
                 glow2: '#FF1744',
-                glowSoft: 'rgba(224, 64, 251, 0.22)'
+                glowSoft: 'rgba(224, 64, 251, 0.22)',
+                rgb: '224, 64, 251'
             }
         ];
 
@@ -1089,7 +1093,7 @@ const WinzePage = () => {
             '--card-glow': theme.glow,
             '--card-glow-2': theme.glow2,
             '--card-glow-soft': theme.glowSoft,
-            background: theme.gradient
+            '--card-glow-rgb': theme.rgb
         };
     };
 
@@ -1857,16 +1861,19 @@ const WinzePage = () => {
                                 transform 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
                 }
                 .scroll-animate.slide-left {
-                    transform: translateX(-20px);
+                    transform: translateX(-40px);
                 }
                 .scroll-animate.slide-right {
-                    transform: translateX(20px);
+                    transform: translateX(40px);
                 }
                 .scroll-animate.slide-up {
-                    transform: translateY(20px);
+                    transform: translateY(40px);
+                }
+                .scroll-animate.drop-in {
+                    transform: translateY(-40px) scale(0.95);
                 }
                 .scroll-animate.rotate-in {
-                    transform: translateY(25px);
+                    transform: translateY(40px);
                 }
                 
                 /* Trigger active state with custom staggered delays */
@@ -1942,11 +1949,13 @@ const WinzePage = () => {
                     display: flex;
                     flex-direction: column;
                     border: 1px solid rgba(255, 255, 255, 0.08);
+                    border-top: 3px solid var(--card-glow, #00E5FF); /* Dynamic Jewel Colored Accent Top Border */
                     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
                     position: relative;
                     z-index: 1;
-                    background: rgba(255, 255, 255, 0.02);
-                    backdrop-filter: blur(5px);
+                    background: rgba(10, 8, 20, 0.45); /* Premium Dark Obsidian Backdrop */
+                    backdrop-filter: blur(15px);
+                    -webkit-backdrop-filter: blur(15px);
                 }
                 
                 /* Subtle premium background gradient overlay */
@@ -1984,7 +1993,7 @@ const WinzePage = () => {
                 }
                 
                 .modern-card:hover::before {
-                    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 100%);
+                    background: linear-gradient(135deg, rgba(var(--card-glow-rgb), 0.1) 0%, transparent 100%);
                 }
                 .modern-card:hover::after {
                     animation: shimmerSweep 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -1995,7 +2004,7 @@ const WinzePage = () => {
                     border-color: var(--card-glow, #00E5FF) !important;
                 }
                 .modern-card:hover .card-inner {
-                    background: radial-gradient(circle at top right, var(--card-glow-soft, rgba(0, 229, 255, 0.12)) 0%, rgba(8, 4, 25, 0.94) 80%) !important;
+                    background: radial-gradient(circle at top right, var(--card-glow-soft, rgba(0, 229, 255, 0.12)) 0%, rgba(6, 3, 15, 0.94) 80%) !important;
                 }
                 
                 /* section h2 tags with glows */
@@ -2122,18 +2131,18 @@ const WinzePage = () => {
                     transform: translateX(5px);
                 }
                 .btn-learn {
-                    background: rgba(0, 229, 255, 0.12);
+                    background: rgba(var(--card-glow-rgb, 0, 229, 255), 0.08);
                     backdrop-filter: blur(4px);
-                    border: 1px solid rgba(0, 229, 255, 0.3);
+                    border: 1px solid rgba(var(--card-glow-rgb, 0, 229, 255), 0.3);
                     padding: 10px 24px;
                     border-radius: 40px;
                     font-weight: 600;
                     font-size: 0.85rem;
-                    transition: 0.3s;
+                    transition: all 0.3s ease;
                     cursor: pointer;
                     width: fit-content;
                     margin-top: 20px;
-                    color: #00E5FF;
+                    color: var(--card-glow, #00E5FF);
                     position: relative;
                     overflow: hidden;
                     z-index: 3;
@@ -2152,11 +2161,11 @@ const WinzePage = () => {
                     left: 100%;
                 }
                 .btn-learn:hover {
-                    background: #00E5FF;
-                    color: #05020c;
-                    border-color: #00E5FF;
+                    background: var(--card-glow, #00E5FF);
+                    color: #05020c !important;
+                    border-color: var(--card-glow, #00E5FF);
                     transform: scale(1.05);
-                    box-shadow: 0 0 20px rgba(0,229,255,0.5);
+                    box-shadow: 0 0 20px var(--card-glow-soft);
                 }
                 .client-logo-item {
                      background: rgba(255, 255, 255, 0.06); 
@@ -2627,10 +2636,23 @@ const WinzePage = () => {
                                 const extraPoints = getDeliveryExtraPoints(item.title);
                                 const floatClass = `float-${(i % 4) + 1}`;
                                 return (
-                                    <div key={i} className={`modern-card ${floatClass} scroll-animate slide-up delay-${Math.min(i + 3, 8)}`} style={getCardStyles(i, 'delivery')}>
+                                    <div key={i} className={`modern-card ${floatClass} scroll-animate ${i % 2 === 0 ? 'slide-left' : 'slide-right'} delay-${Math.min(i + 1, 8)}`} style={getCardStyles(i, 'delivery')}>
                                         <div className="card-inner">
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                                                <FontAwesomeIcon icon={item.icon} style={{ fontSize: '45px', color: 'var(--card-glow)' }} />
+                                                <div style={{
+                                                    width: '64px',
+                                                    height: '64px',
+                                                    borderRadius: '16px',
+                                                    background: 'rgba(var(--card-glow-rgb), 0.08)',
+                                                    border: '1px solid rgba(var(--card-glow-rgb), 0.25)',
+                                                    boxShadow: '0 0 15px rgba(var(--card-glow-rgb), 0.15)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    transition: 'all 0.3s ease'
+                                                }} className="icon-cyber-ring">
+                                                    <FontAwesomeIcon icon={item.icon} style={{ fontSize: '28px', color: 'var(--card-glow)' }} />
+                                                </div>
                                             </div>
                                             <h3 style={{ marginBottom: '12px', color: 'white', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
                                             <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.5', marginBottom: '15px', fontSize: '14px' }}>{item.desc}</p>
@@ -2663,10 +2685,24 @@ const WinzePage = () => {
                                 const extraPoints = getSolutionExtraPoints(solution.title);
                                 const floatClass = `float-${(idx % 4) + 1}`;
                                 return (
-                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate rotate-in delay-${Math.min(idx % 8 + 1, 8)}`} style={getCardStyles(idx, 'solution')}>
+                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate drop-in delay-${Math.min(idx % 8 + 1, 8)}`} style={getCardStyles(idx, 'solution')}>
                                         <img src={solution.img} alt={solution.title} className="card-image" onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x400/2a3a5f/00E5FF?text=' + encodeURIComponent(solution.title); }} />
                                         <div className="card-inner">
-                                            <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '35px', marginBottom: '12px', color: 'var(--card-glow)' }} />
+                                            <div style={{
+                                                width: '54px',
+                                                height: '54px',
+                                                borderRadius: '14px',
+                                                background: 'rgba(var(--card-glow-rgb), 0.08)',
+                                                border: '1px solid rgba(var(--card-glow-rgb), 0.25)',
+                                                boxShadow: '0 0 15px rgba(var(--card-glow-rgb), 0.15)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                marginBottom: '15px',
+                                                transition: 'all 0.3s ease'
+                                            }} className="icon-cyber-ring">
+                                                <FontAwesomeIcon icon={solution.icon} style={{ fontSize: '24px', color: 'var(--card-glow)' }} />
+                                            </div>
                                             <h3 style={{ marginBottom: '10px', color: 'white', fontSize: '1.15rem', fontWeight: '700' }}>{solution.title}</h3>
                                             <p style={{ color: 'rgba(255,255,255,0.75)', lineHeight: '1.45', marginBottom: '15px', fontSize: '13px' }}>{solution.desc}</p>
                                             <div className="extra-points">
@@ -2696,10 +2732,24 @@ const WinzePage = () => {
                                 const extraPoints = getIndustryExtraPoints(industry.name);
                                 const floatClass = `float-${(idx % 4) + 1}`;
                                 return (
-                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate slide-left delay-${idx + 2}`} style={getCardStyles(idx, 'industry')}>
+                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate slide-up delay-${Math.min(idx + 1, 8)}`} style={getCardStyles(idx, 'industry')}>
                                         <img src={industry.img} alt={industry.name} className="card-image" />
                                         <div className="card-inner">
-                                            <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '40px', marginBottom: '15px', color: 'var(--card-glow)' }} />
+                                            <div style={{
+                                                width: '56px',
+                                                height: '56px',
+                                                borderRadius: '14px',
+                                                background: 'rgba(var(--card-glow-rgb), 0.08)',
+                                                border: '1px solid rgba(var(--card-glow-rgb), 0.25)',
+                                                boxShadow: '0 0 15px rgba(var(--card-glow-rgb), 0.15)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                marginBottom: '15px',
+                                                transition: 'all 0.3s ease'
+                                            }} className="icon-cyber-ring">
+                                                <FontAwesomeIcon icon={industry.icon} style={{ fontSize: '24px', color: 'var(--card-glow)' }} />
+                                            </div>
                                             <h3 style={{ marginBottom: '10px', color: 'white', fontSize: '1.25rem', fontWeight: '700' }}>{industry.name}</h3>
                                             <p style={{ color: 'rgba(255,255,255,0.75)', lineHeight: '1.45', fontSize: '13px', marginBottom: '15px' }}>{industry.desc}</p>
                                             <div className="extra-points">
@@ -2748,9 +2798,23 @@ const WinzePage = () => {
                                 const extraPoints = getWorkExtraPoints(item.title);
                                 const floatClass = `float-${(idx % 4) + 1}`;
                                 return (
-                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate slide-right delay-${idx + 3}`} style={getCardStyles(idx, 'work')}>
+                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate ${idx % 3 === 0 ? 'slide-left' : idx % 3 === 1 ? 'drop-in' : 'slide-right'} delay-${Math.min(idx + 1, 8)}`} style={getCardStyles(idx, 'work')}>
                                         <div className="card-inner">
-                                            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '50px', marginBottom: '20px', color: 'var(--card-glow)' }} />
+                                            <div style={{
+                                                width: '64px',
+                                                height: '64px',
+                                                borderRadius: '16px',
+                                                background: 'rgba(var(--card-glow-rgb), 0.08)',
+                                                border: '1px solid rgba(var(--card-glow-rgb), 0.25)',
+                                                boxShadow: '0 0 15px rgba(var(--card-glow-rgb), 0.15)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                marginBottom: '20px',
+                                                transition: 'all 0.3s ease'
+                                            }} className="icon-cyber-ring">
+                                                <FontAwesomeIcon icon={item.icon} style={{ fontSize: '28px', color: 'var(--card-glow)' }} />
+                                            </div>
                                             <h3 style={{ marginBottom: '12px', color: 'white', fontSize: '1.3rem', fontWeight: '700' }}>{item.title}</h3>
                                             <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.5', marginBottom: '15px', fontSize: '14px' }}>{item.desc}</p>
                                             <div className="extra-points">
@@ -2777,12 +2841,12 @@ const WinzePage = () => {
                         <h2 style={{ fontSize: '2.5rem', color: '#00E5FF', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Impact in Numbers</h2>
                         <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">DELIVERING EXCELLENCE THROUGH MEASURABLE RESULTS</p>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '25px' }}>
-                            <div className="stat-card scroll-animate slide-up delay-1" style={{ '--stat-glow': '#00E5FF', '--stat-glow-soft': 'rgba(0, 229, 255, 0.2)' }}>
+                            <div className="stat-card scroll-animate slide-left delay-1" style={{ '--stat-glow': '#00E5FF', '--stat-glow-soft': 'rgba(0, 229, 255, 0.2)' }}>
                                 <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(0, 229, 255, 0.6)', marginBottom: '10px' }}>{counters.years}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Years in Business</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Industry Experience</p>
                             </div>
-                            <div className="stat-card scroll-animate slide-up delay-2" style={{ '--stat-glow': '#7C4DFF', '--stat-glow-soft': 'rgba(124, 77, 255, 0.2)' }}>
+                            <div className="stat-card scroll-animate drop-in delay-2" style={{ '--stat-glow': '#7C4DFF', '--stat-glow-soft': 'rgba(124, 77, 255, 0.2)' }}>
                                 <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(124, 77, 255, 0.6)', marginBottom: '10px' }}>{counters.expertise}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Expertise</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Domain Specialists</p>
@@ -2792,12 +2856,12 @@ const WinzePage = () => {
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Clients</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Satisfied Customers</p>
                             </div>
-                            <div className="stat-card scroll-animate slide-up delay-4" style={{ '--stat-glow': '#FF9100', '--stat-glow-soft': 'rgba(255, 145, 0, 0.2)' }}>
+                            <div className="stat-card scroll-animate drop-in delay-4" style={{ '--stat-glow': '#FF9100', '--stat-glow-soft': 'rgba(255, 145, 0, 0.2)' }}>
                                 <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255, 145, 0, 0.6)', marginBottom: '10px' }}>{counters.awards}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Awards</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Industry Recognition</p>
                             </div>
-                            <div className="stat-card scroll-animate slide-up delay-5" style={{ '--stat-glow': '#00B0FF', '--stat-glow-soft': 'rgba(0, 176, 255, 0.2)' }}>
+                            <div className="stat-card scroll-animate slide-right delay-5" style={{ '--stat-glow': '#00B0FF', '--stat-glow-soft': 'rgba(0, 176, 255, 0.2)' }}>
                                 <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(0, 176, 255, 0.6)', marginBottom: '10px' }}>{counters.projects}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Projects</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Successfully Delivered</p>
