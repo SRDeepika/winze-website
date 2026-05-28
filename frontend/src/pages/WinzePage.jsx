@@ -34,6 +34,11 @@ const bgImages = {
     stats: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format",
 };
 
+// ========== BACKGROUND VIDEOS (CDN TECHNOLOGY LOOPS) ==========
+const bgVideos = {
+    hero: "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-and-numbers-31948-large.mp4"
+};
+
 // Solution Images for Cards
 const solutionImages = {
     unified: "/images/unified-comm.jpg",
@@ -1525,6 +1530,49 @@ const WinzePage = () => {
         </div>
     );
 
+    const BackgroundVideo = ({ videoSrc, fallbackImg }) => (
+        <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100%',
+            height: '100%',
+            overflow: 'hidden',
+            zIndex: 0
+        }}>
+            <video 
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+                poster={fallbackImg}
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    opacity: 0.45
+                }}
+            >
+                <source src={videoSrc} type="video/mp4" />
+            </video>
+            <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'linear-gradient(135deg, rgba(8, 5, 20, 0.92) 0%, rgba(15, 10, 35, 0.82) 50%, rgba(8, 5, 20, 0.95) 100%)',
+                mixBlendMode: 'multiply'
+            }} />
+        </div>
+    );
+
     return (
         <HelmetProvider>
             <>
@@ -1719,9 +1767,9 @@ const WinzePage = () => {
                     background: conic-gradient(
                         from 0deg,
                         transparent 20%,
-                        #f97316 40%,
-                        #eab308 50%,
-                        #f97316 60%,
+                        #00e673 40%,
+                        #007339 50%,
+                        #00e673 60%,
                         transparent 80%
                     );
                 }
@@ -1729,9 +1777,9 @@ const WinzePage = () => {
                     background: conic-gradient(
                         from 0deg,
                         transparent 20%,
-                        #ec4899 40%,
-                        #eab308 50%,
-                        #ec4899 60%,
+                        #ff0055 40%,
+                        #99002d 50%,
+                        #ff0055 60%,
                         transparent 80%
                     );
                 }
@@ -1763,8 +1811,20 @@ const WinzePage = () => {
                     animation: shimmerSweep 1.5s ease-out forwards;
                 }
                 .modern-card:hover {
-                    transform: translateY(-10px) scale(1.02);
-                    box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 30px rgba(255,215,0,0.3);
+                    transform: translateY(-12px) scale(1.03);
+                    box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+                }
+                .bg-delivery .modern-card:hover {
+                    box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 35px rgba(168, 85, 247, 0.45);
+                }
+                .bg-solutions .modern-card:hover {
+                    box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 35px rgba(6, 182, 212, 0.45);
+                }
+                .bg-industries .modern-card:hover {
+                    box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 35px rgba(0, 230, 115, 0.45);
+                }
+                .bg-work .modern-card:hover {
+                    box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 35px rgba(236, 72, 153, 0.45);
                 }
                 
                 /* section h2 tags with glows */
@@ -2070,13 +2130,13 @@ const WinzePage = () => {
                     background: linear-gradient(135deg, #FFE44D 0%, #FFB347 100%);
                 }
                 
-                /* Section background gradients - Shifting Deep Colors */
-                .bg-delivery { background: linear-gradient(135deg, #090314 0%, #150826 50%, #090314 100%); background-size: 200% 200%; animation: gradientShift 8s ease infinite; }
-                .bg-solutions { background: linear-gradient(135deg, #040914 0%, #0d1526 50%, #040914 100%); background-size: 200% 200%; animation: gradientShift 10s ease infinite; }
-                .bg-industries { background: linear-gradient(135deg, #0c0805 0%, #1a1009 50%, #0c0805 100%); background-size: 200% 200%; animation: gradientShift 9s ease infinite; }
-                .bg-partners { background: linear-gradient(135deg, #07030f 0%, #11051c 50%, #07030f 100%); background-size: 200% 200%; animation: gradientShift 7s ease infinite; }
-                .bg-clients { background: linear-gradient(135deg, #03060d 0%, #090f1c 50%, #03060d 100%); background-size: 200% 200%; animation: gradientShift 11s ease infinite; }
-                .bg-work { background: linear-gradient(135deg, #10030c 0%, #1f0817 50%, #10030c 100%); background-size: 200% 200%; animation: gradientShift 12s ease infinite; }
+                /* Section background gradients - Premium Radial Ambient Light Meshes */
+                .bg-delivery { background: radial-gradient(circle at 20% 30%, rgba(89, 0, 153, 0.16) 0%, transparent 60%), radial-gradient(circle at 80% 70%, rgba(28, 0, 51, 0.3) 0%, #080312 100%); }
+                .bg-solutions { background: radial-gradient(circle at 30% 20%, rgba(0, 77, 214, 0.16) 0%, transparent 60%), radial-gradient(circle at 70% 80%, rgba(0, 17, 51, 0.3) 0%, #010817 100%); }
+                .bg-industries { background: radial-gradient(circle at 25% 75%, rgba(0, 230, 115, 0.14) 0%, transparent 60%), radial-gradient(circle at 75% 25%, rgba(0, 26, 13, 0.35) 0%, #010d07 100%); }
+                .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(137, 0, 255, 0.1) 0%, transparent 70%), #04020a; }
+                .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(0, 182, 212, 0.1) 0%, transparent 70%), #02040d; }
+                .bg-work { background: radial-gradient(circle at 80% 20%, rgba(255, 0, 85, 0.14) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(38, 0, 11, 0.35) 0%, #120106 100%); }
             `}</style>
             
             <SEO 
@@ -2105,14 +2165,14 @@ const WinzePage = () => {
                     top: 0,
                     left: 0,
                     right: 0,
-                    background: scrolled ? 'rgba(32, 10, 50, 0.85)' : 'rgba(10, 5, 24, 0.65)',
-                    backdropFilter: 'blur(20px)',
-                    WebkitBackdropFilter: 'blur(20px)',
+                    background: scrolled ? 'rgba(8, 4, 20, 0.88)' : 'rgba(8, 4, 20, 0.45)',
+                    backdropFilter: 'blur(25px)',
+                    WebkitBackdropFilter: 'blur(25px)',
                     padding: '12px 5%',
                     zIndex: 1000,
                     transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                    boxShadow: scrolled ? '0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255, 215, 0, 0.2)' : '0 4px 20px rgba(0,0,0,0.2)',
-                    borderBottom: scrolled ? '2px solid #FFD700' : '1px solid rgba(255, 215, 0, 0.25)'
+                    boxShadow: scrolled ? '0 10px 40px rgba(0,0,0,0.8), inset 0 -1px 0 rgba(255, 215, 0, 0.12)' : 'none',
+                    borderBottom: scrolled ? '1px solid rgba(255, 215, 0, 0.5)' : '1px solid rgba(255, 255, 255, 0.08)'
                 }}>
                     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
                         <div className="logo-clean" onClick={() => setShowLogoModal(true)}>
@@ -2160,7 +2220,7 @@ const WinzePage = () => {
 
                 {/* Hero Section */}
                 <section id="home" ref={homeRef} style={{ minHeight: '85vh', position: 'relative', display: 'flex', alignItems: 'center', padding: '80px 5%', overflow: 'hidden' }}>
-                    <BackgroundImage imageSrc={bgImages.hero} />
+                    <BackgroundVideo videoSrc={bgVideos.hero} fallbackImg={bgImages.hero} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '50px', alignItems: 'center' }}>
                             <div className="slide-left delay-1">
