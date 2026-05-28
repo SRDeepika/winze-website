@@ -2168,42 +2168,55 @@ const WinzePage = () => {
                     box-shadow: 0 0 20px rgba(0,229,255,0.5);
                 }
                 .client-logo-item, .partner-logo-item {
-                    background: white; 
-                    padding: 20px; 
-                    border-radius: 16px; 
-                    text-align: center; 
-                    cursor: pointer;
-                    transition: all 0.3s ease; 
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
-                    min-width: 150px;
-                    border: 1px solid rgba(0,0,0,0.05); 
-                    flex-shrink: 0;
-                    position: relative;
-                    overflow: hidden;
-                }
-                .client-logo-item::before, .partner-logo-item::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent);
-                    transition: left 0.5s ease;
-                }
-                .client-logo-item:hover::before, .partner-logo-item:hover::before {
-                    left: 100%;
-                }
-                .client-logo-item:hover, .partner-logo-item:hover { 
-                    transform: translateY(-8px) scale(1.03); 
-                    box-shadow: 0 20px 35px rgba(0,0,0,0.2); 
-                    background: linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%); 
-                    border-color: #00E5FF;
-                }
-                .client-logo-item:hover h3, .partner-logo-item:hover h3 { color: #ffffff; }
-                .client-logo-img, .partner-logo-img { width: 80px; height: 80px; margin: 0 auto 12px; display: flex; align-items: center; justifyContent: center; }
-                .client-logo-img img, .partner-logo-img img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s ease; }
-                .client-logo-item:hover img, .partner-logo-item:hover img { transform: scale(1.1); }
+                     background: rgba(255, 255, 255, 0.06); 
+                     padding: 20px; 
+                     border-radius: 16px; 
+                     text-align: center; 
+                     cursor: pointer;
+                     transition: all 0.3s ease; 
+                     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25); 
+                     min-width: 150px;
+                     border: 1px solid rgba(255, 255, 255, 0.08); 
+                     flex-shrink: 0;
+                     position: relative;
+                     overflow: hidden;
+                     backdrop-filter: blur(10px);
+                     -webkit-backdrop-filter: blur(10px);
+                 }
+                 .client-logo-item::before, .partner-logo-item::before {
+                     content: '';
+                     position: absolute;
+                     top: 0;
+                     left: -100%;
+                     width: 100%;
+                     height: 100%;
+                     background: linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent);
+                     transition: left 0.5s ease;
+                 }
+                 .client-logo-item:hover::before, .partner-logo-item:hover::before {
+                     left: 100%;
+                 }
+                 .client-logo-item:hover, .partner-logo-item:hover { 
+                     transform: translateY(-8px) scale(1.03); 
+                     box-shadow: 0 20px 35px rgba(0,0,0,0.2); 
+                     background: linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%); 
+                     border-color: #00E5FF;
+                 }
+                 .client-logo-item:hover h3, .partner-logo-item:hover h3 { color: #ffffff; }
+                 .client-logo-img, .partner-logo-img { 
+                     width: 85px; 
+                     height: 85px; 
+                     margin: 0 auto 12px; 
+                     display: flex; 
+                     align-items: center; 
+                     justify-content: center; 
+                     background: white; 
+                     padding: 8px; 
+                     border-radius: 12px; 
+                     box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.08);
+                 }
+                 .client-logo-img img, .partner-logo-img img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s ease; }
+                 .client-logo-item:hover img, .partner-logo-item:hover img { transform: scale(1.1); }
                 
                 .stat-card {
                     padding: 30px 20px;
@@ -2312,9 +2325,9 @@ const WinzePage = () => {
                 
                 /* Section background gradients - Balanced Multi-Color Accent System */
                 .bg-delivery { background: radial-gradient(circle at 15% 20%, rgba(255, 167, 38, 0.15) 0%, transparent 60%), radial-gradient(circle at 85% 80%, rgba(124, 77, 255, 0.08) 0%, #06040b 100%); }
-                .bg-solutions { background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); }
+                .bg-solutions { background: radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.16) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(124, 77, 255, 0.14) 0%, #060412 100%); }
                 .bg-industries { background: radial-gradient(circle at 20% 30%, rgba(0, 230, 118, 0.16) 0%, transparent 65%), radial-gradient(circle at 80% 70%, rgba(0, 229, 255, 0.06) 0%, #010704 100%); }
-                .bg-partners { background: #ffffff; }
+                .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.08) 0%, transparent 70%), #08070d; }
                 .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.14) 0%, transparent 70%), #040209; }
                 .bg-work { background: radial-gradient(circle at 85% 20%, rgba(255, 23, 68, 0.14) 0%, transparent 60%), radial-gradient(circle at 15% 80%, rgba(124, 77, 255, 0.06) 0%, #060105 100%); }
                 
@@ -2636,9 +2649,9 @@ const WinzePage = () => {
                 {/* Solutions Portfolio Section */}
                 <section id="solutions" ref={solutionsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-solutions">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: '#060112', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Solutions Portfolio</h2>
-                        <p style={{ textAlign: 'center', color: '#0f172a', marginBottom: '10px', fontSize: '1rem', letterSpacing: '1px', fontWeight: '600' }} className="scroll-animate slide-up delay-2">PRACTICAL ACTION. BOLD AMBITION. ENDLESS POSSIBILITIES.</p>
-                        <p style={{ textAlign: 'center', color: '#1e293b', marginBottom: '50px', fontSize: '14px', fontWeight: '500' }} className="scroll-animate slide-up delay-3">Enterprise-grade technology solutions for modern businesses</p>
+                        <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Solutions Portfolio</h2>
+                        <p style={{ textAlign: 'center', color: '#00E5FF', marginBottom: '10px', fontSize: '1rem', letterSpacing: '1px', fontWeight: '600' }} className="scroll-animate slide-up delay-2">PRACTICAL ACTION. BOLD AMBITION. ENDLESS POSSIBILITIES.</p>
+                        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.75)', marginBottom: '50px', fontSize: '14px', fontWeight: '500' }} className="scroll-animate slide-up delay-3">Enterprise-grade technology solutions for modern businesses</p>
                         
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '30px' }}>
                             {solutions.map((solution, idx) => {
@@ -2704,10 +2717,10 @@ const WinzePage = () => {
                 {/* Partners Section */}
                 <section id="partners" ref={partnersRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden' }} className="bg-partners">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '2.5rem', color: '#060112', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Trusted Partners</h2>
-                        <p style={{ color: '#475569', marginBottom: '20px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">INNOVATION. EXCELLENCE. TRUST.</p>
-                        <p style={{ color: '#64748b', marginBottom: '40px', fontSize: '14px' }} className="scroll-animate slide-up delay-3">Partnering with industry leaders to deliver world-class technology solutions</p>
-                        <div className="marquee-container scroll-animate slide-up delay-4"><div className="marquee-content">{[...partnerLogos, ...partnerLogos, ...partnerLogos].map((partner, idx) => (<div key={idx} className="partner-logo-item" onClick={() => handleTrackClick(partner.name, 'partner')}><div className="partner-logo-img"><img src={partner.url} alt={partner.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/05020c?text=${partner.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{partner.name}</h3></div>))}</div></div>
+                        <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Trusted Partners</h2>
+                        <p style={{ color: '#00E5FF', marginBottom: '20px', fontSize: '1rem', letterSpacing: '1px', fontWeight: '600' }} className="scroll-animate slide-up delay-2">INNOVATION. EXCELLENCE. TRUST.</p>
+                        <p style={{ color: 'rgba(255,255,255,0.75)', marginBottom: '40px', fontSize: '14px', fontWeight: '500' }} className="scroll-animate slide-up delay-3">Partnering with industry leaders to deliver world-class technology solutions</p>
+                        <div className="marquee-container scroll-animate slide-up delay-4"><div className="marquee-content">{[...partnerLogos, ...partnerLogos, ...partnerLogos].map((partner, idx) => (<div key={idx} className="partner-logo-item" onClick={() => handleTrackClick(partner.name, 'partner')}><div className="partner-logo-img"><img src={partner.url} alt={partner.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/05020c?text=${partner.name.charAt(0)}`; }} /></div><h3 style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{partner.name}</h3></div>))}</div></div>
                     </div>
                 </section>
 
