@@ -2227,29 +2227,29 @@ const WinzePage = () => {
                     padding: 30px 20px;
                     border-radius: 20px;
                     text-align: center;
-                    transition: all 0.4s ease;
-                    animation: fadeInUp 0.6s ease-out;
-                    backdrop-filter: blur(10px);
+                    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+                    backdrop-filter: blur(8px);
+                    -webkit-backdrop-filter: blur(8px);
+                    background: rgba(255, 255, 255, 0.02);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
                     position: relative;
                     overflow: hidden;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
                 }
                 .stat-card::before {
                     content: '';
                     position: absolute;
-                    top: -50%;
-                    left: -50%;
-                    width: 200%;
-                    height: 200%;
-                    background: radial-gradient(circle, rgba(0,229,255,0.15), transparent);
-                    opacity: 0;
-                    transition: opacity 0.4s ease;
-                }
-                .stat-card:hover::before {
-                    opacity: 1;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 100%);
+                    transition: opacity 0.35s ease;
                 }
                 .stat-card:hover {
-                    transform: translateY(-10px) scale(1.03);
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                    transform: translateY(-8px);
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 25px var(--stat-glow-soft);
+                    border-color: var(--stat-glow, #00E5FF) !important;
                 }
  
                 @keyframes fadeInUp {
@@ -2777,28 +2777,28 @@ const WinzePage = () => {
                         <h2 style={{ fontSize: '2.5rem', color: '#00E5FF', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Impact in Numbers</h2>
                         <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">DELIVERING EXCELLENCE THROUGH MEASURABLE RESULTS</p>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '25px' }}>
-                            <div className="stat-card scroll-animate slide-up delay-1" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', border: '1px solid rgba(0,229,255,0.3)', animation: 'pulse 2s infinite' }}>
-                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255,255,255,0.6)', marginBottom: '10px' }}>{counters.years}+</div>
+                            <div className="stat-card scroll-animate slide-up delay-1" style={{ '--stat-glow': '#00E5FF', '--stat-glow-soft': 'rgba(0, 229, 255, 0.2)' }}>
+                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(0, 229, 255, 0.6)', marginBottom: '10px' }}>{counters.years}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Years in Business</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Industry Experience</p>
                             </div>
-                            <div className="stat-card scroll-animate slide-up delay-2" style={{ background: 'linear-gradient(135deg, #f093fb, #f5576c)', border: '1px solid rgba(0,229,255,0.3)', animation: 'pulse 2s infinite 0.3s' }}>
-                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255,255,255,0.6)', marginBottom: '10px' }}>{counters.expertise}+</div>
+                            <div className="stat-card scroll-animate slide-up delay-2" style={{ '--stat-glow': '#7C4DFF', '--stat-glow-soft': 'rgba(124, 77, 255, 0.2)' }}>
+                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(124, 77, 255, 0.6)', marginBottom: '10px' }}>{counters.expertise}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Expertise</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Domain Specialists</p>
                             </div>
-                            <div className="stat-card scroll-animate slide-up delay-3" style={{ background: 'linear-gradient(135deg, #4facfe, #00f2fe)', border: '1px solid rgba(0,229,255,0.3)', animation: 'pulse 2s infinite 0.6s' }}>
-                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255,255,255,0.6)', marginBottom: '10px' }}>{counters.clients}+</div>
+                            <div className="stat-card scroll-animate slide-up delay-3" style={{ '--stat-glow': '#00E676', '--stat-glow-soft': 'rgba(0, 230, 118, 0.2)' }}>
+                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(0, 230, 118, 0.6)', marginBottom: '10px' }}>{counters.clients}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Clients</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Satisfied Customers</p>
                             </div>
-                            <div className="stat-card scroll-animate slide-up delay-4" style={{ background: 'linear-gradient(135deg, #fa709a, #fee140)', border: '1px solid rgba(0,229,255,0.3)', animation: 'pulse 2s infinite 0.9s' }}>
-                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255,255,255,0.6)', marginBottom: '10px' }}>{counters.awards}+</div>
+                            <div className="stat-card scroll-animate slide-up delay-4" style={{ '--stat-glow': '#FF9100', '--stat-glow-soft': 'rgba(255, 145, 0, 0.2)' }}>
+                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255, 145, 0, 0.6)', marginBottom: '10px' }}>{counters.awards}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Awards</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Industry Recognition</p>
                             </div>
-                            <div className="stat-card scroll-animate slide-up delay-5" style={{ background: 'linear-gradient(135deg, #a8edea, #fed6e3)', border: '1px solid rgba(0,229,255,0.3)', animation: 'pulse 2s infinite 1.2s' }}>
-                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(255,255,255,0.6)', marginBottom: '10px' }}>{counters.projects}+</div>
+                            <div className="stat-card scroll-animate slide-up delay-5" style={{ '--stat-glow': '#00B0FF', '--stat-glow-soft': 'rgba(0, 176, 255, 0.2)' }}>
+                                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ffffff', textShadow: '0 0 15px rgba(0, 176, 255, 0.6)', marginBottom: '10px' }}>{counters.projects}+</div>
                                 <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '8px', fontWeight: 'bold' }}>Projects</h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>Successfully Delivered</p>
                             </div>
