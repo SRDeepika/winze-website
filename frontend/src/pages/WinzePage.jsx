@@ -2167,7 +2167,7 @@ const WinzePage = () => {
                     transform: scale(1.05);
                     box-shadow: 0 0 20px rgba(0,229,255,0.5);
                 }
-                .client-logo-item, .partner-logo-item {
+                .client-logo-item {
                      background: rgba(255, 255, 255, 0.06); 
                      padding: 20px; 
                      border-radius: 16px; 
@@ -2182,6 +2182,20 @@ const WinzePage = () => {
                      overflow: hidden;
                      backdrop-filter: blur(10px);
                      -webkit-backdrop-filter: blur(10px);
+                 }
+                 .partner-logo-item {
+                     background: #ffffff; 
+                     padding: 20px; 
+                     border-radius: 16px; 
+                     text-align: center; 
+                     cursor: pointer;
+                     transition: all 0.3s ease; 
+                     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+                     min-width: 150px;
+                     border: 1px solid rgba(0, 0, 0, 0.05); 
+                     flex-shrink: 0;
+                     position: relative;
+                     overflow: hidden;
                  }
                  .client-logo-item::before, .partner-logo-item::before {
                      content: '';
@@ -2202,7 +2216,7 @@ const WinzePage = () => {
                      background: linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%); 
                      border-color: #00E5FF;
                  }
-                 .client-logo-item:hover h3, .partner-logo-item:hover h3 { color: #ffffff; }
+                 .client-logo-item:hover h3, .partner-logo-item:hover h3 { color: #ffffff !important; }
                  .client-logo-img, .partner-logo-img { 
                      width: 85px; 
                      height: 85px; 
@@ -2327,7 +2341,7 @@ const WinzePage = () => {
                 .bg-delivery { background: radial-gradient(circle at 15% 20%, rgba(255, 167, 38, 0.15) 0%, transparent 60%), radial-gradient(circle at 85% 80%, rgba(124, 77, 255, 0.08) 0%, #06040b 100%); }
                 .bg-solutions { background: radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.16) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(124, 77, 255, 0.14) 0%, #060412 100%); }
                 .bg-industries { background: radial-gradient(circle at 20% 30%, rgba(0, 230, 118, 0.16) 0%, transparent 65%), radial-gradient(circle at 80% 70%, rgba(0, 229, 255, 0.06) 0%, #010704 100%); }
-                .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.08) 0%, transparent 70%), #08070d; }
+                .bg-partners { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
                 .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.14) 0%, transparent 70%), #040209; }
                 .bg-work { background: radial-gradient(circle at 85% 20%, rgba(255, 23, 68, 0.14) 0%, transparent 60%), radial-gradient(circle at 15% 80%, rgba(124, 77, 255, 0.06) 0%, #060105 100%); }
                 
@@ -2717,10 +2731,10 @@ const WinzePage = () => {
                 {/* Partners Section */}
                 <section id="partners" ref={partnersRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden' }} className="bg-partners">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Trusted Partners</h2>
-                        <p style={{ color: '#00E5FF', marginBottom: '20px', fontSize: '1rem', letterSpacing: '1px', fontWeight: '600' }} className="scroll-animate slide-up delay-2">INNOVATION. EXCELLENCE. TRUST.</p>
-                        <p style={{ color: 'rgba(255,255,255,0.75)', marginBottom: '40px', fontSize: '14px', fontWeight: '500' }} className="scroll-animate slide-up delay-3">Partnering with industry leaders to deliver world-class technology solutions</p>
-                        <div className="marquee-container scroll-animate slide-up delay-4"><div className="marquee-content">{[...partnerLogos, ...partnerLogos, ...partnerLogos].map((partner, idx) => (<div key={idx} className="partner-logo-item" onClick={() => handleTrackClick(partner.name, 'partner')}><div className="partner-logo-img"><img src={partner.url} alt={partner.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/05020c?text=${partner.name.charAt(0)}`; }} /></div><h3 style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{partner.name}</h3></div>))}</div></div>
+                        <h2 style={{ fontSize: '2.5rem', color: '#060112', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Trusted Partners</h2>
+                        <p style={{ color: '#4f46e5', marginBottom: '20px', fontSize: '1rem', letterSpacing: '1px', fontWeight: '600' }} className="scroll-animate slide-up delay-2">INNOVATION. EXCELLENCE. TRUST.</p>
+                        <p style={{ color: '#4b5563', marginBottom: '40px', fontSize: '14px', fontWeight: '500' }} className="scroll-animate slide-up delay-3">Partnering with industry leaders to deliver world-class technology solutions</p>
+                        <div className="marquee-container scroll-animate slide-up delay-4"><div className="marquee-content">{[...partnerLogos, ...partnerLogos, ...partnerLogos].map((partner, idx) => (<div key={idx} className="partner-logo-item" onClick={() => handleTrackClick(partner.name, 'partner')}><div className="partner-logo-img"><img src={partner.url} alt={partner.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/05020c?text=${partner.name.charAt(0)}`; }} /></div><h3 style={{ color: '#1f2937', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{partner.name}</h3></div>))}</div></div>
                     </div>
                 </section>
 
