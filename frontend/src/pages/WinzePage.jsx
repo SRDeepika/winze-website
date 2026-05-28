@@ -36,7 +36,7 @@ const bgImages = {
 
 // ========== BACKGROUND VIDEOS (LOCAL AI WITH CDN FALLBACK) ==========
 const bgVideos = {
-    hero: "/videos/background video.mp4",
+    hero: "/videos/background-video.mp4",
     heroFallback: "https://assets.mixkit.co/videos/preview/mixkit-blockchain-technology-loop-42858-large.mp4"
 };
 
@@ -2222,41 +2222,20 @@ const WinzePage = () => {
                 <section id="home" ref={homeRef} style={{ minHeight: '95vh', position: 'relative', display: 'flex', alignItems: 'center', padding: '80px 5%', overflow: 'hidden' }}>
                     <BackgroundVideo videoSrc={bgVideos.hero} fallbackVideo={bgVideos.heroFallback} fallbackImg={bgImages.hero} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '50px', alignItems: 'center' }}>
+                        <div style={{ maxWidth: '850px', paddingRight: '40px' }}>
                             <div className="slide-left delay-1">
                                 <div style={{ marginBottom: '20px' }}>
                                     <span style={{ background: 'rgba(0, 229, 255, 0.15)', padding: '5px 16px', borderRadius: '30px', fontSize: '12px', color: '#00E5FF', display: 'inline-block', fontWeight: '600', letterSpacing: '1px', animation: 'neonGlow 2s infinite' }}>16+ YEARS OF EXCELLENCE</span>
-                                    <h1 className="hero-title" style={{ fontSize: '2.8rem', marginTop: '20px', fontFamily: "'Playfair Display', serif", fontWeight: '700', marginBottom: '20px', lineHeight: '1.2' }}>Winze Technologies</h1>
+                                    <h1 className="hero-title" style={{ fontSize: '3.6rem', marginTop: '20px', fontFamily: "'Playfair Display', serif", fontWeight: '700', marginBottom: '20px', lineHeight: '1.2' }}>Winze Technologies</h1>
                                 </div>
-                                <p style={{ fontSize: '1.1rem', marginBottom: '20px', color: '#ddd', lineHeight: '1.7' }}>Leading Enterprise Communication, Security, and AI Technology Solutions Provider</p>
-                                <p style={{ marginBottom: '30px', color: '#aaa', lineHeight: '1.7' }}>With over 16 years of industry experience, Winze Technologies specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.</p>
+                                <p style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ddd', lineHeight: '1.7' }}>Leading Enterprise Communication, Security, and AI Technology Solutions Provider</p>
+                                <p style={{ marginBottom: '30px', color: '#aaa', lineHeight: '1.7', fontSize: '1.05rem' }}>With over 16 years of industry experience, Winze Technologies specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.</p>
                                 
                                 <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
                                     <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} className="btn-consultation-glow" style={{ background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)', color: '#ffffff', border: 'none', padding: '14px 40px', borderRadius: '50px', fontSize: '15px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,229,255,0.3)' }}>Get Free Consultation →</button>
                                     <button onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} style={{ background: 'transparent', color: '#00E5FF', border: '2px solid #00E5FF', padding: '12px 35px', borderRadius: '50px', fontSize: '15px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.4s ease' }}
                                     onMouseEnter={(e) => { e.target.style.background = 'rgba(0,229,255,0.15)'; e.target.style.transform = 'translateY(-4px)'; e.target.style.boxShadow = '0 0 15px rgba(0, 229, 255, 0.3)'; }}
                                     onMouseLeave={(e) => { e.target.style.background = 'transparent'; e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}>Explore Solutions</button>
-                                </div>
-                            </div>
- 
-                            <div className="slide-right delay-1" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                <div style={{ 
-                                    transition: 'all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)', 
-                                    cursor: 'pointer', 
-                                    background: 'linear-gradient(135deg, rgba(0,229,255,0.4), rgba(124,77,255,0.1))', 
-                                    padding: '3px', 
-                                    borderRadius: '24px',
-                                    boxShadow: '0 15px 35px rgba(0,0,0,0.4)'
-                                }}
-                                    onMouseEnter={(e) => { 
-                                        e.currentTarget.style.transform = 'translateY(-8px) rotate(1deg)'; 
-                                        e.currentTarget.style.boxShadow = '0 25px 50px rgba(0,0,0,0.6), 0 0 25px rgba(0,229,255,0.3)'; 
-                                    }}
-                                    onMouseLeave={(e) => { 
-                                        e.currentTarget.style.transform = 'translateY(0) rotate(0)'; 
-                                        e.currentTarget.style.boxShadow = '0 15px 35px rgba(0,0,0,0.4)'; 
-                                    }}>
-                                    <img src="/images/hero-image.jpg" alt="Hero" style={{ width: '100%', maxWidth: '500px', height: 'auto', borderRadius: '22px', display: 'block' }} />
                                 </div>
                             </div>
                         </div>
