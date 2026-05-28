@@ -766,6 +766,9 @@ const WinzePage = () => {
     
     const [landingModalOpen, setLandingModalOpen] = useState(false);
     const [landingData, setLandingData] = useState(null);
+
+    const [heroMouse, setHeroMouse] = useState({ x: 50, y: 50 });
+    const [heroMouseActive, setHeroMouseActive] = useState(false);
     
     const statsRef = useRef(null);
     const homeRef = useRef(null);
@@ -774,6 +777,14 @@ const WinzePage = () => {
     const partnersRef = useRef(null);
     const clientsRef = useRef(null);
     const workwithRef = useRef(null);
+
+    const handleHeroMouseMove = (e) => {
+        if (!homeRef.current) return;
+        const rect = homeRef.current.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        setHeroMouse({ x, y });
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -1620,7 +1631,176 @@ const WinzePage = () => {
     return (
         <HelmetProvider>
             <>
-            <style>{`
+             <style>{`
+                @keyframes techScanline {
+                    0% { transform: translateY(-100%); }
+                    100% { transform: translateY(100%); }
+                }
+                @keyframes radarPulse {
+                    0% { transform: scale(0.9); opacity: 0.3; }
+                    50% { transform: scale(1.1); opacity: 0.8; }
+                    100% { transform: scale(0.9); opacity: 0.3; }
+                }
+                @keyframes floatSubtle {
+                    0%, 100% { transform: translateY(0px) rotate(0deg); }
+                    50% { transform: translateY(-6px) rotate(0.5deg); }
+                }
+                @keyframes gridRotate {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+                @keyframes scrollBounce {
+                    0%, 100% { transform: translateY(0); opacity: 0.5; }
+                    50% { transform: translateY(10px); opacity: 1; }
+                }
+                
+                .tech-grid {
+                    background-image: 
+                        radial-gradient(rgba(0, 229, 255, 0.12) 1.5px, transparent 1.5px),
+                        linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+                    background-size: 30px 30px, 60px 60px, 60px 60px;
+                    background-position: 0 0, 0 0, 0 0;
+                    pointer-events: none;
+                }
+                
+                .hero-text-glass {
+                    background: rgba(8, 4, 25, 0.62);
+                    backdrop-filter: blur(20px);
+                    -webkit-backdrop-filter: blur(20px);
+                    border: 1px solid rgba(0, 229, 255, 0.18);
+                    border-left: 5px solid #00E5FF;
+                    border-radius: 24px;
+                    padding: 40px;
+                    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 25px rgba(0, 229, 255, 0.04);
+                    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                .hero-text-glass:hover {
+                    border-color: rgba(0, 229, 255, 0.38);
+                    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 0 35px rgba(0, 229, 255, 0.08);
+                    transform: translateY(-2px);
+                }
+                
+                .cyber-hud-dashboard {
+                    background: rgba(12, 5, 30, 0.48);
+                    backdrop-filter: blur(20px);
+                    -webkit-backdrop-filter: blur(20px);
+                    border: 1px solid rgba(124, 77, 255, 0.25);
+                    border-radius: 28px;
+                    padding: 30px;
+                    box-shadow: 0 25px 55px rgba(0,0,0,0.6), 0 0 20px rgba(124,77,255,0.12);
+                    position: relative;
+                    overflow: hidden;
+                    height: 480px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    animation: floatSubtle 6s ease-in-out infinite;
+                    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                .cyber-hud-dashboard:hover {
+                    border-color: rgba(0, 229, 255, 0.45);
+                    box-shadow: 0 30px 70px rgba(0,0,0,0.7), 0 0 35px rgba(0,229,255,0.3);
+                    transform: translateY(-6px);
+                }
+                .hud-grid-ring {
+                    position: absolute;
+                    width: 280px;
+                    height: 280px;
+                    border-radius: 50%;
+                    border: 1px dashed rgba(0, 229, 255, 0.22);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    animation: gridRotate 25s linear infinite;
+                    pointer-events: none;
+                }
+                .hud-grid-ring-inner {
+                    position: absolute;
+                    width: 200px;
+                    height: 200px;
+                    border-radius: 50%;
+                    border: 1px solid rgba(124, 77, 255, 0.32);
+                    animation: gridRotate 12s linear infinite reverse;
+                }
+                .hud-core-pulse {
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 50%;
+                    background: radial-gradient(circle, rgba(0, 229, 255, 0.3) 0%, rgba(124, 77, 255, 0.05) 70%);
+                    border: 2px solid #00E5FF;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 0 30px rgba(0, 229, 255, 0.5);
+                    animation: radarPulse 3s infinite ease-in-out;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                .hud-core-pulse:hover {
+                    transform: scale(1.12);
+                    box-shadow: 0 0 45px rgba(0, 229, 255, 0.8), 0 0 12px #7C4DFF;
+                    background: radial-gradient(circle, rgba(0, 229, 255, 0.45) 0%, rgba(124, 77, 255, 0.15) 70%);
+                }
+                .telemetry-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 10px 14px;
+                    background: rgba(255, 255, 255, 0.04);
+                    border-left: 3px solid rgba(124, 77, 255, 0.45);
+                    border-radius: 6px;
+                    margin-bottom: 9px;
+                    font-family: 'Courier New', monospace;
+                    font-size: 11px;
+                    color: rgba(255, 255, 255, 0.85);
+                    transition: all 0.3s ease;
+                }
+                .telemetry-row:hover {
+                    background: rgba(0, 229, 255, 0.08);
+                    border-left-color: #00E5FF;
+                    transform: translateX(4px);
+                    color: #ffffff;
+                }
+                .status-grid {
+                    display: grid;
+                    grid-template-columns: repeat(6, 1fr);
+                    gap: 8px;
+                    margin-top: 15px;
+                }
+                .status-node {
+                    height: 18px;
+                    border-radius: 4px;
+                    background: rgba(255, 255, 255, 0.08);
+                    border: 1px solid rgba(255, 255, 255, 0.15);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    position: relative;
+                }
+                .status-node::after {
+                    content: '';
+                    position: absolute;
+                    top: 2px;
+                    left: 2px;
+                    right: 2px;
+                    bottom: 2px;
+                    border-radius: 2px;
+                    opacity: 0.6;
+                    transition: all 0.3s;
+                }
+                .status-node.cyan::after { background: #00E5FF; box-shadow: 0 0 6px #00E5FF; }
+                .status-node.purple::after { background: #7C4DFF; box-shadow: 0 0 6px #7C4DFF; }
+                .status-node.green::after { background: #00E676; box-shadow: 0 0 6px #00E676; }
+                .status-node.rose::after { background: #FF1744; box-shadow: 0 0 6px #FF1744; }
+                .status-node:hover {
+                    transform: scale(1.18);
+                    border-color: rgba(255,255,255,0.4);
+                    z-index: 5;
+                }
+                .status-node:hover::after {
+                    opacity: 1;
+                }
+
                 @keyframes pulse {
                     0% { transform: scale(1); opacity: 1; }
                     50% { transform: scale(1.02); opacity: 0.95; }
@@ -2137,6 +2317,17 @@ const WinzePage = () => {
                 .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.12) 0%, transparent 70%), #f8fafc; }
                 .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.18) 0%, transparent 70%), #05020c; }
                 .bg-work { background: radial-gradient(circle at 85% 15%, rgba(255, 23, 68, 0.28) 0%, transparent 65%), radial-gradient(circle at 15% 85%, rgba(101, 31, 255, 0.24) 0%, #060107 100%); }
+                
+                @media (min-width: 1024px) {
+                    .hero-grid-responsive {
+                        grid-template-columns: 1.15fr 0.85fr !important;
+                    }
+                }
+                @media (max-width: 1023px) {
+                    .hud-column {
+                        display: none !important;
+                    }
+                }
             `}</style>
             
             <SEO 
@@ -2219,25 +2410,249 @@ const WinzePage = () => {
                 </nav>
 
                 {/* Hero Section */}
-                <section id="home" ref={homeRef} style={{ minHeight: '95vh', position: 'relative', display: 'flex', alignItems: 'center', padding: '80px 5%', overflow: 'hidden' }}>
+                <section 
+                    id="home" 
+                    ref={homeRef} 
+                    onMouseMove={handleHeroMouseMove}
+                    onMouseEnter={() => setHeroMouseActive(true)}
+                    onMouseLeave={() => setHeroMouseActive(false)}
+                    style={{ 
+                        minHeight: '100vh', 
+                        position: 'relative', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        padding: '100px 5% 120px', 
+                        overflow: 'hidden',
+                        background: '#040209'
+                    }}
+                >
                     <BackgroundVideo videoSrc={bgVideos.hero} fallbackVideo={bgVideos.heroFallback} fallbackImg={bgImages.hero} />
+
+                    {/* Cyber Overlay: Tech Grid */}
+                    <div className="tech-grid" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1, opacity: 0.15 }} />
+
+                    {/* Cyber Overlay: Interactive Mouse Cursor Spotlight */}
+                    <div 
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            zIndex: 1,
+                            pointerEvents: 'none',
+                            opacity: heroMouseActive ? 1 : 0,
+                            transition: 'opacity 0.8s ease',
+                            background: `radial-gradient(circle at ${heroMouse.x}% ${heroMouse.y}%, rgba(0, 229, 255, 0.16) 0%, rgba(124, 77, 255, 0.08) 35%, transparent 65%)`
+                        }} 
+                    />
+
+                    {/* Subtle digital scanning lines overlay */}
+                    <div 
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            zIndex: 1,
+                            pointerEvents: 'none',
+                            background: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%)',
+                            backgroundSize: '100% 4px'
+                        }}
+                    />
+
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
-                        <div style={{ maxWidth: '850px', paddingRight: '40px' }}>
-                            <div className="slide-left delay-1">
-                                <div style={{ marginBottom: '20px' }}>
-                                    <span style={{ background: 'rgba(0, 229, 255, 0.15)', padding: '5px 16px', borderRadius: '30px', fontSize: '12px', color: '#00E5FF', display: 'inline-block', fontWeight: '600', letterSpacing: '1px', animation: 'neonGlow 2s infinite' }}>16+ YEARS OF EXCELLENCE</span>
-                                    <h1 className="hero-title" style={{ fontSize: '3.6rem', marginTop: '20px', fontFamily: "'Playfair Display', serif", fontWeight: '700', marginBottom: '20px', lineHeight: '1.2' }}>Winze Technologies</h1>
-                                </div>
-                                <p style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#ddd', lineHeight: '1.7' }}>Leading Enterprise Communication, Security, and AI Technology Solutions Provider</p>
-                                <p style={{ marginBottom: '30px', color: '#aaa', lineHeight: '1.7', fontSize: '1.05rem' }}>With over 16 years of industry experience, Winze Technologies specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.</p>
-                                
-                                <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-                                    <button onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} className="btn-consultation-glow" style={{ background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)', color: '#ffffff', border: 'none', padding: '14px 40px', borderRadius: '50px', fontSize: '15px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,229,255,0.3)' }}>Get Free Consultation →</button>
-                                    <button onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} style={{ background: 'transparent', color: '#00E5FF', border: '2px solid #00E5FF', padding: '12px 35px', borderRadius: '50px', fontSize: '15px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.4s ease' }}
-                                    onMouseEnter={(e) => { e.target.style.background = 'rgba(0,229,255,0.15)'; e.target.style.transform = 'translateY(-4px)'; e.target.style.boxShadow = '0 0 15px rgba(0, 229, 255, 0.3)'; }}
-                                    onMouseLeave={(e) => { e.target.style.background = 'transparent'; e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}>Explore Solutions</button>
+                        <div style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: '1fr',
+                            gap: '50px',
+                            alignItems: 'center'
+                        }}
+                        className="hero-grid-responsive"
+                        >
+                            {/* Left Column: Glass Text Panel */}
+                            <div className="slide-left delay-1" style={{ width: '100%' }}>
+                                <div className="hero-text-glass">
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <span style={{ 
+                                            background: 'rgba(0, 229, 255, 0.12)', 
+                                            padding: '6px 18px', 
+                                            borderRadius: '30px', 
+                                            fontSize: '11px', 
+                                            color: '#00E5FF', 
+                                            display: 'inline-block', 
+                                            fontWeight: '700', 
+                                            letterSpacing: '1.5px', 
+                                            border: '1px solid rgba(0,229,255,0.3)',
+                                            textTransform: 'uppercase',
+                                            boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)'
+                                        }}>
+                                            ⚡ 16+ Years of Enterprise Excellence
+                                        </span>
+                                        <h1 className="hero-title" style={{ 
+                                            fontSize: '3.8rem', 
+                                            marginTop: '22px', 
+                                            fontFamily: "'Playfair Display', serif", 
+                                            fontWeight: '800', 
+                                            marginBottom: '20px', 
+                                            lineHeight: '1.15',
+                                            letterSpacing: '-0.5px'
+                                        }}>
+                                            Winze Technologies
+                                        </h1>
+                                    </div>
+                                    <p style={{ fontSize: '1.25rem', marginBottom: '20px', color: '#ffffff', lineHeight: '1.6', fontWeight: '500' }}>
+                                        Leading Enterprise Communication, Security, and AI Technology Solutions Provider
+                                    </p>
+                                    <p style={{ marginBottom: '35px', color: 'rgba(255, 255, 255, 0.7)', lineHeight: '1.7', fontSize: '1rem' }}>
+                                        With over 16 years of industry experience, Winze Technologies specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.
+                                    </p>
+                                    
+                                    <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} 
+                                            className="btn-consultation-glow" 
+                                            style={{ 
+                                                background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)', 
+                                                color: '#ffffff', 
+                                                border: 'none', 
+                                                padding: '16px 42px', 
+                                                borderRadius: '50px', 
+                                                fontSize: '15px', 
+                                                fontWeight: '700', 
+                                                cursor: 'pointer', 
+                                                boxShadow: '0 8px 25px rgba(0,229,255,0.35)' 
+                                            }}
+                                        >
+                                            Get Free Consultation →
+                                        </button>
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} 
+                                            style={{ 
+                                                background: 'rgba(0, 229, 255, 0.05)', 
+                                                color: '#00E5FF', 
+                                                border: '2px solid rgba(0, 229, 255, 0.6)', 
+                                                padding: '14px 38px', 
+                                                borderRadius: '50px', 
+                                                fontSize: '15px', 
+                                                fontWeight: '600', 
+                                                cursor: 'pointer', 
+                                                transition: 'all 0.4s ease',
+                                                backdropFilter: 'blur(5px)'
+                                            }}
+                                            onMouseEnter={(e) => { 
+                                                e.target.style.background = 'rgba(0,229,255,0.2)'; 
+                                                e.target.style.transform = 'translateY(-3px)'; 
+                                                e.target.style.boxShadow = '0 0 20px rgba(0, 229, 255, 0.4)'; 
+                                                e.target.style.borderColor = '#00E5FF';
+                                            }}
+                                            onMouseLeave={(e) => { 
+                                                e.target.style.background = 'rgba(0, 229, 255, 0.05)'; 
+                                                e.target.style.transform = 'translateY(0)'; 
+                                                e.target.style.boxShadow = 'none'; 
+                                                e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
+                                            }}
+                                        >
+                                            Explore Solutions
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+
+                            {/* Right Column: Holographic/HUD Telemetry Dashboard */}
+                            <div className="slide-right delay-2 hud-column" style={{ width: '100%' }}>
+                                <div className="cyber-hud-dashboard">
+                                    {/* Rotating Telemetry Ring Pattern */}
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '220px', position: 'relative' }}>
+                                        <div className="hud-grid-ring">
+                                            <div className="hud-grid-ring-inner" />
+                                            <div style={{ position: 'absolute', width: '100%', height: '1px', background: 'rgba(0, 229, 255, 0.12)' }} />
+                                            <div style={{ position: 'absolute', height: '100%', width: '1px', background: 'rgba(0, 229, 255, 0.12)' }} />
+                                        </div>
+                                        <div className="hud-core-pulse" onClick={() => setShowQuoteModal(true)}>
+                                            <FontAwesomeIcon icon={faInfinity} style={{ fontSize: '32px', color: '#ffffff' }} />
+                                        </div>
+                                    </div>
+
+                                    {/* Cyber Telemetry Status Board */}
+                                    <div>
+                                        <div className="telemetry-row">
+                                            <span>SECURITY CORE:</span>
+                                            <span style={{ color: '#00E676', fontWeight: 'bold' }}>✓ SECURE & ACTIVE</span>
+                                        </div>
+                                        <div className="telemetry-row">
+                                            <span>AI SMART EYE:</span>
+                                            <span style={{ color: '#00E5FF' }}>ONLINE [99.8% NOMINAL]</span>
+                                        </div>
+                                        <div className="telemetry-row">
+                                            <span>UNIFIED CHANNELS:</span>
+                                            <span style={{ color: '#7C4DFF' }}>16 BANDS CONNECTED</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Dynamic Status Node Grid */}
+                                    <div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <span style={{ fontSize: '10px', color: '#888', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 'bold' }}>Active Infrastructure Nodes</span>
+                                            <span style={{ fontSize: '10px', color: '#00E5FF', fontFamily: 'monospace' }}>PING: 12ms</span>
+                                        </div>
+                                        <div className="status-grid">
+                                            <div className="status-node cyan" title="Unified Communications" />
+                                            <div className="status-node purple" title="Contact Center" />
+                                            <div className="status-node green" title="AI Smart Eye" />
+                                            <div className="status-node cyan" title="WiFi as a Service" />
+                                            <div className="status-node rose" title="Cyber Security" />
+                                            <div className="status-node green" title="IT Infrastructure" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Bouncing Scroll Down Mouse Indicator */}
+                    <div 
+                        className="hero-scroll-indicator" 
+                        onClick={() => {
+                            if (solutionsRef.current) {
+                                solutionsRef.current.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }}
+                        style={{
+                            position: 'absolute',
+                            bottom: '30px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            zIndex: 3,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s'
+                        }}
+                    >
+                        <span style={{ fontSize: '10px', color: '#00E5FF', letterSpacing: '2px', fontWeight: 'bold', marginBottom: '8px', textTransform: 'uppercase', textShadow: '0 0 8px rgba(0, 229, 255, 0.4)' }}>Scroll Down</span>
+                        <div style={{
+                            width: '24px',
+                            height: '38px',
+                            borderRadius: '12px',
+                            border: '2px solid #00E5FF',
+                            position: 'relative',
+                            boxShadow: '0 0 10px rgba(0, 229, 255, 0.2)',
+                            animation: 'scrollBounce 2s infinite'
+                        }}>
+                            <div style={{
+                                width: '4px',
+                                height: '8px',
+                                background: '#00E5FF',
+                                borderRadius: '2px',
+                                position: 'absolute',
+                                top: '6px',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                boxShadow: '0 0 6px #00E5FF'
+                            }} />
                         </div>
                     </div>
                 </section>
