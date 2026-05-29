@@ -1588,7 +1588,7 @@ const WinzePage = () => {
         </div>
     );
 
-    const BackgroundVideo = ({ videoSrc, fallbackVideo, fallbackImg }) => (
+    const BackgroundVideo = ({ videoSrc, fallbackVideo }) => (
         <div style={{
             position: 'absolute',
             top: 0,
@@ -1605,7 +1605,6 @@ const WinzePage = () => {
                 loop 
                 muted 
                 playsInline
-                poster={fallbackImg}
                 style={{
                     width: '100%',
                     height: '100%',
@@ -1857,8 +1856,10 @@ const WinzePage = () => {
                 /* Card entrance scroll-triggered animations - Cinematic Focal Blur-In & Scale */
                 .scroll-animate {
                     opacity: 0 !important;
-                    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                                transform 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+                    filter: blur(10px);
+                    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                                filter 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) !important;
                 }
                 .scroll-animate.slide-left {
                     transform: translateX(-40px);
@@ -1879,6 +1880,7 @@ const WinzePage = () => {
                 /* Trigger active state with custom staggered delays */
                 .scroll-animate.active {
                     opacity: 1 !important;
+                    filter: blur(0px) !important;
                     transform: translate(0) rotate(0) scale(1) !important;
                 }
                 
@@ -2008,6 +2010,12 @@ const WinzePage = () => {
                 .modern-card:hover .card-inner {
                     background: rgba(8, 4, 22, 0.3) !important;
                     border-color: var(--card-glow-soft, rgba(0, 229, 255, 0.2)) !important;
+                }
+                .modern-card:hover .icon-cyber-ring {
+                    transform: scale(1.15) rotate(10deg);
+                    background: var(--card-glow-soft) !important;
+                    border-color: var(--card-glow) !important;
+                    box-shadow: 0 0 20px var(--card-glow-soft);
                 }
                 
                 /* section h2 tags with glows */
@@ -2144,7 +2152,7 @@ const WinzePage = () => {
                     transition: all 0.3s ease;
                     cursor: pointer;
                     width: fit-content;
-                    margin-top: 20px;
+                    margin-top: auto;
                     color: var(--card-glow, #00E5FF);
                     position: relative;
                     overflow: hidden;
@@ -2347,9 +2355,22 @@ const WinzePage = () => {
                 .bg-delivery { background: radial-gradient(circle at 15% 20%, rgba(255, 167, 38, 0.15) 0%, transparent 60%), radial-gradient(circle at 85% 80%, rgba(124, 77, 255, 0.08) 0%, #06040b 100%); }
                 .bg-solutions { background: radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.16) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(124, 77, 255, 0.14) 0%, #060412 100%); }
                 .bg-industries { background: radial-gradient(circle at 20% 30%, rgba(0, 230, 118, 0.16) 0%, transparent 65%), radial-gradient(circle at 80% 70%, rgba(0, 229, 255, 0.06) 0%, #010704 100%); }
-                .bg-partners { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
+                .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.12) 0%, transparent 75%), #050209; }
                 .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.14) 0%, transparent 70%), #040209; }
                 .bg-work { background: radial-gradient(circle at 85% 20%, rgba(255, 23, 68, 0.14) 0%, transparent 60%), radial-gradient(circle at 15% 80%, rgba(124, 77, 255, 0.06) 0%, #060105 100%); }
+                
+                /* Subtle grid patterns overlay for tech sections */
+                .bg-delivery::before, .bg-solutions::before, .bg-industries::before, .bg-work::before, .bg-partners::before {
+                    content: '';
+                    position: absolute;
+                    top: 0; left: 0; right: 0; bottom: 0;
+                    background-image: linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                                      linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+                    background-size: 40px 40px;
+                    pointer-events: none;
+                    opacity: 0.7;
+                    z-index: 0;
+                }
                 
                 @media (min-width: 1024px) {
                     .hero-grid-responsive {
@@ -2459,7 +2480,7 @@ const WinzePage = () => {
                         background: '#040209'
                     }}
                 >
-                    <BackgroundVideo videoSrc={bgVideos.hero} fallbackVideo={bgVideos.heroFallback} fallbackImg={bgImages.hero} />
+                    <BackgroundVideo videoSrc={bgVideos.hero} fallbackVideo={bgVideos.heroFallback} />
 
                     {/* Cyber Overlay: Tech Grid */}
                     <div className="tech-grid" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1, opacity: 0.15 }} />
@@ -2495,92 +2516,150 @@ const WinzePage = () => {
                         }}
                     />
 
-                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'center' }}>
-                        {/* Centered clean text glass panel */}
-                        <div className="slide-left delay-1" style={{ maxWidth: '900px', width: '100%', textAlign: 'center' }}>
-                            <div className="hero-text-glass" style={{ borderLeft: 'none', borderTop: '5px solid #00E5FF' }}>
-                                <div style={{ marginBottom: '22px' }}>
-                                    <span style={{ 
-                                        background: 'rgba(0, 229, 255, 0.12)', 
-                                        padding: '6px 18px', 
-                                        borderRadius: '30px', 
-                                        fontSize: '11px', 
-                                        color: '#00E5FF', 
-                                        display: 'inline-block', 
-                                        fontWeight: '700', 
-                                        letterSpacing: '1.5px', 
-                                        border: '1px solid rgba(0,229,255,0.3)',
-                                        textTransform: 'uppercase',
-                                        boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)'
-                                    }}>
-                                        ⚡ 16+ Years of Enterprise Excellence
-                                    </span>
-                                    <h1 className="hero-title" style={{ 
-                                        fontSize: '4rem', 
-                                        marginTop: '22px', 
-                                        fontFamily: "'Playfair Display', serif", 
-                                        fontWeight: '800', 
-                                        marginBottom: '20px', 
-                                        lineHeight: '1.2',
-                                        letterSpacing: '-0.5px'
-                                    }}>
-                                        Winze Technologies
-                                    </h1>
-                                </div>
-                                <p style={{ fontSize: '1.35rem', marginBottom: '20px', color: '#ffffff', lineHeight: '1.6', fontWeight: '500' }}>
-                                    Leading Enterprise Communication, Security, and AI Technology Solutions Provider
-                                </p>
-                                <p style={{ marginBottom: '35px', color: 'rgba(255, 255, 255, 0.75)', lineHeight: '1.75', fontSize: '1.05rem', maxWidth: '800px', margin: '0 auto 35px' }}>
-                                    With over 16 years of industry experience, Winze Technologies specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.
-                                </p>
-                                
-                                <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                                    <button 
-                                        onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} 
-                                        className="btn-consultation-glow" 
-                                        style={{ 
-                                            background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)', 
-                                            color: '#ffffff', 
-                                            border: 'none', 
-                                            padding: '16px 42px', 
-                                            borderRadius: '50px', 
-                                            fontSize: '15px', 
-                                            fontWeight: '700', 
-                                            cursor: 'pointer', 
-                                            boxShadow: '0 8px 25px rgba(0,229,255,0.35)' 
-                                        }}
-                                    >
-                                        Get Free Consultation →
-                                    </button>
-                                    <button 
-                                        onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} 
-                                        style={{ 
-                                            background: 'rgba(0, 229, 255, 0.05)', 
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
+                        <div className="hero-grid-responsive" style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: '1fr', 
+                            gap: '40px', 
+                            alignItems: 'center' 
+                        }}>
+                            {/* Left Column: Premium text glass panel */}
+                            <div className="slide-left delay-1" style={{ width: '100%', textAlign: 'left' }}>
+                                <div className="hero-text-glass" style={{ borderLeft: '5px solid #00E5FF', borderTop: 'none' }}>
+                                    <div style={{ marginBottom: '22px' }}>
+                                        <span style={{ 
+                                            background: 'rgba(0, 229, 255, 0.12)', 
+                                            padding: '6px 18px', 
+                                            borderRadius: '30px', 
+                                            fontSize: '11px', 
                                             color: '#00E5FF', 
-                                            border: '2px solid rgba(0, 229, 255, 0.6)', 
-                                            padding: '14px 38px', 
-                                            borderRadius: '50px', 
-                                            fontSize: '15px', 
-                                            fontWeight: '600', 
-                                            cursor: 'pointer', 
-                                            transition: 'all 0.4s ease',
-                                            backdropFilter: 'blur(5px)'
-                                        }}
-                                        onMouseEnter={(e) => { 
-                                            e.target.style.background = 'rgba(0,229,255,0.2)'; 
-                                            e.target.style.transform = 'translateY(-3px)'; 
-                                            e.target.style.boxShadow = '0 0 20px rgba(0, 229, 255, 0.4)'; 
-                                            e.target.style.borderColor = '#00E5FF';
-                                        }}
-                                        onMouseLeave={(e) => { 
-                                            e.target.style.background = 'rgba(0, 229, 255, 0.05)'; 
-                                            e.target.style.transform = 'translateY(0)'; 
-                                            e.target.style.boxShadow = 'none'; 
-                                            e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
-                                        }}
-                                    >
-                                        Explore Solutions
-                                    </button>
+                                            display: 'inline-block', 
+                                            fontWeight: '700', 
+                                            letterSpacing: '1.5px', 
+                                            border: '1px solid rgba(0,229,255,0.3)',
+                                            textTransform: 'uppercase',
+                                            boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)'
+                                        }}>
+                                            ⚡ 16+ Years of Enterprise Excellence
+                                        </span>
+                                        <h1 className="hero-title" style={{ 
+                                            fontSize: '3.8rem', 
+                                            marginTop: '22px', 
+                                            fontFamily: "'Playfair Display', serif", 
+                                            fontWeight: '800', 
+                                            marginBottom: '20px', 
+                                            lineHeight: '1.2',
+                                            letterSpacing: '-0.5px'
+                                        }}>
+                                            Winze Technologies
+                                        </h1>
+                                    </div>
+                                    <p style={{ fontSize: '1.35rem', marginBottom: '20px', color: '#ffffff', lineHeight: '1.6', fontWeight: '500' }}>
+                                        Leading Enterprise Communication, Security, and AI Technology Solutions Provider
+                                    </p>
+                                    <p style={{ marginBottom: '35px', color: 'rgba(255, 255, 255, 0.75)', lineHeight: '1.75', fontSize: '1.05rem', maxWidth: '850px' }}>
+                                        With over 16 years of industry experience, Winze Technologies specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.
+                                    </p>
+                                    
+                                    <div style={{ display: 'flex', gap: '20px', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} 
+                                            className="btn-consultation-glow" 
+                                            style={{ 
+                                                background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)', 
+                                                color: '#ffffff', 
+                                                border: 'none', 
+                                                padding: '16px 42px', 
+                                                borderRadius: '50px', 
+                                                fontSize: '15px', 
+                                                fontWeight: '700', 
+                                                cursor: 'pointer', 
+                                                boxShadow: '0 8px 25px rgba(0,229,255,0.35)' 
+                                            }}
+                                        >
+                                            Get Free Consultation →
+                                        </button>
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} 
+                                            style={{ 
+                                                background: 'rgba(0, 229, 255, 0.05)', 
+                                                color: '#00E5FF', 
+                                                border: '2px solid rgba(0, 229, 255, 0.6)', 
+                                                padding: '14px 38px', 
+                                                borderRadius: '50px', 
+                                                fontSize: '15px', 
+                                                fontWeight: '600', 
+                                                cursor: 'pointer', 
+                                                transition: 'all 0.4s ease',
+                                                backdropFilter: 'blur(5px)'
+                                            }}
+                                            onMouseEnter={(e) => { 
+                                                e.target.style.background = 'rgba(0,229,255,0.2)'; 
+                                                e.target.style.transform = 'translateY(-3px)'; 
+                                                e.target.style.boxShadow = '0 0 20px rgba(0, 229, 255, 0.4)'; 
+                                                e.target.style.borderColor = '#00E5FF';
+                                            }}
+                                            onMouseLeave={(e) => { 
+                                                e.target.style.background = 'rgba(0, 229, 255, 0.05)'; 
+                                                e.target.style.transform = 'translateY(0)'; 
+                                                e.target.style.boxShadow = 'none'; 
+                                                e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
+                                            }}
+                                        >
+                                            Explore Solutions
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right Column: Stunning Cyber HUD Dashboard */}
+                            <div className="hud-column slide-right delay-2" style={{ width: '100%' }}>
+                                <div className="cyber-hud-dashboard">
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(0,229,255,0.15)', paddingBottom: '15px', marginBottom: '15px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00E676', boxShadow: '0 0 8px #00E676' }} />
+                                            <span style={{ color: '#00E5FF', fontSize: '12px', fontWeight: 'bold', fontFamily: 'Courier New, monospace', letterSpacing: '1px' }}>WINZE_CORE_NODE :: ACTIVE</span>
+                                        </div>
+                                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', fontFamily: 'Courier New, monospace' }}>FPS: 60.00</span>
+                                    </div>
+
+                                    {/* Visual interactive elements */}
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '240px', position: 'relative' }}>
+                                        <div className="hud-grid-ring">
+                                            <div className="hud-grid-ring-inner" />
+                                        </div>
+                                        <div className="hud-core-pulse" onClick={() => {
+                                            alert("Winze Core Diagnostics: All Systems Running Optimal. Uptime: 99.999%");
+                                        }}>
+                                            <FontAwesomeIcon icon={faShieldAlt} style={{ fontSize: '32px', color: '#00E5FF' }} />
+                                        </div>
+                                    </div>
+
+                                    {/* Telemetry data rows */}
+                                    <div>
+                                        <div className="telemetry-row">
+                                            <span>NETWORK SPEED:</span>
+                                            <span style={{ color: '#00E5FF', fontWeight: 'bold' }}>10.0 Gbps</span>
+                                        </div>
+                                        <div className="telemetry-row">
+                                            <span>ACTIVE SERVERS:</span>
+                                            <span style={{ color: '#7C4DFF', fontWeight: 'bold' }}>124 / 124</span>
+                                        </div>
+                                        <div className="telemetry-row">
+                                            <span>CYBER SEC SHIELD:</span>
+                                            <span style={{ color: '#00E676', fontWeight: 'bold' }}>99.98% SAFE</span>
+                                        </div>
+                                        
+                                        {/* Status grids */}
+                                        <div className="status-grid">
+                                            <div className="status-node cyan" title="Nodes normal" />
+                                            <div className="status-node purple" title="Gateway optimal" />
+                                            <div className="status-node green" title="VOIP normal" />
+                                            <div className="status-node cyan" title="AI vision processing" />
+                                            <div className="status-node green" title="SaaS redundancy ready" />
+                                            <div className="status-node rose" title="Backup synchronized" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2642,7 +2721,7 @@ const WinzePage = () => {
                                 const extraPoints = getDeliveryExtraPoints(item.title);
                                 const floatClass = `float-${(i % 4) + 1}`;
                                 return (
-                                    <div key={i} className={`modern-card ${floatClass} scroll-animate ${i % 2 === 0 ? 'slide-left' : 'slide-right'} delay-${Math.min(i + 1, 8)}`} style={getCardStyles(i, 'delivery')}>
+                                    <div key={i} className={`modern-card style-delivery custom-card-base ${floatClass} scroll-animate ${i % 2 === 0 ? 'slide-left' : 'slide-right'} delay-${Math.min(i + 1, 8)}`} style={getCardStyles(i, 'delivery')}>
                                         <div className="card-inner">
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                                                 <div style={{
@@ -2691,7 +2770,7 @@ const WinzePage = () => {
                                 const extraPoints = getSolutionExtraPoints(solution.title);
                                 const floatClass = `float-${(idx % 4) + 1}`;
                                 return (
-                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate drop-in delay-${Math.min(idx % 8 + 1, 8)}`} style={getCardStyles(idx, 'solution')}>
+                                    <div key={idx} className={`modern-card style-solutions custom-card-base ${floatClass} scroll-animate drop-in delay-${Math.min(idx % 8 + 1, 8)}`} style={getCardStyles(idx, 'solution')}>
                                         <img src={solution.img} alt={solution.title} className="card-image" onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x400/2a3a5f/00E5FF?text=' + encodeURIComponent(solution.title); }} />
                                         <div className="card-inner">
                                             <div style={{
@@ -2738,7 +2817,7 @@ const WinzePage = () => {
                                 const extraPoints = getIndustryExtraPoints(industry.name);
                                 const floatClass = `float-${(idx % 4) + 1}`;
                                 return (
-                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate slide-up delay-${Math.min(idx + 1, 8)}`} style={getCardStyles(idx, 'industry')}>
+                                    <div key={idx} className={`modern-card style-industries custom-card-base ${floatClass} scroll-animate slide-up delay-${Math.min(idx + 1, 8)}`} style={getCardStyles(idx, 'industry')}>
                                         <img src={industry.img} alt={industry.name} className="card-image" />
                                         <div className="card-inner">
                                             <div style={{
@@ -2776,12 +2855,12 @@ const WinzePage = () => {
                 </section>
 
                 {/* Partners Section */}
-                <section id="partners" ref={partnersRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden' }} className="bg-partners">
+                <section id="partners" ref={partnersRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-partners">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '2.5rem', color: '#060112', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Trusted Partners</h2>
-                        <p style={{ color: '#4f46e5', marginBottom: '20px', fontSize: '1rem', letterSpacing: '1px', fontWeight: '600' }} className="scroll-animate slide-up delay-2">INNOVATION. EXCELLENCE. TRUST.</p>
-                        <p style={{ color: '#4b5563', marginBottom: '40px', fontSize: '14px', fontWeight: '500' }} className="scroll-animate slide-up delay-3">Partnering with industry leaders to deliver world-class technology solutions</p>
-                        <div className="marquee-container scroll-animate slide-up delay-4"><div className="marquee-content">{[...partnerLogos, ...partnerLogos, ...partnerLogos].map((partner, idx) => (<div key={idx} className="partner-logo-item" onClick={() => handleTrackClick(partner.name, 'partner')}><div className="partner-logo-img"><img src={partner.url} alt={partner.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/05020c?text=${partner.name.charAt(0)}`; }} /></div><h3 style={{ color: '#1f2937', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{partner.name}</h3></div>))}</div></div>
+                        <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Trusted Partners</h2>
+                        <p style={{ color: '#00E5FF', marginBottom: '20px', fontSize: '1rem', letterSpacing: '1px', fontWeight: '600' }} className="scroll-animate slide-up delay-2">INNOVATION. EXCELLENCE. TRUST.</p>
+                        <p style={{ color: '#aaa', marginBottom: '40px', fontSize: '14px', fontWeight: '500' }} className="scroll-animate slide-up delay-3">Partnering with industry leaders to deliver world-class technology solutions</p>
+                        <div className="marquee-container scroll-animate slide-up delay-4"><div className="marquee-content">{[...partnerLogos, ...partnerLogos, ...partnerLogos].map((partner, idx) => (<div key={idx} className="partner-logo-item rotate-hover" onClick={() => handleTrackClick(partner.name, 'partner')}><div className="partner-logo-img"><img src={partner.url} alt={partner.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/05020c?text=${partner.name.charAt(0)}`; }} /></div><h3 style={{ fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{partner.name}</h3></div>))}</div></div>
                     </div>
                 </section>
 
@@ -2790,7 +2869,7 @@ const WinzePage = () => {
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Valued Clients</h2>
                         <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '40px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">TRUSTED BY INDUSTRY LEADERS ACROSS INDIA</p>
-                        <div className="marquee-container scroll-animate slide-up delay-3"><div className="marquee-content">{[...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (<div key={idx} className="client-logo-item" onClick={() => handleTrackClick(client.name, 'client')}><div className="client-logo-img"><img src={client.url} alt={client.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/1a1a2e?text=${client.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{client.name}</h3></div>))}</div></div>
+                        <div className="marquee-container scroll-animate slide-up delay-3"><div className="marquee-content">{[...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (<div key={idx} className="client-logo-item rotate-hover" onClick={() => handleTrackClick(client.name, 'client')}><div className="client-logo-img"><img src={client.url} alt={client.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/1a1a2e?text=${client.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{client.name}</h3></div>))}</div></div>
                     </div>
                 </section>
 
@@ -2804,7 +2883,7 @@ const WinzePage = () => {
                                 const extraPoints = getWorkExtraPoints(item.title);
                                 const floatClass = `float-${(idx % 4) + 1}`;
                                 return (
-                                    <div key={idx} className={`modern-card ${floatClass} scroll-animate ${idx % 3 === 0 ? 'slide-left' : idx % 3 === 1 ? 'drop-in' : 'slide-right'} delay-${Math.min(idx + 1, 8)}`} style={getCardStyles(idx, 'work')}>
+                                    <div key={idx} className={`modern-card style-work custom-card-base ${floatClass} scroll-animate ${idx % 3 === 0 ? 'slide-left' : idx % 3 === 1 ? 'drop-in' : 'slide-right'} delay-${Math.min(idx + 1, 8)}`} style={getCardStyles(idx, 'work')}>
                                         <div className="card-inner">
                                             <div style={{
                                                 width: '64px',
