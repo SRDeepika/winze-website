@@ -1941,82 +1941,89 @@ const WinzePage = () => {
                 }
                 
                 /* Advanced Running Glowing Border on Hover */
-                /* Advanced Running Glowing Border on Hover */
                 .modern-card {
-                    border-radius: 24px;
-                    transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-                    cursor: pointer;
-                    overflow: hidden;
-                    height: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    border: 1px solid rgba(255, 255, 255, 0.06);
-                    border-top: 4px solid var(--card-glow, #00E5FF); /* Dynamic Jewel Colored Accent Top Border */
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1);
-                    position: relative;
-                    z-index: 1;
-                    background: rgba(10, 6, 25, 0.6); /* Premium Dark Obsidian Backdrop */
-                    backdrop-filter: blur(20px);
-                    -webkit-backdrop-filter: blur(20px);
-                    transform-style: preserve-3d;
-                    perspective: 1000px;
-                }
-                
-                /* Subtle premium background gradient overlay */
-                .modern-card::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: radial-gradient(circle at 50% 0%, rgba(var(--card-glow-rgb), 0.1) 0%, transparent 75%);
-                    z-index: 0;
-                    opacity: 0.8;
-                    transition: all 0.45s ease;
-                }
-                
-                /* Fast High-Speed Diagonal Reflex Shimmer */
-                .modern-card::after {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: -150%;
-                    width: 50%;
-                    height: 100%;
-                    background: linear-gradient(
-                        90deg,
-                        transparent,
-                        rgba(255, 255, 255, 0.22),
-                        transparent
-                    );
-                    transform: skewX(-25deg);
-                    z-index: 5;
-                    pointer-events: none;
-                    transition: none;
-                }
-                
-                .modern-card:hover::before {
-                    background: radial-gradient(circle at 50% 50%, rgba(var(--card-glow-rgb), 0.25) 0%, transparent 80%);
-                }
-                .modern-card:hover::after {
-                    animation: shimmerSweep 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-                }
-                .modern-card:hover {
-                    transform: translateY(-10px) scale(1.025);
-                    box-shadow: 0 25px 50px rgba(0,0,0,0.7), 0 0 35px var(--card-glow-soft), inset 0 0 22px var(--card-glow-soft);
-                    border-color: var(--card-glow, #00E5FF) !important;
-                }
-                .modern-card:hover .card-inner {
-                    background: rgba(8, 4, 22, 0.3) !important;
-                    border-color: var(--card-glow-soft, rgba(0, 229, 255, 0.2)) !important;
-                }
-                .modern-card:hover .icon-cyber-ring {
-                    transform: scale(1.15) rotate(10deg);
-                    background: var(--card-glow-soft) !important;
-                    border-color: var(--card-glow) !important;
-                    box-shadow: 0 0 20px var(--card-glow-soft);
-                }
+                     border-radius: 24px;
+                     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+                     cursor: pointer;
+                     overflow: hidden;
+                     height: 100%;
+                     display: flex;
+                     flex-direction: column;
+                     border: 1px solid rgba(255, 255, 255, 0.06);
+                     border-top: 4px solid var(--card-glow, #00E5FF); /* Dynamic Jewel Colored Accent Top Border */
+                     box-shadow: 0 10px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1);
+                     position: relative;
+                     z-index: 1;
+                     background: rgba(10, 6, 25, 0.6); /* Premium Dark Obsidian Backdrop */
+                     backdrop-filter: blur(20px);
+                     -webkit-backdrop-filter: blur(20px);
+                     transform-style: preserve-3d;
+                     perspective: 1000px;
+                 }
+                 
+                 /* Subtle premium background gradient overlay */
+                 .modern-card::before {
+                     content: '';
+                     position: absolute;
+                     top: -50%;
+                     left: -50%;
+                     width: 200%;
+                     height: 200%;
+                     background: radial-gradient(circle, rgba(var(--card-glow-rgb, 0, 229, 255), 0.15) 0%, transparent 65%);
+                     z-index: 0;
+                     transform: scale(0.5);
+                     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+                     opacity: 0;
+                 }
+                 
+                 /* Fast High-Speed Diagonal Reflex Shimmer */
+                 .modern-card::after {
+                     content: '';
+                     position: absolute;
+                     top: 0;
+                     left: -150%;
+                     width: 50%;
+                     height: 100%;
+                     background: linear-gradient(
+                         90deg,
+                         transparent,
+                         rgba(255, 255, 255, 0.22),
+                         transparent
+                     );
+                     transform: skewX(-25deg);
+                     z-index: 5;
+                     pointer-events: none;
+                     transition: none;
+                 }
+                 
+                 .modern-card:hover::before {
+                     transform: scale(1);
+                     opacity: 1;
+                 }
+                 .modern-card:hover::after {
+                     animation: shimmerSweep 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                 }
+                 .modern-card:hover {
+                     transform: perspective(1000px) rotateX(2.5deg) rotateY(-2.5deg) translateY(-12px) scale(1.03);
+                     box-shadow: 0 30px 60px rgba(0,0,0,0.85), 0 0 40px var(--card-glow-soft), inset 0 0 25px var(--card-glow-soft);
+                     border-color: var(--card-glow, #00E5FF) !important;
+                     animation-play-state: paused !important;
+                 }
+                 .modern-card:hover .card-inner {
+                     background: rgba(8, 4, 22, 0.3) !important;
+                     border-color: var(--card-glow-soft, rgba(0, 229, 255, 0.2)) !important;
+                 }
+                 @keyframes floatIcon {
+                     0% { transform: translateY(0px) scale(1); }
+                     50% { transform: translateY(-5px) scale(1.08) rotate(5deg); }
+                     100% { transform: translateY(0px) scale(1); }
+                 }
+                 .modern-card:hover .icon-cyber-ring {
+                     animation: floatIcon 2s ease-in-out infinite alternate;
+                     background: var(--card-glow-soft) !important;
+                     border-color: var(--card-glow) !important;
+                     box-shadow: 0 0 20px var(--card-glow-soft);
+                 }
                 
                 /* section h2 tags with glows */
                 h2 {
@@ -2382,6 +2389,24 @@ const WinzePage = () => {
                         display: none !important;
                     }
                 }
+                
+                @keyframes scanlineSweep {
+                    0% { transform: translateY(-100px); opacity: 0; }
+                    10% { opacity: 0.4; }
+                    90% { opacity: 0.4; }
+                    100% { transform: translateY(calc(100vh + 100px)); opacity: 0; }
+                }
+                .section-scanline {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 1.5px;
+                    background: linear-gradient(90deg, transparent, var(--section-glow, #00E5FF), transparent);
+                    pointer-events: none;
+                    animation: scanlineSweep 8s linear infinite;
+                    z-index: 1;
+                }
             `}</style>
             
             <SEO 
@@ -2516,150 +2541,92 @@ const WinzePage = () => {
                         }}
                     />
 
-                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
-                        <div className="hero-grid-responsive" style={{ 
-                            display: 'grid', 
-                            gridTemplateColumns: '1fr', 
-                            gap: '40px', 
-                            alignItems: 'center' 
-                        }}>
-                            {/* Left Column: Premium text glass panel */}
-                            <div className="slide-left delay-1" style={{ width: '100%', textAlign: 'left' }}>
-                                <div className="hero-text-glass" style={{ borderLeft: '5px solid #00E5FF', borderTop: 'none' }}>
-                                    <div style={{ marginBottom: '22px' }}>
-                                        <span style={{ 
-                                            background: 'rgba(0, 229, 255, 0.12)', 
-                                            padding: '6px 18px', 
-                                            borderRadius: '30px', 
-                                            fontSize: '11px', 
-                                            color: '#00E5FF', 
-                                            display: 'inline-block', 
-                                            fontWeight: '700', 
-                                            letterSpacing: '1.5px', 
-                                            border: '1px solid rgba(0,229,255,0.3)',
-                                            textTransform: 'uppercase',
-                                            boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)'
-                                        }}>
-                                            ⚡ 16+ Years of Enterprise Excellence
-                                        </span>
-                                        <h1 className="hero-title" style={{ 
-                                            fontSize: '3.8rem', 
-                                            marginTop: '22px', 
-                                            fontFamily: "'Playfair Display', serif", 
-                                            fontWeight: '800', 
-                                            marginBottom: '20px', 
-                                            lineHeight: '1.2',
-                                            letterSpacing: '-0.5px'
-                                        }}>
-                                            Winze Technologies
-                                        </h1>
-                                    </div>
-                                    <p style={{ fontSize: '1.35rem', marginBottom: '20px', color: '#ffffff', lineHeight: '1.6', fontWeight: '500' }}>
-                                        Leading Enterprise Communication, Security, and AI Technology Solutions Provider
-                                    </p>
-                                    <p style={{ marginBottom: '35px', color: 'rgba(255, 255, 255, 0.75)', lineHeight: '1.75', fontSize: '1.05rem', maxWidth: '850px' }}>
-                                        With over 16 years of industry experience, Winze Technologies specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.
-                                    </p>
-                                    
-                                    <div style={{ display: 'flex', gap: '20px', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
-                                        <button 
-                                            onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} 
-                                            className="btn-consultation-glow" 
-                                            style={{ 
-                                                background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)', 
-                                                color: '#ffffff', 
-                                                border: 'none', 
-                                                padding: '16px 42px', 
-                                                borderRadius: '50px', 
-                                                fontSize: '15px', 
-                                                fontWeight: '700', 
-                                                cursor: 'pointer', 
-                                                boxShadow: '0 8px 25px rgba(0,229,255,0.35)' 
-                                            }}
-                                        >
-                                            Get Free Consultation →
-                                        </button>
-                                        <button 
-                                            onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} 
-                                            style={{ 
-                                                background: 'rgba(0, 229, 255, 0.05)', 
-                                                color: '#00E5FF', 
-                                                border: '2px solid rgba(0, 229, 255, 0.6)', 
-                                                padding: '14px 38px', 
-                                                borderRadius: '50px', 
-                                                fontSize: '15px', 
-                                                fontWeight: '600', 
-                                                cursor: 'pointer', 
-                                                transition: 'all 0.4s ease',
-                                                backdropFilter: 'blur(5px)'
-                                            }}
-                                            onMouseEnter={(e) => { 
-                                                e.target.style.background = 'rgba(0,229,255,0.2)'; 
-                                                e.target.style.transform = 'translateY(-3px)'; 
-                                                e.target.style.boxShadow = '0 0 20px rgba(0, 229, 255, 0.4)'; 
-                                                e.target.style.borderColor = '#00E5FF';
-                                            }}
-                                            onMouseLeave={(e) => { 
-                                                e.target.style.background = 'rgba(0, 229, 255, 0.05)'; 
-                                                e.target.style.transform = 'translateY(0)'; 
-                                                e.target.style.boxShadow = 'none'; 
-                                                e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
-                                            }}
-                                        >
-                                            Explore Solutions
-                                        </button>
-                                    </div>
+                    <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'center' }}>
+                        {/* Centered clean text glass panel */}
+                        <div className="slide-left delay-1" style={{ maxWidth: '900px', width: '100%', textAlign: 'center' }}>
+                            <div className="hero-text-glass" style={{ borderLeft: 'none', borderTop: '5px solid #00E5FF' }}>
+                                <div style={{ marginBottom: '22px' }}>
+                                    <span style={{ 
+                                        background: 'rgba(0, 229, 255, 0.12)', 
+                                        padding: '6px 18px', 
+                                        borderRadius: '30px', 
+                                        fontSize: '11px', 
+                                        color: '#00E5FF', 
+                                        display: 'inline-block', 
+                                        fontWeight: '700', 
+                                        letterSpacing: '1.5px', 
+                                        border: '1px solid rgba(0,229,255,0.3)',
+                                        textTransform: 'uppercase',
+                                        boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)'
+                                    }}>
+                                        ⚡ 16+ Years of Enterprise Excellence
+                                    </span>
+                                    <h1 className="hero-title" style={{ 
+                                        fontSize: '4.2rem', 
+                                        marginTop: '22px', 
+                                        fontFamily: "'Playfair Display', serif", 
+                                        fontWeight: '800', 
+                                        marginBottom: '20px', 
+                                        lineHeight: '1.2',
+                                        letterSpacing: '-0.5px'
+                                    }}>
+                                        Winze Technologies
+                                    </h1>
                                 </div>
-                            </div>
-
-                            {/* Right Column: Stunning Cyber HUD Dashboard */}
-                            <div className="hud-column slide-right delay-2" style={{ width: '100%' }}>
-                                <div className="cyber-hud-dashboard">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(0,229,255,0.15)', paddingBottom: '15px', marginBottom: '15px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00E676', boxShadow: '0 0 8px #00E676' }} />
-                                            <span style={{ color: '#00E5FF', fontSize: '12px', fontWeight: 'bold', fontFamily: 'Courier New, monospace', letterSpacing: '1px' }}>WINZE_CORE_NODE :: ACTIVE</span>
-                                        </div>
-                                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', fontFamily: 'Courier New, monospace' }}>FPS: 60.00</span>
-                                    </div>
-
-                                    {/* Visual interactive elements */}
-                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '240px', position: 'relative' }}>
-                                        <div className="hud-grid-ring">
-                                            <div className="hud-grid-ring-inner" />
-                                        </div>
-                                        <div className="hud-core-pulse" onClick={() => {
-                                            alert("Winze Core Diagnostics: All Systems Running Optimal. Uptime: 99.999%");
-                                        }}>
-                                            <FontAwesomeIcon icon={faShieldAlt} style={{ fontSize: '32px', color: '#00E5FF' }} />
-                                        </div>
-                                    </div>
-
-                                    {/* Telemetry data rows */}
-                                    <div>
-                                        <div className="telemetry-row">
-                                            <span>NETWORK SPEED:</span>
-                                            <span style={{ color: '#00E5FF', fontWeight: 'bold' }}>10.0 Gbps</span>
-                                        </div>
-                                        <div className="telemetry-row">
-                                            <span>ACTIVE SERVERS:</span>
-                                            <span style={{ color: '#7C4DFF', fontWeight: 'bold' }}>124 / 124</span>
-                                        </div>
-                                        <div className="telemetry-row">
-                                            <span>CYBER SEC SHIELD:</span>
-                                            <span style={{ color: '#00E676', fontWeight: 'bold' }}>99.98% SAFE</span>
-                                        </div>
-                                        
-                                        {/* Status grids */}
-                                        <div className="status-grid">
-                                            <div className="status-node cyan" title="Nodes normal" />
-                                            <div className="status-node purple" title="Gateway optimal" />
-                                            <div className="status-node green" title="VOIP normal" />
-                                            <div className="status-node cyan" title="AI vision processing" />
-                                            <div className="status-node green" title="SaaS redundancy ready" />
-                                            <div className="status-node rose" title="Backup synchronized" />
-                                        </div>
-                                    </div>
+                                <p style={{ fontSize: '1.35rem', marginBottom: '20px', color: '#ffffff', lineHeight: '1.6', fontWeight: '500' }}>
+                                    Leading Enterprise Communication, Security, and AI Technology Solutions Provider
+                                </p>
+                                <p style={{ marginBottom: '35px', color: 'rgba(255, 255, 255, 0.75)', lineHeight: '1.75', fontSize: '1.05rem', maxWidth: '800px', margin: '0 auto 35px' }}>
+                                    With over 16 years of industry experience, Winze Technologies specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.
+                                </p>
+                                
+                                <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} 
+                                        className="btn-consultation-glow" 
+                                        style={{ 
+                                            background: 'linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%)', 
+                                            color: '#ffffff', 
+                                            border: 'none', 
+                                            padding: '16px 42px', 
+                                            borderRadius: '50px', 
+                                            fontSize: '15px', 
+                                            fontWeight: '700', 
+                                            cursor: 'pointer', 
+                                            boxShadow: '0 8px 25px rgba(0,229,255,0.35)' 
+                                        }}
+                                    >
+                                        Get Free Consultation →
+                                    </button>
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); handleTrackClick('Explore Solutions', 'cta'); if (solutionsRef.current) { solutionsRef.current.scrollIntoView({ behavior: 'smooth' }); } }} 
+                                        style={{ 
+                                            background: 'rgba(0, 229, 255, 0.05)', 
+                                            color: '#00E5FF', 
+                                            border: '2px solid rgba(0, 229, 255, 0.6)', 
+                                            padding: '14px 38px', 
+                                            borderRadius: '50px', 
+                                            fontSize: '15px', 
+                                            fontWeight: '600', 
+                                            cursor: 'pointer', 
+                                            transition: 'all 0.4s ease',
+                                            backdropFilter: 'blur(5px)'
+                                        }}
+                                        onMouseEnter={(e) => { 
+                                            e.target.style.background = 'rgba(0,229,255,0.2)'; 
+                                            e.target.style.transform = 'translateY(-3px)'; 
+                                            e.target.style.boxShadow = '0 0 20px rgba(0, 229, 255, 0.4)'; 
+                                            e.target.style.borderColor = '#00E5FF';
+                                        }}
+                                        onMouseLeave={(e) => { 
+                                            e.target.style.background = 'rgba(0, 229, 255, 0.05)'; 
+                                            e.target.style.transform = 'translateY(0)'; 
+                                            e.target.style.boxShadow = 'none'; 
+                                            e.target.style.borderColor = 'rgba(0, 229, 255, 0.6)';
+                                        }}
+                                    >
+                                        Explore Solutions
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -2713,6 +2680,7 @@ const WinzePage = () => {
 
                 {/* What We Deliver Section - Animated Gradient Background */}
                 <section id="delivery" style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-delivery">
+                    <div className="section-scanline" style={{ '--section-glow': '#FFA726' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">What We Deliver</h2>
                         <p style={{ textAlign: 'center', color: '#00E5FF', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">COMPREHENSIVE TECHNOLOGY LIFECYCLE</p>
@@ -2760,6 +2728,7 @@ const WinzePage = () => {
 
                 {/* Solutions Portfolio Section */}
                 <section id="solutions" ref={solutionsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-solutions">
+                    <div className="section-scanline" style={{ '--section-glow': '#00E5FF' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Solutions Portfolio</h2>
                         <p style={{ textAlign: 'center', color: '#00E5FF', marginBottom: '10px', fontSize: '1rem', letterSpacing: '1px', fontWeight: '600' }} className="scroll-animate slide-up delay-2">PRACTICAL ACTION. BOLD AMBITION. ENDLESS POSSIBILITIES.</p>
@@ -2809,6 +2778,7 @@ const WinzePage = () => {
 
                 {/* Industries Section */}
                 <section id="industries" ref={industriesRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-industries">
+                    <div className="section-scanline" style={{ '--section-glow': '#00E676' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Industries We Serve</h2>
                         <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">TRANSFORMING BUSINESSES ACROSS SECTORS</p>
@@ -2856,6 +2826,7 @@ const WinzePage = () => {
 
                 {/* Partners Section */}
                 <section id="partners" ref={partnersRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-partners">
+                    <div className="section-scanline" style={{ '--section-glow': '#7C4DFF' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Trusted Partners</h2>
                         <p style={{ color: '#00E5FF', marginBottom: '20px', fontSize: '1rem', letterSpacing: '1px', fontWeight: '600' }} className="scroll-animate slide-up delay-2">INNOVATION. EXCELLENCE. TRUST.</p>
@@ -2866,6 +2837,7 @@ const WinzePage = () => {
 
                 {/* Clients Section */}
                 <section id="clients" ref={clientsRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden' }} className="bg-clients">
+                    <div className="section-scanline" style={{ '--section-glow': '#00E5FF' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Valued Clients</h2>
                         <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '40px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">TRUSTED BY INDUSTRY LEADERS ACROSS INDIA</p>
@@ -2875,6 +2847,7 @@ const WinzePage = () => {
 
                 {/* Work With Winze Section */}
                 <section id="workwith" ref={workwithRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-work">
+                    <div className="section-scanline" style={{ '--section-glow': '#FF1744' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Why Work With Winze?</h2>
                         <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">PARTNER WITH US FOR A TRANSFORMATIVE EXPERIENCE</p>
