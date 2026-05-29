@@ -2185,23 +2185,7 @@ const WinzePage = () => {
                     transform: scale(1.05);
                     box-shadow: 0 0 20px var(--card-glow-soft);
                 }
-                .client-logo-item {
-                     background: rgba(255, 255, 255, 0.06); 
-                     padding: 20px; 
-                     border-radius: 16px; 
-                     text-align: center; 
-                     cursor: pointer;
-                     transition: all 0.3s ease; 
-                     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25); 
-                     min-width: 150px;
-                     border: 1px solid rgba(255, 255, 255, 0.08); 
-                     flex-shrink: 0;
-                     position: relative;
-                     overflow: hidden;
-                     backdrop-filter: blur(10px);
-                     -webkit-backdrop-filter: blur(10px);
-                 }
-                 .partner-logo-item {
+                 .client-logo-item {
                      background: #ffffff; 
                      padding: 20px; 
                      border-radius: 16px; 
@@ -2214,6 +2198,28 @@ const WinzePage = () => {
                      flex-shrink: 0;
                      position: relative;
                      overflow: hidden;
+                 }
+                 .client-logo-item h3 {
+                     color: #333344;
+                 }
+                 .partner-logo-item {
+                     background: rgba(255, 255, 255, 0.06); 
+                     padding: 20px; 
+                     border-radius: 16px; 
+                     text-align: center; 
+                     cursor: pointer;
+                     transition: all 0.3s ease; 
+                     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+                     min-width: 150px;
+                     border: 1px solid rgba(0, 0, 0, 0.05); 
+                     flex-shrink: 0;
+                     position: relative;
+                     overflow: hidden;
+                     backdrop-filter: blur(10px);
+                     -webkit-backdrop-filter: blur(10px);
+                 }
+                 .partner-logo-item h3 {
+                     color: rgba(255, 255, 255, 0.9);
                  }
                  .client-logo-item::before, .partner-logo-item::before {
                      content: '';
@@ -2363,7 +2369,7 @@ const WinzePage = () => {
                 .bg-solutions { background: radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.16) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(124, 77, 255, 0.14) 0%, #060412 100%); }
                 .bg-industries { background: radial-gradient(circle at 20% 30%, rgba(0, 230, 118, 0.16) 0%, transparent 65%), radial-gradient(circle at 80% 70%, rgba(0, 229, 255, 0.06) 0%, #010704 100%); }
                 .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.12) 0%, transparent 75%), #050209; }
-                .bg-clients { background: radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.14) 0%, transparent 70%), #040209; }
+                .bg-clients { background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); }
                 .bg-work { background: radial-gradient(circle at 85% 20%, rgba(255, 23, 68, 0.14) 0%, transparent 60%), radial-gradient(circle at 15% 80%, rgba(124, 77, 255, 0.06) 0%, #060105 100%); }
                 
                 /* Subtle grid patterns overlay for tech sections */
@@ -2406,6 +2412,46 @@ const WinzePage = () => {
                     pointer-events: none;
                     animation: scanlineSweep 8s linear infinite;
                     z-index: 1;
+                }
+                
+                /* Section Entrance Scroll-Triggered animations */
+                .scroll-animate.section-slide-left {
+                    transform: translateX(-150px) scale(0.97);
+                    opacity: 0 !important;
+                    filter: blur(15px);
+                }
+                .scroll-animate.section-slide-right {
+                    transform: translateX(150px) scale(0.97);
+                    opacity: 0 !important;
+                    filter: blur(15px);
+                }
+                .scroll-animate.section-slide-down {
+                    transform: translateY(-120px) scale(0.97);
+                    opacity: 0 !important;
+                    filter: blur(15px);
+                }
+                .scroll-animate.section-slide-up {
+                    transform: translateY(120px) scale(0.97);
+                    opacity: 0 !important;
+                    filter: blur(15px);
+                }
+                
+                .scroll-animate.section-slide-left,
+                .scroll-animate.section-slide-right,
+                .scroll-animate.section-slide-down,
+                .scroll-animate.section-slide-up {
+                    transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+                                filter 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+                                transform 1.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                }
+                
+                .scroll-animate.section-slide-left.active,
+                .scroll-animate.section-slide-right.active,
+                .scroll-animate.section-slide-down.active,
+                .scroll-animate.section-slide-up.active {
+                    opacity: 1 !important;
+                    filter: blur(0px) !important;
+                    transform: translate(0) scale(1) !important;
                 }
             `}</style>
             
@@ -2679,7 +2725,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* What We Deliver Section - Animated Gradient Background */}
-                <section id="delivery" style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-delivery">
+                <section id="delivery" style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-delivery scroll-animate section-slide-left">
                     <div className="section-scanline" style={{ '--section-glow': '#FFA726' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">What We Deliver</h2>
@@ -2727,7 +2773,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* Solutions Portfolio Section */}
-                <section id="solutions" ref={solutionsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-solutions">
+                <section id="solutions" ref={solutionsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-solutions scroll-animate section-slide-right">
                     <div className="section-scanline" style={{ '--section-glow': '#00E5FF' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Solutions Portfolio</h2>
@@ -2777,7 +2823,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* Industries Section */}
-                <section id="industries" ref={industriesRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-industries">
+                <section id="industries" ref={industriesRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-industries scroll-animate section-slide-down">
                     <div className="section-scanline" style={{ '--section-glow': '#00E676' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Industries We Serve</h2>
@@ -2825,7 +2871,7 @@ const WinzePage = () => {
                 </section>
 
                 {/* Partners Section */}
-                <section id="partners" ref={partnersRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-partners">
+                <section id="partners" ref={partnersRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-partners scroll-animate section-slide-up">
                     <div className="section-scanline" style={{ '--section-glow': '#7C4DFF' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Trusted Partners</h2>
@@ -2836,17 +2882,16 @@ const WinzePage = () => {
                 </section>
 
                 {/* Clients Section */}
-                <section id="clients" ref={clientsRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden' }} className="bg-clients">
-                    <div className="section-scanline" style={{ '--section-glow': '#00E5FF' }} />
+                <section id="clients" ref={clientsRef} style={{ padding: '60px 5%', position: 'relative', overflow: 'hidden' }} className="bg-clients scroll-animate section-slide-left">
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                        <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Valued Clients</h2>
-                        <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '40px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">TRUSTED BY INDUSTRY LEADERS ACROSS INDIA</p>
+                        <h2 style={{ fontSize: '2.5rem', color: '#0c0a24', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Valued Clients</h2>
+                        <p style={{ color: '#555566', marginBottom: '40px', fontSize: '1rem', letterSpacing: '1px', fontWeight: '600' }} className="scroll-animate slide-up delay-2">TRUSTED BY INDUSTRY LEADERS ACROSS INDIA</p>
                         <div className="marquee-container scroll-animate slide-up delay-3"><div className="marquee-content">{[...clientLogos, ...clientLogos, ...clientLogos].map((client, idx) => (<div key={idx} className="client-logo-item rotate-hover" onClick={() => handleTrackClick(client.name, 'client')}><div className="client-logo-img"><img src={client.url} alt={client.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/00E5FF/1a1a2e?text=${client.name.charAt(0)}`; }} /></div><h3 style={{ color: '#333', fontSize: '0.85rem', margin: 0, fontWeight: '600' }}>{client.name}</h3></div>))}</div></div>
                     </div>
                 </section>
 
                 {/* Work With Winze Section */}
-                <section id="workwith" ref={workwithRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-work">
+                <section id="workwith" ref={workwithRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-work scroll-animate section-slide-right">
                     <div className="section-scanline" style={{ '--section-glow': '#FF1744' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Why Work With Winze?</h2>
