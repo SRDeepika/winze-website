@@ -2397,6 +2397,38 @@ const WinzePage = () => {
                 }
                 
 
+                @keyframes heroReveal {
+                    0% {
+                        opacity: 0;
+                        transform: translateY(35px) scale(0.97);
+                        filter: blur(15px);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                        filter: blur(0px);
+                    }
+                }
+                .hero-reveal-banner {
+                    opacity: 0;
+                    animation: heroReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+                }
+                .hero-reveal-title {
+                    opacity: 0;
+                    animation: heroReveal 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+                }
+                .hero-reveal-desc1 {
+                    opacity: 0;
+                    animation: heroReveal 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+                }
+                .hero-reveal-desc2 {
+                    opacity: 0;
+                    animation: heroReveal 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+                }
+                .hero-reveal-ctas {
+                    opacity: 0;
+                    animation: heroReveal 2.0s cubic-bezier(0.16, 1, 0.3, 1) 1.0s forwards;
+                }
                 
                 /* Section Entrance Scroll-Triggered animations */
                 .scroll-animate.section-slide-left {
@@ -2573,7 +2605,7 @@ const WinzePage = () => {
 
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'center' }}>
                         {/* Centered clean text glass panel */}
-                        <div className="slide-left delay-1" style={{ maxWidth: '900px', width: '100%', textAlign: 'center' }}>
+                        <div style={{ maxWidth: '950px', width: '100%', textAlign: 'center' }}>
                             <div className="hero-text-glass" style={{ borderLeft: 'none' }}>
                                 <div style={{ marginBottom: '22px' }}>
                                     <span style={{ 
@@ -2588,10 +2620,10 @@ const WinzePage = () => {
                                         border: '1px solid rgba(0,229,255,0.3)',
                                         textTransform: 'uppercase',
                                         boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)'
-                                    }}>
+                                    }} className="hero-reveal-banner">
                                         ⚡ 16+ Years of Enterprise Excellence
                                     </span>
-                                    <h1 className="hero-title" style={{ 
+                                    <h1 className="hero-title hero-reveal-title" style={{ 
                                         fontSize: '4.2rem', 
                                         marginTop: '22px', 
                                         fontFamily: "'Playfair Display', serif", 
@@ -2603,14 +2635,14 @@ const WinzePage = () => {
                                         Winze Technologies
                                     </h1>
                                 </div>
-                                <p style={{ fontSize: '1.35rem', marginBottom: '20px', color: '#ffffff', lineHeight: '1.6', fontWeight: '500' }}>
+                                <p style={{ fontSize: '1.35rem', marginBottom: '20px', color: '#ffffff', lineHeight: '1.6', fontWeight: '500' }} className="hero-reveal-desc1">
                                     Leading Enterprise Communication, Security, and AI Technology Solutions Provider
                                 </p>
-                                <p style={{ marginBottom: '35px', color: 'rgba(255, 255, 255, 0.75)', lineHeight: '1.75', fontSize: '1.05rem', maxWidth: '800px', margin: '0 auto 35px' }}>
+                                <p style={{ marginBottom: '35px', color: 'rgba(255, 255, 255, 0.75)', lineHeight: '1.75', fontSize: '1.05rem', maxWidth: '800px', margin: '0 auto 35px' }} className="hero-reveal-desc2">
                                     With over 16 years of industry experience, Winze Technologies specializes in designing, deploying, and supporting integrated technology ecosystems for enterprises across India.
                                 </p>
                                 
-                                <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }} className="hero-reveal-ctas">
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); setShowQuoteModal(true); handleTrackClick('Free Consultation', 'cta'); }} 
                                         className="btn-consultation-glow" 
@@ -2659,51 +2691,6 @@ const WinzePage = () => {
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Bouncing Scroll Down Mouse Indicator */}
-                    <div 
-                        className="hero-scroll-indicator" 
-                        onClick={() => {
-                            if (solutionsRef.current) {
-                                solutionsRef.current.scrollIntoView({ behavior: 'smooth' });
-                            }
-                        }}
-                        style={{
-                            position: 'absolute',
-                            bottom: '30px',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            zIndex: 3,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s'
-                        }}
-                    >
-                        <span style={{ fontSize: '10px', color: '#00E5FF', letterSpacing: '2px', fontWeight: 'bold', marginBottom: '8px', textTransform: 'uppercase', textShadow: '0 0 8px rgba(0, 229, 255, 0.4)' }}>Scroll Down</span>
-                        <div style={{
-                            width: '24px',
-                            height: '38px',
-                            borderRadius: '12px',
-                            border: '2px solid #00E5FF',
-                            position: 'relative',
-                            boxShadow: '0 0 10px rgba(0, 229, 255, 0.2)',
-                            animation: 'scrollBounce 2s infinite'
-                        }}>
-                            <div style={{
-                                width: '4px',
-                                height: '8px',
-                                background: '#00E5FF',
-                                borderRadius: '2px',
-                                position: 'absolute',
-                                top: '6px',
-                                left: '50%',
-                                transform: 'translateX(-50%)',
-                                boxShadow: '0 0 6px #00E5FF'
-                            }} />
                         </div>
                     </div>
                 </section>
