@@ -1016,7 +1016,7 @@ const WinzePage = () => {
         { icon: faHandshake, title: "Strategic Partnership", desc: "We don't just deliver services; we build long-term strategic partnerships focused on your business growth." },
         { icon: faGem, title: "Enterprise Value", desc: "Your success is our success. We're committed to delivering excellence in every project we undertake." },
         { icon: faRocket, title: "Innovation First", desc: "Stay ahead of the curve with our cutting-edge solutions and future-ready technology approach." },
-        { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 20+ satisfied enterprise clients, and 16+ years of excellence." }
+        { icon: faUsers, title: "Client Success", desc: "100+ successful deployments, 500+ satisfied enterprise clients, and 16+ years of excellence." }
     ];
 
     // Enhanced Jewel Spectrum Card Styles with distinct vibrant color mapping per card
