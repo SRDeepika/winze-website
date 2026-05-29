@@ -1668,20 +1668,20 @@ const WinzePage = () => {
                 }
                 
                 .hero-text-glass {
-                    background: rgba(8, 4, 25, 0.62);
-                    backdrop-filter: blur(20px);
-                    -webkit-backdrop-filter: blur(20px);
-                    border: 1px solid rgba(0, 229, 255, 0.18);
-                    border-left: 5px solid #00E5FF;
-                    border-radius: 24px;
-                    padding: 40px;
-                    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 25px rgba(0, 229, 255, 0.04);
+                    background: transparent;
+                    backdrop-filter: none;
+                    -webkit-backdrop-filter: none;
+                    border: none;
+                    border-left: none;
+                    border-radius: 0;
+                    padding: 0;
+                    box-shadow: none;
                     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
                 }
                 .hero-text-glass:hover {
-                    border-color: rgba(0, 229, 255, 0.38);
-                    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 0 35px rgba(0, 229, 255, 0.08);
-                    transform: translateY(-2px);
+                    border-color: transparent;
+                    box-shadow: none;
+                    transform: none;
                 }
                 
                 .cyber-hud-dashboard {
@@ -2574,7 +2574,7 @@ const WinzePage = () => {
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'center' }}>
                         {/* Centered clean text glass panel */}
                         <div className="slide-left delay-1" style={{ maxWidth: '900px', width: '100%', textAlign: 'center' }}>
-                            <div className="hero-text-glass" style={{ borderLeft: 'none', borderTop: '5px solid #00E5FF' }}>
+                            <div className="hero-text-glass" style={{ borderLeft: 'none' }}>
                                 <div style={{ marginBottom: '22px' }}>
                                     <span style={{ 
                                         background: 'rgba(0, 229, 255, 0.12)', 
