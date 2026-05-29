@@ -2004,8 +2004,8 @@ const WinzePage = () => {
                      animation: shimmerSweep 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
                  }
                  .modern-card:hover {
-                     transform: perspective(1000px) rotateX(2.5deg) rotateY(-2.5deg) translateY(-12px) scale(1.03);
-                     box-shadow: 0 30px 60px rgba(0,0,0,0.85), 0 0 40px var(--card-glow-soft), inset 0 0 25px var(--card-glow-soft);
+                     transform: perspective(1000px) rotateX(4.5deg) rotateY(-4.5deg) translateY(-16px) scale(1.045);
+                     box-shadow: 0 40px 80px rgba(0,0,0,0.92), 0 0 50px var(--card-glow-soft), inset 0 0 35px var(--card-glow-soft);
                      border-color: var(--card-glow, #00E5FF) !important;
                      animation-play-state: paused !important;
                  }
@@ -2365,12 +2365,32 @@ const WinzePage = () => {
                 }
                 
                 /* Section background gradients - Balanced Multi-Color Accent System */
-                .bg-delivery { background: radial-gradient(circle at 15% 20%, rgba(255, 167, 38, 0.15) 0%, transparent 60%), radial-gradient(circle at 85% 80%, rgba(124, 77, 255, 0.08) 0%, #06040b 100%); }
-                .bg-solutions { background: radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.18) 0%, transparent 55%), radial-gradient(circle at 20% 80%, rgba(124, 77, 255, 0.14) 0%, #08031a 100%); }
-                .bg-industries { background: radial-gradient(circle at 20% 30%, rgba(0, 230, 118, 0.16) 0%, transparent 65%), radial-gradient(circle at 80% 70%, rgba(0, 229, 255, 0.06) 0%, #010704 100%); }
-                .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.12) 0%, transparent 75%), #050209; }
+                .bg-delivery { 
+                    background: radial-gradient(circle at 15% 20%, rgba(255, 167, 38, 0.15) 0%, transparent 60%), radial-gradient(circle at 85% 80%, rgba(124, 77, 255, 0.08) 0%, #06040b 100%); 
+                    background-size: 200% 200%;
+                    animation: gradientShift 22s ease infinite;
+                }
+                .bg-solutions { 
+                    background: radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.18) 0%, transparent 55%), radial-gradient(circle at 20% 80%, rgba(124, 77, 255, 0.14) 0%, #08031a 100%); 
+                    background-size: 200% 200%;
+                    animation: gradientShift 25s ease infinite;
+                }
+                .bg-industries { 
+                    background: radial-gradient(circle at 20% 30%, rgba(0, 230, 118, 0.16) 0%, transparent 65%), radial-gradient(circle at 80% 70%, rgba(0, 229, 255, 0.06) 0%, #010704 100%); 
+                    background-size: 200% 200%;
+                    animation: gradientShift 24s ease infinite;
+                }
+                .bg-partners { 
+                    background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.12) 0%, transparent 75%), #050209; 
+                    background-size: 200% 200%;
+                    animation: gradientShift 30s ease infinite;
+                }
                 .bg-clients { background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); }
-                .bg-work { background: radial-gradient(circle at 85% 20%, rgba(255, 23, 68, 0.14) 0%, transparent 60%), radial-gradient(circle at 15% 80%, rgba(124, 77, 255, 0.06) 0%, #060105 100%); }
+                .bg-work { 
+                    background: radial-gradient(circle at 85% 20%, rgba(255, 23, 68, 0.14) 0%, transparent 60%), radial-gradient(circle at 15% 80%, rgba(124, 77, 255, 0.06) 0%, #060105 100%); 
+                    background-size: 200% 200%;
+                    animation: gradientShift 28s ease infinite;
+                }
                 
                 /* Subtle grid patterns overlay for tech sections */
                 .bg-delivery::before, .bg-solutions::before, .bg-industries::before, .bg-work::before, .bg-partners::before {
