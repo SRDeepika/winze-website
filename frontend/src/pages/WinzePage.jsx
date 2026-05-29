@@ -2366,7 +2366,7 @@ const WinzePage = () => {
                 
                 /* Section background gradients - Balanced Multi-Color Accent System */
                 .bg-delivery { background: radial-gradient(circle at 15% 20%, rgba(255, 167, 38, 0.15) 0%, transparent 60%), radial-gradient(circle at 85% 80%, rgba(124, 77, 255, 0.08) 0%, #06040b 100%); }
-                .bg-solutions { background: radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.16) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(124, 77, 255, 0.14) 0%, #060412 100%); }
+                .bg-solutions { background: radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.18) 0%, transparent 55%), radial-gradient(circle at 20% 80%, rgba(124, 77, 255, 0.14) 0%, #08031a 100%); }
                 .bg-industries { background: radial-gradient(circle at 20% 30%, rgba(0, 230, 118, 0.16) 0%, transparent 65%), radial-gradient(circle at 80% 70%, rgba(0, 229, 255, 0.06) 0%, #010704 100%); }
                 .bg-partners { background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.12) 0%, transparent 75%), #050209; }
                 .bg-clients { background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); }
@@ -2396,23 +2396,7 @@ const WinzePage = () => {
                     }
                 }
                 
-                @keyframes scanlineSweep {
-                    0% { transform: translateY(-100px); opacity: 0; }
-                    10% { opacity: 0.4; }
-                    90% { opacity: 0.4; }
-                    100% { transform: translateY(calc(100vh + 100px)); opacity: 0; }
-                }
-                .section-scanline {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 1.5px;
-                    background: linear-gradient(90deg, transparent, var(--section-glow, #00E5FF), transparent);
-                    pointer-events: none;
-                    animation: scanlineSweep 8s linear infinite;
-                    z-index: 1;
-                }
+
                 
                 /* Section Entrance Scroll-Triggered animations */
                 .scroll-animate.section-slide-left {
@@ -2724,9 +2708,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* What We Deliver Section - Animated Gradient Background */}
                 <section id="delivery" style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-delivery scroll-animate section-slide-left">
-                    <div className="section-scanline" style={{ '--section-glow': '#FFA726' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">What We Deliver</h2>
                         <p style={{ textAlign: 'center', color: '#00E5FF', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">COMPREHENSIVE TECHNOLOGY LIFECYCLE</p>
@@ -2772,9 +2754,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Solutions Portfolio Section */}
                 <section id="solutions" ref={solutionsRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-solutions scroll-animate section-slide-right">
-                    <div className="section-scanline" style={{ '--section-glow': '#00E5FF' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Solutions Portfolio</h2>
                         <p style={{ textAlign: 'center', color: '#00E5FF', marginBottom: '10px', fontSize: '1rem', letterSpacing: '1px', fontWeight: '600' }} className="scroll-animate slide-up delay-2">PRACTICAL ACTION. BOLD AMBITION. ENDLESS POSSIBILITIES.</p>
@@ -2822,9 +2802,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Industries Section */}
                 <section id="industries" ref={industriesRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-industries scroll-animate section-slide-down">
-                    <div className="section-scanline" style={{ '--section-glow': '#00E676' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ textAlign: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Industries We Serve</h2>
                         <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">TRANSFORMING BUSINESSES ACROSS SECTORS</p>
@@ -2870,9 +2848,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Partners Section */}
                 <section id="partners" ref={partnersRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-partners scroll-animate section-slide-up">
-                    <div className="section-scanline" style={{ '--section-glow': '#7C4DFF' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Our Trusted Partners</h2>
                         <p style={{ color: '#00E5FF', marginBottom: '20px', fontSize: '1rem', letterSpacing: '1px', fontWeight: '600' }} className="scroll-animate slide-up delay-2">INNOVATION. EXCELLENCE. TRUST.</p>
@@ -2890,9 +2866,7 @@ const WinzePage = () => {
                     </div>
                 </section>
 
-                {/* Work With Winze Section */}
                 <section id="workwith" ref={workwithRef} style={{ padding: '80px 5%', position: 'relative', overflow: 'hidden' }} className="bg-work scroll-animate section-slide-right">
-                    <div className="section-scanline" style={{ '--section-glow': '#FF1744' }} />
                     <div className="section-content" style={{ maxWidth: '1400px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
                         <h2 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '15px', fontWeight: '700' }} className="scroll-animate slide-up delay-1">Why Work With Winze?</h2>
                         <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '50px', fontSize: '1rem', letterSpacing: '1px' }} className="scroll-animate slide-up delay-2">PARTNER WITH US FOR A TRANSFORMATIVE EXPERIENCE</p>
